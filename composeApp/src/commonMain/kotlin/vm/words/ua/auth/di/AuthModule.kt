@@ -7,6 +7,5 @@ import org.koin.dsl.module
  * Все модули приложения
  */
 val authModules = module {
-    includes(client)
+    includes(client, managerDi, viewModelDi)
 }
-

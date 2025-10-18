@@ -5,7 +5,7 @@ import vm.words.ua.core.ui.states.EndetableState
 import vm.words.ua.core.ui.states.ErrorableState
 
 
-internal data class LoginState(
+data class LoginState(
     val isNotExpired: Boolean = false,
     val isAvailableBiometric: Boolean = false,
     val phoneNumber: String = "",

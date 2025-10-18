@@ -3,25 +3,32 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AuthResponse(
-    val user: User? = null,
-    val token: String? = null,
-    val error: Error? = null
+    val user : User? = null,
+    val token : Token? = null,
+    val error: Error? = null,
+    val tempToken: String? = null
 ) {
+    @Serializable
+    data class Token(
+        val value : String,
+        val expirationTime : Long
+    )
+
     @Serializable
     data class User(
         val id: String,
         val phoneNumber: String,
-        val email: String? = null,
-        val firstName: String? = null,
-        val lastName: String? = null
+        val firstName: String,
+        val lastName: String,
+        val currency: String,
+        val email: String?,
+        val role: String
     )
-
     @Serializable
     data class Error(
         val message: String
     )
 
-    val isSuccess: Boolean
-        get() = error == null && user != null && token != null
+    fun hasError() = error != null
 }
 

@@ -1,6 +1,6 @@
 package vm.words.ua.auth.domain.models.data
 
-internal data class SignUpModel(
+data class SignUpModel(
     val phoneNumber: String,
     val password: String,
     val firstName: String,
