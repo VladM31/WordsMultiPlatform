@@ -18,7 +18,7 @@ fun AppNavGraph(
             LoaderScreen()
 
             LaunchedEffect(Unit) {
-                delay(5000) // 5 секунд
+                delay(1000) // 5 секунд
                 navController.navigateAndClear(Screen.Login.route)
             }
         }
