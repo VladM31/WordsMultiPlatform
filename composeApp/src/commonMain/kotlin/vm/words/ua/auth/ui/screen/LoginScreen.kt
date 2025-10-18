@@ -22,6 +22,7 @@ import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppTextField
 import vm.words.ua.core.ui.components.AppToolBar
+import vm.words.ua.core.ui.components.CenteredContainer
 import vm.words.ua.core.ui.components.VerticalCenteredContainer
 import vm.words.ua.core.ui.components.PrimaryButton
 import vm.words.ua.navigation.SimpleNavController
@@ -44,61 +45,63 @@ fun LoginScreen(
             showBackButton = false
         )
 
-        VerticalCenteredContainer(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            val phoneState = remember { mutableStateOf("") }
-            val passState = remember { mutableStateOf("") }
-
-            AppTextField(
-                value = phoneState.value,
-                onValueChange = { phoneState.value = it },
-                label = "Phone",
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.size(12.dp))
-
-            AppTextField(
-                value = passState.value,
-                onValueChange = { passState.value = it },
-                label = "Password",
-                modifier = Modifier.fillMaxWidth(),
-                isPassword = true
-            )
-
-            Spacer(modifier = Modifier.size(12.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
+        CenteredContainer(maxWidth = 300.dp) {
+            VerticalCenteredContainer(
+                modifier = Modifier.padding(16.dp)
             ) {
-                Text(text = "Join now", color = AppTheme.PrimaryColor, modifier = Modifier.clickable {
-                    navController.navigate("signup")
-                })
-            }
+                val phoneState = remember { mutableStateOf("") }
+                val passState = remember { mutableStateOf("") }
 
-            Spacer(modifier = Modifier.size(12.dp))
+                AppTextField(
+                    value = phoneState.value,
+                    onValueChange = { phoneState.value = it },
+                    label = "Phone",
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-            PrimaryButton(
-                text = "Sign in",
-                onClick = { onLogin(phoneState.value, passState.value) },
-                modifier = Modifier.fillMaxWidth()
-            )
+                Spacer(modifier = Modifier.size(12.dp))
 
-            Spacer(modifier = Modifier.size(8.dp))
+                AppTextField(
+                    value = passState.value,
+                    onValueChange = { passState.value = it },
+                    label = "Password",
+                    modifier = Modifier.fillMaxWidth(),
+                    isPassword = true
+                )
 
-            Text(text = "Sign in with", color = AppTheme.PrimaryColor)
+                Spacer(modifier = Modifier.size(12.dp))
 
-            Spacer(modifier = Modifier.size(8.dp))
-
-            Image(
-                painterResource(Res.drawable.telegram_image),
-                contentDescription = "telegram",
-                modifier = Modifier.size(80.dp).clickable {
-                    navController.navigate("telegram_login")
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Text(text = "Join now", color = AppTheme.PrimaryColor, modifier = Modifier.clickable {
+                        navController.navigate("signup")
+                    })
                 }
-            )
+
+                Spacer(modifier = Modifier.size(12.dp))
+
+                PrimaryButton(
+                    text = "Sign in",
+                    onClick = { onLogin(phoneState.value, passState.value) },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.size(8.dp))
+
+                Text(text = "Sign in with", color = AppTheme.PrimaryColor)
+
+                Spacer(modifier = Modifier.size(8.dp))
+
+                Image(
+                    painterResource(Res.drawable.telegram_image),
+                    contentDescription = "telegram",
+                    modifier = Modifier.size(80.dp).clickable {
+                        navController.navigate("telegram_login")
+                    }
+                )
+            }
         }
     }
 }
