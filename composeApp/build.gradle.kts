@@ -36,6 +36,11 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.androidx.navigation.compose)
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.koin.core)
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
+            implementation(libs.ktor.client.logging)
             implementation(projects.shared)
         }
 
@@ -53,16 +58,23 @@ kotlin {
             dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation(libs.kotlinx.coroutinesSwing)
+                implementation(libs.ktor.client.okhttp)
             }
         }
 
         jsMain {
             dependsOn(firebaseMain)
+            dependencies {
+                implementation(libs.ktor.client.js)
+            }
         }
 
         // WasmJS платформа - без Firebase
         val wasmJsMain by getting {
             dependsOn(commonMain.get())
+            dependencies {
+                implementation(libs.ktor.client.js)
+            }
         }
 
         commonTest.dependencies {
