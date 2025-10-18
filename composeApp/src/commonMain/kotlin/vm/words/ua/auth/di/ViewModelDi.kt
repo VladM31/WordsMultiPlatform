@@ -1,14 +1,17 @@
 package vm.words.ua.auth.di
 
-import org.koin.dsl.module
+import org.kodein.di.DI
+import org.kodein.di.bind
+import org.kodein.di.instance
+import org.kodein.di.singleton
 import vm.words.ua.auth.ui.vms.LoginViewModel
 
-internal val viewModelDi = module {
-    single <LoginViewModel> {
+internal val viewModelDi = DI.Module("viewModel") {
+    bind<LoginViewModel>() with singleton {
         LoginViewModel(
-            authManager = get(),
-            userCacheManager = get(),
-            authHistoryManager = get(),
+            authManager = instance(),
+            userCacheManager = instance(),
+            authHistoryManager = instance(),
         )
     }
 }

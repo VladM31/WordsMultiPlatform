@@ -1,22 +1,18 @@
 package vm.words.ua.auth.di
 
-import io.ktor.client.HttpClient
-import org.koin.dsl.module
-import vm.words.ua.auth.net.HttpClientFactory
+import org.kodein.di.DI
+import org.kodein.di.bind
+import org.kodein.di.instance
+import org.kodein.di.singleton
 import vm.words.ua.auth.net.clients.AuthClient
 import vm.words.ua.auth.net.clients.KtorAuthClient
 
 /**
- * Модуль Koin для сетевых зависимостей
+ * Модуль Kodein-DI для сетевых зависимостей
  */
-internal val client = module {
-    // HTTP клиент (singleton)
-    single<HttpClient> {
-        HttpClientFactory.createAuthClient()
-    }
-
+internal val client = DI.Module("client") {
     // Auth клиент (singleton)
-    single<AuthClient> {
-        KtorAuthClient(get())
+    bind<AuthClient>() with singleton {
+        KtorAuthClient(instance())
     }
 }

@@ -9,12 +9,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.koin.mp.KoinPlatform.getKoin
-import vm.words.ua.auth.ui.actions.LoginAction
+import org.kodein.di.instance
 import vm.words.ua.auth.ui.components.LoginForm
 import vm.words.ua.auth.ui.vms.LoginViewModel
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.*
+import vm.words.ua.di.DiContainer
 import vm.words.ua.navigation.SimpleNavController
 
 @Composable
@@ -22,8 +22,8 @@ fun LoginScreen(
     navController: SimpleNavController,
     modifier: Modifier = Modifier
 ) {
-    // Get ViewModel from Koin manually
-    val viewModel: LoginViewModel = getKoin().get()
+    // Get ViewModel from Kodein manually
+    val viewModel: LoginViewModel by DiContainer.di.instance()
     val state by viewModel.state.collectAsState()
 
     // Navigate when login is successful

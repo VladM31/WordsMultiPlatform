@@ -1,11 +1,12 @@
 package vm.words.ua.di
 
 import io.ktor.client.*
-import org.koin.dsl.module
+import org.kodein.di.DI
+import org.kodein.di.bind
+import org.kodein.di.instance
+import org.kodein.di.singleton
 import vm.words.ua.auth.di.authModules
 import vm.words.ua.auth.net.HttpClientFactory
-import vm.words.ua.auth.net.clients.AuthClient
-import vm.words.ua.auth.net.clients.KtorAuthClient
 import vm.words.ua.core.domain.crypto.TokenCipherFactory
 import vm.words.ua.core.domain.managers.SettingsFactory
 import vm.words.ua.core.domain.managers.impl.SharedUserCacheManager
@@ -13,25 +14,20 @@ import vm.words.ua.core.domain.managers.UserCacheManager
 
 
 /**
- * Модуль Koin для сетевых зависимостей
+ * Модуль Kodein-DI для сетевых зависимостей
  */
-val networkModule = module {
+val networkModule = DI.Module("network") {
     // HTTP клиент (singleton)
-    single<HttpClient> {
+    bind<HttpClient>() with singleton {
         HttpClientFactory.createAuthClient()
-    }
-
-    // Auth клиент (singleton)
-    single<AuthClient> {
-        KtorAuthClient(get())
     }
 }
 
 /**
- * Модуль Koin для кэш-менеджеров
+ * Модуль Kodein-DI для кэш-менеджеров
  */
-val cacheModule = module {
-    single<UserCacheManager> {
+val cacheModule = DI.Module("cache") {
+    bind<UserCacheManager>() with singleton {
         SharedUserCacheManager(
             settings = SettingsFactory.create(),
             tokenCipher = TokenCipherFactory.create()
@@ -42,8 +38,12 @@ val cacheModule = module {
 /**
  * Все модули приложения
  */
-val appModules = listOf(
-    networkModule,
-    cacheModule,
-    authModules
-)
+val appModules = DI {
+    import(networkModule)
+    import(cacheModule)
+    import(authModules)
+}
+
+object DiContainer {
+    val di = appModules
+}

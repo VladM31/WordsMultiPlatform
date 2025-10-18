@@ -1,17 +1,13 @@
 package vm.words.ua.di
 
-import org.koin.core.context.startKoin
-
-private var koinStarted = false
+private var diInitialized = false
 
 /**
- * Initialize Koin DI once per process.
+ * Initialize Kodein DI once per process.
  */
-fun initKoin() {
-    if (!koinStarted) {
-        startKoin {
-            modules(appModules)
-        }
-        koinStarted = true
+fun initDi() {
+    if (!diInitialized) {
+        DiContainer.di
+        diInitialized = true
     }
 }

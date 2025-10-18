@@ -1,22 +1,25 @@
 package vm.words.ua.auth.di
 
-import org.koin.dsl.module
+import org.kodein.di.DI
+import org.kodein.di.bind
+import org.kodein.di.instance
+import org.kodein.di.singleton
 import vm.words.ua.auth.domain.managers.AuthHistoryManager
 import vm.words.ua.auth.domain.managers.AuthHistorySettingsFactory
 import vm.words.ua.auth.domain.managers.AuthManager
 import vm.words.ua.auth.domain.managers.impls.AuthHistoryManagerImpl
 import vm.words.ua.auth.domain.managers.impls.AuthManagerImpl
 
-internal val managerDi = module {
+internal val managerDi = DI.Module("manager") {
     // HTTP клиент (singleton)
-    single<AuthManager> {
+    bind<AuthManager>() with singleton {
         AuthManagerImpl(
-            authClient = get(),
-            userCacheManager = get()
+            authClient = instance(),
+            userCacheManager = instance()
         )
     }
 
-    single<AuthHistoryManager> {
+    bind<AuthHistoryManager>() with singleton {
         AuthHistoryManagerImpl(
             settings = AuthHistorySettingsFactory.create()
         )

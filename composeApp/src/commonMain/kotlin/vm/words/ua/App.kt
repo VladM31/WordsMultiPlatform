@@ -9,8 +9,8 @@ import androidx.compose.ui.Modifier
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import vm.words.ua.core.firebase.AppRemoteConfig
 import vm.words.ua.core.ui.AppTheme
+import vm.words.ua.di.initDi
 
-import vm.words.ua.di.initKoin
 import vm.words.ua.navigation.AppNavGraph
 import vm.words.ua.navigation.rememberSimpleNavController
 
@@ -18,7 +18,7 @@ import vm.words.ua.navigation.rememberSimpleNavController
 @Preview
 fun App() {
     // Initialize DI (safe to call multiple times)
-    initKoin()
+    initDi()
 
     // Инициализация Remote Config при запуске приложения
     LaunchedEffect(Unit) {
