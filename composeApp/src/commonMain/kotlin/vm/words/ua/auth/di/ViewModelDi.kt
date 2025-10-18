@@ -4,7 +4,7 @@ import org.koin.dsl.module
 import vm.words.ua.auth.ui.vms.LoginViewModel
 
 internal val viewModelDi = module {
-    factory<LoginViewModel> {
+    single <LoginViewModel> {
         LoginViewModel(
             authManager = get(),
             userCacheManager = get(),

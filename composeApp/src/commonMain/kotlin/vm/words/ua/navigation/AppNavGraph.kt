@@ -25,10 +25,7 @@ fun AppNavGraph(
 
         Screen.Login.route -> {
             LoginScreen(
-                navController = navController,
-                onLogin = { phone, password ->
-                    // TODO: Implement login logic
-                }
+                navController = navController
             )
         }
 

@@ -2,10 +2,17 @@ package vm.words.ua.auth.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import org.koin.mp.KoinPlatform.getKoin
+import vm.words.ua.auth.ui.actions.LoginAction
 import vm.words.ua.auth.ui.components.LoginForm
+import vm.words.ua.auth.ui.vms.LoginViewModel
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.*
 import vm.words.ua.navigation.SimpleNavController
@@ -13,9 +20,19 @@ import vm.words.ua.navigation.SimpleNavController
 @Composable
 fun LoginScreen(
     navController: SimpleNavController,
-    modifier: Modifier = Modifier,
-    onLogin: (phone: String, password: String) -> Unit = { _, _ -> }
+    modifier: Modifier = Modifier
 ) {
+    // Get ViewModel from Koin manually
+    val viewModel: LoginViewModel = getKoin().get()
+    val state by viewModel.state.collectAsState()
+
+    // Navigate when login is successful
+    LaunchedEffect(state.isEnd) {
+        if (state.isEnd) {
+            navController.navigate("home")
+        }
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -31,11 +48,21 @@ fun LoginScreen(
                 modifier = Modifier.padding(16.dp)
             ) {
                 LoginForm(
-                    onLogin = onLogin,
+                    viewModel = viewModel,
                     onJoinNowClick = { navController.navigate("signup") },
                     onTelegramClick = { navController.navigate("telegram_login") },
                     showTelegramButton = true
                 )
+
+                // Display error message if present
+                state.errorMessage?.let { error ->
+                    Spacer(modifier = Modifier.size(8.dp))
+                    Text(
+                        text = error.message,
+                        color = AppTheme.PrimaryColor,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
         }
     }

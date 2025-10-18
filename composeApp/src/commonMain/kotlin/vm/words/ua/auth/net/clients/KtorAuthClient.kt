@@ -19,7 +19,7 @@ class KtorAuthClient(
 ) : AuthClient {
 
     private val baseUrl: String
-        get() = "http://${AppRemoteConfig.localHost}"
+        get() = "http://${AppRemoteConfig.localHost}:8000"
 
     override suspend fun logIn(request: LoginRequest): AuthResponse {
         return try {

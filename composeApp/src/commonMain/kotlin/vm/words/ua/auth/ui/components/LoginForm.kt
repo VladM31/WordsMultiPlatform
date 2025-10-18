@@ -10,11 +10,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import org.jetbrains.compose.resources.painterResource
+import vm.words.ua.auth.ui.actions.LoginAction
+import vm.words.ua.auth.ui.vms.LoginViewModel
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppTextField
 import vm.words.ua.core.ui.components.PrimaryButton
@@ -23,17 +28,17 @@ import wordsmultiplatform.composeapp.generated.resources.telegram_image
 
 @Composable
 fun ColumnScope.LoginForm(
-    onLogin: (phone: String, password: String) -> Unit = { _, _ -> },
+    viewModel: LoginViewModel,
     onJoinNowClick: () -> Unit = {},
     onTelegramClick: () -> Unit = {},
     showTelegramButton: Boolean = true
 ) {
-    val phoneState = remember { mutableStateOf("") }
-    val passState = remember { mutableStateOf("") }
+    val phoneState = viewModel.state.map { it.phoneNumber }.distinctUntilChanged().collectAsState(initial = "")
+    val passState = viewModel.state.map { it.password }.distinctUntilChanged().collectAsState(initial = "")
 
     AppTextField(
         value = phoneState.value,
-        onValueChange = { phoneState.value = it },
+        onValueChange = { viewModel.sent(LoginAction.SetPhoneNumber(it ))},
         label = "Phone",
         modifier = Modifier.fillMaxWidth()
     )
@@ -42,7 +47,7 @@ fun ColumnScope.LoginForm(
 
     AppTextField(
         value = passState.value,
-        onValueChange = { passState.value = it },
+        onValueChange = { viewModel.sent(LoginAction.SetPassword(it ))},
         label = "Password",
         modifier = Modifier.fillMaxWidth(),
         isPassword = true
@@ -65,7 +70,7 @@ fun ColumnScope.LoginForm(
 
     PrimaryButton(
         text = "Sign in",
-        onClick = { onLogin(phoneState.value, passState.value) },
+        onClick = { viewModel.sent(LoginAction.Submit) },
         modifier = Modifier.fillMaxWidth()
     )
 
