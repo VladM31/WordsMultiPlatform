@@ -19,9 +19,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.PrimaryButton
+import vm.words.ua.navigation.SimpleNavController
 
 @Composable
 fun ConfirmSignUpScreen(
+    navController: SimpleNavController,
     modifier: Modifier = Modifier,
     confirmationText: String = "Please check your email and confirm your registration. After that, you can log in to the application.",
     onOpenTelegramBot: () -> Unit = {}

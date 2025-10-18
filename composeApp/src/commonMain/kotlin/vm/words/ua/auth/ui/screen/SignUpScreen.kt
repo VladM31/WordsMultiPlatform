@@ -27,11 +27,21 @@ import androidx.compose.ui.unit.sp
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppTextField
 import vm.words.ua.core.ui.components.PrimaryButton
+import vm.words.ua.navigation.SimpleNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreen(
+    navController: SimpleNavController,
     modifier: Modifier = Modifier,
+    onSignUp: (
+        phone: String,
+        password: String,
+        email: String,
+        firstName: String,
+        lastName: String,
+        currency: String
+    ) -> Unit = { _, _, _, _, _, _ -> }
 ) {
     val scrollState = rememberScrollState()
 
@@ -179,7 +189,15 @@ fun SignUpScreen(
             text = "Submit",
             onClick = {
                 if (agreedToTerms) {
-                    print("Sign Up with: $phoneState, $passwordState, $emailState, $firstNameState, $lastNameState, $selectedCurrency")
+                    onSignUp(
+                        phoneState,
+                        passwordState,
+                        emailState,
+                        firstNameState,
+                        lastNameState,
+                        selectedCurrency
+                    )
+                    navController.navigate("confirm_signup")
                 }
             },
             modifier = Modifier.fillMaxWidth(),

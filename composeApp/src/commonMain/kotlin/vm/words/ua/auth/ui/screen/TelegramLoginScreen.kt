@@ -22,9 +22,11 @@ import androidx.compose.ui.unit.sp
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppTextField
 import vm.words.ua.core.ui.components.PrimaryButton
+import vm.words.ua.navigation.SimpleNavController
 
 @Composable
 fun TelegramLoginScreen(
+    navController: SimpleNavController,
     modifier: Modifier = Modifier,
     onSubmit: (phoneNumber: String) -> Unit = {},
     onOpenTelegram: () -> Unit = {},

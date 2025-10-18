@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppTheme
 
 @Composable
-fun LoaderScrean(
+fun LoaderScreen(
     modifier: Modifier = Modifier,
     message: String? = null
 ) {

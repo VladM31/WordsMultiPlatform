@@ -21,14 +21,15 @@ import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppTextField
 import vm.words.ua.core.ui.components.PrimaryButton
+import vm.words.ua.navigation.SimpleNavController
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.telegram_image
 
 @Composable
 fun LoginScreen(
+    navController: SimpleNavController,
     modifier: Modifier = Modifier,
-    onLogin: (phone: String, password: String) -> Unit = { _, _ -> },
-    onTelegram: () -> Unit = {}
+    onLogin: (phone: String, password: String) -> Unit = { _, _ -> }
 ) {
     Column(
         modifier = modifier
@@ -61,7 +62,9 @@ fun LoginScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End
         ) {
-            Text(text = "Join now", color = AppTheme.PrimaryColor, modifier = Modifier.clickable { /* navigate */ })
+            Text(text = "Join now", color = AppTheme.PrimaryColor, modifier = Modifier.clickable {
+                navController.navigate("signup")
+            })
         }
 
         PrimaryButton(
@@ -75,12 +78,9 @@ fun LoginScreen(
         Text(text = "Sign in with", color = AppTheme.PrimaryColor)
 
         Row(horizontalArrangement = Arrangement.SpaceAround, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-            Image(painterResource(Res.drawable.telegram_image), contentDescription = "telegram", modifier = Modifier.size(80.dp).clickable { onTelegram() })
+            Image(painterResource(Res.drawable.telegram_image), contentDescription = "telegram", modifier = Modifier.size(80.dp).clickable {
+                navController.navigate("telegram_login")
+            })
         }
     }
-}
-
-@Composable
-fun LoginScreenPreview() {
-    LoginScreen()
 }
