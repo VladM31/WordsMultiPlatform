@@ -25,7 +25,8 @@ import wordsmultiplatform.composeapp.generated.resources.telegram_image
 fun ColumnScope.LoginForm(
     onLogin: (phone: String, password: String) -> Unit = { _, _ -> },
     onJoinNowClick: () -> Unit = {},
-    onTelegramClick: () -> Unit = {}
+    onTelegramClick: () -> Unit = {},
+    showTelegramButton: Boolean = true
 ) {
     val phoneState = remember { mutableStateOf("") }
     val passState = remember { mutableStateOf("") }
@@ -68,16 +69,17 @@ fun ColumnScope.LoginForm(
         modifier = Modifier.fillMaxWidth()
     )
 
-    Spacer(modifier = Modifier.size(8.dp))
+    if (showTelegramButton) {
+        Spacer(modifier = Modifier.size(8.dp))
 
-    Text(text = "Sign in with", color = AppTheme.PrimaryColor)
+        Text(text = "Sign in with", color = AppTheme.PrimaryColor)
 
-    Spacer(modifier = Modifier.size(8.dp))
+        Spacer(modifier = Modifier.size(8.dp))
 
-    Image(
-        painterResource(Res.drawable.telegram_image),
-        contentDescription = "telegram",
-        modifier = Modifier.size(80.dp).clickable { onTelegramClick() }
-    )
+        Image(
+            painterResource(Res.drawable.telegram_image),
+            contentDescription = "telegram",
+            modifier = Modifier.size(80.dp).clickable { onTelegramClick() }
+        )
+    }
 }
-

@@ -26,14 +26,15 @@ fun LoginScreen(
             showBackButton = false
         )
 
-        CenteredContainer(maxWidth = 300.dp) {
+        CenteredContainer(maxWidth = 500.dp) {
             VerticalCenteredContainer(
                 modifier = Modifier.padding(16.dp)
             ) {
                 LoginForm(
                     onLogin = onLogin,
                     onJoinNowClick = { navController.navigate("signup") },
-                    onTelegramClick = { navController.navigate("telegram_login") }
+                    onTelegramClick = { navController.navigate("telegram_login") },
+                    showTelegramButton = true
                 )
             }
         }
