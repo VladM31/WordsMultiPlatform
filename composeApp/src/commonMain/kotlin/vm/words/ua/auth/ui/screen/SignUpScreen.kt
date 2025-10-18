@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppTextField
+import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.PrimaryButton
 import vm.words.ua.navigation.SimpleNavController
 
@@ -60,148 +61,152 @@ fun SignUpScreen(
         modifier = modifier
             .fillMaxSize()
             .background(AppTheme.PrimaryBack)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "Sign Up",
-            color = AppTheme.PrimaryColor,
-            fontSize = 24.sp
+        AppToolBar(
+            title = "Sign Up",
+            onBackClick = { navController.popBackStack() }
         )
 
         Column(
             modifier = Modifier
-                .weight(1f)
-                .verticalScroll(scrollState),
+                .fillMaxSize()
+                .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(scrollState),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    AppTextField(
-                        value = phoneState,
-                        onValueChange = { phoneState = it },
-                        label = "Phone number",
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    AppTextField(
-                        value = passwordState,
-                        onValueChange = { passwordState = it },
-                        label = "Password",
-                        modifier = Modifier.fillMaxWidth(),
-                        isPassword = true
-                    )
-
-                    AppTextField(
-                        value = emailState,
-                        onValueChange = { emailState = it },
-                        label = "Email",
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    AppTextField(
-                        value = firstNameState,
-                        onValueChange = { firstNameState = it },
-                        label = "First name",
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    AppTextField(
-                        value = lastNameState,
-                        onValueChange = { lastNameState = it },
-                        label = "Last name",
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    ExposedDropdownMenuBox(
-                        expanded = expanded,
-                        onExpandedChange = { expanded = !expanded }
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         AppTextField(
-                            value = selectedCurrency,
-                            onValueChange = {},
-                            label = "Currency",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .menuAnchor()
+                            value = phoneState,
+                            onValueChange = { phoneState = it },
+                            label = "Phone number",
+                            modifier = Modifier.fillMaxWidth()
                         )
 
-                        ExposedDropdownMenu(
+                        AppTextField(
+                            value = passwordState,
+                            onValueChange = { passwordState = it },
+                            label = "Password",
+                            modifier = Modifier.fillMaxWidth(),
+                            isPassword = true
+                        )
+
+                        AppTextField(
+                            value = emailState,
+                            onValueChange = { emailState = it },
+                            label = "Email",
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        AppTextField(
+                            value = firstNameState,
+                            onValueChange = { firstNameState = it },
+                            label = "First name",
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        AppTextField(
+                            value = lastNameState,
+                            onValueChange = { lastNameState = it },
+                            label = "Last name",
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        ExposedDropdownMenuBox(
                             expanded = expanded,
-                            onDismissRequest = { expanded = false },
-                            modifier = Modifier.background(AppTheme.PrimaryBack)
+                            onExpandedChange = { expanded = !expanded }
                         ) {
-                            currencies.forEach { currency ->
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(
-                                            text = currency,
-                                            color = AppTheme.PrimaryColor
-                                        )
-                                    },
-                                    onClick = {
-                                        selectedCurrency = currency
-                                        expanded = false
-                                    }
-                                )
+                            AppTextField(
+                                value = selectedCurrency,
+                                onValueChange = {},
+                                label = "Currency",
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .menuAnchor()
+                            )
+
+                            ExposedDropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false },
+                                modifier = Modifier.background(AppTheme.PrimaryBack)
+                            ) {
+                                currencies.forEach { currency ->
+                                    DropdownMenuItem(
+                                        text = {
+                                            Text(
+                                                text = currency,
+                                                color = AppTheme.PrimaryColor
+                                            )
+                                        },
+                                        onClick = {
+                                            selectedCurrency = currency
+                                            expanded = false
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
-        }
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Checkbox(
-                checked = agreedToTerms,
-                onCheckedChange = { agreedToTerms = it },
-                colors = CheckboxDefaults.colors(
-                    checkedColor = AppTheme.PrimaryColor,
-                    uncheckedColor = AppTheme.PrimaryColor,
-                    checkmarkColor = AppTheme.PrimaryBack
-                )
-            )
-            Text(
-                text = "I agree to the terms of service",
-                color = AppTheme.PrimaryColor,
-                fontSize = 16.sp
-            )
-        }
-
-        PrimaryButton(
-            text = "Submit",
-            onClick = {
-                if (agreedToTerms) {
-                    onSignUp(
-                        phoneState,
-                        passwordState,
-                        emailState,
-                        firstNameState,
-                        lastNameState,
-                        selectedCurrency
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Checkbox(
+                    checked = agreedToTerms,
+                    onCheckedChange = { agreedToTerms = it },
+                    colors = CheckboxDefaults.colors(
+                        checkedColor = AppTheme.PrimaryColor,
+                        uncheckedColor = AppTheme.PrimaryColor,
+                        checkmarkColor = AppTheme.PrimaryBack
                     )
-                    navController.navigate("confirm_signup")
-                }
-            },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = agreedToTerms
-        )
+                )
+                Text(
+                    text = "I agree to the terms of service",
+                    color = AppTheme.PrimaryColor,
+                    fontSize = 16.sp
+                )
+            }
+
+            PrimaryButton(
+                text = "Submit",
+                onClick = {
+                    if (agreedToTerms) {
+                        onSignUp(
+                            phoneState,
+                            passwordState,
+                            emailState,
+                            firstNameState,
+                            lastNameState,
+                            selectedCurrency
+                        )
+                        navController.navigate("confirm_signup")
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = agreedToTerms
+            )
+        }
     }
 }

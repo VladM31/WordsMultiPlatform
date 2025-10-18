@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import vm.words.ua.core.ui.AppTheme
+import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.PrimaryButton
 import vm.words.ua.navigation.SimpleNavController
 
@@ -34,37 +35,47 @@ fun ConfirmSignUpScreen(
         modifier = modifier
             .fillMaxSize()
             .background(AppTheme.PrimaryBack)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        AppToolBar(
+            title = "Confirmation",
+            onBackClick = { navController.popBackStack() }
+        )
+
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .verticalScroll(scrollState),
+                .fillMaxSize()
+                .padding(16.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            PrimaryButton(
-                text = "Open Telegram Bot",
-                onClick = onOpenTelegramBot,
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth(0.8f)
-                    .padding(bottom = 20.dp)
-            )
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .verticalScroll(scrollState),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                PrimaryButton(
+                    text = "Open Telegram Bot",
+                    onClick = onOpenTelegramBot,
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f)
+                        .padding(bottom = 20.dp)
+                )
 
-            Text(
-                text = confirmationText,
-                color = AppTheme.PrimaryColor,
-                fontSize = 20.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth(0.8f)
-                    .padding(bottom = 16.dp)
-            )
+                Text(
+                    text = confirmationText,
+                    color = AppTheme.PrimaryColor,
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f)
+                        .padding(bottom = 16.dp)
+                )
 
-            Spacer(modifier = Modifier.size(80.dp))
+                Spacer(modifier = Modifier.size(80.dp))
+            }
         }
     }
 }
