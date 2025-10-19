@@ -9,6 +9,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import org.kodein.di.instance
 import vm.words.ua.auth.ui.components.LoginForm
 import vm.words.ua.auth.ui.vms.LoginViewModel
@@ -25,6 +27,9 @@ fun LoginScreen(
     // Get ViewModel from Kodein manually
     val viewModel: LoginViewModel by DiContainer.di.instance()
     val state by viewModel.state.collectAsState()
+    val  error = viewModel.state.map { it.errorMessage }
+        .distinctUntilChanged()
+        .collectAsState(initial = null)
 
     // Navigate when login is successful
     LaunchedEffect(state.isEnd) {
@@ -55,13 +60,9 @@ fun LoginScreen(
                 )
 
                 // Display error message if present
-                state.errorMessage?.let { error ->
-                    Spacer(modifier = Modifier.size(8.dp))
-                    Text(
-                        text = error.message,
-                        color = AppTheme.PrimaryColor,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                error.value?.let { errorMessage ->
+                    Spacer(modifier = Modifier.height(12.dp))
+                    ErrorMessageBox(message = errorMessage)
                 }
             }
         }

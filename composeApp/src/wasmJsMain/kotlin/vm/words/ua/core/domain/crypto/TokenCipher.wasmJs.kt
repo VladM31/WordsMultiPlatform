@@ -16,7 +16,7 @@ class WasmTokenCipher : TokenCipher {
         return try {
             Base64.encode(value.encodeToByteArray())
         } catch (e: Exception) {
-            console.error("Encryption error:", e)
+//            console.error("Encryption error:", e)
             value
         }
     }
@@ -28,7 +28,7 @@ class WasmTokenCipher : TokenCipher {
         return try {
             Base64.decode(value).decodeToString()
         } catch (e: Exception) {
-            console.error("Decryption error:", e)
+//            console.error("Decryption error:", e)
             value
         }
     }

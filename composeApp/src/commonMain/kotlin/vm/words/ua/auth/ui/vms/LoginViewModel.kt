@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import vm.words.ua.auth.domain.managers.AuthManager
 import vm.words.ua.auth.ui.actions.LoginAction
 import vm.words.ua.auth.ui.states.LoginState
+import vm.words.ua.auth.ui.validation.loginValidator
 import vm.words.ua.core.domain.managers.UserCacheManager
 import vm.words.ua.core.ui.models.ErrorMessage
 
@@ -23,7 +24,7 @@ class LoginViewModel(
         phoneNumber = authHistoryManager.lastPhoneNumber.orEmpty()
     ))
     val state: StateFlow<LoginState> = mutableState
-//    private val validator = loginValidator(mutableState)
+    private val validator = loginValidator(mutableState)
 
 
     fun sent(action: LoginAction){
@@ -47,12 +48,12 @@ class LoginViewModel(
     }
 
     private fun submit(){
-//        val errors = validator.validate(" - ")
-//
-//        if (errors.isNotEmpty()){
-//            mutableState.value = state.value.copy(errorMessage = ErrorMessage(message = errors))
-//            return
-//        }
+        val errors = validator.validate(" - ")
+
+        if (errors.isNotEmpty()){
+            mutableState.value = state.value.copy(errorMessage = ErrorMessage(message = errors))
+            return
+        }
 
         viewModelScope.launch(Dispatchers.Default){
             logIn()
