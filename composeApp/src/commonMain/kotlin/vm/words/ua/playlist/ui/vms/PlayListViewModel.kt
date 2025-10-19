@@ -16,6 +16,8 @@ class PlayListViewModel(
     private val mutableState = MutableStateFlow(PlayListState())
     val state: StateFlow<PlayListState> = mutableState
 
+    private var currentLoadJob: kotlinx.coroutines.Job? = null
+
     init {
         loadPlaylists()
     }
@@ -28,28 +30,38 @@ class PlayListViewModel(
     }
 
     private fun handleReFetch() {
+        currentLoadJob?.cancel()
         mutableState.value = mutableState.value.copy(
             playlists = emptyList(),
             currentPage = 0,
-            hasMore = true
+            hasMore = true,
+            isLoading = false
         )
         loadPlaylists()
     }
 
     private fun handleUpdateFilter(action: PlayListAction.UpdateFilter) {
+        currentLoadJob?.cancel()
         mutableState.value = mutableState.value.copy(
             filter = action.filter,
             playlists = emptyList(),
             currentPage = 0,
-            hasMore = true
+            hasMore = true,
+            isLoading = false
         )
         loadPlaylists()
     }
 
     private fun loadPlaylists() {
-        if (mutableState.value.isLoading || !mutableState.value.hasMore) return
+        if (mutableState.value.isLoading || !mutableState.value.hasMore) {
+            println("PlayListViewModel.loadPlaylists: Skipping - isLoading=${mutableState.value.isLoading}, hasMore=${mutableState.value.hasMore}")
+            return
+        }
 
-        viewModelScope.launch {
+        // Cancel previous job if it's still running
+        currentLoadJob?.cancel()
+
+        currentLoadJob = viewModelScope.launch {
             mutableState.value = mutableState.value.copy(isLoading = true, error = null)
 
             try {
@@ -58,15 +70,26 @@ class PlayListViewModel(
                     size = PAGE_SIZE
                 )
 
+                println("PlayListViewModel.loadPlaylists: Starting with filter: $filter")
                 val result = playListManager.countBy(filter)
+                println("PlayListViewModel.loadPlaylists: Got result with ${result.content.size} items")
+
+                val playlists = if (filter.page == 0) {
+                    result.content
+                } else {
+                    mutableState.value.playlists + result.content
+                }
 
                 mutableState.value = mutableState.value.copy(
-                    playlists = mutableState.value.playlists + result.content,
+                    playlists = playlists,
                     isLoading = false,
                     currentPage = mutableState.value.currentPage + 1,
                     hasMore = result.content.size >= PAGE_SIZE
                 )
+                println("PlayListViewModel.loadPlaylists: State updated, total playlists: ${mutableState.value.playlists.size}")
             } catch (e: Exception) {
+                println("PlayListViewModel.loadPlaylists: ERROR - ${e.message}")
+                e.printStackTrace()
                 mutableState.value = mutableState.value.copy(
                     isLoading = false,
                     error = e.message ?: "Unknown error"
@@ -83,4 +106,3 @@ class PlayListViewModel(
         private const val PAGE_SIZE = 20
     }
 }
-

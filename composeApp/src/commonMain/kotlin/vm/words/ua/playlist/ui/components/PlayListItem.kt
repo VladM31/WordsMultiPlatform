@@ -12,7 +12,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.utils.toFormatDateTime
+import vm.words.ua.core.utils.*
 import vm.words.ua.playlist.domain.models.PlayListCount
 
 @Composable
@@ -25,17 +25,12 @@ fun PlayListItem(
     val dateText = playList.createdAt.toFormatDateTime()
 
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
-        val scaleFactor = when {
-            maxWidth >= 1920.dp -> 1.8f // 4K
-            maxWidth >= 1280.dp -> 1.5f // FullHD
-            maxWidth >= 800.dp -> 1.2f  // Big tablets
-            maxWidth <= 360.dp -> 0.8f  // Small phones
-            else -> 1.0f // Just screen
-        }
+        val scaleFactor = getScaleFactor(maxWidth)
 
-        val titleSize = (20 * scaleFactor).sp
+        val titleSize = getFontSize(scaleFactor)
         val detailsSize = (14 * scaleFactor).sp
-        val iconSize = (40 * scaleFactor).dp
+        val iconSize = getIconSize(scaleFactor)
+        val buttonSize = getIconButtonSize(scaleFactor)
         val cardPadding = (16 * scaleFactor).dp
         val horizontalPadding = (16 * scaleFactor).dp
         val verticalPadding = (8 * scaleFactor).dp
@@ -86,7 +81,7 @@ fun PlayListItem(
                             }
                         },
                         enabled = enabled,
-                        modifier = Modifier.size(iconSize * 1.2f)
+                        modifier = Modifier.size(buttonSize)
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
@@ -100,5 +95,3 @@ fun PlayListItem(
         }
     }
 }
-
-
