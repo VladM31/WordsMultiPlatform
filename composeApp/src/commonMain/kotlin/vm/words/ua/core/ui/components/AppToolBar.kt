@@ -33,6 +33,7 @@ import vm.words.ua.navigation.SimpleNavController
 fun AppToolBar(
     title: String,
     modifier: Modifier = Modifier,
+    backButtonImage: Painter = painterResource(Res.drawable.arrow),
     onBackClick: (() -> Unit)? = null,
     onAdditionalClick: (() -> Unit)? = null,
     showBackButton: Boolean = true,
@@ -70,7 +71,8 @@ fun AppToolBar(
                     onBackClick = onBackClick,
                     showBackButton = showBackButton,
                     buttonSize = buttonSize,
-                    iconSize = iconSize
+                    iconSize = iconSize,
+                    backButtonImage=  backButtonImage
                 )
 
                 // Title
@@ -103,6 +105,7 @@ fun AppToolBar(
 private fun BackButton(
     onBackClick: (() -> Unit)?,
     showBackButton: Boolean,
+    backButtonImage: Painter,
     buttonSize: Dp,
     iconSize: Dp
 ){
@@ -116,7 +119,7 @@ private fun BackButton(
         modifier = Modifier.size(buttonSize)
     ) {
         Icon(
-            painter = painterResource(Res.drawable.arrow),
+            painter = backButtonImage,
             contentDescription = "Back",
             tint = AppTheme.PrimaryColor,
             modifier = Modifier.size(iconSize)
