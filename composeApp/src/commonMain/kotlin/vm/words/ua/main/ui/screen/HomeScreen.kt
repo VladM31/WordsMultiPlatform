@@ -6,8 +6,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
+import vm.words.ua.main.ui.components.BottomNavBar
 import vm.words.ua.navigation.SimpleNavController
 
 @Composable
@@ -89,26 +88,6 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(24.dp))
         }
 
-        // Simple bottom navigation row similar to navigation_bar.xml
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(72.dp)
-                .background(AppTheme.PrimaryBack),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = { navController.navigate("playlist") }) {
-                // placeholder icon, using text as fallback
-                Text(text = "Play")
-            }
-            IconButton(onClick = { navController.navigate("home") }) {
-                Text(text = "Home")
-            }
-            IconButton(onClick = { navController.navigate("settings") }) {
-                Text(text = "Settings")
-            }
-        }
+        BottomNavBar(currentRoute = "home", onNavigate = { route -> navController.navigate(route) })
     }
 }
-
