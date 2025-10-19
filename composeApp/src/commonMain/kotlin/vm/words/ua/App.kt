@@ -18,12 +18,7 @@ import vm.words.ua.navigation.rememberSimpleNavController
 @Preview
 fun App() {
     // Initialize DI (safe to call multiple times)
-    initDi()
 
-    // Инициализация Remote Config при запуске приложения
-    LaunchedEffect(Unit) {
-        AppRemoteConfig.initialize()
-    }
 
     MaterialTheme(
         colorScheme = AppTheme.ColorSchema

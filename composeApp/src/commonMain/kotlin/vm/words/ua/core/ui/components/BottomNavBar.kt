@@ -1,4 +1,4 @@
-package vm.words.ua.main.ui.components
+package vm.words.ua.core.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,7 +28,7 @@ import wordsmultiplatform.composeapp.generated.resources.setting_no_active
 @Composable
 fun BottomNavBar(
     currentRoute: String,
-    onNavigate: (String) -> Unit,
+    onNavigate: (Screen) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val iconSize = 80.dp
@@ -42,9 +42,11 @@ fun BottomNavBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Playlist button
-        val playlistRes = if (currentRoute == "playlist") Res.drawable.play_list_nav else Res.drawable.play_list_nav_no_active
+        val isPlaylist = currentRoute == Screen.PlayList.route
+        val playlistRes = if (isPlaylist) Res.drawable.play_list_nav else Res.drawable.play_list_nav_no_active
         IconButton(
-            onClick = { onNavigate("playlist") },
+            enabled = isPlaylist.not(),
+            onClick = { onNavigate(Screen.PlayList) },
             modifier = Modifier.size(iconSize)
         ) {
             Image(
@@ -56,9 +58,11 @@ fun BottomNavBar(
         }
 
         // Home button
-        val homeRes = if (currentRoute == Screen.Home.route) Res.drawable.home else Res.drawable.home_no_active
+        val isHome = currentRoute == Screen.Home.route
+        val homeRes = if (isHome) Res.drawable.home else Res.drawable.home_no_active
         IconButton(
-            onClick = { onNavigate(Screen.Home.route) },
+            enabled = isHome.not(),
+            onClick = { onNavigate(Screen.Home) },
             modifier = Modifier.size(iconSize)
         ) {
             Image(
@@ -69,10 +73,11 @@ fun BottomNavBar(
             )
         }
 
-        // Settings button
-        val settingRes = if (currentRoute == "settings") Res.drawable.setting else Res.drawable.setting_no_active
+        val isSettings = currentRoute == Screen.Settings.route
+        val settingRes = if (isSettings) Res.drawable.setting else Res.drawable.setting_no_active
         IconButton(
-            onClick = { onNavigate("settings") },
+            enabled = isSettings.not(),
+            onClick = { onNavigate(Screen.Settings) },
             modifier = Modifier.size(iconSize)
         ) {
             Image(

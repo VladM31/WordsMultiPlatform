@@ -7,7 +7,9 @@ import vm.words.ua.auth.ui.screen.ConfirmSignUpScreen
 import vm.words.ua.auth.ui.screen.LoginScreen
 import vm.words.ua.auth.ui.screen.SignUpScreen
 import vm.words.ua.auth.ui.screen.TelegramLoginScreen
+import vm.words.ua.core.firebase.AppRemoteConfig
 import vm.words.ua.core.ui.screen.LoaderScreen
+import vm.words.ua.di.initDi
 import vm.words.ua.main.ui.screen.HomeScreen
 
 @Composable
@@ -19,8 +21,9 @@ fun AppNavGraph(
             LoaderScreen()
 
             LaunchedEffect(Unit) {
-                delay(1000) // 5 секунд
-                navController.navigateAndClear(Screen.Login.route)
+                initDi()
+                AppRemoteConfig.initialize()
+                navController.navigateAndClear(Screen.Login)
             }
         }
 

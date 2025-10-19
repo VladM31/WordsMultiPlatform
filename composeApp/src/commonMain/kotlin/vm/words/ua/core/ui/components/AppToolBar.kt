@@ -23,6 +23,7 @@ import vm.words.ua.core.ui.AppTheme
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.arrow
 import wordsmultiplatform.composeapp.generated.resources.setting
+import vm.words.ua.navigation.SimpleNavController
 
 @Composable
 fun AppToolBar(
@@ -94,4 +95,24 @@ fun AppToolBar(
             }
         }
     }
+}
+
+// Overload: accept a SimpleNavController and wire the back button to it
+@Composable
+fun AppToolBar(
+    title: String,
+    navController: SimpleNavController,
+    modifier: Modifier = Modifier,
+    onAdditionalClick: (() -> Unit)? = null,
+    showBackButton: Boolean = true,
+    showAdditionalButton: Boolean = false
+) {
+    AppToolBar(
+        title = title,
+        modifier = modifier,
+        onBackClick = { navController.popBackStack() },
+        onAdditionalClick = onAdditionalClick,
+        showBackButton = showBackButton,
+        showAdditionalButton = showAdditionalButton
+    )
 }
