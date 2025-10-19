@@ -12,6 +12,7 @@ import vm.words.ua.core.ui.components.BottomNavBar
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.core.ui.components.ButtonsGrid
 import vm.words.ua.core.ui.components.GridButtonItem
+import vm.words.ua.navigation.Screen
 
 @Composable
 fun HomeScreen(
@@ -43,6 +44,6 @@ fun HomeScreen(
             textSizeSp = textSize.value
         )
 
-        BottomNavBar(currentRoute = "home", onNavigate = { route -> navController.navigate(route) })
+        BottomNavBar(currentRoute = Screen.Home, onNavigate = { route -> navController.navigate(route) })
     }
 }

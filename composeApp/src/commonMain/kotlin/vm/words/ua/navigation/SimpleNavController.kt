@@ -80,6 +80,18 @@ class SimpleNavController {
     fun removeNavigateListener(listener: (String) -> Unit) {
         navigateListeners.remove(listener)
     }
+
+    fun navigate(screen: Screen) {
+        this.navigate(screen.route)
+    }
+
+    fun navigateAndClear(screen: Screen) {
+        this.navigateAndClear(screen.route)
+    }
+
+    fun popBackStackTo(screen: Screen, inclusive: Boolean = false): Boolean{
+        return this.popBackStackTo(screen.route, inclusive)
+    }
 }
 
 @Composable

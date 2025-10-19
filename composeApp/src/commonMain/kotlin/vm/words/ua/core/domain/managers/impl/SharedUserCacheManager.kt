@@ -51,7 +51,7 @@ class SharedUserCacheManager(
         settings.putString(TOKEN_KEY, json.encodeToString(token.copy(value = encryptedValue)))
     }
 
-    override fun clear() {
+    override suspend fun clear() {
         settings.remove(USER_KEY)
         settings.remove(TOKEN_KEY)
     }

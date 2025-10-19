@@ -11,6 +11,7 @@ import vm.words.ua.core.firebase.AppRemoteConfig
 import vm.words.ua.core.ui.screen.LoaderScreen
 import vm.words.ua.di.initDi
 import vm.words.ua.main.ui.screen.HomeScreen
+import vm.words.ua.settings.ui.screen.SettingScreen
 
 @Composable
 fun AppNavGraph(
@@ -68,5 +69,12 @@ fun AppNavGraph(
                 navController = navController
             )
         }
+        Screen.Settings.route -> {
+            SettingScreen(
+                navController = navController
+            )
+        }
+
+
     }
 }

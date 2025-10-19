@@ -20,7 +20,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
  */
 data class GridButtonItem(
     val text: String,
-    val onClick: () -> Unit
+    val onClick: () -> Unit = {}
 )
 
 @Composable

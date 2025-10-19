@@ -15,5 +15,5 @@ interface UserCacheManager {
 
     fun saveToken(token: Token)
 
-    fun clear()
+    suspend fun clear()
 }

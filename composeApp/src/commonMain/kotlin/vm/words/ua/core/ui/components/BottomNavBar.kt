@@ -27,7 +27,7 @@ import wordsmultiplatform.composeapp.generated.resources.setting_no_active
 
 @Composable
 fun BottomNavBar(
-    currentRoute: String,
+    currentRoute: Screen,
     onNavigate: (Screen) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -42,7 +42,7 @@ fun BottomNavBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Playlist button
-        val isPlaylist = currentRoute == Screen.PlayList.route
+        val isPlaylist = currentRoute == Screen.PlayList
         val playlistRes = if (isPlaylist) Res.drawable.play_list_nav else Res.drawable.play_list_nav_no_active
         IconButton(
             enabled = isPlaylist.not(),
@@ -58,7 +58,7 @@ fun BottomNavBar(
         }
 
         // Home button
-        val isHome = currentRoute == Screen.Home.route
+        val isHome = currentRoute == Screen.Home
         val homeRes = if (isHome) Res.drawable.home else Res.drawable.home_no_active
         IconButton(
             enabled = isHome.not(),
@@ -73,7 +73,7 @@ fun BottomNavBar(
             )
         }
 
-        val isSettings = currentRoute == Screen.Settings.route
+        val isSettings = currentRoute == Screen.Settings
         val settingRes = if (isSettings) Res.drawable.setting else Res.drawable.setting_no_active
         IconButton(
             enabled = isSettings.not(),
