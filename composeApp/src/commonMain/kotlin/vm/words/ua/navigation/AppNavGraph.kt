@@ -2,7 +2,7 @@ package vm.words.ua.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import kotlinx.coroutines.delay
+import vm.words.ua.core.ui.components.AuthWatcher
 import vm.words.ua.auth.ui.screen.ConfirmSignUpScreen
 import vm.words.ua.auth.ui.screen.LoginScreen
 import vm.words.ua.auth.ui.screen.SignUpScreen
@@ -77,4 +77,5 @@ fun AppNavGraph(
 
 
     }
+    AuthWatcher(navController = navController)
 }

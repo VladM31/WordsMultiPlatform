@@ -1,6 +1,8 @@
 package vm.words.ua.core.domain.managers.impl
 
 import com.russhwolf.settings.Settings
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import vm.words.ua.core.domain.crypto.TokenCipher
@@ -21,39 +23,59 @@ class SharedUserCacheManager(
         isLenient = true
     }
 
-    override val user: User
-        get() = settings.getStringOrNull(USER_KEY)?.let {
-            json.decodeFromString<User>(it)
-        } ?: throw IllegalStateException("User not found")
+    private val mutableUserFlow = MutableStateFlow<User?>(null)
 
-    override val token: Token
-        get() {
-            val token = settings.getStringOrNull(TOKEN_KEY)?.let {
-                json.decodeFromString<Token>(it)
-            } ?: Token.Companion.DEFAULT
+    private val mutableTokenFlow = MutableStateFlow<Token?>(null)
+    override val tokenFlow = mutableTokenFlow.asStateFlow()
 
-            val decryptedValue = tokenCipher.decrypt(token.value)
-
-            return token.copy(value = decryptedValue)
+    init {
+        settings.getStringOrNull(USER_KEY)?.let {
+            try {
+                val u = json.decodeFromString<User>(it)
+                mutableUserFlow.value = u
+            } catch (_: Throwable) {
+            }
         }
 
+        settings.getStringOrNull(TOKEN_KEY)?.let {
+            try {
+                val stored = json.decodeFromString<Token>(it)
+                val decryptedValue = try {
+                    tokenCipher.decrypt(stored.value)
+                } catch (_: Throwable) {
+                    ""
+                }
+                mutableTokenFlow.value = stored.copy(value = decryptedValue)
+            } catch (_: Throwable) {
+            }
+        }
+    }
+
+    override val user: User
+        get() = mutableUserFlow.value ?: throw IllegalStateException("User not found")
+
+    override val token: Token
+        get() = mutableTokenFlow.value ?: Token.DEFAULT
+
     override val isExpired: Boolean
-        get() = settings.getStringOrNull(TOKEN_KEY)?.let {
-            json.decodeFromString<Token>(it)
-        }?.isExpired() ?: true
+        get() = mutableTokenFlow.value?.isExpired() != false
 
     override fun saveUser(user: User) {
         settings.putString(USER_KEY, json.encodeToString(user))
+        mutableUserFlow.value = user
     }
 
     override fun saveToken(token: Token) {
         val encryptedValue = tokenCipher.encrypt(token.value)
         settings.putString(TOKEN_KEY, json.encodeToString(token.copy(value = encryptedValue)))
+        mutableTokenFlow.value = token
     }
 
-    override suspend fun clear() {
+    override fun clear() {
         settings.remove(USER_KEY)
         settings.remove(TOKEN_KEY)
+        mutableUserFlow.value = null
+        mutableTokenFlow.value = null
     }
 
     companion object {

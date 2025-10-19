@@ -28,7 +28,6 @@ fun SettingScreen(
     modifier: Modifier = Modifier
 ) {
     val textSize = remember { 40.sp }
-    val scope = rememberCoroutineScope()
     val userCacheManager: UserCacheManager by DiContainer.di.instance()
 
     val buttons = remember {
@@ -39,10 +38,7 @@ fun SettingScreen(
             GridButtonItem("Profile"),
             GridButtonItem("Policy"),
             GridButtonItem("Log Out") {
-                scope.launch {
-                    userCacheManager.clear() // await completion
-                    navController.navigateAndClear(Screen.Login)
-                }
+                userCacheManager.clear()
             }
         )
     }

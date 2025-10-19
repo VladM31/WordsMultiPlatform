@@ -6,10 +6,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import org.kodein.di.direct
 import org.kodein.di.instance
 import vm.words.ua.auth.ui.components.LoginForm
 import vm.words.ua.auth.ui.vms.LoginViewModel
@@ -25,12 +27,16 @@ fun LoginScreen(
     modifier: Modifier = Modifier
 ) {
     // Get ViewModel from Kodein manually
-    val viewModel: LoginViewModel by DiContainer.di.instance()
+    // Keep the resolved ViewModel stable across recompositions
+    val viewModel = remember {
+        DiContainer.di.direct.instance<LoginViewModel>()
+    }
+
     val state by viewModel.state.collectAsState()
     val  error = viewModel.state.map { it.errorMessage }
         .distinctUntilChanged()
         .collectAsState(initial = null)
-    
+
     // If token already present and not expired - go to home
     LaunchedEffect(Unit) {
         try {
