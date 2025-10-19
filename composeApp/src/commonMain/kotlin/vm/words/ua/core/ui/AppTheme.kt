@@ -24,6 +24,11 @@ object AppTheme {
     val PrimaryBlue = Color(0xFF44A1F2)
     val PrimaryGray = Color(0xFFB0B0B0)
 
+    val SecondaryBack = PrimaryBackLight
+    val PrimaryText = White
+    val SecondaryText = PrimaryGray
+    val Error = PrimaryRed
+
     // Material TextInput stroke color in Android resources aliases primary green
     val MtrlTextInputDefaultBoxStrokeColor = PrimaryGreen
 
@@ -61,4 +66,3 @@ object AppTheme {
         scrim = AppTheme.SpotlightBackground
     )
 }
-

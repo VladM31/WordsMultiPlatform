@@ -11,6 +11,7 @@ import vm.words.ua.core.firebase.AppRemoteConfig
 import vm.words.ua.core.ui.screen.LoaderScreen
 import vm.words.ua.di.initDi
 import vm.words.ua.main.ui.screen.HomeScreen
+import vm.words.ua.playlist.ui.screen.PlayListScreen
 import vm.words.ua.settings.ui.screen.SettingScreen
 
 @Composable
@@ -75,7 +76,11 @@ fun AppNavGraph(
             )
         }
 
-
+        Screen.PlayList.route -> {
+            PlayListScreen(
+                navController = navController
+            )
+        }
     }
     AuthWatcher(navController = navController)
 }
