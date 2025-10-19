@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -32,7 +33,8 @@ fun AppToolBar(
     onBackClick: (() -> Unit)? = null,
     onAdditionalClick: (() -> Unit)? = null,
     showBackButton: Boolean = true,
-    showAdditionalButton: Boolean = false
+    showAdditionalButton: Boolean = false,
+    additionalButtonImage: Painter = painterResource(Res.drawable.setting)
 ) {
     Box(
         modifier = modifier
@@ -48,21 +50,10 @@ fun AppToolBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Back Button
-            if (showBackButton && onBackClick != null) {
-                IconButton(
-                    onClick = onBackClick,
-                    modifier = Modifier.size(40.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.arrow),
-                        contentDescription = "Back",
-                        tint = AppTheme.PrimaryColor,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            } else {
-                Box(modifier = Modifier.size(40.dp))
-            }
+            BackButton(
+                onBackClick = onBackClick,
+                showBackButton = showBackButton
+            )
 
             // Title
             Text(
@@ -78,22 +69,59 @@ fun AppToolBar(
             )
 
             // Additional Button
-            if (showAdditionalButton && onAdditionalClick != null) {
-                IconButton(
-                    onClick = onAdditionalClick,
-                    modifier = Modifier.size(40.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.setting),
-                        contentDescription = "More",
-                        tint = AppTheme.PrimaryColor,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            } else {
-                Box(modifier = Modifier.size(40.dp))
-            }
+            AdditionalButton(
+                onAdditionalClick = onAdditionalClick,
+                showAdditionalButton = showAdditionalButton,
+                additionalButtonImage = additionalButtonImage
+            )
         }
+    }
+}
+
+@Composable
+private fun BackButton(
+    onBackClick: (() -> Unit)?,
+    showBackButton: Boolean,
+){
+    if (showBackButton.not()){
+        Box(modifier = Modifier.size(40.dp))
+        return
+    }
+
+    IconButton(
+        onClick = onBackClick ?: {},
+        modifier = Modifier.size(40.dp)
+    ) {
+        Icon(
+            painter = painterResource(Res.drawable.arrow),
+            contentDescription = "Back",
+            tint = AppTheme.PrimaryColor,
+            modifier = Modifier.size(24.dp)
+        )
+    }
+}
+
+@Composable
+private fun AdditionalButton(
+    onAdditionalClick: (() -> Unit)? = null,
+    showAdditionalButton: Boolean = false,
+    additionalButtonImage: Painter = painterResource(Res.drawable.setting)
+){
+    if (showAdditionalButton.not()){
+        Box(modifier = Modifier.size(40.dp))
+        return
+    }
+
+    IconButton(
+        onClick = onAdditionalClick ?: {},
+        modifier = Modifier.size(40.dp)
+    ) {
+        Icon(
+            painter = additionalButtonImage,
+            contentDescription = "More",
+            tint = AppTheme.PrimaryColor,
+            modifier = Modifier.size(24.dp)
+        )
     }
 }
 
