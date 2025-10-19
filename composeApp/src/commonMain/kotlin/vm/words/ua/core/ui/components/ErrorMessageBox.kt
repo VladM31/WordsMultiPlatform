@@ -50,7 +50,7 @@ fun ErrorMessageBox(
     ) {
         Text(
             text = message.message,
-            color = AppTheme.PrimaryRed,
+            color = AppTheme.PrimaryColor,
             fontSize = 14.sp,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
@@ -84,7 +84,7 @@ private fun ErrorMessageAlertDialog(
             text = {
                 Text(
                     text = message.message,
-                    color = AppTheme.PrimaryRed,
+                    color = AppTheme.PrimaryColor,
                     fontSize = 14.sp,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
