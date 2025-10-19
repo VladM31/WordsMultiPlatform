@@ -11,25 +11,50 @@ class SimpleNavController {
         private set
 
     private val backStack = mutableListOf<String>()
-
-    // listeners for navigation events (used by platform integrations)
     private val navigateListeners = mutableListOf<(String) -> Unit>()
+    private val navigateParams = mutableMapOf<String, Any?>()
+    private val returnParams = mutableMapOf<String, Any?>()
+
+    fun navigate(screen: Screen) {
+        this.navigate(screen.route)
+    }
+
+    fun navigate(screen: Screen, param: Any?) {
+        this.navigate(screen.route, param)
+    }
 
     fun navigate(route: String) {
+        navigate(route, null)
+    }
+
+    fun navigate(route: String, param: Any?) {
         backStack.add(currentRoute)
         currentRoute = route
-        // notify listeners
+        navigateParams[route] = param
+        // Clear return params when navigating to new screen
+        returnParams.remove(currentRoute)
         navigateListeners.forEach { it(route) }
     }
 
     fun navigateAndClear(route: String) {
         backStack.clear()
+        navigateParams.clear()
+        returnParams.clear()
         currentRoute = route
         navigateListeners.forEach { it(route) }
     }
 
-    fun popBackStack(): Boolean {
+    fun navigateAndClear(screen: Screen) {
+        this.navigateAndClear(screen.route)
+    }
+
+    fun popBackStack(returnParam: Any? = null): Boolean {
         return if (backStack.isNotEmpty()) {
+            val previousRoute = backStack.last()
+            // Store return parameter for previous screen
+            if (returnParam != null) {
+                returnParams[previousRoute] = returnParam
+            }
             currentRoute = backStack.removeLast()
             true
         } else {
@@ -37,40 +62,60 @@ class SimpleNavController {
         }
     }
 
-    /**
-     * Pop the back stack up to the last occurrence of [route].
-     * If [inclusive] == false: the controller will pop entries above [route] and then set currentRoute = [route].
-     * If [inclusive] == true: the controller will also remove [route] itself and set currentRoute to the route below it.
-     * Returns true if the operation succeeded (the [route] was present), false otherwise.
-     *
-     * Note: if [inclusive] == true and [route] is the bottom-most element (no route below it),
-     * the currentRoute will be set to "loader" (the initial default) and the back stack cleared.
-     */
-    fun popBackStackTo(route: String, inclusive: Boolean = false): Boolean {
+    fun popBackStackTo(route: String, inclusive: Boolean = false, returnParam: Any? = null): Boolean {
         val index = backStack.lastIndexOf(route)
         if (index == -1) return false
 
-        // targetIndexExclusive is the index of the element that should remain above (not removed)
-        // after trimming the stack. For inclusive == false we want to keep route and then remove it
-        // from backStack when assigning currentRoute; for inclusive == true we want to remove route
-        // as well and land on the previous element.
         val targetIndexExclusive = if (inclusive) index - 1 else index
 
-        // Remove elements from the end until the last index equals targetIndexExclusive
         while (backStack.size - 1 > targetIndexExclusive) {
             backStack.removeLast()
         }
 
-        // After trimming, if there is at least one element, pop it and set as currentRoute.
         return if (backStack.isNotEmpty()) {
+            val previousRoute = backStack.last()
+            // Store return parameter for target screen
+            if (returnParam != null) {
+                returnParams[previousRoute] = returnParam
+            }
             currentRoute = backStack.removeLast()
             true
         } else {
-            // No element left to pop to: set a sensible default (loader) and return true
             currentRoute = "loader"
             backStack.clear()
             true
         }
+    }
+
+    fun popBackStackTo(screen: Screen, inclusive: Boolean = false, returnParam: Any? = null): Boolean {
+        return this.popBackStackTo(screen.route, inclusive, returnParam)
+    }
+
+    /**
+     * Get parameter passed to current screen via navigate()
+     */
+    fun <T> getParam(route: String = currentRoute): T? {
+        @Suppress("UNCHECKED_CAST")
+        return navigateParams[route] as? T
+    }
+
+    /**
+     * Get parameter returned from child screen via popBackStack()
+     */
+    fun <T> getReturnParam(route: String = currentRoute): T? {
+        @Suppress("UNCHECKED_CAST")
+        val param = returnParams[route] as? T
+        // Clear after reading to prevent stale data
+        returnParams.remove(route)
+        return param
+    }
+
+    /**
+     * Clear parameter for specific route
+     */
+    fun clearParam(route: String = currentRoute) {
+        navigateParams.remove(route)
+        returnParams.remove(route)
     }
 
     fun addNavigateListener(listener: (String) -> Unit) {
@@ -79,18 +124,6 @@ class SimpleNavController {
 
     fun removeNavigateListener(listener: (String) -> Unit) {
         navigateListeners.remove(listener)
-    }
-
-    fun navigate(screen: Screen) {
-        this.navigate(screen.route)
-    }
-
-    fun navigateAndClear(screen: Screen) {
-        this.navigateAndClear(screen.route)
-    }
-
-    fun popBackStackTo(screen: Screen, inclusive: Boolean = false): Boolean{
-        return this.popBackStackTo(screen.route, inclusive)
     }
 }
 
