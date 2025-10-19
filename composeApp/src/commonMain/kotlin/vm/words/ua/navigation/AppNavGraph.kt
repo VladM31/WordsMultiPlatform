@@ -8,6 +8,7 @@ import vm.words.ua.auth.ui.screen.LoginScreen
 import vm.words.ua.auth.ui.screen.SignUpScreen
 import vm.words.ua.auth.ui.screen.TelegramLoginScreen
 import vm.words.ua.core.ui.screen.LoaderScreen
+import vm.words.ua.main.ui.screen.HomeScreen
 
 @Composable
 fun AppNavGraph(
@@ -56,6 +57,12 @@ fun AppNavGraph(
                 onOpenTelegramBot = {
                     // TODO: Open telegram bot
                 }
+            )
+        }
+
+        Screen.Home.route -> {
+            HomeScreen(
+                navController = navController
             )
         }
     }

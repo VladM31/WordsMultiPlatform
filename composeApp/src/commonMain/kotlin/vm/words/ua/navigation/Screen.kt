@@ -6,5 +6,7 @@ sealed class Screen(val route: String) {
     data object SignUp : Screen("signup")
     data object TelegramLogin : Screen("telegram_login")
     data object ConfirmSignUp : Screen("confirm_signup")
+
+    data object Home : Screen("home")
 }
 

@@ -2,7 +2,6 @@ package vm.words.ua.auth.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -14,6 +13,7 @@ import kotlinx.coroutines.flow.map
 import org.kodein.di.instance
 import vm.words.ua.auth.ui.components.LoginForm
 import vm.words.ua.auth.ui.vms.LoginViewModel
+import vm.words.ua.core.domain.managers.UserCacheManager
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.*
 import vm.words.ua.di.DiContainer
@@ -30,6 +30,18 @@ fun LoginScreen(
     val  error = viewModel.state.map { it.errorMessage }
         .distinctUntilChanged()
         .collectAsState(initial = null)
+    
+    // If token already present and not expired - go to home
+    LaunchedEffect(Unit) {
+        try {
+            if (state.isNotExpired) {
+                navController.navigate("home")
+                return@LaunchedEffect
+            }
+        } catch (_: Throwable) {
+            // ignore - treat as no token
+        }
+    }
 
     // Navigate when login is successful
     LaunchedEffect(state.isEnd) {
