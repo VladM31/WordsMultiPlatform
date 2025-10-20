@@ -15,6 +15,7 @@ import vm.words.ua.auth.ui.vms.LoginViewModel
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.*
 import vm.words.ua.di.rememberInstance
+import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
 
 @Composable
@@ -33,7 +34,7 @@ fun LoginScreen(
     // Navigate when login is successful
     LaunchedEffect(state.isEnd) {
         if (state.isEnd) {
-            navController.navigate("home")
+            navController.navigateAndClear(Screen.Home)
         }
     }
 

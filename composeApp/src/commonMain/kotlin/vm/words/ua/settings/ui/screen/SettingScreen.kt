@@ -59,7 +59,7 @@ fun SettingScreen(
             textSizeSp = textSize.value
         )
 
-        BottomNavBar(currentRoute = Screen.Settings, onNavigate = { route -> navController.navigate(route) })
+        BottomNavBar(currentRoute = Screen.Settings, onNavigate = { route -> navController.navigateAndClear(route) })
     }
 }
 
