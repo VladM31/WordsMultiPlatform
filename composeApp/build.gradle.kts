@@ -7,9 +7,17 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
     alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.googleServices)
 }
 
 kotlin {
+    androidTarget {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        }
+    }
+
     jvm()
     
     js {
@@ -46,12 +54,21 @@ kotlin {
             implementation(projects.shared)
         }
 
-        // Промежуточный source set для платформ с Firebase (JVM и JS)
+        // Промежуточный source set для платформ с Firebase (JVM, JS, Android)
         val firebaseMain by creating {
             dependsOn(commonMain.get())
             dependencies {
                 implementation(libs.firebase.common)
                 implementation(libs.firebase.config)
+            }
+        }
+
+        androidMain {
+            dependsOn(firebaseMain)
+            dependencies {
+                implementation("androidx.activity:activity-compose:1.9.3")
+                implementation("androidx.core:core-ktx:1.13.1")
+                implementation(libs.ktor.client.okhttp)
             }
         }
 
@@ -85,6 +102,29 @@ kotlin {
     }
 }
 
+android {
+    namespace = "vm.words.ua"
+    compileSdk = 35
+
+    defaultConfig {
+        applicationId = "vm.words.ua"
+        minSdk = 24
+        targetSdk = 35
+        versionCode = 1
+        versionName = "1.0"
+    }
+
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+}
 
 compose.desktop {
     application {
@@ -94,6 +134,29 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "vm.words.ua"
             packageVersion = "1.0.0"
+        }
+    }
+}
+
+// Custom task to install and run Android app
+tasks.register("installAndRunDebug") {
+    group = "android"
+    description = "Install and run the debug APK on connected device"
+    dependsOn("installDebug")
+
+    doLast {
+        try {
+            val adbPath = android.adbExecutable.absolutePath
+            println("Using ADB: $adbPath")
+
+            exec {
+                commandLine(adbPath, "shell", "am", "start", "-n", "vm.words.ua/.MainActivity")
+            }
+
+            println("✓ Application launched successfully!")
+        } catch (e: Exception) {
+            println("Failed to launch application: ${e.message}")
+            println("You can manually launch the app from your device.")
         }
     }
 }

@@ -1,10 +1,7 @@
 package vm.words.ua.di
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import org.kodein.di.DI
-import org.kodein.di.direct
-import org.kodein.di.instance
 import vm.words.ua.auth.di.authModules
 import vm.words.ua.core.di.coreModule
 import vm.words.ua.playlist.di.playlistModule
@@ -27,14 +24,13 @@ object DiContainer {
  * Composable делегат для получения зависимости из DI
  * Автоматически оборачивает вызов в remember для стабильности между рекомпозициями
  *
+ * На Android использует androidx.lifecycle.viewmodel для ViewModel,
+ * чтобы сохранять состояние при изменении конфигурации (поворот экрана)
+ *
  * Использование:
  * ```
  * val viewModel = rememberInstance<LoginViewModel>()
  * ```
  */
 @Composable
-inline fun <reified T : Any> rememberInstance(): T {
-    return remember {
-        DiContainer.di.direct.instance<T>()
-    }
-}
+expect inline fun <reified T : Any> rememberInstance(): T

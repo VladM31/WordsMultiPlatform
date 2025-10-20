@@ -3,7 +3,8 @@ package vm.words.ua.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 
 class SimpleNavController {
@@ -55,7 +56,7 @@ class SimpleNavController {
             if (returnParam != null) {
                 returnParams[previousRoute] = returnParam
             }
-            currentRoute = backStack.removeLast()
+            currentRoute = backStack.removeAt(backStack.lastIndex)
             true
         } else {
             false
@@ -69,7 +70,7 @@ class SimpleNavController {
         val targetIndexExclusive = if (inclusive) index - 1 else index
 
         while (backStack.size - 1 > targetIndexExclusive) {
-            backStack.removeLast()
+            backStack.removeAt(backStack.lastIndex)
         }
 
         return if (backStack.isNotEmpty()) {
@@ -78,7 +79,7 @@ class SimpleNavController {
             if (returnParam != null) {
                 returnParams[previousRoute] = returnParam
             }
-            currentRoute = backStack.removeLast()
+            currentRoute = backStack.removeAt(backStack.lastIndex)
             true
         } else {
             currentRoute = "loader"
@@ -125,9 +126,44 @@ class SimpleNavController {
     fun removeNavigateListener(listener: (String) -> Unit) {
         navigateListeners.remove(listener)
     }
+
+    /**
+     * Restore navigation state
+     */
+    internal fun restoreState(route: String, stack: List<String>) {
+        currentRoute = route
+        backStack.clear()
+        backStack.addAll(stack)
+    }
+
+    /**
+     * Get current navigation state for saving
+     */
+    internal fun getState(): Pair<String, List<String>> {
+        return currentRoute to backStack.toList()
+    }
 }
 
 @Composable
 fun rememberSimpleNavController(): SimpleNavController {
-    return remember { SimpleNavController() }
+    return rememberSaveable(
+        saver = Saver(
+            save = { controller ->
+                val (route, stack) = controller.getState()
+                // Save as list: [currentRoute, ...backStack]
+                listOf(route) + stack
+            },
+            restore = { savedList ->
+                val controller = SimpleNavController()
+                if (savedList.isNotEmpty()) {
+                    val currentRoute = savedList[0]
+                    val backStack = savedList.drop(1)
+                    controller.restoreState(currentRoute, backStack)
+                }
+                controller
+            }
+        )
+    ) {
+        SimpleNavController()
+    }
 }

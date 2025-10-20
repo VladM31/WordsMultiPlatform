@@ -10,22 +10,18 @@ import vm.words.ua.auth.domain.managers.AuthManager
 import vm.words.ua.auth.ui.actions.LoginAction
 import vm.words.ua.auth.ui.states.LoginState
 import vm.words.ua.auth.ui.validation.loginValidator
-import vm.words.ua.core.domain.managers.UserCacheManager
 import vm.words.ua.core.ui.models.ErrorMessage
 
 class LoginViewModel(
     private val authManager: AuthManager,
-    private val authHistoryManager: vm.words.ua.auth.domain.managers.AuthHistoryManager,
-    userCacheManager : UserCacheManager
+    private val authHistoryManager: vm.words.ua.auth.domain.managers.AuthHistoryManager
 ) : ViewModel() {
 
     private val mutableState = MutableStateFlow(LoginState(
-        isNotExpired = userCacheManager.isExpired.not(),
         phoneNumber = authHistoryManager.lastPhoneNumber.orEmpty()
     ))
     val state: StateFlow<LoginState> = mutableState
     private val validator = loginValidator(mutableState)
-
 
     fun sent(action: LoginAction){
         when(action){
@@ -34,9 +30,6 @@ class LoginViewModel(
             is LoginAction.SetPassword -> setPassword(action)
         }
     }
-
-
-
 
     private fun setPassword(action: LoginAction.SetPassword) {
         mutableState.value = mutableState.value.copy(password = action.value)

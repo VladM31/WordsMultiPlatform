@@ -47,7 +47,8 @@ fun PlayListFilterScreen(
     val state by viewModel.state.collectAsState()
     val scrollState = rememberScrollState()
 
-
+    // Track if we already navigated back to prevent multiple triggers
+    val hasNavigatedBack = remember { mutableStateOf(false) }
 
     // Get current filter from navigation params
     val currentFilter = navController.getParam<PlayListCountFilter>() ?: PlayListCountFilter()
@@ -57,10 +58,20 @@ fun PlayListFilterScreen(
         viewModel.send(PlayListFilterAction.Init(currentFilter))
     }
 
-    // Navigate back when filter is applied
+    // Navigate back when filter is applied - only once
     LaunchedEffect(state.isEnd) {
-        if (state.isEnd) {
-            navController.popBackStack(returnParam = viewModel.toFilter())
+        if (state.isEnd && !hasNavigatedBack.value) {
+            hasNavigatedBack.value = true
+            try {
+                val filter = viewModel.toFilter()
+                println("DEBUG: Applying filter - name: ${filter.name}, count: ${filter.count}")
+                navController.popBackStack(returnParam = filter)
+            } catch (e: Exception) {
+                println("ERROR applying filter: ${e.message}")
+                e.printStackTrace()
+                // Navigate back without param if error occurs
+                navController.popBackStack()
+            }
         }
     }
 

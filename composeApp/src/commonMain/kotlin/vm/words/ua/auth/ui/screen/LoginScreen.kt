@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import vm.words.ua.auth.ui.components.LoginForm
 import vm.words.ua.auth.ui.vms.LoginViewModel
-import vm.words.ua.core.domain.managers.UserCacheManager
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.*
 import vm.words.ua.di.rememberInstance
@@ -27,21 +26,9 @@ fun LoginScreen(
     val viewModel = rememberInstance<LoginViewModel>()
 
     val state by viewModel.state.collectAsState()
-    val  error = viewModel.state.map { it.errorMessage }
+    val error = viewModel.state.map { it.errorMessage }
         .distinctUntilChanged()
         .collectAsState(initial = null)
-
-    // If token already present and not expired - go to home
-    LaunchedEffect(Unit) {
-        try {
-            if (state.isNotExpired) {
-                navController.navigate("home")
-                return@LaunchedEffect
-            }
-        } catch (_: Throwable) {
-            // ignore - treat as no token
-        }
-    }
 
     // Navigate when login is successful
     LaunchedEffect(state.isEnd) {

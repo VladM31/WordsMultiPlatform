@@ -21,13 +21,9 @@ fun AppNavGraph(
 ) {
     when (navController.currentRoute) {
         Screen.Loader.route -> {
-            LoaderScreen()
+            LoaderScreen(navController = navController)
 
-            LaunchedEffect(Unit) {
-                initDi()
-                AppRemoteConfig.initialize()
-                navController.navigateAndClear(Screen.Login)
-            }
+
         }
 
         Screen.Login.route -> {

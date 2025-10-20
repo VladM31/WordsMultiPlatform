@@ -6,7 +6,6 @@ import vm.words.ua.core.ui.states.ErrorableState
 
 
 data class LoginState(
-    val isNotExpired: Boolean = false,
     val isAvailableBiometric: Boolean = false,
     val phoneNumber: String = "",
     val password: String = "",
