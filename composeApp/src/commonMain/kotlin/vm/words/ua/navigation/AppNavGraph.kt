@@ -22,8 +22,6 @@ fun AppNavGraph(
     when (navController.currentRoute) {
         Screen.Loader.route -> {
             LoaderScreen(navController = navController)
-
-
         }
 
         Screen.Login.route -> {

@@ -37,7 +37,7 @@ fun LoaderScreen(
         val userCacheManager : UserCacheManager by DiContainer.di.instance()
 
         try {
-            if (userCacheManager.tokenFlow.value?.isExpired() == true) {
+            if (userCacheManager.tokenFlow.value?.isExpired() == false) {
                 navController.navigate(Screen.Home)
                 return@LaunchedEffect
             }

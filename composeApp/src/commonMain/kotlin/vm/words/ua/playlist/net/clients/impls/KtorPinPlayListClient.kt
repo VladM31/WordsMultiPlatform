@@ -11,8 +11,7 @@ class KtorPinPlayListClient(
     private val client: HttpClient
 ) : PinPlayListClient {
 
-    private val baseUrl: String
-        get() = "http://${AppRemoteConfig.localHost}:8000"
+    private val baseUrl: String = AppRemoteConfig.baseUrl
 
     override suspend fun pin(token: String, requests: List<PinPlayRequest>) {
         try {

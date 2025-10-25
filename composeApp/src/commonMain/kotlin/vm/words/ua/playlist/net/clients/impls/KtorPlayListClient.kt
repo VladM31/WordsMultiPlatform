@@ -27,8 +27,7 @@ class KtorPlayListClient(
     private val client: HttpClient
 ) : PlayListClient {
 
-    private val baseUrl: String
-        get() = "http://${AppRemoteConfig.localHost}:8000"
+    private val baseUrl: String = AppRemoteConfig.baseUrl
 
     override suspend fun countBy(token: String, filter: PlayListCountFilter): PagedModels<PlayListCount> {
         return try {
