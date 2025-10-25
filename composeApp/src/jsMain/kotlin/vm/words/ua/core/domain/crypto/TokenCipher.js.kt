@@ -1,6 +1,5 @@
 package vm.words.ua.core.domain.crypto
 
-import kotlinx.browser.window
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
