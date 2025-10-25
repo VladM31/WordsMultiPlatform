@@ -54,7 +54,6 @@ class PlayListViewModel(
 
     private fun loadPlaylists() {
         if (mutableState.value.isLoading || !mutableState.value.hasMore) {
-            println("PlayListViewModel.loadPlaylists: Skipping - isLoading=${mutableState.value.isLoading}, hasMore=${mutableState.value.hasMore}")
             return
         }
 
@@ -70,9 +69,7 @@ class PlayListViewModel(
                     size = PAGE_SIZE
                 )
 
-                println("PlayListViewModel.loadPlaylists: Starting with filter: $filter")
                 val result = playListManager.countBy(filter)
-                println("PlayListViewModel.loadPlaylists: Got result with ${result.content.size} items")
 
                 val playlists = if (filter.page == 0) {
                     result.content
@@ -86,9 +83,7 @@ class PlayListViewModel(
                     currentPage = mutableState.value.currentPage + 1,
                     hasMore = result.content.size >= PAGE_SIZE
                 )
-                println("PlayListViewModel.loadPlaylists: State updated, total playlists: ${mutableState.value.playlists.size}")
             } catch (e: Exception) {
-                println("PlayListViewModel.loadPlaylists: ERROR - ${e.message}")
                 e.printStackTrace()
                 mutableState.value = mutableState.value.copy(
                     isLoading = false,

@@ -19,8 +19,6 @@ fun HomeScreen(
     navController: SimpleNavController,
     modifier: Modifier = Modifier
 ) {
-    val textSize = 40.sp
-
     val items = listOf(
         "words" to "Words",
         "user_words" to "My Words",
@@ -39,9 +37,7 @@ fun HomeScreen(
             items = items.map { (route, title) -> GridButtonItem(title) { navController.navigate(route) } },
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f),
-            maxButtonWidth = 300.dp,
-            textSizeSp = textSize.value
+                .weight(1f)
         )
 
         BottomNavBar(currentRoute = Screen.Home, onNavigate = { route -> navController.navigate(route) })

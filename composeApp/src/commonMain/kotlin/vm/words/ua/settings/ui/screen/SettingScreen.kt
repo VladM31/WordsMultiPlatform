@@ -54,9 +54,7 @@ fun SettingScreen(
             items = buttons,
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f),
-            maxButtonWidth = 300.dp,
-            textSizeSp = textSize.value
+                .weight(1f)
         )
 
         BottomNavBar(currentRoute = Screen.Settings, onNavigate = { route -> navController.navigateAndClear(route) })
