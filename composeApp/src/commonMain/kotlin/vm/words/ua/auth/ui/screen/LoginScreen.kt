@@ -38,31 +38,38 @@ fun LoginScreen(
         }
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(AppTheme.PrimaryBack)
-    ) {
-        AppToolBar(
-            title = "Login",
-            showBackButton = false
-        )
+    // Get maxWidth from BoxWithConstraints before CenteredContainer
+    BoxWithConstraints {
+        val boxMaxWith = maxWidth
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .background(AppTheme.PrimaryBack)
+        ) {
+            AppToolBar(
+                title = "Login",
+                showBackButton = false
+            )
 
-        CenteredContainer(maxWidth = 500.dp) {
-            VerticalCenteredContainer(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                LoginForm(
-                    viewModel = viewModel,
-                    onJoinNowClick = { navController.navigate("signup") },
-                    onTelegramClick = { navController.navigate("telegram_login") },
-                    showTelegramButton = true
-                )
+            CenteredContainer(maxWidth = 500.dp) {
+                VerticalCenteredContainer(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    // Get actual maxWidth inside CenteredContainer
+                    BoxWithConstraints {
+                        LoginForm(
+                            viewModel = viewModel,
+                            maxWidth = boxMaxWith,
+                            onJoinNowClick = { navController.navigate("signup") },
+                            onTelegramClick = { navController.navigate("telegram_login") }
+                        )
+                    }
 
-                // Display error message if present
-                error.value?.let { errorMessage ->
-                    Spacer(modifier = Modifier.height(12.dp))
-                    ErrorMessageBox(message = errorMessage)
+                    // Display error message if present
+                    error.value?.let { errorMessage ->
+                        Spacer(modifier = Modifier.height(12.dp))
+                        ErrorMessageBox(message = errorMessage)
+                    }
                 }
             }
         }

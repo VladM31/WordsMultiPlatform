@@ -2,6 +2,7 @@
 
 package vm.words.ua.core.ui.components
 
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
@@ -12,40 +13,48 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.Dp
 import vm.words.ua.core.ui.AppTheme
+import vm.words.ua.core.utils.getFontSize
+import vm.words.ua.core.utils.getScaleFactor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTextField(
     value: String,
+    boxMaxWidth: Dp = Dp.Unspecified,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     label: String? = null,
     singleLine: Boolean = true,
     isPassword: Boolean = false
 ) {
-    val primaryColor70 = AppTheme.PrimaryColor.copy(alpha = 0.7f)
+    BoxWithConstraints {
+        val scaleFactor = getScaleFactor(boxMaxWidth)
+        val primaryColor70 = AppTheme.PrimaryColor.copy(alpha = 0.7f)
 
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        modifier = modifier,
-        label = if (label != null) {
-            { Text(label, color = primaryColor70) }
-        } else null,
-        singleLine = singleLine,
-        visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
-        keyboardOptions = KeyboardOptions(keyboardType = if (isPassword) KeyboardType.Password else KeyboardType.Text),
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedTextColor = AppTheme.PrimaryColor,
-            unfocusedTextColor = AppTheme.PrimaryColor,
-            focusedBorderColor = AppTheme.PrimaryColor,
-            unfocusedBorderColor = primaryColor70,
-            focusedLabelColor = AppTheme.PrimaryColor,
-            unfocusedLabelColor = AppTheme.PrimaryColor,
-            cursorColor = AppTheme.PrimaryColor,
-            focusedPlaceholderColor = AppTheme.PrimaryColor,
-            unfocusedPlaceholderColor = primaryColor70
+        OutlinedTextField(
+            value = value,
+            onValueChange = onValueChange,
+            modifier = modifier,
+            label = if (label != null) {
+                { Text(label, color = primaryColor70, fontSize = getFontSize(scaleFactor * 0.85f)) }
+            } else null,
+            singleLine = singleLine,
+            textStyle = androidx.compose.material3.LocalTextStyle.current.copy(fontSize = getFontSize(scaleFactor * 0.9f)),
+            visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
+            keyboardOptions = KeyboardOptions(keyboardType = if (isPassword) KeyboardType.Password else KeyboardType.Text),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = AppTheme.PrimaryColor,
+                unfocusedTextColor = AppTheme.PrimaryColor,
+                focusedBorderColor = AppTheme.PrimaryColor,
+                unfocusedBorderColor = primaryColor70,
+                focusedLabelColor = AppTheme.PrimaryColor,
+                unfocusedLabelColor = AppTheme.PrimaryColor,
+                cursorColor = AppTheme.PrimaryColor,
+                focusedPlaceholderColor = AppTheme.PrimaryColor,
+                unfocusedPlaceholderColor = primaryColor70
+            )
         )
-    )
+    }
 }

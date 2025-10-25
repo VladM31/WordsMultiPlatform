@@ -3,7 +3,7 @@ package vm.words.ua.auth.ui.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,9 +11,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -23,68 +23,88 @@ import vm.words.ua.auth.ui.vms.LoginViewModel
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppTextField
 import vm.words.ua.core.ui.components.PrimaryButton
+import vm.words.ua.core.utils.getScaleFactor
+import vm.words.ua.core.utils.getFontSize
+import vm.words.ua.core.utils.getIconSize
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.telegram_image
 
 @Composable
-fun ColumnScope.LoginForm(
+fun LoginForm(
     viewModel: LoginViewModel,
+    maxWidth: Dp,
     onJoinNowClick: () -> Unit = {},
-    onTelegramClick: () -> Unit = {},
-    showTelegramButton: Boolean = true
+    onTelegramClick: () -> Unit = {}
 ) {
+    val scaleFactor = getScaleFactor(maxWidth)
+
     val phoneState = viewModel.state.map { it.phoneNumber }.distinctUntilChanged().collectAsState(initial = "")
     val passState = viewModel.state.map { it.password }.distinctUntilChanged().collectAsState(initial = "")
 
-    AppTextField(
-        value = phoneState.value,
-        onValueChange = { viewModel.sent(LoginAction.SetPhoneNumber(it ))},
-        label = "Phone",
-        modifier = Modifier.fillMaxWidth()
-    )
-
-    Spacer(modifier = Modifier.size(12.dp))
-
-    AppTextField(
-        value = passState.value,
-        onValueChange = { viewModel.sent(LoginAction.SetPassword(it ))},
-        label = "Password",
+    Column(
         modifier = Modifier.fillMaxWidth(),
-        isPassword = true
-    )
-
-    Spacer(modifier = Modifier.size(12.dp))
-
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        AppTextField(
+            value = phoneState.value,
+            onValueChange = { viewModel.sent(LoginAction.SetPhoneNumber(it ))},
+            label = "Phone",
+            boxMaxWidth = maxWidth,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.size((12 * scaleFactor).dp))
+
+        AppTextField(
+            value = passState.value,
+            onValueChange = { viewModel.sent(LoginAction.SetPassword(it ))},
+            label = "Password",
+            modifier = Modifier.fillMaxWidth(),
+            boxMaxWidth = maxWidth,
+            isPassword = true
+        )
+
+        Spacer(modifier = Modifier.size((12 * scaleFactor).dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            Text(
+                text = "Join now",
+                color = AppTheme.PrimaryColor,
+                fontSize = getFontSize(scaleFactor),
+                modifier = Modifier.clickable { onJoinNowClick() }
+            )
+        }
+
+        Spacer(modifier = Modifier.size((12 * scaleFactor).dp))
+
+        PrimaryButton(
+            text = "Sign in",
+            onClick = { viewModel.sent(LoginAction.Submit) },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.size((8 * scaleFactor).dp))
+
         Text(
-            text = "Join now",
+            text = "Sign in with",
             color = AppTheme.PrimaryColor,
-            modifier = Modifier.clickable { onJoinNowClick() }
+            fontSize = getFontSize(scaleFactor * 0.8f)
         )
-    }
 
-    Spacer(modifier = Modifier.size(12.dp))
+        Spacer(modifier = Modifier.size((8 * scaleFactor).dp))
 
-    PrimaryButton(
-        text = "Sign in",
-        onClick = { viewModel.sent(LoginAction.Submit) },
-        modifier = Modifier.fillMaxWidth()
-    )
-
-    if (showTelegramButton) {
-        Spacer(modifier = Modifier.size(8.dp))
-
-        Text(text = "Sign in with", color = AppTheme.PrimaryColor)
-
-        Spacer(modifier = Modifier.size(8.dp))
-
-        Image(
-            painterResource(Res.drawable.telegram_image),
-            contentDescription = "telegram",
-            modifier = Modifier.size(80.dp).clickable { onTelegramClick() }
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Image(
+                painterResource(Res.drawable.telegram_image),
+                contentDescription = "telegram",
+                modifier = Modifier.size(getIconSize(scaleFactor)).clickable { onTelegramClick() }
+            )
+        }
     }
 }
