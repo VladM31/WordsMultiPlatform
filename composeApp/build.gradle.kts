@@ -8,7 +8,6 @@ plugins {
     alias(libs.plugins.composeHotReload)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.googleServices)
 }
 
 kotlin {
@@ -54,26 +53,16 @@ kotlin {
             implementation(projects.shared)
         }
 
-        // Промежуточный source set для платформ с Firebase (JVM, JS, Android)
-        val firebaseMain by creating {
-            dependsOn(commonMain.get())
-            dependencies {
-                implementation(libs.firebase.common)
-                implementation(libs.firebase.config)
-            }
-        }
-
         androidMain {
-            dependsOn(firebaseMain)
             dependencies {
                 implementation("androidx.activity:activity-compose:1.9.3")
                 implementation("androidx.core:core-ktx:1.13.1")
                 implementation(libs.ktor.client.okhttp)
+                implementation(libs.ktor.client.android)
             }
         }
 
         jvmMain {
-            dependsOn(commonMain.get())
             dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation(libs.kotlinx.coroutinesSwing)
@@ -82,15 +71,12 @@ kotlin {
         }
 
         jsMain {
-            dependsOn(firebaseMain)
             dependencies {
                 implementation(libs.ktor.client.js)
             }
         }
 
-        // WasmJS платформа - без Firebase
         val wasmJsMain by getting {
-            dependsOn(commonMain.get())
             dependencies {
                 implementation(libs.ktor.client.js)
             }
@@ -136,6 +122,11 @@ compose.desktop {
             packageVersion = "1.0.0"
         }
     }
+}
+
+// Fix duplicate handling for wasmJs resources
+tasks.withType<Copy> {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 // Custom task to install and run Android app

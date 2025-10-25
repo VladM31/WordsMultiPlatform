@@ -18,12 +18,11 @@ class KtorAuthClient(
     private val client: HttpClient
 ) : AuthClient {
 
-    private val baseUrl: String
-        get() = "http://${AppRemoteConfig.localHost}:8000"
+
 
     override suspend fun logIn(request: LoginRequest): AuthResponse {
         return try {
-            val response: HttpResponse = client.post("$baseUrl/auth/login") {
+            val response: HttpResponse = client.post("${AppRemoteConfig.baseUrl}/auth/login") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }
@@ -48,7 +47,7 @@ class KtorAuthClient(
 
     override suspend fun signUp(request: SignUpRequest): SignUpResponse {
         return try {
-            val response: HttpResponse = client.post("$baseUrl/auth/sign-up") {
+            val response: HttpResponse = client.post("${AppRemoteConfig.baseUrl}/auth/sign-up") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }
@@ -68,7 +67,7 @@ class KtorAuthClient(
 
     override suspend fun isRegistered(phoneNumber: String): Boolean {
         return try {
-            val response: HttpResponse = client.get("$baseUrl/auth/is-registered") {
+            val response: HttpResponse = client.get("${AppRemoteConfig.baseUrl}/auth/is-registered") {
                 parameter("phoneNumber", phoneNumber)
             }
 

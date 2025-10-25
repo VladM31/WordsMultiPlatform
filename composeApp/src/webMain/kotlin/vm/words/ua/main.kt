@@ -1,11 +1,3 @@
-package vm.words.ua
+// This file has been removed to avoid signature clash with wasmJsMain
+// The main() function is now only in wasmJsMain/kotlin/vm/words/ua/main.kt
 
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.window.ComposeViewport
-
-@OptIn(ExperimentalComposeUiApi::class)
-fun main() {
-    ComposeViewport {
-        App()
-    }
-}
