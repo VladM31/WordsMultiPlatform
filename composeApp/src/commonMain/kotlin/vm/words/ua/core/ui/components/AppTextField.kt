@@ -3,6 +3,8 @@
 package vm.words.ua.core.ui.components
 
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
@@ -14,6 +16,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.utils.getFontSize
 import vm.words.ua.core.utils.getScaleFactor
@@ -24,7 +27,7 @@ fun AppTextField(
     value: String,
     boxMaxWidth: Dp = Dp.Unspecified,
     onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.padding(PaddingValues(top = 5.dp)),
     label: String? = null,
     singleLine: Boolean = true,
     isPassword: Boolean = false

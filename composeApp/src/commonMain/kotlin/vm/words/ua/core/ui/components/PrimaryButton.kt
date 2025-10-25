@@ -8,6 +8,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import vm.words.ua.core.ui.AppTheme
+import vm.words.ua.core.utils.getFontSize
+import vm.words.ua.core.utils.getScaleFactor
 
 @Composable
 fun PrimaryButton(
@@ -15,7 +17,12 @@ fun PrimaryButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    maxWidth: androidx.compose.ui.unit.Dp = androidx.compose.ui.unit.Dp.Unspecified
 ) {
+
+    val scaleFactor = getScaleFactor(maxWidth)
+    val fontSize = getFontSize(0.75f * scaleFactor)
+
     Button(
         onClick = onClick,
         modifier = modifier,
@@ -25,7 +32,7 @@ fun PrimaryButton(
             contentColor = AppTheme.PrimaryBack
         )
     ) {
-        Text(text)
+        Text(text, fontSize = fontSize)
     }
 }
 

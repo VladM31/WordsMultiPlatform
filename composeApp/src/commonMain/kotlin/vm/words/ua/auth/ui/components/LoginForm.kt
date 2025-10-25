@@ -37,6 +37,7 @@ fun LoginForm(
     onTelegramClick: () -> Unit = {}
 ) {
     val scaleFactor = getScaleFactor(maxWidth)
+    val textWeight = 0.75f
 
     val phoneState = viewModel.state.map { it.phoneNumber }.distinctUntilChanged().collectAsState(initial = "")
     val passState = viewModel.state.map { it.password }.distinctUntilChanged().collectAsState(initial = "")
@@ -73,7 +74,7 @@ fun LoginForm(
             Text(
                 text = "Join now",
                 color = AppTheme.PrimaryColor,
-                fontSize = getFontSize(scaleFactor),
+                fontSize = getFontSize(scaleFactor * textWeight),
                 modifier = Modifier.clickable { onJoinNowClick() }
             )
         }
@@ -91,7 +92,7 @@ fun LoginForm(
         Text(
             text = "Sign in with",
             color = AppTheme.PrimaryColor,
-            fontSize = getFontSize(scaleFactor * 0.8f)
+            fontSize = getFontSize(scaleFactor * textWeight)
         )
 
         Spacer(modifier = Modifier.size((8 * scaleFactor).dp))
