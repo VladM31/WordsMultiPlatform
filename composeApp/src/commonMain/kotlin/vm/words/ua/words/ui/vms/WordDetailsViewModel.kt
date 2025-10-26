@@ -16,7 +16,7 @@ import vm.words.ua.words.ui.actions.WordDetailsAction
 import vm.words.ua.words.ui.states.WordDetailsState
 
 class WordDetailsViewModel(
-    private val byteContentManager : ByteContentManager,
+    private val byteContentManager: ByteContentManager,
     private val soundManager: SoundManager
 ) : ViewModel() {
 
@@ -33,7 +33,7 @@ class WordDetailsViewModel(
 
     private fun fetchUserWord(action: WordDetailsAction.Init) {
         val isLoading = action.word.imageLink.isNullOrBlank().not()
-                && action.word.soundLink.isNullOrBlank().not()
+                || action.word.soundLink.isNullOrBlank().not()
 
         mutableState.value = mutableState.value.copy(
             isLoading = isLoading,
@@ -41,7 +41,7 @@ class WordDetailsViewModel(
             word = action.word
         )
 
-        if(isLoading.not()){
+        if (isLoading.not()) {
             return
         }
 
@@ -60,7 +60,7 @@ class WordDetailsViewModel(
                     image = imageTask.await(),
                     sound = soundTask.await()
                 )
-            }catch (e: Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
                 mutableState.value = mutableState.value.copy(
                     isLoading = false,
@@ -70,13 +70,12 @@ class WordDetailsViewModel(
         }
     }
 
-    private suspend fun getContent(link : String?) : ByteContent?{
-        if (link.isNullOrBlank()){
+    private suspend fun getContent(link: String?): ByteContent? {
+        if (link.isNullOrBlank()) {
             return null
         }
         return byteContentManager.downloadByteContent(link)
     }
-
 
 
     private fun handleDelete() {
@@ -103,7 +102,7 @@ class WordDetailsViewModel(
                 mutableState.value.sound?.let {
                     soundManager.playSound(it)
                     // Даем время на воспроизведение звука
-                    delay(3000)
+                    delay(1500)
                 }
 
             } catch (e: Exception) {
