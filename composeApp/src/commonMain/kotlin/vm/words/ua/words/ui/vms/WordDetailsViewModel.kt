@@ -3,10 +3,12 @@ package vm.words.ua.words.ui.vms
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import vm.words.ua.core.domain.managers.ByteContentManager
+import vm.words.ua.core.domain.models.ByteContent
 import vm.words.ua.core.ui.models.ErrorMessage
 import vm.words.ua.words.ui.actions.WordDetailsAction
 import vm.words.ua.words.ui.states.WordDetailsState
@@ -27,23 +29,33 @@ class WordDetailsViewModel(
     }
 
     private fun fetchUserWord(action: WordDetailsAction.Init) {
+        val isLoading = action.word.imageLink.isNullOrBlank().not()
+                && action.word.soundLink.isNullOrBlank().not()
 
         mutableState.value = mutableState.value.copy(
-            isLoading = action.word.imageLink.isNullOrBlank().not(),
+            isLoading = isLoading,
             userWord = action.userWord,
             word = action.word
         )
-        if (action.word.imageLink.isNullOrBlank()){
+
+        if(isLoading.not()){
             return
         }
 
         viewModelScope.launch(Dispatchers.Default) {
+
             try {
-                val content = byteContentManager.downloadByteContent(action.word.imageLink)
+                val imageTask = async {
+                    getContent(action.word.imageLink)
+                }
+                val soundTask = async {
+                    getContent(action.word.soundLink)
+                }
 
                 mutableState.value = mutableState.value.copy(
                     isLoading = false,
-                    image = content
+                    image = imageTask.await(),
+                    sound = soundTask.await()
                 )
             }catch (e: Exception) {
                 e.printStackTrace()
@@ -54,6 +66,15 @@ class WordDetailsViewModel(
             }
         }
     }
+
+    private suspend fun getContent(link : String?) : ByteContent?{
+        if (link.isNullOrBlank()){
+            return null
+        }
+        return byteContentManager.downloadByteContent(link)
+    }
+
+
 
     private fun handleDelete() {
         viewModelScope.launch {

@@ -10,6 +10,7 @@ data class WordDetailsState(
     val userWord: UserWord? = null,
     val word: Word? = null,
     val image: ByteContent? = null,
+    val sound: ByteContent? = null,
     val isLoading: Boolean = false,
     val isDeleted: Boolean = false,
     val isPlayingSound: Boolean = false,

@@ -46,8 +46,6 @@ fun WordDetailsScreen(
     val viewModel = rememberInstance<WordDetailsViewModel>()
     val state by viewModel.state.collectAsState()
 
-    val wordState = viewModel.state.map { it -> it.word }.collectAsState(null)
-    val image by viewModel.state.map { it -> it.image }.collectAsState(null)
 
     // Fetch word on first composition
     LaunchedEffect(Unit) {
@@ -61,7 +59,6 @@ fun WordDetailsScreen(
         }
     }
 
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -69,7 +66,7 @@ fun WordDetailsScreen(
     ) {
         Box {
             AppToolBar(
-                title = wordState.value?.original ?: "Word Details",
+                title = state.word?.original ?: "Word Details",
                 showBackButton = true,
                 onBackClick = { navController.popBackStack() },
                 showAdditionalButton = false
@@ -116,23 +113,24 @@ fun WordDetailsScreen(
                 MobileLayout(
                     word = word,
                     userWord = userWord,
-                    wordState = wordState,
-                    image = image,
+                    wordState =  state,
+                    image = state.image,
                     maxWidth = maxWidth,
                     state = state,
                     viewModel = viewModel
                 )
-            } else {
-                DesktopLayout(
-                    word = word,
-                    userWord = userWord,
-                    wordState = wordState,
-                    image = image,
-                    maxWidth = maxWidth,
-                    state = state,
-                    viewModel = viewModel
-                )
+                return@BoxWithConstraints
             }
+
+            DesktopLayout(
+                word = word,
+                userWord = userWord,
+                wordState = state,
+                image = state.image,
+                maxWidth = maxWidth,
+                state = state,
+                viewModel = viewModel
+            )
         }
 
 
@@ -147,7 +145,7 @@ fun WordDetailsScreen(
 private fun MobileLayout(
     word: Word,
     userWord: UserWord?,
-    wordState: State<Word?>,
+    wordState: WordDetailsState?,
     image: ByteContent?,
     maxWidth: Dp,
     state: WordDetailsState,
@@ -197,7 +195,7 @@ private fun MobileLayout(
 
         // Image and Sound
         FileView(
-            hasSound = wordState.value?.soundLink != null,
+            hasSound = wordState?.sound != null,
             hideImage = true,
             image = null,
             maxWidth = maxWidth,
@@ -215,7 +213,7 @@ private fun MobileLayout(
 private fun DesktopLayout(
     word: Word,
     userWord: UserWord?,
-    wordState: State<Word?>,
+    wordState: WordDetailsState,
     image: ByteContent?,
     maxWidth: Dp,
     state: WordDetailsState,
@@ -256,7 +254,7 @@ private fun DesktopLayout(
 
         // Right Column - Image and Sound
         FileView(
-            hasSound = wordState.value?.soundLink != null,
+            hasSound = wordState.sound != null,
             image = image,
             maxWidth = maxWidth,
             isPlayingSound = state.isPlayingSound,
