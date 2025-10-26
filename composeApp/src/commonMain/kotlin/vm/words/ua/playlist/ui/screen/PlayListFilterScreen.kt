@@ -64,12 +64,9 @@ fun PlayListFilterScreen(
             hasNavigatedBack.value = true
             try {
                 val filter = viewModel.toFilter()
-                println("DEBUG: Applying filter - name: ${filter.name}, count: ${filter.count}")
                 navController.popBackStack(returnParam = filter)
             } catch (e: Exception) {
-                println("ERROR applying filter: ${e.message}")
                 e.printStackTrace()
-                // Navigate back without param if error occurs
                 navController.popBackStack()
             }
         }
