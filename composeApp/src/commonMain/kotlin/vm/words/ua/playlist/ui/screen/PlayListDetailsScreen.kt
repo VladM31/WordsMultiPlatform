@@ -17,7 +17,6 @@ import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.PopupMenuButton
 import vm.words.ua.core.ui.components.PopupMenuItem
-import vm.words.ua.core.utils.getMaxWidth
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.playlist.ui.actions.PlayListDetailsAction
@@ -37,7 +36,6 @@ fun PlayListDetailsScreen(
     val viewModel = rememberInstance<PlayListDetailsViewModel>()
     val state by viewModel.state.collectAsState()
     var showEditDialog by remember { mutableStateOf(false) }
-    val maxWidth = getMaxWidth()
 
     // Fetch playlist on first composition
     LaunchedEffect(playListId) {
@@ -55,8 +53,13 @@ fun PlayListDetailsScreen(
         modifier = modifier
             .fillMaxSize()
             .background(AppTheme.PrimaryBack)
+            .padding(top = 3.dp)
     ) {
-        Box {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+        ) {
             AppToolBar(
                 title = state.name,
                 showBackButton = true,
@@ -65,29 +68,26 @@ fun PlayListDetailsScreen(
             )
 
             // Popup menu positioned at top right
-            BoxWithConstraints {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                        .padding(end = 10.dp),
-                    contentAlignment = Alignment.CenterEnd
-                ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+                    .padding(end = 10.dp),
+                contentAlignment = Alignment.CenterEnd
+            ) {
 
-                    PopupMenuButton(
-                        items = listOf(
-                            PopupMenuItem(
-                                text = "Edit",
-                                onClick = { showEditDialog = true }
-                            ),
-                            PopupMenuItem(
-                                text = "Delete",
-                                onClick = {  }
-                            )
+                PopupMenuButton(
+                    items = listOf(
+                        PopupMenuItem(
+                            text = "Edit",
+                            onClick = { showEditDialog = true }
                         ),
-                        maxWidth = maxWidth.value
+                        PopupMenuItem(
+                            text = "Delete",
+                            onClick = { viewModel.sent(PlayListDetailsAction.Delete) }
+                        )
                     )
-                }
+                )
             }
         }
 

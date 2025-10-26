@@ -49,7 +49,7 @@ fun AppToolBar(
 
         val toolbarHeight = (56 * scaleFactor).dp
         val horizontalPadding = (10 * scaleFactor).dp
-        val titleSize = (29 * scaleFactor).sp
+        val titleSize = (26 * scaleFactor).sp
         val titleHorizontalPadding = (16 * scaleFactor).dp
 
         val iconSize = (40 * scaleFactor).dp

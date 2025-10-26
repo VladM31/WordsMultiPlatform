@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
@@ -45,30 +44,30 @@ data class PopupMenuItem(
 fun PopupMenuButton(
     items: List<PopupMenuItem>,
     modifier: Modifier = Modifier,
-    buttonIcon: Painter = painterResource(Res.drawable.setting),
-    buttonSize: Dp = 48.dp,
-    iconSize: Dp = 40.dp,
-    maxWidth: Dp = Dp.Unspecified
+    buttonIcon: Painter = painterResource(Res.drawable.setting)
 ) {
     var expanded by remember { mutableStateOf(false) }
 
     BoxWithConstraints(modifier = modifier) {
         val scaleFactor = getScaleFactor(maxWidth)
-        val scaledButtonSize = (buttonSize.value * scaleFactor).dp
-        val scaledIconSize = (iconSize.value * scaleFactor).dp
+
+        // Используем те же размеры, что и в AppToolBar
+        val iconSize = (40 * scaleFactor).dp
+        val buttonSize = iconSize * 1.2f
         val scaledTextSize = (16 * scaleFactor).sp
         val scaledMenuIconSize = (24 * scaleFactor).dp
+
 
         Box {
             IconButton(
                 onClick = { expanded = true },
-                modifier = Modifier.size(scaledButtonSize).padding(end = 10.dp),
+                modifier = Modifier.size(buttonSize)
             ) {
                 Icon(
                     painter = buttonIcon,
                     contentDescription = "Menu",
                     tint = AppTheme.PrimaryColor,
-                    modifier = Modifier.size(scaledIconSize)
+                    modifier = Modifier.size(iconSize)
                 )
             }
 
