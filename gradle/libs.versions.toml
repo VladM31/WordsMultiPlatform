@@ -13,6 +13,8 @@ ktor = "3.0.2"
 multiplatform-settings = "1.1.1"
 # Added for Android support
 agp = "8.6.1"
+mp3spi-soundlibs = "1.9.5-1"
+tritonus-share = "0.3.7-2"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -35,6 +37,8 @@ ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "k
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-js = { module = "io.ktor:ktor-client-js", version.ref = "ktor" }
 ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
+mp3spi = { module = "com.googlecode.soundlibs:mp3spi", version.ref = "mp3spi-soundlibs" }
+tritonus-share = { module = "com.googlecode.soundlibs:tritonus-share", version.ref = "tritonus-share" }
 
 [plugins]
 composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "composeHotReload" }
@@ -44,4 +48,3 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
-

@@ -9,8 +9,8 @@ import vm.words.ua.words.ui.vms.WordDetailsViewModel
 internal val viewModelWordsModule = DI.Module("viewModelWordsModule") {
     bind<WordDetailsViewModel>() with factory {
         WordDetailsViewModel(
-            byteContentManager = instance()
+            byteContentManager = instance(),
+            soundManager = instance()
         )
     }
 }
-

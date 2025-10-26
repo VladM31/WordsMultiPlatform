@@ -4,17 +4,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import vm.words.ua.core.domain.managers.ByteContentManager
 import vm.words.ua.core.domain.models.ByteContent
 import vm.words.ua.core.ui.models.ErrorMessage
+import vm.words.ua.words.domain.managers.SoundManager
 import vm.words.ua.words.ui.actions.WordDetailsAction
 import vm.words.ua.words.ui.states.WordDetailsState
 
 class WordDetailsViewModel(
-    private val byteContentManager : ByteContentManager
+    private val byteContentManager : ByteContentManager,
+    private val soundManager: SoundManager
 ) : ViewModel() {
 
     private val mutableState = MutableStateFlow(WordDetailsState())
@@ -91,15 +94,22 @@ class WordDetailsViewModel(
     }
 
     private fun playSound() {
+        if (mutableState.value.sound == null) {
+            return
+        }
         mutableState.value = mutableState.value.copy(isPlayingSound = true)
         viewModelScope.launch {
             try {
-                val soundUrl = state.value.userWord?.word?.soundLink ?: return@launch
-
-                // TODO: Play sound using MediaPlayer or other audio solution
-                // Sound URL will be cached and played
+                mutableState.value.sound?.let {
+                    soundManager.playSound(it)
+                    // Даем время на воспроизведение звука
+                    delay(3000)
+                }
 
             } catch (e: Exception) {
+                mutableState.value = mutableState.value.copy(
+                    errorMessage = ErrorMessage(e.message ?: "Error playing sound")
+                )
                 e.printStackTrace()
             } finally {
                 mutableState.value = mutableState.value.copy(isPlayingSound = false)

@@ -6,6 +6,7 @@ import vm.words.ua.auth.di.authModules
 import vm.words.ua.core.di.coreModule
 import vm.words.ua.playlist.di.playlistModule
 import vm.words.ua.words.di.viewModelWordsModule
+import vm.words.ua.words.di.managersWordsModule
 
 
 /**
@@ -15,6 +16,7 @@ val appModules = DI {
     import(coreModule)
     import(authModules)
     import(playlistModule)
+    import(managersWordsModule)
     import(viewModelWordsModule)
 }
 
