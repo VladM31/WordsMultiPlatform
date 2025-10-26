@@ -1,5 +1,9 @@
 package vm.words.ua.core.utils
 
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -18,3 +22,12 @@ fun getScaleFactor(maxWidth: Dp): Float {
     }
 }
 
+
+@Composable
+fun getMaxWidth() : MutableState<Dp> {
+    val maxWidth = mutableStateOf(0.dp)
+    BoxWithConstraints{
+        maxWidth.value = this.maxWidth
+    }
+    return maxWidth
+}

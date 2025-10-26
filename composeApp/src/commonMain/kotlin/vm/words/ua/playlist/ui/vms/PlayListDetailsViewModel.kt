@@ -8,6 +8,7 @@ import kotlinx.coroutines.launch
 import vm.words.ua.playlist.domain.managers.PinPlayListManager
 import vm.words.ua.playlist.domain.managers.PlayListManager
 import vm.words.ua.playlist.domain.models.PinPlayList
+import vm.words.ua.playlist.domain.models.UpdatePlayList
 import vm.words.ua.playlist.domain.models.filters.DeletePlayListFilter
 import vm.words.ua.playlist.domain.models.filters.PlayListFilter
 import vm.words.ua.playlist.ui.actions.PlayListDetailsAction
@@ -48,9 +49,24 @@ class PlayListDetailsViewModel(
     }
 
     private fun handleEdit(name: String) {
-        mutableState.value = mutableState.value.copy(
-            name = name
-        )
+        viewModelScope.launch {
+            try {
+                playListManager.update(
+                    listOf(
+                        UpdatePlayList(
+                            id = state.value.id,
+                            name = name
+                        )
+                    )
+                )
+
+                mutableState.value = mutableState.value.copy(
+                    name = name
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     private fun unPin() {
@@ -114,4 +130,3 @@ class PlayListDetailsViewModel(
         }
     }
 }
-

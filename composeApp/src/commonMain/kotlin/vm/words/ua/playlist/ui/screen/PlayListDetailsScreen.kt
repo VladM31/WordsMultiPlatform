@@ -15,6 +15,9 @@ import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
+import vm.words.ua.core.ui.components.PopupMenuButton
+import vm.words.ua.core.ui.components.PopupMenuItem
+import vm.words.ua.core.utils.getMaxWidth
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.playlist.ui.actions.PlayListDetailsAction
@@ -23,7 +26,7 @@ import vm.words.ua.playlist.ui.vms.PlayListDetailsViewModel
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.delete_red
 import wordsmultiplatform.composeapp.generated.resources.play
-import wordsmultiplatform.composeapp.generated.resources.setting
+
 
 @Composable
 fun PlayListDetailsScreen(
@@ -33,6 +36,8 @@ fun PlayListDetailsScreen(
 ) {
     val viewModel = rememberInstance<PlayListDetailsViewModel>()
     val state by viewModel.state.collectAsState()
+    var showEditDialog by remember { mutableStateOf(false) }
+    val maxWidth = getMaxWidth()
 
     // Fetch playlist on first composition
     LaunchedEffect(playListId) {
@@ -51,18 +56,40 @@ fun PlayListDetailsScreen(
             .fillMaxSize()
             .background(AppTheme.PrimaryBack)
     ) {
-        AppToolBar(
-            title = state.name,
-            showBackButton = true,
-            onBackClick = { navController.popBackStack() },
-            showAdditionalButton = true,
-            additionalButtonImage = painterResource(Res.drawable.setting),
-            onAdditionalClick = {
-                // TODO: Show context menu with Edit and Remove options
-                // For now, just show delete action
-//                viewModel.sent(PlayListDetailsAction.Delete)
+        Box {
+            AppToolBar(
+                title = state.name,
+                showBackButton = true,
+                onBackClick = { navController.popBackStack() },
+                showAdditionalButton = false
+            )
+
+            // Popup menu positioned at top right
+            BoxWithConstraints {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .padding(end = 10.dp),
+                    contentAlignment = Alignment.CenterEnd
+                ) {
+
+                    PopupMenuButton(
+                        items = listOf(
+                            PopupMenuItem(
+                                text = "Edit",
+                                onClick = { showEditDialog = true }
+                            ),
+                            PopupMenuItem(
+                                text = "Delete",
+                                onClick = {  }
+                            )
+                        ),
+                        maxWidth = maxWidth.value
+                    )
+                }
             }
-        )
+        }
 
         // Words list
         LazyColumn(
@@ -105,6 +132,71 @@ fun PlayListDetailsScreen(
             }
         )
     }
+
+    // Edit dialog
+    if (showEditDialog) {
+        EditPlayListDialog(
+            currentName = state.name,
+            onDismiss = { showEditDialog = false },
+            onConfirm = { newName ->
+                viewModel.sent(PlayListDetailsAction.HandleEdit(newName))
+                showEditDialog = false
+            }
+        )
+    }
+}
+
+@Composable
+private fun EditPlayListDialog(
+    currentName: String,
+    onDismiss: () -> Unit,
+    onConfirm: (String) -> Unit
+) {
+    var name by remember { mutableStateOf(currentName) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = "Edit Playlist",
+                color = AppTheme.PrimaryColor,
+                fontSize = 20.sp
+            )
+        },
+        text = {
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it },
+                label = { Text("Playlist Name") },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = AppTheme.PrimaryColor,
+                    unfocusedBorderColor = AppTheme.PrimaryGray,
+                    focusedLabelColor = AppTheme.PrimaryColor,
+                    unfocusedLabelColor = AppTheme.PrimaryGray,
+                    focusedTextColor = AppTheme.PrimaryColor,
+                    unfocusedTextColor = AppTheme.PrimaryColor
+                ),
+                singleLine = true
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = { onConfirm(name) },
+                enabled = name.isNotBlank(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = AppTheme.PrimaryColor
+                )
+            ) {
+                Text("Save", color = AppTheme.PrimaryBack)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel", color = AppTheme.PrimaryColor)
+            }
+        },
+        containerColor = AppTheme.SecondaryBack
+    )
 }
 
 @Composable
