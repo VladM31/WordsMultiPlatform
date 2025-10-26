@@ -1,4 +1,4 @@
-package vm.words.ua.auth.net
+package vm.words.ua.core.net
 
 import io.ktor.client.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -11,7 +11,7 @@ import kotlinx.serialization.json.Json
  */
 object HttpClientFactory {
 
-    fun createAuthClient(): HttpClient {
+    fun createHttpClient(): HttpClient {
         return HttpClient {
             // Настройка JSON сериализации
             install(ContentNegotiation) {
