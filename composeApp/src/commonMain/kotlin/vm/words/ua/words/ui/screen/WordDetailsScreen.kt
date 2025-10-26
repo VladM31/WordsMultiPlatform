@@ -12,8 +12,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.flow.map
 import org.jetbrains.compose.resources.painterResource
+import vm.words.ua.core.domain.models.ByteContent
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
+import vm.words.ua.core.ui.components.ErrorMessageBox
+import vm.words.ua.core.ui.components.ImageFromBytes
 import vm.words.ua.core.ui.components.PopupMenuButton
 import vm.words.ua.core.ui.components.PopupMenuItem
 import vm.words.ua.di.rememberInstance
@@ -35,8 +38,10 @@ fun WordDetailsScreen(
     modifier: Modifier = Modifier
 ) {
     val viewModel = rememberInstance<WordDetailsViewModel>()
-    val wordState = viewModel.state.map { it -> it.word }.collectAsState(null)
     val state by viewModel.state.collectAsState()
+
+    val wordState = viewModel.state.map { it -> it.word }.collectAsState(null)
+    val image by viewModel.state.map { it -> it.image }.collectAsState(null)
 
     // Fetch word on first composition
     LaunchedEffect(Unit) {
@@ -93,28 +98,23 @@ fun WordDetailsScreen(
             ) {
                 CircularProgressIndicator(color = AppTheme.PrimaryColor)
             }
-        } else if (state.userWord != null) {
+            return
+        }
+
+        if (state.userWord != null) {
             WordDetailsContent(
                 userWord = state.userWord ?: throw IllegalStateException(),
                 isPlayingSound = state.isPlayingSound,
+                image = image,
                 onPlaySound = { viewModel.sent(WordDetailsAction.PlaySound) },
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
             )
-        } else {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = state.error ?: "No word found",
-                    color = AppTheme.PrimaryColor,
-                    fontSize = 18.sp
-                )
-            }
+        }
+
+        state.errorMessage?.let {
+            ErrorMessageBox(it)
         }
     }
 }
@@ -122,6 +122,7 @@ fun WordDetailsScreen(
 @Composable
 private fun WordDetailsContent(
     userWord: UserWord,
+    image: ByteContent?,
     isPlayingSound: Boolean,
     onPlaySound: () -> Unit,
     modifier: Modifier = Modifier
@@ -135,30 +136,13 @@ private fun WordDetailsContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Image
-        if (word.imageLink != null) {
-//            AsyncImage(
-//                model = word.imageLink,
-//                contentDescription = "Word image",
-//                modifier = Modifier
-//                    .size(300.dp),
-//                contentScale = ContentScale.Crop
-//            )
-        } else {
-            Box(
-                modifier = Modifier
-                    .size(300.dp)
-                    .background(AppTheme.SecondaryBack),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = painterResource(Res.drawable.image_icon),
-                    contentDescription = "No image",
-                    tint = AppTheme.PrimaryGray,
-                    modifier = Modifier.size(100.dp)
-                )
-            }
-        }
+        ImageFromBytes(
+            imageBytes = image?.bytes,
+            defaultPaint = painterResource(Res.drawable.image_icon),
+            width = 200.dp,
+            height = 200.dp,
+            contentDescription = "Word Image"
+        )
 
         Spacer(modifier = Modifier.height(8.dp))
 

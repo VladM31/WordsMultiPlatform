@@ -2,13 +2,18 @@ package vm.words.ua.words.ui.vms
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import vm.words.ua.core.domain.managers.ByteContentManager
+import vm.words.ua.core.ui.models.ErrorMessage
 import vm.words.ua.words.ui.actions.WordDetailsAction
 import vm.words.ua.words.ui.states.WordDetailsState
 
-class WordDetailsViewModel : ViewModel() {
+class WordDetailsViewModel(
+    private val byteContentManager : ByteContentManager
+) : ViewModel() {
 
     private val mutableState = MutableStateFlow(WordDetailsState())
     val state: StateFlow<WordDetailsState> = mutableState
@@ -24,11 +29,30 @@ class WordDetailsViewModel : ViewModel() {
     private fun fetchUserWord(action: WordDetailsAction.Init) {
 
         mutableState.value = mutableState.value.copy(
-            isLoading = false,
+            isLoading = action.word.imageLink.isNullOrBlank().not(),
             userWord = action.userWord,
             word = action.word
         )
+        if (action.word.imageLink.isNullOrBlank()){
+            return
+        }
 
+        viewModelScope.launch(Dispatchers.Default) {
+            try {
+                val content = byteContentManager.downloadByteContent(action.word.imageLink)
+
+                mutableState.value = mutableState.value.copy(
+                    isLoading = false,
+                    image = content
+                )
+            }catch (e: Exception) {
+                e.printStackTrace()
+                mutableState.value = mutableState.value.copy(
+                    isLoading = false,
+                    errorMessage = ErrorMessage(e.message ?: "Error loading image")
+                )
+            }
+        }
     }
 
     private fun handleDelete() {
@@ -39,7 +63,7 @@ class WordDetailsViewModel : ViewModel() {
             } catch (e: Exception) {
                 e.printStackTrace()
                 mutableState.value = mutableState.value.copy(
-                    error = e.message ?: "Error deleting word"
+                    errorMessage = ErrorMessage(e.message ?: "Error deleting word")
                 )
             }
         }
