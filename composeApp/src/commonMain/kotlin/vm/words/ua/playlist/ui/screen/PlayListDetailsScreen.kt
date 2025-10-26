@@ -20,7 +20,7 @@ import vm.words.ua.core.ui.components.PopupMenuItem
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.playlist.ui.actions.PlayListDetailsAction
-import vm.words.ua.playlist.ui.components.WordItem
+import vm.words.ua.words.ui.components.WordItem
 import vm.words.ua.playlist.ui.vms.PlayListDetailsViewModel
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.delete_red

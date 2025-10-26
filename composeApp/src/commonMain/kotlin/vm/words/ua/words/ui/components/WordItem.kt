@@ -1,4 +1,4 @@
-package vm.words.ua.playlist.ui.components
+package vm.words.ua.words.ui.components
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
