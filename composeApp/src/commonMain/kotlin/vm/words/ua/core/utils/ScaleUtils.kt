@@ -22,12 +22,3 @@ fun getScaleFactor(maxWidth: Dp): Float {
     }
 }
 
-
-@Composable
-fun getMaxWidth() : MutableState<Dp> {
-    val maxWidth = mutableStateOf(0.dp)
-    BoxWithConstraints{
-        maxWidth.value = this.maxWidth
-    }
-    return maxWidth
-}
