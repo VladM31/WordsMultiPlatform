@@ -27,13 +27,9 @@ class PlayListManagerImpl(
 
     override suspend fun countBy(filter: PlayListCountFilter): PagedModels<PlayListCount> {
         return try {
-            println("PlayListManager.countBy: Starting request with filter: $filter")
-            println("PlayListManager.countBy: Token: ${getToken()}")
             val result = playListClient.countBy(getToken(), filter)
-            println("PlayListManager.countBy: Success, got ${result.content.size} items")
             result
         } catch (e: Exception) {
-            println("PlayListManager.countBy: ERROR - ${e.message}")
             e.printStackTrace()
             PagedModels.empty()
         }

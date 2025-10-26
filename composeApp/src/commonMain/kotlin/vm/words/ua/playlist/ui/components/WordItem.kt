@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.utils.*
-import vm.words.ua.playlist.domain.models.PlayList
 import vm.words.ua.words.domain.models.Word
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.arrow
