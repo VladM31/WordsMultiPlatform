@@ -8,6 +8,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.flow.map
@@ -19,6 +20,8 @@ import vm.words.ua.core.ui.components.ErrorMessageBox
 import vm.words.ua.core.ui.components.ImageFromBytes
 import vm.words.ua.core.ui.components.PopupMenuButton
 import vm.words.ua.core.ui.components.PopupMenuItem
+import vm.words.ua.core.utils.getFontSize
+import vm.words.ua.core.utils.getScaleFactor
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.words.domain.models.UserWord
@@ -54,6 +57,7 @@ fun WordDetailsScreen(
             navController.popBackStack()
         }
     }
+
 
     Column(
         modifier = modifier
@@ -101,17 +105,41 @@ fun WordDetailsScreen(
             return
         }
 
-        if (state.userWord != null) {
-            WordDetailsContent(
-                userWord = state.userWord ?: throw IllegalStateException(),
-                isPlayingSound = state.isPlayingSound,
-                image = image,
-                onPlaySound = { viewModel.sent(WordDetailsAction.PlaySound) },
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-            )
+        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+            val maxWidth = maxWidth
+
+            Row(modifier = Modifier.fillMaxHeight()) {
+                Column(
+                    modifier = Modifier
+                        .weight(1f) // 50% ширины
+                        .padding(56.dp)
+                ) {
+                    WordDetailsContent(
+                        word = word,
+                        maxWidth = maxWidth,
+                        modifier = Modifier
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    userWord?.let {
+                        UserWordDetails(userWord = it, maxWidth = maxWidth)
+                    }
+                }
+
+                FileView(
+                    hasSound = wordState.value?.soundLink == null,
+                    image = image,
+                    maxWidth = maxWidth,
+                    isPlayingSound = state.isPlayingSound,
+                    onPlaySound = { viewModel.sent(WordDetailsAction.PlaySound) },
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .heightIn(max = 400.dp)
+                )
+            }
         }
+
+
 
         state.errorMessage?.let {
             ErrorMessageBox(it)
@@ -120,18 +148,21 @@ fun WordDetailsScreen(
 }
 
 @Composable
-private fun WordDetailsContent(
-    userWord: UserWord,
-    image: ByteContent?,
+private fun FileView(
+    hasSound: Boolean,
+    maxWidth: Dp = Dp.Unspecified,
+    image: ByteContent? = null,
+    modifier: Modifier = Modifier,
     isPlayingSound: Boolean,
     onPlaySound: () -> Unit,
-    modifier: Modifier = Modifier
 ) {
-    val word = userWord.word
+    val scale = getScaleFactor(maxWidth)
+    val imageSize = (300 * scale).dp
 
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
+            .fillMaxHeight()
             .padding(horizontal = 16.dp, vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -139,67 +170,16 @@ private fun WordDetailsContent(
         ImageFromBytes(
             imageBytes = image?.bytes,
             defaultPaint = painterResource(Res.drawable.image_icon),
-            width = 200.dp,
-            height = 200.dp,
+            width = imageSize,
+            height = imageSize,
             contentDescription = "Word Image"
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Category
-        if (word.category != null) {
-            Text(
-                text = "Category: ${word.category}",
-                color = AppTheme.PrimaryColor,
-                fontSize = 16.sp
-            )
-        }
-
-        // CEFR Level
-        Text(
-            text = "CEFR: ${word.cefr}",
-            color = AppTheme.PrimaryColor,
-            fontSize = 16.sp
-        )
-
-        // Original word
-        Text(
-            text = "${word.lang.upperShortName}: ${word.original}",
-            color = AppTheme.PrimaryColor,
-            fontSize = 24.sp
-        )
-
-        // Translation
-        Text(
-            text = "${word.translateLang.upperShortName}: ${word.translate}",
-            color = AppTheme.PrimaryColor,
-            fontSize = 24.sp
-        )
-
-        // Description
-        if (word.description != null) {
-            Text(
-                text = "Definition: ${word.description}",
-                color = AppTheme.PrimaryColor,
-                fontSize = 14.sp
-            )
-        }
-
-        // Dates
-        Text(
-            text = "Created: ${userWord.createdAt}",
-            color = AppTheme.SecondaryText,
-            fontSize = 12.sp
-        )
-
-        Text(
-            text = "Last read: ${userWord.lastReadDate}",
-            color = AppTheme.SecondaryText,
-            fontSize = 12.sp
-        )
 
         // Sound button
-        if (word.soundLink != null) {
+        if (hasSound) {
             Button(
                 onClick = onPlaySound,
                 enabled = !isPlayingSound,
@@ -216,20 +196,96 @@ private fun WordDetailsContent(
                     modifier = Modifier.size(40.dp)
                 )
             }
-        } else {
-            Box(
-                modifier = Modifier
-                    .size(80.dp),
-                contentAlignment = Alignment.Center
+            return
+        }
+
+        Box(
+            modifier = Modifier
+                .size(80.dp),
+            contentAlignment = Alignment.Center,
+
             ) {
-                Icon(
-                    painter = painterResource(Res.drawable.sound),
-                    contentDescription = "No sound",
-                    tint = AppTheme.PrimaryGray,
-                    modifier = Modifier.size(40.dp)
-                )
-            }
+            Icon(
+                painter = painterResource(Res.drawable.sound),
+                contentDescription = "No sound",
+                tint = AppTheme.PrimaryGray,
+                modifier = Modifier.size(40.dp)
+            )
         }
     }
 }
 
+@Composable
+private fun WordDetailsContent(
+    word: Word,
+    maxWidth: Dp = Dp.Unspecified,
+    modifier: Modifier = Modifier
+) {
+    val scale = getScaleFactor(maxWidth)
+    val fontSize = getFontSize(scale)
+
+    Column(
+        modifier = modifier
+            .verticalScroll(rememberScrollState())
+    ) {
+        // Category
+        if (word.category != null) {
+            Text(
+                text = "Category: ${word.category}",
+                color = AppTheme.PrimaryColor,
+                fontSize = fontSize
+            )
+        }
+
+        // CEFR Level
+        Text(
+            text = "CEFR: ${word.cefr}",
+            color = AppTheme.PrimaryColor,
+            fontSize = fontSize
+        )
+
+        // Original word
+        Text(
+            text = "${word.lang.upperShortName}: ${word.original}",
+            color = AppTheme.PrimaryColor,
+            fontSize = fontSize
+        )
+
+        // Translation
+        Text(
+            text = "${word.translateLang.upperShortName}: ${word.translate}",
+            color = AppTheme.PrimaryColor,
+            fontSize = fontSize
+        )
+
+        // Description
+        if (word.description != null) {
+            Text(
+                text = "Definition: ${word.description}",
+                color = AppTheme.PrimaryColor,
+                fontSize = fontSize * 0.7f
+            )
+        }
+    }
+}
+
+@Composable
+private fun UserWordDetails(
+    maxWidth: Dp = Dp.Unspecified,
+    userWord: UserWord
+) {
+    val scale = getScaleFactor(maxWidth)
+    val fontSize = getFontSize(scale) * 0.7f
+
+    Text(
+        text = "Created: ${userWord.createdAt}",
+        color = AppTheme.SecondaryText,
+        fontSize = fontSize
+    )
+
+    Text(
+        text = "Last read: ${userWord.lastReadDate}",
+        color = AppTheme.SecondaryText,
+        fontSize = fontSize
+    )
+}
