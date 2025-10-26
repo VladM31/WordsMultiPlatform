@@ -1,11 +1,8 @@
 package vm.words.ua.core.utils
 
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import vm.words.ua.core.domain.models.enums.DeviceFormat
 
 /**
  * Calculate scale factor based on screen width
@@ -19,6 +16,16 @@ fun getScaleFactor(maxWidth: Dp): Float {
         maxWidth >= 800.dp -> 1.2f  // Big tablets
         maxWidth <= 360.dp -> 0.8f  // Small phones
         else -> 1.0f // Just screen
+    }
+}
+
+fun getWidthDeviceFormat(maxWidth: Dp) : DeviceFormat {
+    return when {
+        maxWidth >= 1920.dp -> DeviceFormat.FOUR_K
+        maxWidth >= 1280.dp -> DeviceFormat.FULL_HD
+        maxWidth >= 800.dp -> DeviceFormat.BIG_TABLET
+        maxWidth <= 360.dp -> DeviceFormat.SMALL_PHONE
+        else -> DeviceFormat.PHONE
     }
 }
 

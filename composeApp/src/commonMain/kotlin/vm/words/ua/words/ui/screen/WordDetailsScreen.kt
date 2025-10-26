@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.flow.map
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.domain.models.ByteContent
+import vm.words.ua.core.domain.models.enums.DeviceFormat
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.ErrorMessageBox
@@ -22,11 +23,13 @@ import vm.words.ua.core.ui.components.PopupMenuButton
 import vm.words.ua.core.ui.components.PopupMenuItem
 import vm.words.ua.core.utils.getFontSize
 import vm.words.ua.core.utils.getScaleFactor
+import vm.words.ua.core.utils.getWidthDeviceFormat
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.words.domain.models.UserWord
 import vm.words.ua.words.domain.models.Word
 import vm.words.ua.words.ui.actions.WordDetailsAction
+import vm.words.ua.words.ui.states.WordDetailsState
 import vm.words.ua.words.ui.vms.WordDetailsViewModel
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.delete_red
@@ -107,34 +110,27 @@ fun WordDetailsScreen(
 
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
             val maxWidth = maxWidth
+            val isPhone = getWidthDeviceFormat(maxWidth).isPhone
 
-            Row(modifier = Modifier.fillMaxHeight()) {
-                Column(
-                    modifier = Modifier
-                        .weight(1f) // 50% ширины
-                        .padding(56.dp)
-                ) {
-                    WordDetailsContent(
-                        word = word,
-                        maxWidth = maxWidth,
-                        modifier = Modifier
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    userWord?.let {
-                        UserWordDetails(userWord = it, maxWidth = maxWidth)
-                    }
-                }
-
-                FileView(
-                    hasSound = wordState.value?.soundLink == null,
+            if (isPhone) {
+                MobileLayout(
+                    word = word,
+                    userWord = userWord,
+                    wordState = wordState,
                     image = image,
                     maxWidth = maxWidth,
-                    isPlayingSound = state.isPlayingSound,
-                    onPlaySound = { viewModel.sent(WordDetailsAction.PlaySound) },
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                        .heightIn(max = 400.dp)
+                    state = state,
+                    viewModel = viewModel
+                )
+            } else {
+                DesktopLayout(
+                    word = word,
+                    userWord = userWord,
+                    wordState = wordState,
+                    image = image,
+                    maxWidth = maxWidth,
+                    state = state,
+                    viewModel = viewModel
                 )
             }
         }
@@ -148,43 +144,170 @@ fun WordDetailsScreen(
 }
 
 @Composable
+private fun MobileLayout(
+    word: Word,
+    userWord: UserWord?,
+    wordState: State<Word?>,
+    image: ByteContent?,
+    maxWidth: Dp,
+    state: WordDetailsState,
+    viewModel: WordDetailsViewModel
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+
+            .padding(bottom = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        val scale = getScaleFactor(maxWidth)
+        val width = (300 * scale).dp
+
+        // Image and Sound
+        FileView(
+            hasSound = false,
+            hideSound = true,
+            image = image,
+            maxWidth = maxWidth,
+            isPlayingSound = state.isPlayingSound,
+            onPlaySound = { viewModel.sent(WordDetailsAction.PlaySound) },
+            modifier = Modifier
+                .widthIn(width)
+                .padding(horizontal = 16.dp, vertical = 4.dp)
+        )
+
+        // Text Content
+        Column(
+            modifier = Modifier
+                .widthIn(width)
+                .padding(horizontal = 16.dp, vertical = 4.dp),
+            verticalArrangement = Arrangement.Top
+        ) {
+            WordDetailsContent(
+                word = word,
+                maxWidth = maxWidth,
+                modifier = Modifier
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            userWord?.let {
+                UserWordDetails(userWord = it, maxWidth = maxWidth)
+            }
+        }
+
+        // Image and Sound
+        FileView(
+            hasSound = wordState.value?.soundLink != null,
+            hideImage = true,
+            image = null,
+            maxWidth = maxWidth,
+            isPlayingSound = state.isPlayingSound,
+            onPlaySound = { viewModel.sent(WordDetailsAction.PlaySound) },
+            modifier = Modifier
+                .widthIn(width)
+                .padding(horizontal = 16.dp, vertical = 4.dp)
+        )
+
+    }
+}
+
+@Composable
+private fun DesktopLayout(
+    word: Word,
+    userWord: UserWord?,
+    wordState: State<Word?>,
+    image: ByteContent?,
+    maxWidth: Dp,
+    state: WordDetailsState,
+    viewModel: WordDetailsViewModel
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = 16.dp),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        // Left Column - Text Content
+        val leftScrollState = rememberScrollState()
+        val scale = getScaleFactor(maxWidth)
+        val contentWidth = (400 * scale).dp
+        val contentHeight = (500 * scale).dp * 1.2f
+
+        Column(
+            modifier = Modifier
+                .widthIn(min = 300.dp, max = contentWidth)
+                .heightIn(max = contentHeight)
+                .verticalScroll(leftScrollState)
+                .padding(start = 4.dp, end = 4.dp, top = 16.dp, bottom = 16.dp),
+            verticalArrangement = Arrangement.Top
+        ) {
+            WordDetailsContent(
+                word = word,
+                maxWidth = maxWidth,
+                modifier = Modifier
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            userWord?.let {
+                UserWordDetails(userWord = it, maxWidth = maxWidth)
+            }
+        }
+
+        Spacer(modifier = Modifier.width(32.dp))
+
+        // Right Column - Image and Sound
+        FileView(
+            hasSound = wordState.value?.soundLink != null,
+            image = image,
+            maxWidth = maxWidth,
+            isPlayingSound = state.isPlayingSound,
+            onPlaySound = { viewModel.sent(WordDetailsAction.PlaySound) },
+            modifier = Modifier
+                .widthIn(min = 300.dp, max = contentWidth)
+                .heightIn(max = contentHeight)
+                .padding(start = 4.dp, end = 4.dp, top = 16.dp, bottom = 16.dp)
+        )
+    }
+}
+
+@Composable
 private fun FileView(
     hasSound: Boolean,
+
     maxWidth: Dp = Dp.Unspecified,
     image: ByteContent? = null,
     modifier: Modifier = Modifier,
     isPlayingSound: Boolean,
     onPlaySound: () -> Unit,
+    hideImage: Boolean = false,
+    hideSound: Boolean = false
 ) {
     val scale = getScaleFactor(maxWidth)
     val imageSize = (300 * scale).dp
 
     Column(
         modifier = modifier
-            .verticalScroll(rememberScrollState())
-            .fillMaxHeight()
-            .padding(horizontal = 16.dp, vertical = 16.dp),
+            .padding(horizontal = 8.dp, vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.Center
     ) {
-        ImageFromBytes(
-            imageBytes = image?.bytes,
-            defaultPaint = painterResource(Res.drawable.image_icon),
-            width = imageSize,
-            height = imageSize,
-            contentDescription = "Word Image"
-        )
+        if (hideImage.not()){
+            ImageFromBytes(
+                imageBytes = image?.bytes,
+                defaultPaint = painterResource(Res.drawable.image_icon),
+                width = imageSize,
+                height = imageSize,
+                contentDescription = "Word Image"
+            )
+        }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-
-        // Sound button
-        if (hasSound) {
+        if (hideSound.not()){
             Button(
                 onClick = onPlaySound,
-                enabled = !isPlayingSound,
+                enabled = !isPlayingSound && hasSound,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = AppTheme.PrimaryColor
+                    containerColor = if (hasSound) AppTheme.PrimaryColor else AppTheme.PrimaryGray
                 ),
                 modifier = Modifier
                     .size(80.dp)
@@ -196,21 +319,6 @@ private fun FileView(
                     modifier = Modifier.size(40.dp)
                 )
             }
-            return
-        }
-
-        Box(
-            modifier = Modifier
-                .size(80.dp),
-            contentAlignment = Alignment.Center,
-
-            ) {
-            Icon(
-                painter = painterResource(Res.drawable.sound),
-                contentDescription = "No sound",
-                tint = AppTheme.PrimaryGray,
-                modifier = Modifier.size(40.dp)
-            )
         }
     }
 }
@@ -226,7 +334,6 @@ private fun WordDetailsContent(
 
     Column(
         modifier = modifier
-            .verticalScroll(rememberScrollState())
     ) {
         // Category
         if (word.category != null) {
