@@ -13,6 +13,8 @@ import vm.words.ua.playlist.ui.screen.PlayListFilterScreen
 import vm.words.ua.playlist.ui.screen.PlayListScreen
 import vm.words.ua.playlist.ui.screen.PlayListDetailsScreen
 import vm.words.ua.settings.ui.screen.SettingScreen
+import vm.words.ua.words.ui.bundles.WordDetailsBundle
+import vm.words.ua.words.ui.screen.WordDetailsScreen
 
 @Composable
 fun AppNavGraph(
@@ -91,6 +93,15 @@ fun AppNavGraph(
 
             PlayListDetailsScreen(
                 playListId = playListId,
+                navController = navController
+            )
+        }
+
+        Screen.WordDetails.route -> {
+            val bundle = navController.getParam<WordDetailsBundle>(Screen.WordDetails.route) ?: throw IllegalStateException()
+            WordDetailsScreen(
+                userWord = bundle.userWord,
+                word = bundle.word,
                 navController = navController
             )
         }

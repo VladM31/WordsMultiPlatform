@@ -19,9 +19,11 @@ import vm.words.ua.core.ui.components.PopupMenuButton
 import vm.words.ua.core.ui.components.PopupMenuItem
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
+import vm.words.ua.navigation.Screen
 import vm.words.ua.playlist.ui.actions.PlayListDetailsAction
 import vm.words.ua.words.ui.components.WordItem
 import vm.words.ua.playlist.ui.vms.PlayListDetailsViewModel
+import vm.words.ua.words.ui.bundles.WordDetailsBundle
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.delete_red
 import wordsmultiplatform.composeapp.generated.resources.play
@@ -115,7 +117,13 @@ fun PlayListDetailsScreen(
                         )
                     },
                     onOpen = {
-                        // TODO: Navigate to word details
+                        navController.navigate(
+                            Screen.WordDetails,
+                            WordDetailsBundle(
+                                userWord = pinnedWord.userWord,
+                                word = pinnedWord.userWord.word
+                            )
+                        )
                     }
                 )
             }

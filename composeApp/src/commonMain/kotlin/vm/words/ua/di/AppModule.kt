@@ -5,6 +5,7 @@ import org.kodein.di.DI
 import vm.words.ua.auth.di.authModules
 import vm.words.ua.core.di.coreModule
 import vm.words.ua.playlist.di.playlistModule
+import vm.words.ua.words.di.viewModelWordsModule
 
 
 /**
@@ -14,6 +15,7 @@ val appModules = DI {
     import(coreModule)
     import(authModules)
     import(playlistModule)
+    import(viewModelWordsModule)
 }
 
 object DiContainer {
