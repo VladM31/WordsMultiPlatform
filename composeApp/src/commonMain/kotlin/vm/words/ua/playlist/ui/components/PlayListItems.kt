@@ -23,7 +23,8 @@ import vm.words.ua.playlist.ui.states.PlayListState
 @Composable
 fun ColumnScope.PlayListItems(
     state: PlayListState,
-    listState: LazyListState
+    listState: LazyListState,
+    onPlayListClick: (String) -> Unit = {}
 ){
     Box(
         modifier = Modifier
@@ -60,10 +61,7 @@ fun ColumnScope.PlayListItems(
                 val playlist = state.playlists[index]
                 PlayListItem(
                     playList = playlist,
-                    onClick = { playlistId ->
-                        // TODO: Navigate to playlist details
-                        println("Clicked playlist: $playlistId")
-                    }
+                    onClick = onPlayListClick
                 )
             }
 

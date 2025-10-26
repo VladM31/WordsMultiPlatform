@@ -1,4 +1,4 @@
-package vm.words.ua.core.firebase
+package vm.words.ua.core.config
 
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*

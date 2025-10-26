@@ -1,8 +1,8 @@
 package vm.words.ua.playlist.net.models.responses
 
 import kotlinx.serialization.Serializable
-
-
+import vm.words.ua.core.domain.models.enums.CEFR
+import vm.words.ua.core.domain.models.enums.Language
 
 
 @Serializable
@@ -35,10 +35,10 @@ data class PlayListRespond(
     data class WordResponse(
         val id: String,
         val original: String,
-        val lang: String,
+        val lang: Language,
         val translate: String,
-        val translateLang: String,
-        val cefr: String,
+        val translateLang: Language,
+        val cefr: CEFR,
         val description: String?,
         val category: String?,
         val soundLink: String?,

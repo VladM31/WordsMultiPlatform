@@ -24,6 +24,7 @@ import vm.words.ua.core.ui.components.BottomNavBar
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
+import vm.words.ua.playlist.domain.models.bundles.PlayListDetailsBundle
 import vm.words.ua.playlist.domain.models.filters.PlayListCountFilter
 import vm.words.ua.playlist.ui.actions.PlayListAction
 import vm.words.ua.playlist.ui.components.PlayListItem
@@ -74,6 +75,9 @@ fun PlayListScreen(
         PlayListItems(
             state = state,
             listState = listState,
+            onPlayListClick = { playListId ->
+                navController.navigate(Screen.PlayListDetails, PlayListDetailsBundle(playListId))
+            }
         )
 
         BottomNavBar(

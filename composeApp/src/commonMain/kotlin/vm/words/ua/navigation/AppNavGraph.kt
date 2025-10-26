@@ -1,18 +1,17 @@
 package vm.words.ua.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import vm.words.ua.core.ui.components.AuthWatcher
 import vm.words.ua.auth.ui.screen.ConfirmSignUpScreen
 import vm.words.ua.auth.ui.screen.LoginScreen
 import vm.words.ua.auth.ui.screen.SignUpScreen
 import vm.words.ua.auth.ui.screen.TelegramLoginScreen
-import vm.words.ua.core.firebase.AppRemoteConfig
 import vm.words.ua.core.ui.screen.LoaderScreen
-import vm.words.ua.di.initDi
 import vm.words.ua.main.ui.screen.HomeScreen
+import vm.words.ua.playlist.domain.models.bundles.PlayListDetailsBundle
 import vm.words.ua.playlist.ui.screen.PlayListFilterScreen
 import vm.words.ua.playlist.ui.screen.PlayListScreen
+import vm.words.ua.playlist.ui.screen.PlayListDetailsScreen
 import vm.words.ua.settings.ui.screen.SettingScreen
 
 @Composable
@@ -79,6 +78,19 @@ fun AppNavGraph(
 
         Screen.PlayListFilter.route -> {
             PlayListFilterScreen(
+                navController = navController
+            )
+        }
+
+        Screen.PlayListDetails.route -> {
+            val playListId = navController.getParam<PlayListDetailsBundle>(Screen.PlayListDetails.route)?.playListId
+            if (playListId == null){
+                navController.popBackStack()
+                return
+            }
+
+            PlayListDetailsScreen(
+                playListId = playListId,
                 navController = navController
             )
         }

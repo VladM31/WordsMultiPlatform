@@ -1,15 +1,11 @@
-package vm.words.ua.core.firebase
+package vm.words.ua.core.config
 
-import io.ktor.client.*
-import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.serialization.json.Json
-import vm.words.ua.core.config.RemoteConfigData
+import vm.words.ua.core.domain.models.RemoteConfigData
 
-/**
- * Менеджер для работы с удаленной конфигурацией приложения
- */
+
 object AppRemoteConfig {
     private const val CONFIG_URL = "https://gist.githubusercontent.com/VladM31/54f9cccbe96d9adf02d32791dba4f49e/raw"
 
@@ -71,8 +67,3 @@ object AppRemoteConfig {
         }
     }
 }
-
-/**
- * Создание HttpClient для разных платформ
- */
-expect fun createHttpClient(): HttpClient

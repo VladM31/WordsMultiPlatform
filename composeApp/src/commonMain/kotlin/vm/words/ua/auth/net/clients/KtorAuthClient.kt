@@ -9,7 +9,7 @@ import vm.words.ua.auth.net.requests.LoginRequest
 import vm.words.ua.auth.net.requests.SignUpRequest
 import vm.words.ua.auth.net.responses.AuthResponse
 import vm.words.ua.auth.net.responses.SignUpResponse
-import vm.words.ua.core.firebase.AppRemoteConfig
+import vm.words.ua.core.config.AppRemoteConfig
 
 /**
  * Реализация AuthClient на основе Ktor HTTP клиента

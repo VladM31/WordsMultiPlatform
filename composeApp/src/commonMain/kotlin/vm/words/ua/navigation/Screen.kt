@@ -11,4 +11,5 @@ sealed class Screen(val route: String) {
     data object Settings : Screen("settings")
     data object PlayList : Screen("playlist")
     data object PlayListFilter : Screen("playlist_filter")
+    data object PlayListDetails : Screen("playlist_details")
 }

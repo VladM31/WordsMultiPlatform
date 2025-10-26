@@ -1,6 +1,7 @@
 package vm.words.ua.playlist.domain.models
 
 import kotlinx.datetime.Instant
+import vm.words.ua.words.domain.models.UserWord
 
 data class PlayList(
     val id: String,
@@ -13,26 +14,4 @@ data class PlayList(
         val lastReadDate: Instant,
         val userWord: UserWord
     )
-
-    data class UserWord(
-        val id: String,
-        val learningGrade: Long,
-        val createdAt: Instant,
-        val lastReadDate: Instant,
-        val word: Word
-    )
-
-    data class Word(
-        val id: String,
-        val original: String,
-        val lang: String,
-        val translate: String,
-        val translateLang: String,
-        val cefr: String,
-        val description: String?,
-        val category: String?,
-        val soundLink: String?,
-        val imageLink: String?
-    )
-
 }

@@ -1,6 +1,6 @@
 package  vm.words.ua.auth.ui.states
 
-import vm.words.ua.core.domain.models.Currency
+import vm.words.ua.core.domain.models.enums.Currency
 import vm.words.ua.core.ui.models.ErrorMessage
 
 

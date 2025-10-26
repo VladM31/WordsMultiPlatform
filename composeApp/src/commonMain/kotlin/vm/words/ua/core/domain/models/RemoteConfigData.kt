@@ -1,10 +1,7 @@
-package vm.words.ua.core.config
+package vm.words.ua.core.domain.models
 
 import kotlinx.serialization.Serializable
 
-/**
- * Модель данных для конфигурации из удаленного источника
- */
 @Serializable
 data class RemoteConfigData(
     val baseUrl: String,
@@ -17,4 +14,3 @@ data class RemoteConfigData(
     val version: String,
     val telegramBotLink: String
 )
-
