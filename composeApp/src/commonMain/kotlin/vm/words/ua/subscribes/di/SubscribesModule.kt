@@ -7,5 +7,5 @@ import org.kodein.di.DI
  */
 val subscribesModule = DI.Module("subscribes") {
     import(subscribesClientModule)
+    import(subscribesManagerModule)
 }
-
