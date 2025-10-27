@@ -7,13 +7,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import vm.words.ua.core.ui.AppTheme
+import vm.words.ua.core.utils.AppWindowProvider
 
 import vm.words.ua.navigation.AppNavGraph
 import vm.words.ua.navigation.rememberSimpleNavController
 
 @Composable
 @Preview
-fun App() {
+fun App() = AppWindowProvider {
     // Initialize DI (safe to call multiple times)
 
 
