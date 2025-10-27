@@ -14,10 +14,11 @@ class KtorSubscribeClient(
     private val client: HttpClient
 ) : SubscribeClient {
 
-    override suspend fun fetch(): SubscribeRespond? {
+    override suspend fun fetch(token: String): SubscribeRespond? {
         return try {
             val response: HttpResponse = client.get("${AppRemoteConfig.baseUrl}/pay/subscribe") {
                 contentType(ContentType.Application.Json)
+                header("Authorization", "Bearer $token")
             }
 
             if (response.status.isSuccess()) {

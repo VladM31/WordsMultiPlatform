@@ -10,7 +10,8 @@ internal val viewModelWordsModule = DI.Module("viewModelWordsModule") {
     bind<WordDetailsViewModel>() with factory {
         WordDetailsViewModel(
             byteContentManager = instance(),
-            soundManager = instance()
+            soundManager = instance(),
+            subscribeManager = instance()
         )
     }
 }

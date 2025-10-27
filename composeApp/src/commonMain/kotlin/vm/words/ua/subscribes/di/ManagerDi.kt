@@ -12,7 +12,10 @@ import vm.words.ua.subscribes.domain.managers.impl.InMemorySubscribeCacheManager
  */
 internal val subscribesManagerModule = DI.Module("subscribesManager") {
     bind<SubscribeCacheManager>() with singleton {
-        InMemorySubscribeCacheManager(instance())
+        InMemorySubscribeCacheManager(
+            subscribeClient = instance(),
+            userCacheManager = instance()
+        )
     }
 }
 

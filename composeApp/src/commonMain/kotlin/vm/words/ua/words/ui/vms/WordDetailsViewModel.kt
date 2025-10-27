@@ -11,13 +11,15 @@ import kotlinx.coroutines.launch
 import vm.words.ua.core.domain.managers.ByteContentManager
 import vm.words.ua.core.domain.models.ByteContent
 import vm.words.ua.core.ui.models.ErrorMessage
+import vm.words.ua.subscribes.domain.managers.SubscribeCacheManager
 import vm.words.ua.words.domain.managers.SoundManager
 import vm.words.ua.words.ui.actions.WordDetailsAction
 import vm.words.ua.words.ui.states.WordDetailsState
 
 class WordDetailsViewModel(
     private val byteContentManager: ByteContentManager,
-    private val soundManager: SoundManager
+    private val soundManager: SoundManager,
+    private val subscribeManager: SubscribeCacheManager
 ) : ViewModel() {
 
     private val mutableState = MutableStateFlow(WordDetailsState())
@@ -32,13 +34,17 @@ class WordDetailsViewModel(
     }
 
     private fun fetchUserWord(action: WordDetailsAction.Init) {
+        if (state.value.isInited){
+            return
+        }
         val isLoading = action.word.imageLink.isNullOrBlank().not()
                 || action.word.soundLink.isNullOrBlank().not()
 
         mutableState.value = mutableState.value.copy(
             isLoading = isLoading,
             userWord = action.userWord,
-            word = action.word
+            word = action.word,
+            isInited = true
         )
 
         if (isLoading.not()) {
@@ -48,6 +54,14 @@ class WordDetailsViewModel(
         viewModelScope.launch(Dispatchers.Default) {
 
             try {
+                val isActiveSubscribe = subscribeManager.isActiveSubscribe()
+                if (isActiveSubscribe.not()){
+                    mutableState.value = mutableState.value.copy(
+                        isLoading = false
+                    )
+                    return@launch
+                }
+
                 val imageTask = async {
                     getContent(action.word.imageLink)
                 }
@@ -58,7 +72,8 @@ class WordDetailsViewModel(
                 mutableState.value = mutableState.value.copy(
                     isLoading = false,
                     image = imageTask.await(),
-                    sound = soundTask.await()
+                    sound = soundTask.await(),
+                    isActiveSubscribe = isActiveSubscribe
                 )
             } catch (e: Exception) {
                 e.printStackTrace()

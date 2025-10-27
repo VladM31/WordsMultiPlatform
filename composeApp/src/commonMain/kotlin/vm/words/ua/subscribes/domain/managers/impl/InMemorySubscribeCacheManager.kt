@@ -2,6 +2,7 @@ package vm.words.ua.subscribes.domain.managers.impl
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import vm.words.ua.core.domain.managers.UserCacheManager
 import vm.words.ua.subscribes.domain.managers.SubscribeCacheManager
 import vm.words.ua.subscribes.domain.models.Cache
 import vm.words.ua.subscribes.domain.models.Subscribe
@@ -11,14 +12,15 @@ import vm.words.ua.subscribes.net.clients.SubscribeClient
  * Реализация SubscribeCacheManager в памяти (без файлов)
  */
 class InMemorySubscribeCacheManager(
-    private val subscribeClient: SubscribeClient
+    private val subscribeClient: SubscribeClient,
+    private val userCacheManager: UserCacheManager
 ) : SubscribeCacheManager {
 
     private var cachedSubscribe: Subscribe? = null
     private var cacheDate: Instant? = null
 
     override suspend fun fetch(): Subscribe? {
-        val response = subscribeClient.fetch() ?: return null
+        val response = subscribeClient.fetch(userCacheManager.token.value) ?: return null
 
         cachedSubscribe = Subscribe(response.expirationDate)
         cacheDate = Clock.System.now()
