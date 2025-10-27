@@ -13,14 +13,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.exercise.domain.models.data.ExerciseSelection
 
 @Composable
 fun ExerciseItemSelected(
     exerciseSelection: ExerciseSelection,
+    fontSize: TextUnit,
     onRemove: (ExerciseSelection) -> Unit
 ) {
     Box(
@@ -32,7 +33,7 @@ fun ExerciseItemSelected(
     ) {
         Text(
             text = "${exerciseSelection.number}. ${exerciseSelection.exercise.text}",
-            fontSize = 18.sp,
+            fontSize = fontSize,
             fontWeight = FontWeight.Bold,
             color = Color(0xFF1B1B1B)
         )

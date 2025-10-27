@@ -10,12 +10,12 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
+import vm.words.ua.core.utils.getFontSize
 import vm.words.ua.exercise.ui.actions.ExerciseSelectAction
 import vm.words.ua.exercise.ui.vm.ExerciseSelectionViewModel
 import vm.words.ua.exercise.ui.componets.ExerciseItemSelected
 import vm.words.ua.exercise.ui.componets.ExerciseItemUnselected
 import vm.words.ua.navigation.SimpleNavController
-
 
 
 @Composable
@@ -24,6 +24,8 @@ fun ExerciseSelectionScreen(
     navController: SimpleNavController
 ) {
     val state by viewModel.state.collectAsState()
+    val fontSize = getFontSize()
+
 
     LaunchedEffect(state.isConfirmed) {
         if (state.isConfirmed) {
@@ -53,6 +55,7 @@ fun ExerciseSelectionScreen(
             ) { exerciseSelection ->
                 ExerciseItemSelected(
                     exerciseSelection = exerciseSelection,
+                    fontSize = fontSize,
                     onRemove = {
                         viewModel.sent(ExerciseSelectAction.RemoveExercise(exerciseSelection.exercise))
                     }
@@ -72,6 +75,7 @@ fun ExerciseSelectionScreen(
             ) { exerciseSelection ->
                 ExerciseItemUnselected(
                     exerciseSelection = exerciseSelection,
+                    fontSize = fontSize,
                     onSelect = {
                         viewModel.sent(ExerciseSelectAction.AddExercise(exerciseSelection.exercise))
                     }

@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import vm.words.ua.core.ui.AppTheme
@@ -20,6 +21,7 @@ import vm.words.ua.exercise.domain.models.data.ExerciseSelection
 @Composable
 fun ExerciseItemUnselected(
     exerciseSelection: ExerciseSelection,
+    fontSize: TextUnit,
     onSelect: () -> Unit
 ) {
     Box(
@@ -31,7 +33,7 @@ fun ExerciseItemUnselected(
     ) {
         Text(
             text = exerciseSelection.exercise.text,
-            fontSize = 18.sp,
+            fontSize = fontSize,
             fontWeight = FontWeight.SemiBold,
             color = AppTheme.PrimaryColor
         )
