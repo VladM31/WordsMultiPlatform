@@ -136,7 +136,7 @@ fun PlayListDetailsScreen(
             onUnselect = { viewModel.sent(PlayListDetailsAction.UnSelect) },
             onUnpin = { viewModel.sent(PlayListDetailsAction.UnPin) },
             onPlay = {
-                // TODO: Start exercise transaction
+                navController.navigate(Screen.ExerciseSelection)
             }
         )
     }

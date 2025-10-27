@@ -7,6 +7,7 @@ import vm.words.ua.auth.ui.screen.LoginScreen
 import vm.words.ua.auth.ui.screen.SignUpScreen
 import vm.words.ua.auth.ui.screen.TelegramLoginScreen
 import vm.words.ua.core.ui.screen.LoaderScreen
+import vm.words.ua.exercise.ui.screens.ExerciseSelectionScreen
 import vm.words.ua.main.ui.screen.HomeScreen
 import vm.words.ua.playlist.domain.models.bundles.PlayListDetailsBundle
 import vm.words.ua.playlist.ui.screen.PlayListFilterScreen
@@ -102,6 +103,12 @@ fun AppNavGraph(
             WordDetailsScreen(
                 userWord = bundle.userWord,
                 word = bundle.word,
+                navController = navController
+            )
+        }
+
+        Screen.ExerciseSelection.route -> {
+            ExerciseSelectionScreen(
                 navController = navController
             )
         }
