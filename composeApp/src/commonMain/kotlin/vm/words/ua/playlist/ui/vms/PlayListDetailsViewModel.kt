@@ -2,6 +2,7 @@ package vm.words.ua.playlist.ui.vms
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -72,7 +73,7 @@ class PlayListDetailsViewModel(
     private fun unPin() {
         if (state.value.selectedWords.isEmpty()) return
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             val unPinWords = state.value.selectedWords.keys.map {
                 PinPlayList(
                     wordId = it,

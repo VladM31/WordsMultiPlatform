@@ -28,7 +28,7 @@ class KtorPinPlayListClient(
     override suspend fun unpin(token: String, requests: List<PinPlayRequest>) {
         try {
             client.post("$baseUrl/words-api/unpin") {
-                header("Authorization", token)
+                header("Authorization", "Bearer $token")
                 contentType(ContentType.Application.Json)
                 setBody(requests)
             }
