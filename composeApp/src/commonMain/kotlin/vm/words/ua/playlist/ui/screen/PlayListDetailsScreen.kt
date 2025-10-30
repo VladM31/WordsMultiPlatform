@@ -18,6 +18,7 @@ import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.PopupMenuButton
 import vm.words.ua.core.ui.components.PopupMenuItem
 import vm.words.ua.di.rememberInstance
+import vm.words.ua.exercise.domain.mappers.toExerciseWordDetails
 import vm.words.ua.exercise.ui.bundles.ExerciseSelectionBundle
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.navigation.Screen
