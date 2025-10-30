@@ -30,7 +30,6 @@ fun ExerciseSelectionScreen(
     val state by viewModel.state.collectAsState()
     val fontSize = getFontSize()
     val bundle = navController.getParam<ExerciseSelectionBundle>() ?: throw IllegalArgumentException()
-    println(bundle.words.size)
 
     LaunchedEffect(state.isConfirmed) {
         if (state.isConfirmed) {
