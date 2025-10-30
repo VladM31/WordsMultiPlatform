@@ -1,4 +1,4 @@
-package vm.words.ua.exercise.domain.models.states
+package vm.words.ua.exercise.ui.states
 
 import vm.words.ua.exercise.domain.models.enums.Exercise
 import vm.words.ua.exercise.domain.models.data.ExerciseSelection

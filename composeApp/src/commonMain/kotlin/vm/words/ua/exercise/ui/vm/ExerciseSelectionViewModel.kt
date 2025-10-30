@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 import vm.words.ua.exercise.ui.actions.ExerciseSelectAction
 import vm.words.ua.exercise.domain.models.data.ExerciseSelection
 import vm.words.ua.exercise.domain.models.enums.Exercise
-import vm.words.ua.exercise.domain.models.states.ExerciseSelectState
+import vm.words.ua.exercise.ui.states.ExerciseSelectState
 
 class ExerciseSelectionViewModel : ViewModel() {
 
