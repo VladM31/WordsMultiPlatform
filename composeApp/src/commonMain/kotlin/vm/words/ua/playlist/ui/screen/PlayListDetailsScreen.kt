@@ -144,7 +144,7 @@ fun PlayListDetailsScreen(
                     Screen.ExerciseSelection,
                     ExerciseSelectionBundle(
                         playListId = state.id,
-                        words = state.getWords()
+                        words = state.getSelectedWords()
                     )
                 )
             }

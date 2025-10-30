@@ -11,7 +11,7 @@ data class PlayListDetailsState(
     val isEnd: Boolean = false
 ) {
 
-    fun getWords(): List<UserWord> {
+    fun getSelectedWords(): List<UserWord> {
         if (selectedWords.isEmpty()) {
             return words.map { it.userWord }
         }

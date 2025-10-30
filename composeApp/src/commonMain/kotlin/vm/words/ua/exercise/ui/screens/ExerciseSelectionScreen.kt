@@ -1,12 +1,7 @@
 package vm.words.ua.exercise.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -20,6 +15,7 @@ import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.utils.getFontSize
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.exercise.ui.actions.ExerciseSelectAction
+import vm.words.ua.exercise.ui.bundles.ExerciseSelectionBundle
 import vm.words.ua.exercise.ui.componets.ExerciseItemSelected
 import vm.words.ua.exercise.ui.componets.ExerciseItemUnselected
 import vm.words.ua.exercise.ui.vm.ExerciseSelectionViewModel
@@ -33,7 +29,8 @@ fun ExerciseSelectionScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val fontSize = getFontSize()
-
+    val bundle = navController.getParam<ExerciseSelectionBundle>() ?: throw IllegalArgumentException()
+    println(bundle.words.size)
 
     LaunchedEffect(state.isConfirmed) {
         if (state.isConfirmed) {
