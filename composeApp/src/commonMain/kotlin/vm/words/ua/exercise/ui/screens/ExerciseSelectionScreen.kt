@@ -4,12 +4,16 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import vm.words.ua.core.ui.components.CenteredLoader
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.utils.getFontSize
@@ -29,12 +33,21 @@ fun ExerciseSelectionScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val fontSize = getFontSize()
-    val bundle = navController.getParam<ExerciseSelectionBundle>() ?: throw IllegalArgumentException()
+    val bundle = navController.getParam<ExerciseSelectionBundle>() // Adjust the type as needed
 
     LaunchedEffect(state.isConfirmed) {
         if (state.isConfirmed) {
             navController.popBackStack()
         }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.sent(
+            ExerciseSelectAction.Init(
+                playListId = bundle?.playListId,
+                words = bundle?.words ?: emptyList()
+            )
+        )
     }
 
     Column(
@@ -47,10 +60,21 @@ fun ExerciseSelectionScreen(
             onBackClick = { navController.popBackStack() }
         )
 
+        if (state.isLoading) {
+            // Let the loader fill available space so its internal Column centers content
+            CenteredLoader(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                message = "Prepare..."
+            )
+            return@Column
+        }
+
         LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
+                .weight(1f)
+                .padding(4.dp),
             verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
             // Выбранные упражнения
@@ -86,5 +110,18 @@ fun ExerciseSelectionScreen(
                 )
             }
         }
+
+        // Confirm button
+        Button(
+            onClick = { viewModel.sent(ExerciseSelectAction.ConfirmSelection) },
+            enabled = state.exercises.count { it.isSelected } > 0,
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(8.dp)
+
+        ) {
+            Text(text = "Confirm",  fontSize = fontSize * 1.2, modifier = Modifier.padding(horizontal = 48.dp))
+        }
+
     }
 }

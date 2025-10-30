@@ -1,6 +1,7 @@
 package vm.words.ua.exercise.domain.models.data
 
 import kotlinx.datetime.Instant
+import vm.words.ua.core.domain.models.ByteContent
 import vm.words.ua.core.domain.models.enums.CEFR
 import vm.words.ua.core.domain.models.enums.Language
 
@@ -19,5 +20,7 @@ data class ExerciseWordDetails(
     val description: String?,
     val category: String?,
     val soundLink: String?,
-    val imageLink: String?
+    val imageLink: String?,
+    val soundContent: ByteContent? = null,
+    val imageContent: ByteContent? = null
 )
