@@ -27,9 +27,7 @@ fun AppNavGraph(
         }
 
         Screen.Login.route -> {
-            LoginScreen(
-                navController = navController
-            )
+            LoginScreen(navController = navController)
         }
 
         Screen.SignUp.route -> {
@@ -86,23 +84,13 @@ fun AppNavGraph(
         }
 
         Screen.PlayListDetails.route -> {
-            val playListId = navController.getParam<PlayListDetailsBundle>(Screen.PlayListDetails.route)?.playListId
-            if (playListId == null){
-                navController.popBackStack()
-                return
-            }
-
             PlayListDetailsScreen(
-                playListId = playListId,
                 navController = navController
             )
         }
 
         Screen.WordDetails.route -> {
-            val bundle = navController.getParam<WordDetailsBundle>(Screen.WordDetails.route) ?: throw IllegalStateException()
             WordDetailsScreen(
-                userWord = bundle.userWord,
-                word = bundle.word,
                 navController = navController
             )
         }

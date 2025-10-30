@@ -18,8 +18,10 @@ import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.PopupMenuButton
 import vm.words.ua.core.ui.components.PopupMenuItem
 import vm.words.ua.di.rememberInstance
+import vm.words.ua.exercise.ui.bundles.ExerciseSelectionBundle
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.navigation.Screen
+import vm.words.ua.playlist.domain.models.bundles.PlayListDetailsBundle
 import vm.words.ua.playlist.ui.actions.PlayListDetailsAction
 import vm.words.ua.words.ui.components.WordItem
 import vm.words.ua.playlist.ui.vms.PlayListDetailsViewModel
@@ -31,20 +33,23 @@ import wordsmultiplatform.composeapp.generated.resources.play
 
 @Composable
 fun PlayListDetailsScreen(
-    playListId: String,
     navController: SimpleNavController,
     modifier: Modifier = Modifier
 ) {
+    val playListId = navController.getParam<PlayListDetailsBundle>(Screen.PlayListDetails.route)?.playListId
+    if (playListId == null){
+        navController.popBackStack()
+        return
+    }
+
     val viewModel = rememberInstance<PlayListDetailsViewModel>()
     val state by viewModel.state.collectAsState()
     var showEditDialog by remember { mutableStateOf(false) }
 
-    // Fetch playlist on first composition
     LaunchedEffect(playListId) {
         viewModel.sent(PlayListDetailsAction.Fetch(playListId))
     }
 
-    // Handle navigation back when playlist is deleted
     LaunchedEffect(state.isEnd) {
         if (state.isEnd) {
             navController.popBackStack()
@@ -93,7 +98,6 @@ fun PlayListDetailsScreen(
             }
         }
 
-        // Words list
         LazyColumn(
             modifier = Modifier
                 .weight(1f)
@@ -136,12 +140,17 @@ fun PlayListDetailsScreen(
             onUnselect = { viewModel.sent(PlayListDetailsAction.UnSelect) },
             onUnpin = { viewModel.sent(PlayListDetailsAction.UnPin) },
             onPlay = {
-                navController.navigate(Screen.ExerciseSelection)
+                navController.navigate(
+                    Screen.ExerciseSelection,
+                    ExerciseSelectionBundle(
+                        playListId = state.id,
+                        words = state.getWords()
+                    )
+                )
             }
         )
     }
 
-    // Edit dialog
     if (showEditDialog) {
         EditPlayListDialog(
             currentName = state.name,

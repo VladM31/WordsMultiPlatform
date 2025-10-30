@@ -25,10 +25,12 @@ import vm.words.ua.core.utils.getFontSize
 import vm.words.ua.core.utils.getScaleFactor
 import vm.words.ua.core.utils.getWidthDeviceFormat
 import vm.words.ua.di.rememberInstance
+import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.words.domain.models.UserWord
 import vm.words.ua.words.domain.models.Word
 import vm.words.ua.words.ui.actions.WordDetailsAction
+import vm.words.ua.words.ui.bundles.WordDetailsBundle
 import vm.words.ua.words.ui.states.WordDetailsState
 import vm.words.ua.words.ui.vms.WordDetailsViewModel
 import wordsmultiplatform.composeapp.generated.resources.Res
@@ -38,11 +40,14 @@ import wordsmultiplatform.composeapp.generated.resources.sound
 
 @Composable
 fun WordDetailsScreen(
-    userWord: UserWord?,
-    word: Word,
+
     navController: SimpleNavController,
     modifier: Modifier = Modifier
 ) {
+    val bundle = navController.getParam<WordDetailsBundle>(Screen.WordDetails.route) ?: throw IllegalStateException()
+    val userWord: UserWord? = bundle.userWord
+    val word: Word = bundle.word
+
     val viewModel = rememberInstance<WordDetailsViewModel>()
     val state by viewModel.state.collectAsState()
 
