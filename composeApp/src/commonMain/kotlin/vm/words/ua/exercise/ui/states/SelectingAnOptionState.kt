@@ -3,7 +3,10 @@ package vm.words.ua.exercise.ui.states
 import vm.words.ua.core.ui.states.EndetableState
 import vm.words.ua.exercise.domain.models.data.ExerciseWordDetails
 import vm.words.ua.exercise.domain.models.enums.Exercise
+import androidx.compose.runtime.Immutable
+import vm.words.ua.exercise.ui.utils.isEnableImage
 
+@Immutable
 data class SelectingAnOptionState(
     val wordIndex: Int = 0,
     val words: List<ExerciseWordDetails> = emptyList(),
@@ -20,4 +23,8 @@ data class SelectingAnOptionState(
     val isSoundAfterAnswer: Boolean = false
 ) : EndetableState{
     fun currentWord() = words[wordIndex]
+
+    fun enableImage() : Boolean {
+        return isActiveSubscribe && currentWord().imageContent != null && exercise.isEnableImage()
+    }
 }

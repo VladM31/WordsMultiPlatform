@@ -14,4 +14,16 @@ sealed class Screen(val route: String) {
     data object PlayListDetails : Screen("playlist_details")
     data object WordDetails : Screen("word_details")
     data object ExerciseSelection : Screen("exercise_selection")
+
+    data object OptionDescriptionByWords : Screen("option_description_by_words")
+    data object OptionWordByDescription : Screen("option_word_by_description")
+    data object OptionWordByOriginal : Screen("option_word_by_original")
+    data object OptionWordByTranslate : Screen("option_word_by_translate")
+
+    data object LetterMatchByDescription : Screen("letter_match_by_description")
+    data object LetterMatchByTranslation : Screen("letter_match_by_translation")
+    data object MatchWords : Screen("match_words")
+
+    data object WriteByImageAndDescription : Screen("write_by_image_and_description")
+    data object WriteByImageAndTranslation : Screen("write_by_image_and_translation")
 }

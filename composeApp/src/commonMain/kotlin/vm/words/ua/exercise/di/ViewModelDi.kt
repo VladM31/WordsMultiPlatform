@@ -5,6 +5,7 @@ import org.kodein.di.bind
 import org.kodein.di.factory
 import org.kodein.di.instance
 import vm.words.ua.exercise.ui.vm.ExerciseSelectionViewModel
+import vm.words.ua.exercise.ui.vm.SelectingAnOptionVm
 
 /**
  * Модуль Kodein-DI для ViewModels Exercise
@@ -14,6 +15,12 @@ internal val exerciseViewModelModule = DI.Module("exerciseViewModel") {
         ExerciseSelectionViewModel(
             subscribeCacheManager = instance(),
             byteContentManager = instance()
+        )
+    }
+    bind<SelectingAnOptionVm>() with factory {
+        SelectingAnOptionVm(
+            soundManager = instance(),
+            contentManager = instance()
         )
     }
 }

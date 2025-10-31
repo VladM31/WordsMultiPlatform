@@ -24,12 +24,25 @@ class SimpleNavController {
         this.navigate(screen.route, param)
     }
 
+
     fun navigate(route: String) {
         navigate(route, null)
     }
 
     fun navigate(route: String, param: Any?) {
         backStack.add(currentRoute)
+        currentRoute = route
+        navigateParams[route] = param
+        // Clear return params when navigating to new screen
+        returnParams.remove(currentRoute)
+        navigateListeners.forEach { it(route) }
+    }
+
+    fun navigateAndClearCurrent(screen: Screen, param: Any?) {
+        this.navigateAndClearCurrent(screen.route, param)
+    }
+
+    fun navigateAndClearCurrent(route: String, param: Any?) {
         currentRoute = route
         navigateParams[route] = param
         // Clear return params when navigating to new screen
@@ -98,6 +111,13 @@ class SimpleNavController {
     fun <T> getParam(route: String = currentRoute): T? {
         @Suppress("UNCHECKED_CAST")
         return navigateParams[route] as? T
+    }
+
+    /**
+     * Get parameter passed to current screen via navigate()
+     */
+    fun <T> getParamOrThrow(route: String = currentRoute): T {
+        return getParam<T>(route) ?: throw IllegalStateException("No navigation parameter for route: $route")
     }
 
     /**

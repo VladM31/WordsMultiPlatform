@@ -13,6 +13,6 @@ interface SelectingAnOptionAction {
         val isSoundBeforeAnswer: Boolean,
         val isSoundAfterAnswer: Boolean
     ) : SelectingAnOptionAction
-    data class ChooseWord(val wordId: String) : SelectingAnOptionAction
+    data class ChooseWord(val word: ExerciseWordDetails) : SelectingAnOptionAction
     data object Next : SelectingAnOptionAction
 }

@@ -1,20 +1,20 @@
 package vm.words.ua.navigation
 
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import vm.words.ua.core.ui.components.AuthWatcher
 import vm.words.ua.auth.ui.screen.ConfirmSignUpScreen
 import vm.words.ua.auth.ui.screen.LoginScreen
 import vm.words.ua.auth.ui.screen.SignUpScreen
 import vm.words.ua.auth.ui.screen.TelegramLoginScreen
+import vm.words.ua.core.ui.components.AuthWatcher
 import vm.words.ua.core.ui.screen.LoaderScreen
-import vm.words.ua.exercise.ui.screens.ExerciseSelectionScreen
+import vm.words.ua.exercise.ui.screens.*
 import vm.words.ua.main.ui.screen.HomeScreen
-import vm.words.ua.playlist.domain.models.bundles.PlayListDetailsBundle
+import vm.words.ua.playlist.ui.screen.PlayListDetailsScreen
 import vm.words.ua.playlist.ui.screen.PlayListFilterScreen
 import vm.words.ua.playlist.ui.screen.PlayListScreen
-import vm.words.ua.playlist.ui.screen.PlayListDetailsScreen
 import vm.words.ua.settings.ui.screen.SettingScreen
-import vm.words.ua.words.ui.bundles.WordDetailsBundle
 import vm.words.ua.words.ui.screen.WordDetailsScreen
 
 @Composable
@@ -65,6 +65,7 @@ fun AppNavGraph(
                 navController = navController
             )
         }
+
         Screen.Settings.route -> {
             SettingScreen(
                 navController = navController
@@ -99,6 +100,41 @@ fun AppNavGraph(
             ExerciseSelectionScreen(
                 navController = navController
             )
+        }
+
+        Screen.WriteByImageAndTranslation.route,
+        Screen.WriteByImageAndDescription.route,
+        Screen.MatchWords.route,
+        Screen.LetterMatchByTranslation.route,
+        Screen.LetterMatchByDescription.route -> {
+            Button(onClick = { navController.popBackStack() }) {
+                Text("Exercise Screen, " + navController.currentRoute)
+            }
+        }
+        Screen.OptionDescriptionByWords.route -> {
+            DescriptionByWordsScreen(
+                navController = navController
+            )
+        }
+        Screen.OptionWordByDescription.route -> {
+            WordByDescriptionsScreen(
+                navController = navController
+            )
+        }
+        Screen.OptionWordByOriginal.route -> {
+            WordByOriginalsScreen(
+                navController = navController
+            )
+        }
+        Screen.OptionWordByTranslate.route -> {
+            WordByTranslatesScreen(
+                navController = navController
+            )
+        }
+        else -> {
+            Button(onClick = { navController.popBackStack() }) {
+                Text("Unknown Screen, " + navController.currentRoute)
+            }
         }
     }
     AuthWatcher(navController = navController)

@@ -18,8 +18,10 @@ import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.utils.getFontSize
 import vm.words.ua.di.rememberInstance
+import vm.words.ua.exercise.domain.mappers.toScreen
 import vm.words.ua.exercise.ui.actions.ExerciseSelectAction
 import vm.words.ua.exercise.ui.bundles.ExerciseSelectionBundle
+import vm.words.ua.exercise.ui.bundles.SelectingAnOptionBundle
 import vm.words.ua.exercise.ui.componets.ExerciseItemSelected
 import vm.words.ua.exercise.ui.componets.ExerciseItemUnselected
 import vm.words.ua.exercise.ui.vm.ExerciseSelectionViewModel
@@ -35,10 +37,19 @@ fun ExerciseSelectionScreen(
     val fontSize = getFontSize()
     val bundle = navController.getParam<ExerciseSelectionBundle>() // Adjust the type as needed
 
+
     LaunchedEffect(state.isConfirmed) {
-        if (state.isConfirmed) {
-            navController.popBackStack()
+        if (!state.isConfirmed) {
+            return@LaunchedEffect
         }
+        val exercises = state.exercises.filter { it.isSelected }
+        val bundle = SelectingAnOptionBundle(
+            exercises = exercises,
+            words = state.words,
+            transactionId = state.transactionId,
+            isActiveSubscribe = state.isActiveSubscribe,
+        )
+        navController.navigateAndClearCurrent(exercises.first().exercise.toScreen(), bundle)
     }
 
     LaunchedEffect(Unit) {
@@ -74,7 +85,7 @@ fun ExerciseSelectionScreen(
         LazyColumn(
             modifier = Modifier
                 .weight(1f)
-                .padding(4.dp),
+                .padding(vertical = 4.dp, horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
             // Выбранные упражнения
@@ -93,7 +104,7 @@ fun ExerciseSelectionScreen(
             // Пространство между выбранными и невыбранными
             if (state.selectedExercises.isNotEmpty()) {
                 item {
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
                 }
             }
 

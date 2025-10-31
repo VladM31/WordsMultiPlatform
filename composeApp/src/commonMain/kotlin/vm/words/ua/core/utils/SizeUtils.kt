@@ -36,3 +36,8 @@ fun getIconButtonSize() : Dp{
 fun getFontSize() : TextUnit{
     return (24 * getScaleFactor()).sp
 }
+
+@Composable
+fun getImageSize() : Dp{
+    return (300 * getScaleFactor()).dp
+}

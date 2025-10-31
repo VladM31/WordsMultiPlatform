@@ -11,6 +11,7 @@ import vm.words.ua.core.domain.managers.ByteContentManager
 import vm.words.ua.exercise.domain.models.data.ExerciseWordDetails
 import vm.words.ua.exercise.ui.actions.SelectingAnOptionAction
 import vm.words.ua.exercise.ui.states.SelectingAnOptionState
+import vm.words.ua.exercise.ui.utils.toOptionText
 import vm.words.ua.words.domain.managers.SoundManager
 
 class SelectingAnOptionVm(
@@ -32,16 +33,12 @@ class SelectingAnOptionVm(
 
     private fun handleChooseWord(action: SelectingAnOptionAction.ChooseWord) {
         val word = state.value.let { it.words[it.wordIndex] }
-        val isCorrect = word.wordId == action.wordId
+        val isCorrect = calculateIsCorrect(word, action)
 
-        val newIndex = state.value.wordIndex + 1
-        val isEnd = newIndex == state.value.words.size
-
-        runSound(newIndex, isNeedSound = { it.isSoundAfterAnswer})
+        runSound(isNeedSound = { it.isSoundAfterAnswer})
 
         mutableState.value = state.value.copy(
             grades = state.value.grades + if (isCorrect) 1 else 0,
-            isEnd = isEnd,
             waitNext = true,
             isCorrect = isCorrect
         )
@@ -53,11 +50,18 @@ class SelectingAnOptionVm(
         }
     }
 
+    private fun calculateIsCorrect(
+        word: ExerciseWordDetails,
+        action: SelectingAnOptionAction.ChooseWord
+    ): Boolean =
+        word.wordId == action.word.wordId || word.toOptionText(state.value.exercise) == action.word.toOptionText(state.value.exercise)
+
     private fun handleNext(){
         val newIndex = state.value.wordIndex + 1
         val isEnd = newIndex == state.value.words.size
 
         val wordsToChoose = if (isEnd) emptyList() else getChoiceWords(newIndex, state.value.words)
+
         mutableState.value = state.value.copy(
             wordIndex = if (isEnd) newIndex - 1 else newIndex,
             wordsToChoose = wordsToChoose,
@@ -65,11 +69,13 @@ class SelectingAnOptionVm(
             waitNext = false,
             isCorrect = null
         )
-        runSound(mutableState.value.wordIndex, isNeedSound = { it.isSoundBeforeAnswer})
+        if (isEnd.not()) {
+            runSound(isNeedSound = { it.isSoundBeforeAnswer})
+        }
     }
 
-    private fun runSound(newIndex: Int, isNeedSound :  (SelectingAnOptionState) -> Boolean) {
-        state.value.words.getOrNull(newIndex)?.soundLink?.let { link ->
+    private fun runSound(isNeedSound :  (SelectingAnOptionState) -> Boolean) {
+        state.value.currentWord().soundLink?.let { link ->
             if (!state.value.let { it.isActiveSubscribe && isNeedSound(it) }) {
                 return@let
             }
@@ -86,6 +92,7 @@ class SelectingAnOptionVm(
         if (state.value.isInited) return
         val words = action.words.shuffled()
 
+
         mutableState.value = state.value.copy(
             isInited = true,
             words = words,
@@ -96,7 +103,7 @@ class SelectingAnOptionVm(
             isSoundBeforeAnswer = action.isSoundBeforeAnswer,
             isSoundAfterAnswer = action.isSoundAfterAnswer
         )
-        runSound(mutableState.value.wordIndex, isNeedSound = { it.isSoundBeforeAnswer})
+        runSound(isNeedSound = { it.isSoundBeforeAnswer})
     }
 
     private fun getChoiceWords(index: Int, stateWords: List<ExerciseWordDetails>): List<ExerciseWordDetails> {
