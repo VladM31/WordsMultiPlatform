@@ -5,6 +5,7 @@ import org.kodein.di.bind
 import org.kodein.di.factory
 import org.kodein.di.instance
 import vm.words.ua.exercise.ui.vm.ExerciseSelectionViewModel
+import vm.words.ua.exercise.ui.vm.LettersMatchVm
 import vm.words.ua.exercise.ui.vm.MatchWordsViewModel
 import vm.words.ua.exercise.ui.vm.SelectingAnOptionVm
 
@@ -21,12 +22,21 @@ internal val exerciseViewModelModule = DI.Module("exerciseViewModel") {
     bind<SelectingAnOptionVm>() with factory {
         SelectingAnOptionVm(
             soundManager = instance(),
-            contentManager = instance()
+            contentManager = instance(),
+            exerciseStatisticalManager = instance()
         )
     }
 
     bind<MatchWordsViewModel>() with factory {
-        MatchWordsViewModel()
+        MatchWordsViewModel(
+            exerciseStatisticalManager = instance()
+        )
+    }
+
+    bind<LettersMatchVm>() with factory {
+        LettersMatchVm(
+            exerciseStatisticalManager = instance()
+        )
     }
 }
 

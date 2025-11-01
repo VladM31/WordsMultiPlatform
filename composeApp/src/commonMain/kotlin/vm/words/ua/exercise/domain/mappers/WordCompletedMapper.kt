@@ -3,6 +3,7 @@ package vm.words.ua.exercise.domain.mappers
 import kotlinx.datetime.Clock
 import vm.words.ua.exercise.domain.models.data.WordCompleted
 import vm.words.ua.exercise.domain.models.enums.Exercise
+import vm.words.ua.exercise.ui.states.LettersMatchState
 import vm.words.ua.exercise.ui.states.MatchWordsState
 import vm.words.ua.exercise.ui.states.SelectingAnOptionState
 
@@ -33,3 +34,17 @@ fun SelectingAnOptionState.toWordCompleted()  : WordCompleted{
     )
 }
 
+fun LettersMatchState.toWordCompleted() : WordCompleted {
+    val currentWord = this.currentWord()
+
+
+    return WordCompleted(
+        transactionId = transactionId,
+        wordId = currentWord.wordId,
+        userWordId = currentWord.userWordId,
+        exerciseId = this.exerciseType.id,
+        attempts = this.attempts,
+        isCorrect = attempts < 3,
+        completedAt = Clock.System.now().toEpochMilliseconds()
+    )
+}
