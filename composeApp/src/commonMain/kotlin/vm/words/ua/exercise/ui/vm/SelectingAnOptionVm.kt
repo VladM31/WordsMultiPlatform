@@ -89,11 +89,11 @@ class SelectingAnOptionVm(
     }
 
     private fun handleInit(action: SelectingAnOptionAction.Init) {
-        if (state.value.isInited) return
+        if (state.value.isInited && state.value.exercise == action.exerciseType) return
         val words = action.words.shuffled()
 
 
-        mutableState.value = state.value.copy(
+        mutableState.value = SelectingAnOptionState(
             isInited = true,
             words = words,
             isActiveSubscribe = action.isActiveSubscribe,

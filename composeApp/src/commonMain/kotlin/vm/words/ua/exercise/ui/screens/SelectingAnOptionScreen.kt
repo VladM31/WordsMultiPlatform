@@ -14,13 +14,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.ui.components.ImageFromBytes
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.CenteredLoader
-import vm.words.ua.core.ui.components.PrimaryButton
+import vm.words.ua.core.ui.components.ImageFromBytes
 import vm.words.ua.core.utils.getFontSize
 import vm.words.ua.core.utils.getImageSize
 import vm.words.ua.core.utils.getWidthDeviceFormat
@@ -31,9 +29,9 @@ import vm.words.ua.exercise.ui.actions.SelectingAnOptionAction
 import vm.words.ua.exercise.ui.bundles.SelectingAnOptionBundle
 import vm.words.ua.exercise.ui.componets.OptionCard
 import vm.words.ua.exercise.ui.utils.isSoundAfterAnswer
+import vm.words.ua.exercise.ui.utils.isSoundBeforeAnswer
 import vm.words.ua.exercise.ui.utils.toOptionText
 import vm.words.ua.exercise.ui.utils.toText
-import vm.words.ua.exercise.ui.utils.isSoundBeforeAnswer
 import vm.words.ua.exercise.ui.vm.SelectingAnOptionVm
 import vm.words.ua.navigation.SimpleNavController
 import wordsmultiplatform.composeapp.generated.resources.Res
@@ -100,6 +98,9 @@ private fun SelectingAnOptionScreen(
 
     LaunchedEffect(state.value.isEnd) {
         if (!state.value.isEnd) {
+            return@LaunchedEffect
+        }
+        if (state.value.exercise != param.exercises[param.number].exercise){
             return@LaunchedEffect
         }
         val newNumber = param.number + 1
