@@ -35,11 +35,14 @@ fun ExerciseSelectionScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val fontSize = getFontSize()
-    val bundle = navController.getParam<ExerciseSelectionBundle>() // Adjust the type as needed
+    val bundle = navController.getParamOrThrow<ExerciseSelectionBundle>() // Adjust the type as needed
 
 
     LaunchedEffect(state.isConfirmed) {
         if (!state.isConfirmed) {
+            return@LaunchedEffect
+        }
+        if (bundle.transactionId != state.transactionId) {
             return@LaunchedEffect
         }
         val exercises = state.exercises.filter { it.isSelected }
@@ -55,8 +58,9 @@ fun ExerciseSelectionScreen(
     LaunchedEffect(Unit) {
         viewModel.sent(
             ExerciseSelectAction.Init(
-                playListId = bundle?.playListId,
-                words = bundle?.words ?: emptyList()
+                playListId = bundle.playListId,
+                words = bundle.words,
+                transactionId = bundle.transactionId,
             )
         )
     }

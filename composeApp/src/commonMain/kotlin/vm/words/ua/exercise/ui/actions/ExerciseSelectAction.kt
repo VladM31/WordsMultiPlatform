@@ -6,7 +6,8 @@ import vm.words.ua.words.domain.models.UserWord
 sealed class ExerciseSelectAction {
     data class Init(
         val playListId: String?,
-        val words: List<UserWord>
+        val words: List<UserWord>,
+        val transactionId: String,
     ) : ExerciseSelectAction()
 
     data class AddExercise(val exercise: Exercise) : ExerciseSelectAction()
