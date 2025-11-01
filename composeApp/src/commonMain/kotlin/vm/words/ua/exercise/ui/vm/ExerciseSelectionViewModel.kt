@@ -39,15 +39,11 @@ class ExerciseSelectionViewModel(
         if (state.value.isInited && state.value.transactionId == action.transactionId) {
             return
         }
-        mutableState.value = state.value.copy(
+
+        mutableState.value = ExerciseSelectState(
             isInited = true,
             transactionId = action.transactionId,
-            words = action.words.map { it.toExerciseWordDetails(state.value.transactionId) },
-            exercises = Exercise.entries.map {
-                ExerciseSelection(it)
-            },
-            selectedExercises = mapOf(),
-            number = 0
+            words = action.words.map { it.toExerciseWordDetails(action.transactionId) }
         )
     }
 

@@ -30,9 +30,9 @@ import vm.words.ua.navigation.SimpleNavController
 
 @Composable
 fun ExerciseSelectionScreen(
-    viewModel: ExerciseSelectionViewModel = rememberInstance<ExerciseSelectionViewModel>(),
     navController: SimpleNavController
 ) {
+    val viewModel: ExerciseSelectionViewModel = rememberInstance<ExerciseSelectionViewModel>()
     val state by viewModel.state.collectAsState()
     val fontSize = getFontSize()
     val bundle = navController.getParamOrThrow<ExerciseSelectionBundle>() // Adjust the type as needed
