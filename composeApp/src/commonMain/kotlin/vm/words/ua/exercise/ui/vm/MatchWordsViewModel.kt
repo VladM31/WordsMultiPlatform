@@ -91,7 +91,7 @@ class MatchWordsViewModel : ViewModel() {
         }
         val words = action.words.shuffled()
         positionKeeper = 0
-        mutableState.value = mutableState.value.copy(
+        mutableState.value = MatchWordsState().copy(
             words = words,
             originalWords = words.map { MatchWordsBox(it) }.shuffled(),
             translateWords = words.map { MatchWordsBox(it) }.shuffled(),

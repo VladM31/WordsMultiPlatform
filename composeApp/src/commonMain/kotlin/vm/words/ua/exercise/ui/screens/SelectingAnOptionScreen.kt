@@ -26,7 +26,7 @@ import vm.words.ua.di.rememberInstance
 import vm.words.ua.exercise.domain.mappers.toScreen
 import vm.words.ua.exercise.domain.models.data.ExerciseWordDetails
 import vm.words.ua.exercise.ui.actions.SelectingAnOptionAction
-import vm.words.ua.exercise.ui.bundles.SelectingAnOptionBundle
+import vm.words.ua.exercise.ui.bundles.ExerciseBundle
 import vm.words.ua.exercise.ui.componets.OptionCard
 import vm.words.ua.exercise.ui.utils.isSoundAfterAnswer
 import vm.words.ua.exercise.ui.utils.isSoundBeforeAnswer
@@ -66,7 +66,7 @@ private fun SelectingAnOptionScreen(
     val scroll = rememberScrollState()
     val state = viewModel.state.collectAsState()
     val isPhoneFormat = getWidthDeviceFormat().isPhone
-    val param = navController.getParamOrThrow<SelectingAnOptionBundle>()
+    val param = navController.getParamOrThrow<ExerciseBundle>()
     val fontSize = getFontSize()
 
     val toText = { word: ExerciseWordDetails ->
@@ -100,22 +100,15 @@ private fun SelectingAnOptionScreen(
         if (!state.value.isEnd) {
             return@LaunchedEffect
         }
-        if (state.value.exercise != param.exercises[param.number].exercise){
+        if (state.value.exercise != param.currentExercise){
             return@LaunchedEffect
         }
-        val newNumber = param.number + 1
-        if (newNumber >= param.exercises.size) {
+        if (param.isLast) {
             navController.popBackStack()
             return@LaunchedEffect
         }
-        val bundle = SelectingAnOptionBundle(
-            exercises = param.exercises,
-            words = state.value.words,
-            transactionId = param.transactionId,
-            isActiveSubscribe = param.isActiveSubscribe,
-            number = newNumber
-        )
-        param.exercises[newNumber].exercise.toScreen().let { nextExercise ->
+        val bundle = param.toNext(state.value.words)
+        param.nextExercise.toScreen().let { nextExercise ->
             navController.navigateAndClearCurrent(nextExercise, bundle)
         }
     }
@@ -186,7 +179,7 @@ private fun SelectingAnOptionScreen(
         Column(modifier = Modifier.fillMaxSize()) {
             // App toolbar
             AppToolBar(
-                title = "Select Exercises",
+                title = param.currentExercise.text,
                 onBackClick = { navController.popBackStack() }
             )
 

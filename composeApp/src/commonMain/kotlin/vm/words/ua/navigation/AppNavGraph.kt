@@ -100,7 +100,7 @@ fun AppNavGraph() {
 
         Screen.WriteByImageAndTranslation.route,
         Screen.WriteByImageAndDescription.route,
-        Screen.MatchWords.route,
+
         Screen.LetterMatchByTranslation.route,
         Screen.LetterMatchByDescription.route -> {
             Button(onClick = { navController.popBackStack() }) {
@@ -124,6 +124,11 @@ fun AppNavGraph() {
         }
         Screen.OptionWordByTranslate.route -> {
             WordByTranslatesScreen(
+                navController = navController
+            )
+        }
+        Screen.MatchWords.route -> {
+            MatchWordsScreen(
                 navController = navController
             )
         }

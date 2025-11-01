@@ -21,7 +21,7 @@ import vm.words.ua.di.rememberInstance
 import vm.words.ua.exercise.domain.mappers.toScreen
 import vm.words.ua.exercise.ui.actions.ExerciseSelectAction
 import vm.words.ua.exercise.ui.bundles.ExerciseSelectionBundle
-import vm.words.ua.exercise.ui.bundles.SelectingAnOptionBundle
+import vm.words.ua.exercise.ui.bundles.ExerciseBundle
 import vm.words.ua.exercise.ui.componets.ExerciseItemSelected
 import vm.words.ua.exercise.ui.componets.ExerciseItemUnselected
 import vm.words.ua.exercise.ui.vm.ExerciseSelectionViewModel
@@ -46,7 +46,7 @@ fun ExerciseSelectionScreen(
             return@LaunchedEffect
         }
         val exercises = state.exercises.filter { it.isSelected }
-        val bundle = SelectingAnOptionBundle(
+        val bundle = ExerciseBundle(
             exercises = exercises,
             words = state.words,
             transactionId = state.transactionId,
