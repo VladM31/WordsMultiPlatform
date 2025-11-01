@@ -1,20 +1,30 @@
 package vm.words.ua.navigation
 
+import androidx.compose.runtime.Composable
 import java.awt.KeyboardFocusManager
 import java.awt.event.KeyEvent
 
-actual fun registerBackHandler(navController: SimpleNavController): () -> Unit {
-    val dispatcher = KeyboardFocusManager.getCurrentKeyboardFocusManager()
+private var jvmDispatcher: java.awt.KeyEventDispatcher? = null
+
+@Composable
+actual fun registerBackHandler(navController: SimpleNavController) {
+    if (jvmDispatcher != null) return // Already registered
+
+    jvmDispatcher = KeyboardFocusManager.getCurrentKeyboardFocusManager()
         .createKeyEventDispatcher { e ->
             try {
-                if (e.id == KeyEvent.KEY_PRESSED) {
-                    val keyCode = e.keyCode
-                    val isAlt = e.isAltDown
-                    if (keyCode == KeyEvent.VK_BACK_SPACE || keyCode == KeyEvent.VK_ESCAPE || (isAlt && keyCode == KeyEvent.VK_LEFT)) {
-                        val handled = navController.popBackStack()
-                        if (handled) {
-                            e.consume()
-                        }
+                if (e.id != KeyEvent.KEY_PRESSED){
+                    return@createKeyEventDispatcher false
+                }
+                if (navController.isLastScreen){
+                    return@createKeyEventDispatcher false
+                }
+                val keyCode = e.keyCode
+                val isAlt = e.isAltDown
+                if (keyCode == KeyEvent.VK_BACK_SPACE || keyCode == KeyEvent.VK_ESCAPE || (isAlt && keyCode == KeyEvent.VK_LEFT)) {
+                    val handled = navController.popBackStack()
+                    if (handled) {
+                        e.consume()
                     }
                 }
             } catch (_: Throwable) {
@@ -24,12 +34,18 @@ actual fun registerBackHandler(navController: SimpleNavController): () -> Unit {
 
     // KeyboardFocusManager doesn't provide a direct remove for created dispatchers; we'll add dispatcher and return a remove function
     val kfm = KeyboardFocusManager.getCurrentKeyboardFocusManager()
-    kfm.addKeyEventDispatcher(dispatcher)
+    kfm.addKeyEventDispatcher(jvmDispatcher)
+}
 
+actual fun getBackHandlerCleanup(navController: SimpleNavController): () -> Unit {
     return {
-        try {
-            KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventDispatcher(dispatcher)
-        } catch (_: Throwable) {
+        val dispatcher = jvmDispatcher
+        if (dispatcher != null) {
+            try {
+                KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventDispatcher(dispatcher)
+                jvmDispatcher = null
+            } catch (_: Throwable) {
+            }
         }
     }
 }
@@ -38,4 +54,3 @@ actual fun registerBackHandler(navController: SimpleNavController): () -> Unit {
 private fun KeyboardFocusManager.createKeyEventDispatcher(handler: (KeyEvent) -> Boolean): java.awt.KeyEventDispatcher {
     return java.awt.KeyEventDispatcher { e -> handler(e) }
 }
-

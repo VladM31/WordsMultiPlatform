@@ -16,6 +16,9 @@ class SimpleNavController {
     private val navigateParams = mutableMapOf<String, Any?>()
     private val returnParams = mutableMapOf<String, Any?>()
 
+    val isLastScreen: Boolean
+        get() = backStack.size <= 1
+
     fun navigate(screen: Screen) {
         this.navigate(screen.route)
     }

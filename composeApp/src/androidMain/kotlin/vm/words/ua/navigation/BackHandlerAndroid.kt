@@ -1,6 +1,16 @@
 package vm.words.ua.navigation
 
-// On Android we rely on the system back and can enhance later via androidx.activity.compose.BackHandler.
-// For now, no-op to allow compilation.
-actual fun registerBackHandler(navController: SimpleNavController): () -> Unit = { }
+import androidx.activity.compose.BackHandler as AndroidBackHandler
+import androidx.compose.runtime.Composable
 
+@Composable
+actual fun registerBackHandler(navController: SimpleNavController) {
+    AndroidBackHandler(enabled = navController.isLastScreen.not()) {
+        navController.popBackStack()
+    }
+}
+
+actual fun getBackHandlerCleanup(navController: SimpleNavController): () -> Unit {
+    // Android BackHandler is managed by Compose, no cleanup needed
+    return { }
+}

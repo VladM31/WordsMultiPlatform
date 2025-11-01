@@ -1,10 +1,16 @@
 package vm.words.ua.navigation
 
+import androidx.compose.runtime.Composable
 import kotlinx.browser.window
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.KeyboardEvent
 
-actual fun registerBackHandler(navController: SimpleNavController): () -> Unit {
+private var jsCleanup: (() -> Unit)? = null
+
+@Composable
+actual fun registerBackHandler(navController: SimpleNavController) {
+    if (jsCleanup != null) return // Already registered
+
     // popstate handler: when user clicks browser Back, pop nav
     val onPop: (Event) -> Unit = { _ ->
         try {
@@ -19,8 +25,11 @@ actual fun registerBackHandler(navController: SimpleNavController): () -> Unit {
         val key = ke.key
         if (key == "Backspace" || (ke.altKey && key == "ArrowLeft") || key == "Escape") {
             try {
-                val handled = navController.popBackStack()
-                if (handled) ke.preventDefault()
+                if (navController.isLastScreen.not()){
+                    val handled = navController.popBackStack()
+                    if (handled) ke.preventDefault()
+                }
+
             } catch (_: Throwable) {
             }
         }
@@ -39,7 +48,7 @@ actual fun registerBackHandler(navController: SimpleNavController): () -> Unit {
     window.addEventListener("keydown", onKeyDown)
     navController.addNavigateListener(navListener)
 
-    return {
+    jsCleanup = {
         try {
             window.removeEventListener("popstate", onPop)
             window.removeEventListener("keydown", onKeyDown)
@@ -47,4 +56,8 @@ actual fun registerBackHandler(navController: SimpleNavController): () -> Unit {
         } catch (_: Throwable) {
         }
     }
+}
+
+actual fun getBackHandlerCleanup(navController: SimpleNavController): () -> Unit {
+    return jsCleanup ?: { }
 }

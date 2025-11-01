@@ -138,4 +138,5 @@ fun AppNavGraph() {
             }
         }
     }
+    BackHandler(navController = navController)
 }
