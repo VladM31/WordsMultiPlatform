@@ -112,7 +112,7 @@ class PlayListDetailsViewModel(
     }
 
     private fun fetchPlayList(id: String) {
-        if (id.isEmpty() || id == mutableState.value.id) return
+        if (id.isEmpty()) return
 
         viewModelScope.launch {
             try {

@@ -18,7 +18,6 @@ import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.PopupMenuButton
 import vm.words.ua.core.ui.components.PopupMenuItem
 import vm.words.ua.di.rememberInstance
-import vm.words.ua.exercise.domain.mappers.toExerciseWordDetails
 import vm.words.ua.exercise.ui.bundles.ExerciseSelectionBundle
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.navigation.Screen
@@ -37,18 +36,24 @@ fun PlayListDetailsScreen(
     navController: SimpleNavController,
     modifier: Modifier = Modifier
 ) {
-    val playListId = navController.getParam<PlayListDetailsBundle>(Screen.PlayListDetails.route)?.playListId
-    if (playListId == null){
-        navController.popBackStack()
-        return
-    }
-
     val viewModel = rememberInstance<PlayListDetailsViewModel>()
     val state by viewModel.state.collectAsState()
     var showEditDialog by remember { mutableStateOf(false) }
 
+    // Get playListId from navigation params or use the one already stored in state
+    val playListId = navController.getParam<PlayListDetailsBundle>(Screen.PlayListDetails.route)?.playListId
+        ?: state.id.takeIf { it.isNotEmpty() }
+
+    if (playListId == null) {
+        navController.popBackStack()
+        return
+    }
+
     LaunchedEffect(playListId) {
-        viewModel.sent(PlayListDetailsAction.Fetch(playListId))
+        // Only fetch if we don't have this playlist loaded yet
+        if (state.id != playListId) {
+            viewModel.sent(PlayListDetailsAction.Fetch(playListId))
+        }
     }
 
     LaunchedEffect(state.isEnd) {
