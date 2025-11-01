@@ -66,7 +66,7 @@ class SimpleNavController {
     }
 
     fun popBackStack(returnParam: Any? = null): Boolean {
-        return if (backStack.isNotEmpty()) {
+        return if (backStack.size > 1) {
             val previousRoute = backStack.last()
             // Store return parameter for previous screen
             if (returnParam != null) {
@@ -89,7 +89,7 @@ class SimpleNavController {
             backStack.removeAt(backStack.lastIndex)
         }
 
-        return if (backStack.isNotEmpty()) {
+        return if (backStack.size > 1) {
             val previousRoute = backStack.last()
             // Store return parameter for target screen
             if (returnParam != null) {
