@@ -20,5 +20,7 @@ data class MatchWordsState(
     data class WordBox(
         val id: String,
         val index: Int,
+        val original: String,
+        val translate: String
     )
 }

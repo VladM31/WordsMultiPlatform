@@ -96,7 +96,7 @@ fun MatchWordsScreen(
                             viewModel.sent(
                                 MatchWordsAction.Click(
                                     isOriginal = true,
-                                    wordId = wordBox.word.userWordId,
+                                    word =  wordBox.word,
                                     index = index
                                 )
                             )
@@ -132,7 +132,7 @@ fun MatchWordsScreen(
                             viewModel.sent(
                                 MatchWordsAction.Click(
                                     isOriginal = false,
-                                    wordId = wordBox.word.userWordId,
+                                    word = wordBox.word,
                                     index = index
                                 )
                             )

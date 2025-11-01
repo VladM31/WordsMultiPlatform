@@ -25,19 +25,22 @@ class MatchWordsViewModel : ViewModel() {
     }
 
     private fun handleClick(action: MatchWordsAction.Click){
-        val wordBox = MatchWordsState.WordBox(action.wordId, action.index)
+        val wordBox = MatchWordsState.WordBox(action.word.userWordId, action.index, action.word.original, action.word.translate)
         val newState = if (action.isOriginal){
             mutableState.value.copy(original = wordBox)
         } else {
             mutableState.value.copy(translate = wordBox)
         }
 
-        if (newState.original == null || newState.translate == null){
+        // Ждем выбора обоих слов
+        if (newState.original == null || newState.translate == null) {
             mutableState.value = newState
             return
         }
 
         val isMistake = newState.original.id != newState.translate.id
+                && newState.original.original.trim() != newState.translate.original.trim()
+                && newState.original.translate.trim() != newState.translate.translate.trim()
         val originalWords = newState.originalWords.toMutableList()
         val translateWords = newState.translateWords.toMutableList()
 

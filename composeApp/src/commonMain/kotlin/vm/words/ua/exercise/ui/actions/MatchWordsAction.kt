@@ -7,6 +7,6 @@ sealed interface MatchWordsAction {
         val words: List<ExerciseWordDetails>,
         val transactionId: String
     ) : MatchWordsAction
-    data class Click(val isOriginal: Boolean, val wordId: String, val index: Int) :
+    data class Click(val isOriginal: Boolean, val index: Int, val word: ExerciseWordDetails) :
         MatchWordsAction
 }
