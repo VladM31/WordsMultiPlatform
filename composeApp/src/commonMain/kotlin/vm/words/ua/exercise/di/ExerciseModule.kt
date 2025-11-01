@@ -6,6 +6,7 @@ import org.kodein.di.DI
  * Главный модуль Exercise приложения
  */
 val exerciseModule = DI.Module("exercise") {
+    import(managerExerciseModule)
     import(exerciseViewModelModule)
 }
 

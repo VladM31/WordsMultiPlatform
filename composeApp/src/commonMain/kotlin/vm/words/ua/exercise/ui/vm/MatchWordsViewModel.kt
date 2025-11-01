@@ -7,11 +7,15 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import vm.words.ua.exercise.domain.managers.ExerciseStatisticalManager
+import vm.words.ua.exercise.domain.mappers.toWordCompleted
 import vm.words.ua.exercise.domain.models.data.MatchWordsBox
 import vm.words.ua.exercise.ui.actions.MatchWordsAction
 import vm.words.ua.exercise.ui.states.MatchWordsState
 
-class MatchWordsViewModel : ViewModel() {
+class MatchWordsViewModel(
+    private val exerciseStatisticalManager: ExerciseStatisticalManager
+) : ViewModel() {
     private var positionKeeper = 0
     private val mutableState = MutableStateFlow(MatchWordsState())
     val state: StateFlow<MatchWordsState> = mutableState
@@ -52,9 +56,9 @@ class MatchWordsViewModel : ViewModel() {
             val isEnd = position == newState.words.size - 1
 
             viewModelScope.launch(Dispatchers.Default) {
-//                exerciseStatisticalManager.completeWord(
-//                    newState.toWordCompleted()
-//                )
+                exerciseStatisticalManager.completeWord(
+                    newState.toWordCompleted()
+                )
             }
 
             mutableState.value = newState.copy(

@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import vm.words.ua.core.domain.managers.ByteContentManager
+import vm.words.ua.exercise.domain.managers.ExerciseStatisticalManager
+import vm.words.ua.exercise.domain.mappers.toWordCompleted
 import vm.words.ua.exercise.domain.models.data.ExerciseWordDetails
 import vm.words.ua.exercise.ui.actions.SelectingAnOptionAction
 import vm.words.ua.exercise.ui.states.SelectingAnOptionState
@@ -16,7 +18,8 @@ import vm.words.ua.words.domain.managers.SoundManager
 
 class SelectingAnOptionVm(
     private val soundManager: SoundManager,
-    private val contentManager: ByteContentManager
+    private val contentManager: ByteContentManager,
+    private val exerciseStatisticalManager: ExerciseStatisticalManager
 ) : ViewModel() {
 
     private val mutableState = MutableStateFlow(SelectingAnOptionState())
@@ -44,9 +47,9 @@ class SelectingAnOptionVm(
         )
 
         viewModelScope.launch(Dispatchers.Default){
-//            exerciseStatisticalManager.completeWord(
-//                state.value.toWordCompleted()
-//            )
+            exerciseStatisticalManager.completeWord(
+                state.value.toWordCompleted()
+            )
         }
     }
 
