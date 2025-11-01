@@ -11,9 +11,8 @@ import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
 
 @Composable
-fun AuthWatcher(
-    navController: SimpleNavController
-) {
+fun AuthWatcher() {
+    val navController: SimpleNavController by DiContainer.di.instance()
     val userCacheManager : UserCacheManager by DiContainer.di.instance()
     val tokenState by userCacheManager.tokenFlow.collectAsState()
 

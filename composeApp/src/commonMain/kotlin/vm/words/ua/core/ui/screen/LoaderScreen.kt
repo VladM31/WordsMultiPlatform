@@ -20,29 +20,33 @@ import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.di.DiContainer
 import vm.words.ua.di.initDi
 import vm.words.ua.navigation.Screen
+import vm.words.ua.navigation.SimpleNavController
 import kotlin.getValue
 
 @Composable
 fun LoaderScreen(
     modifier: Modifier = Modifier,
     message: String? = null,
-    navController: vm.words.ua.navigation.SimpleNavController,
+    onInitialized: (() -> Unit)
 ) {
 
     LaunchedEffect(Unit) {
         initDi()
         AppRemoteConfig.initialize()
         val userCacheManager : UserCacheManager by DiContainer.di.instance()
+        val navController : SimpleNavController by DiContainer.di.instance()
 
         try {
             if (userCacheManager.tokenFlow.value?.isExpired() == false) {
                 navController.navigate(Screen.Home)
+                onInitialized()
                 return@LaunchedEffect
             }
         } catch (_: Throwable) {
             // ignore - treat as no token
         }
         navController.navigateAndClear(Screen.Login)
+        onInitialized()
     }
 
     Column(

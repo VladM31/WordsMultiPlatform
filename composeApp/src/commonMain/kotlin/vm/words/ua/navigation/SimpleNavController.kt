@@ -146,44 +146,4 @@ class SimpleNavController {
     fun removeNavigateListener(listener: (String) -> Unit) {
         navigateListeners.remove(listener)
     }
-
-    /**
-     * Restore navigation state
-     */
-    internal fun restoreState(route: String, stack: List<String>) {
-        currentRoute = route
-        backStack.clear()
-        backStack.addAll(stack)
-    }
-
-    /**
-     * Get current navigation state for saving
-     */
-    internal fun getState(): Pair<String, List<String>> {
-        return currentRoute to backStack.toList()
-    }
-}
-
-@Composable
-fun rememberSimpleNavController(): SimpleNavController {
-    return rememberSaveable(
-        saver = Saver(
-            save = { controller ->
-                val (route, stack) = controller.getState()
-                // Save as list: [currentRoute, ...backStack]
-                listOf(route) + stack
-            },
-            restore = { savedList ->
-                val controller = SimpleNavController()
-                if (savedList.isNotEmpty()) {
-                    val currentRoute = savedList[0]
-                    val backStack = savedList.drop(1)
-                    controller.restoreState(currentRoute, backStack)
-                }
-                controller
-            }
-        )
-    ) {
-        SimpleNavController()
-    }
 }

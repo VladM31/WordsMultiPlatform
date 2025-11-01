@@ -3,12 +3,13 @@ package vm.words.ua.navigation
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import org.kodein.di.DI
+import org.kodein.di.instance
 import vm.words.ua.auth.ui.screen.ConfirmSignUpScreen
 import vm.words.ua.auth.ui.screen.LoginScreen
 import vm.words.ua.auth.ui.screen.SignUpScreen
 import vm.words.ua.auth.ui.screen.TelegramLoginScreen
-import vm.words.ua.core.ui.components.AuthWatcher
-import vm.words.ua.core.ui.screen.LoaderScreen
+import vm.words.ua.di.DiContainer
 import vm.words.ua.exercise.ui.screens.*
 import vm.words.ua.main.ui.screen.HomeScreen
 import vm.words.ua.playlist.ui.screen.PlayListDetailsScreen
@@ -18,14 +19,9 @@ import vm.words.ua.settings.ui.screen.SettingScreen
 import vm.words.ua.words.ui.screen.WordDetailsScreen
 
 @Composable
-fun AppNavGraph(
-    navController: SimpleNavController
-) {
+fun AppNavGraph() {
+    val navController: SimpleNavController by DiContainer.di.instance()
     when (navController.currentRoute) {
-        Screen.Loader.route -> {
-            LoaderScreen(navController = navController)
-        }
-
         Screen.Login.route -> {
             LoginScreen(navController = navController)
         }
@@ -137,5 +133,4 @@ fun AppNavGraph(
             }
         }
     }
-    AuthWatcher(navController = navController)
 }
