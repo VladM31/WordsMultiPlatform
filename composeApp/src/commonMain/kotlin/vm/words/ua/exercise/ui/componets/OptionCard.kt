@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -48,7 +49,7 @@ fun OptionCard(
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.titleMedium,
+            style = LocalTextStyle.current.copy(lineHeight = fontSize * 1.1f),
             color = contentColor,
             fontSize = fontSize,
             textAlign = TextAlign.Center,
