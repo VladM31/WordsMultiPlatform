@@ -201,10 +201,7 @@ private fun SelectingAnOptionScreen(
                     }
                 },
                 right = {
-                    // For two-column layout the right column already has verticalScroll applied in TwoPaneGrid
-                    if (columns == 1) {
-                        // no-op, handled above
-                    } else {
+                    if (columns != 1) {
                         optionContent()
                     }
                 }
