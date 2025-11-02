@@ -7,12 +7,17 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import vm.words.ua.core.domain.managers.ByteContentManager
 import vm.words.ua.exercise.domain.managers.ExerciseStatisticalManager
 import vm.words.ua.exercise.domain.mappers.toWordCompleted
 import vm.words.ua.exercise.ui.actions.LettersMatchAction
 import vm.words.ua.exercise.ui.states.LettersMatchState
+import vm.words.ua.exercise.ui.utils.runSound
+import vm.words.ua.words.domain.managers.SoundManager
 
 class LettersMatchVm(
+    private val soundManager: SoundManager,
+    private val contentManager: ByteContentManager,
     private val exerciseStatisticalManager: ExerciseStatisticalManager
 ) : ViewModel() {
 
@@ -37,7 +42,7 @@ class LettersMatchVm(
             words = words,
             isInited = true,
             isActiveSubscribe = action.isActiveSubscribe,
-            originalWord = words[0].original,
+            originalWord = words[0].original.trim(),
             transactionId = action.transactionId,
             exercise = action.exerciseType,
             letters = words[0].original.trim().map { LettersMatchState.Letter.from(it) }.shuffled()
@@ -79,6 +84,19 @@ class LettersMatchVm(
             letters = state.value.letters - remoteLetter,
             isNext = isNext
         )
+        playAudio()
+    }
+
+    private fun playAudio() {
+        state.value.takeIf {
+            it.isNext && it.isActiveSubscribe
+        }?.let {
+            runSound(
+                soundLink = it.currentWord().soundLink,
+                soundManager = soundManager,
+                contentManager = contentManager
+            )
+        }
     }
 
     private fun handleNext() {
@@ -100,7 +118,7 @@ class LettersMatchVm(
             wordIndex = newIndex,
             originalWord = word.original.trim(),
             resultWord = state.value.endLetter,
-            letters = word.original.map { LettersMatchState.Letter.from(it) }.shuffled(),
+            letters = word.original.trim().map { LettersMatchState.Letter.from(it) }.shuffled(),
             grades = state.value.let { it.grades + it.grade },
             letterIndex = 0,
             isNext = false,
@@ -139,5 +157,6 @@ class LettersMatchVm(
             letters = state.value.letters - plusLetter,
             isNext = isNext
         )
+        playAudio()
     }
 }

@@ -35,6 +35,8 @@ internal val exerciseViewModelModule = DI.Module("exerciseViewModel") {
 
     bind<LettersMatchVm>() with factory {
         LettersMatchVm(
+            soundManager = instance(),
+            contentManager = instance(),
             exerciseStatisticalManager = instance()
         )
     }
