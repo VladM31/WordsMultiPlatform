@@ -13,6 +13,7 @@ import vm.words.ua.exercise.domain.mappers.toWordCompleted
 import vm.words.ua.exercise.domain.models.data.ExerciseWordDetails
 import vm.words.ua.exercise.ui.actions.SelectingAnOptionAction
 import vm.words.ua.exercise.ui.states.SelectingAnOptionState
+import vm.words.ua.exercise.ui.utils.runSound
 import vm.words.ua.exercise.ui.utils.toOptionText
 import vm.words.ua.words.domain.managers.SoundManager
 
@@ -38,7 +39,7 @@ class SelectingAnOptionVm(
         val word = state.value.let { it.words[it.wordIndex] }
         val isCorrect = calculateIsCorrect(word, action)
 
-        runSound(isNeedSound = { it.isSoundAfterAnswer})
+        runSound(isNeedSound = { it.isSoundAfterAnswer })
 
         mutableState.value = state.value.copy(
             grades = state.value.grades + if (isCorrect) 1 else 0,
@@ -46,7 +47,7 @@ class SelectingAnOptionVm(
             isCorrect = isCorrect
         )
 
-        viewModelScope.launch(Dispatchers.Default){
+        viewModelScope.launch(Dispatchers.Default) {
             exerciseStatisticalManager.completeWord(
                 state.value.toWordCompleted()
             )
@@ -59,7 +60,7 @@ class SelectingAnOptionVm(
     ): Boolean =
         word.wordId == action.word.wordId || word.toOptionText(state.value.exercise) == action.word.toOptionText(state.value.exercise)
 
-    private fun handleNext(){
+    private fun handleNext() {
         val newIndex = state.value.wordIndex + 1
         val isEnd = newIndex == state.value.words.size
 
@@ -73,21 +74,17 @@ class SelectingAnOptionVm(
             isCorrect = null
         )
         if (isEnd.not()) {
-            runSound(isNeedSound = { it.isSoundBeforeAnswer})
+            runSound(isNeedSound = { it.isSoundBeforeAnswer })
         }
     }
 
-    private fun runSound(isNeedSound :  (SelectingAnOptionState) -> Boolean) {
-        state.value.currentWord().soundLink?.let { link ->
-            if (!state.value.let { it.isActiveSubscribe && isNeedSound(it) }) {
-                return@let
-            }
-            viewModelScope.launch(Dispatchers.Default) {
-                val content = contentManager.downloadByteContent(link)
-                withContext(Dispatchers.Main) {
-                    soundManager.playSound(content)
-                }
-            }
+    private fun runSound(isNeedSound: (SelectingAnOptionState) -> Boolean) {
+        state.value.takeIf { it.isActiveSubscribe && isNeedSound(it) }?.let {
+            runSound(
+                soundLink = it.currentWord().soundLink,
+                soundManager = soundManager,
+                contentManager = contentManager
+            )
         }
     }
 
@@ -100,13 +97,13 @@ class SelectingAnOptionVm(
             isInited = true,
             words = words,
             isActiveSubscribe = action.isActiveSubscribe,
-            wordsToChoose = getChoiceWords(state.value.wordIndex,words),
+            wordsToChoose = getChoiceWords(state.value.wordIndex, words),
             exercise = action.exerciseType,
             transactionId = action.transactionId,
             isSoundBeforeAnswer = action.isSoundBeforeAnswer,
             isSoundAfterAnswer = action.isSoundAfterAnswer
         )
-        runSound(isNeedSound = { it.isSoundBeforeAnswer})
+        runSound(isNeedSound = { it.isSoundBeforeAnswer })
     }
 
     private fun getChoiceWords(index: Int, stateWords: List<ExerciseWordDetails>): List<ExerciseWordDetails> {
