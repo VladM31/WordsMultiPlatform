@@ -16,7 +16,7 @@ fun MatchWordsState.toWordCompleted()  : WordCompleted {
         transactionId = transactionId,
         wordId = currentWord.wordId,
         userWordId = currentWord.userWordId,
-        exerciseId = Exercise.COMPARE.id,
+        exerciseId = Exercise.MATCH_WORDS.id,
         attempts = this.attempts,
         isCorrect = attempts < 3,
         completedAt = Clock.System.now().toEpochMilliseconds()

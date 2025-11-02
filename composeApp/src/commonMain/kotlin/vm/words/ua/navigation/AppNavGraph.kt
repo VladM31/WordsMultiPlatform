@@ -3,7 +3,6 @@ package vm.words.ua.navigation
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import org.kodein.di.DI
 import org.kodein.di.instance
 import vm.words.ua.auth.ui.screen.ConfirmSignUpScreen
 import vm.words.ua.auth.ui.screen.LoginScreen
@@ -98,8 +97,17 @@ fun AppNavGraph() {
             )
         }
 
-//        Screen.WriteByImageAndTranslation.route,
-//        Screen.WriteByImageAndDescription.route,
+        Screen.WriteByImageAndTranslation.route -> {
+            WriteByImageAndTranslationScreen(
+                navController = navController
+            )
+        }
+
+        Screen.WriteByImageAndDescription.route -> {
+            WriteByImageAndDescriptionScreen(
+                navController = navController
+            )
+        }
 
         Screen.LetterMatchByTranslation.route -> {
             LetterMatchByTranslationScreen(

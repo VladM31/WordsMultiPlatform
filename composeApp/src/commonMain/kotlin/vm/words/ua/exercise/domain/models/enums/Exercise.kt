@@ -9,8 +9,8 @@ enum class Exercise(val text: String, val id: Int) {
     LETTERS_MATCH_BY_TRANSLATION("Letters match by translation", id = 6),
     LETTERS_MATCH_BY_DESCRIPTION("Letters match by description", id = 9),
 
-    COMPARE("Match words", id = 7),
+    MATCH_WORDS("Match words", id = 7),
     WORD_BY_WRITE_TRANSLATE("Write by translate", id = 1),
-    WORD_BY_WRITE_BY_DESCRIPTION("Write by description", id = 8),
+    WORD_BY_WRITE_DESCRIPTION("Write by description", id = 8),
 
 }

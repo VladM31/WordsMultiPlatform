@@ -17,6 +17,7 @@ import vm.words.ua.core.utils.getFontSize
 @Composable
 fun NextButton(
     hide: Boolean,
+    text: String = "Next",
     onNextClick: () -> Unit
 ){
     if (hide) {
@@ -31,7 +32,7 @@ fun NextButton(
     ) {
         Box(Modifier.background(AppTheme.PrimaryBack).fillMaxWidth(), contentAlignment = Alignment.BottomCenter) {
             Button(onClick = onNextClick, modifier = Modifier.padding(16.dp)) {
-                Text("Next", fontSize = fontSize, modifier = Modifier.padding(horizontal = 32.dp))
+                Text(text, fontSize = fontSize, modifier = Modifier.padding(horizontal = 32.dp))
             }
         }
     }

@@ -5,27 +5,23 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.CenteredLoader
-import vm.words.ua.core.ui.components.ImageFromBytes
 import vm.words.ua.core.utils.getFontSize
-import vm.words.ua.core.utils.getImageSize
 import vm.words.ua.core.utils.getWidthDeviceFormat
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.exercise.domain.models.data.ExerciseWordDetails
 import vm.words.ua.exercise.ui.actions.SelectingAnOptionAction
 import vm.words.ua.exercise.ui.bundles.ExerciseBundle
+import vm.words.ua.exercise.ui.componets.ExerciseImageView
 import vm.words.ua.exercise.ui.componets.OptionCard
 import vm.words.ua.exercise.ui.effects.EndExerciseEffect
 import vm.words.ua.exercise.ui.utils.isSoundAfterAnswer
@@ -34,8 +30,6 @@ import vm.words.ua.exercise.ui.utils.toOptionText
 import vm.words.ua.exercise.ui.utils.toText
 import vm.words.ua.exercise.ui.vm.SelectingAnOptionVm
 import vm.words.ua.navigation.SimpleNavController
-import wordsmultiplatform.composeapp.generated.resources.Res
-import wordsmultiplatform.composeapp.generated.resources.image_icon
 
 @Composable
 fun WordByTranslatesScreen(navController: SimpleNavController) {
@@ -100,30 +94,12 @@ private fun SelectingAnOptionScreen(
 
     // Left pane: image (if allowed) + main word
     val imageContent = @Composable {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            if (state.value.enableImage()) {
-                val imageSize = getImageSize()
-                ImageFromBytes(
-                    imageBytes = state.value.currentWord().imageContent?.bytes,
-                    defaultPaint = painterResource(Res.drawable.image_icon),
-                    width = imageSize,
-                    height = imageSize,
-                    contentDescription = "Word Image"
-                )
-                Spacer(Modifier.height(10.dp))
-            }
-
-            Text(
-                text = toText(state.value.currentWord()),
-                color = AppTheme.PrimaryColor,
-                textAlign = TextAlign.Center,
-                fontSize = fontSize,
-                style = LocalTextStyle.current.copy(lineHeight = fontSize * 1.1f),
-                modifier = Modifier
-                    .padding(bottom = 8.dp)
-                    .fillMaxWidth()
-            )
-        }
+        ExerciseImageView(
+            enableImage = state.value.enableImage(),
+            word = state.value.currentWord(),
+            fontSize = fontSize,
+            toText = toText
+        )
     }
 
     // Right pane: options

@@ -7,7 +7,7 @@ sealed interface WriteByImageAndFieldAction {
     data class Init(
         val words: List<ExerciseWordDetails>,
         val transactionId: String,
-        val exerciseType: Exercise,
+        val exercise: Exercise,
         val isActiveSubscribe: Boolean = false
     ) : WriteByImageAndFieldAction
 

@@ -65,14 +65,14 @@ class WriteByImageAndFieldVm(
     }
 
     private fun handleInit(action: WriteByImageAndFieldAction.Init) {
-        if (state.value.isInited && state.value.exercise == action.exerciseType) return
+        if (state.value.isInited && state.value.exercise == action.exercise) return
 
         mutableState.value = WriteByImageAndFieldState(
             words = action.words.shuffled(),
             isInited = true,
             isActiveSubscribe = action.isActiveSubscribe,
             transactionId = action.transactionId,
-            exercise = action.exerciseType
+            exercise = action.exercise
         )
     }
 

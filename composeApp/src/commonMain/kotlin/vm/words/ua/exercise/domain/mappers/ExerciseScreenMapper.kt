@@ -10,8 +10,8 @@ private val SCREEN_BY_EXERCISE = mapOf(
     Exercise.WORD_BY_TRANSLATES to Screen.OptionWordByTranslate,
     Exercise.LETTERS_MATCH_BY_DESCRIPTION to Screen.LetterMatchByDescription,
     Exercise.LETTERS_MATCH_BY_TRANSLATION to Screen.LetterMatchByTranslation,
-    Exercise.COMPARE to Screen.MatchWords,
-    Exercise.WORD_BY_WRITE_BY_DESCRIPTION to Screen.WriteByImageAndDescription,
+    Exercise.MATCH_WORDS to Screen.MatchWords,
+    Exercise.WORD_BY_WRITE_DESCRIPTION to Screen.WriteByImageAndDescription,
     Exercise.WORD_BY_WRITE_TRANSLATE to Screen.WriteByImageAndTranslation
 )
 
