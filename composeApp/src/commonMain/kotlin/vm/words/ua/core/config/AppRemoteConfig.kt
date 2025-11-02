@@ -43,6 +43,8 @@ object AppRemoteConfig {
     val version: String
         get() = configData?.version ?: "2.0.1"
 
+    val currentVersion: String = "0.0.1"
+
     /**
      * Инициализация конфигурации - загрузка данных из удаленного источника
      */
