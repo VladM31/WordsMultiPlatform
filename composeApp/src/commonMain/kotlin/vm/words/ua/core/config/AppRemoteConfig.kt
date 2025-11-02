@@ -25,9 +25,6 @@ object AppRemoteConfig {
     val instructionLink: String
         get() = configData?.instructionLink ?: "https://raw.githubusercontent.com/VladM31/AndroidWordApplication/refs/heads/master/documents/instruction/en_instruction.pdf"
 
-    val localHost: String
-        get() = configData?.localHost ?: "vps2498837.fastwebserver.de"
-
     val policyLastUpdateAt: String
         get() = configData?.policyLastUpdateAt ?: "2025-10-12T01:52:29.604559800+03:00"
 

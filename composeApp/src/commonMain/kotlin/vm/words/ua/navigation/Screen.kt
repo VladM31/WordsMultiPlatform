@@ -1,7 +1,7 @@
 package vm.words.ua.navigation
 
 sealed class Screen(val route: String) {
-    data object Loader : Screen("loader")
+    data object UpdateApp : Screen("update_app")
     data object Login : Screen("login")
     data object SignUp : Screen("signup")
     data object TelegramLogin : Screen("telegram_login")

@@ -14,14 +14,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.kodein.di.instance
-import vm.words.ua.core.domain.managers.UserCacheManager
 import vm.words.ua.core.config.AppRemoteConfig
+import vm.words.ua.core.domain.managers.UserCacheManager
+import vm.words.ua.core.platform.currentPlatform
+import vm.words.ua.core.platform.isWeb
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.di.DiContainer
 import vm.words.ua.di.initDi
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
-import kotlin.getValue
 
 @Composable
 fun LoaderScreen(
@@ -37,6 +38,11 @@ fun LoaderScreen(
         val navController : SimpleNavController by DiContainer.di.instance()
 
         try {
+            if (AppRemoteConfig.currentVersion != AppRemoteConfig.version && currentPlatform().isWeb.not()) {
+                navController.navigateAndClear(Screen.UpdateApp)
+                onInitialized()
+                return@LaunchedEffect
+            }
             if (userCacheManager.tokenFlow.value?.isExpired() == false) {
                 navController.navigate(Screen.Home)
                 onInitialized()

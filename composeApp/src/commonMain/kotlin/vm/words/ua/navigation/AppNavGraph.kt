@@ -8,6 +8,7 @@ import vm.words.ua.auth.ui.screen.ConfirmSignUpScreen
 import vm.words.ua.auth.ui.screen.LoginScreen
 import vm.words.ua.auth.ui.screen.SignUpScreen
 import vm.words.ua.auth.ui.screen.TelegramLoginScreen
+import vm.words.ua.core.ui.screen.UpdateScreen
 import vm.words.ua.di.DiContainer
 import vm.words.ua.exercise.ui.screens.*
 import vm.words.ua.main.ui.screen.HomeScreen
@@ -21,6 +22,10 @@ import vm.words.ua.words.ui.screen.WordDetailsScreen
 fun AppNavGraph() {
     val navController: SimpleNavController by DiContainer.di.instance()
     when (navController.currentRoute) {
+        Screen.UpdateApp.route -> {
+            UpdateScreen(navController = navController)
+        }
+
         Screen.Login.route -> {
             LoginScreen(navController = navController)
         }
