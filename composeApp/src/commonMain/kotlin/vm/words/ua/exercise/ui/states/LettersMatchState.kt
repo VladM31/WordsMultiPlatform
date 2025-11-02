@@ -1,16 +1,20 @@
 package vm.words.ua.exercise.ui.states
 
-import vm.words.ua.core.ui.states.EndetableState
+import vm.words.ua.core.platform.currentPlatform
+import vm.words.ua.core.platform.isWeb
 import vm.words.ua.exercise.domain.models.data.ExerciseWordDetails
 import vm.words.ua.exercise.domain.models.enums.Exercise
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
+val defaultEndLetter: String = if (currentPlatform().isWeb) "↵" else "⏎"
+
+
 data class LettersMatchState(
-    val endLetter: String = "⏎",
+    val endLetter: String = defaultEndLetter,
     val letterIndex: Int = 0,
     val originalWord: String = "",
-    val resultWord: String = endLetter,
+    val resultWord: String = defaultEndLetter,
     val letters: List<Letter> = emptyList(),
     val isNext: Boolean = false,
     val grade: Int = 3,
