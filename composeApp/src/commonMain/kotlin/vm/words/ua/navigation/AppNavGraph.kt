@@ -98,14 +98,18 @@ fun AppNavGraph() {
             )
         }
 
-        Screen.WriteByImageAndTranslation.route,
-        Screen.WriteByImageAndDescription.route,
+//        Screen.WriteByImageAndTranslation.route,
+//        Screen.WriteByImageAndDescription.route,
 
-        Screen.LetterMatchByTranslation.route,
+        Screen.LetterMatchByTranslation.route -> {
+            LetterMatchByTranslationScreen(
+                navController = navController
+            )
+        }
         Screen.LetterMatchByDescription.route -> {
-            Button(onClick = { navController.popBackStack() }) {
-                Text("Exercise Screen, " + navController.currentRoute)
-            }
+            LetterMatchByDescriptionScreen(
+                navController = navController
+            )
         }
         Screen.OptionDescriptionByWords.route -> {
             DescriptionByWordsScreen(

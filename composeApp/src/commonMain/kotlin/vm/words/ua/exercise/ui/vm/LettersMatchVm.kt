@@ -13,7 +13,7 @@ import vm.words.ua.exercise.ui.actions.LettersMatchAction
 import vm.words.ua.exercise.ui.states.LettersMatchState
 
 class LettersMatchVm(
-    private val exerciseStatisticalManager : ExerciseStatisticalManager
+    private val exerciseStatisticalManager: ExerciseStatisticalManager
 ) : ViewModel() {
 
     private val mutableState = MutableStateFlow(LettersMatchState())
@@ -33,14 +33,14 @@ class LettersMatchVm(
         if (state.value.isInited) return
         val words = action.words.shuffled()
 
-        mutableState.value = state.value.copy(
+        mutableState.value = LettersMatchState(
             words = words,
             isInited = true,
             isActiveSubscribe = action.isActiveSubscribe,
             originalWord = words[0].original,
             transactionId = action.transactionId,
             exerciseType = action.exerciseType,
-            letters = words[0].original.map { LettersMatchState.Letter.from(it) }.shuffled()
+            letters = words[0].original.trim().map { LettersMatchState.Letter.from(it) }.shuffled()
         )
     }
 
@@ -82,8 +82,7 @@ class LettersMatchVm(
     }
 
     private fun handleNext() {
-
-        viewModelScope.launch(Dispatchers.Default){
+        viewModelScope.launch(Dispatchers.Default) {
             exerciseStatisticalManager.completeWord(state.value.toWordCompleted())
         }
 
@@ -99,10 +98,10 @@ class LettersMatchVm(
         val word = state.value.words[newIndex]
         mutableState.value = state.value.copy(
             wordIndex = newIndex,
-            originalWord = word.original,
+            originalWord = word.original.trim(),
             resultWord = state.value.endLetter,
             letters = word.original.map { LettersMatchState.Letter.from(it) }.shuffled(),
-            grades = state.value.let { it.grades + it.grade},
+            grades = state.value.let { it.grades + it.grade },
             letterIndex = 0,
             isNext = false,
             grade = 3,
@@ -111,7 +110,7 @@ class LettersMatchVm(
 
     }
 
-    private fun onEnd(){
+    private fun onEnd() {
         val grades = state.value.grades + state.value.grade
 
         mutableState.value = state.value.copy(
@@ -121,7 +120,7 @@ class LettersMatchVm(
     }
 
     private fun handlePlusOneLetter() {
-        if (state.value.run { isInited.not() || isNext}) return
+        if (state.value.run { isInited.not() || isNext }) return
 
         val grade = state.value.grade - 1
 
@@ -134,7 +133,7 @@ class LettersMatchVm(
         val isNext = newResultWord == state.value.originalWord
 
         mutableState.value = state.value.copy(
-            grade = if (grade< 0) 0 else grade,
+            grade = if (grade < 0) 0 else grade,
             letterIndex = newLetterIndex,
             resultWord = newResultWord + if (isNext) "" else state.value.endLetter,
             letters = state.value.letters - plusLetter,

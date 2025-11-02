@@ -15,6 +15,8 @@ private val TO_TEXT_BY_EXERCISE : Map<Exercise, (ExerciseWordDetails) -> String>
     Exercise.WORD_BY_DESCRIPTIONS to { it.original },
     Exercise.WORD_BY_ORIGINALS to { it.translate },
     Exercise.WORD_BY_TRANSLATES to { it.original },
+    Exercise.LETTERS_MATCH_BY_TRANSLATION to { it.translate },
+    Exercise.LETTERS_MATCH_BY_DESCRIPTION to { it.description ?: "Description not found, word -> ${it.original}" },
 )
 
 private val IS_SOUND_BEFORE_BY_EXERCISE = mapOf(
