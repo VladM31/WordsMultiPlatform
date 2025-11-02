@@ -5,20 +5,22 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import vm.words.ua.core.domain.managers.ByteContentManager
+import vm.words.ua.exercise.domain.managers.ExerciseStatisticalManager
 import vm.words.ua.exercise.domain.mappers.toExerciseWordDetails
-import vm.words.ua.exercise.ui.actions.ExerciseSelectAction
+import vm.words.ua.exercise.domain.mappers.toStartExerciseTransaction
 import vm.words.ua.exercise.domain.models.data.ExerciseSelection
 import vm.words.ua.exercise.domain.models.data.ExerciseWordDetails
 import vm.words.ua.exercise.domain.models.enums.Exercise
+import vm.words.ua.exercise.ui.actions.ExerciseSelectAction
 import vm.words.ua.exercise.ui.states.ExerciseSelectState
 import vm.words.ua.subscribes.domain.managers.SubscribeCacheManager
 
 class ExerciseSelectionViewModel(
+    private val exerciseStatisticalManager: ExerciseStatisticalManager,
     private val subscribeCacheManager: SubscribeCacheManager,
     private val byteContentManager: ByteContentManager
 ) : ViewModel() {
@@ -123,6 +125,7 @@ class ExerciseSelectionViewModel(
                     getByteContent(it)
                 }
             }.awaitAll()
+            exerciseStatisticalManager.startExercise(state.value.toStartExerciseTransaction())
 
             mutableState.value = state.value.copy(
                 isConfirmed = true,

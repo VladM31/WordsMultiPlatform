@@ -30,7 +30,8 @@ fun UpdateScreen(
     Column(modifier = Modifier.fillMaxSize()) {
         AppToolBar(
             title = "Update App",
-            navController = navController
+            navController = navController,
+            showBackButton = false
         )
 
         Column(

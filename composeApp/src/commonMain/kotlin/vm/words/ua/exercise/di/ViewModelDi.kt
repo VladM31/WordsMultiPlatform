@@ -13,7 +13,8 @@ internal val exerciseViewModelModule = DI.Module("exerciseViewModel") {
     bind<ExerciseSelectionViewModel>() with factory {
         ExerciseSelectionViewModel(
             subscribeCacheManager = instance(),
-            byteContentManager = instance()
+            byteContentManager = instance(),
+            exerciseStatisticalManager = instance(),
         )
     }
     bind<SelectingAnOptionVm>() with factory {

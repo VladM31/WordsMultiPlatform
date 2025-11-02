@@ -40,6 +40,7 @@ class KrotExerciseStatisticalClient(
     ) {
 
         client.post("$baseUrl$endpoint") {
+            header("Content-Type", "application/json")
             additionalHeaders.forEach {
                 header(it.first, it.second)
             }
