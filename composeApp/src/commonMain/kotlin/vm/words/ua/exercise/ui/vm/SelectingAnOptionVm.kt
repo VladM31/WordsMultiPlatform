@@ -6,7 +6,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import vm.words.ua.core.domain.managers.ByteContentManager
 import vm.words.ua.exercise.domain.managers.ExerciseStatisticalManager
 import vm.words.ua.exercise.domain.mappers.toWordCompleted
@@ -89,7 +88,10 @@ class SelectingAnOptionVm(
     }
 
     private fun handleInit(action: SelectingAnOptionAction.Init) {
-        if (state.value.isInited && state.value.exercise == action.exerciseType) return
+        if (state.value.isInited
+            && state.value.exercise == action.exerciseType
+            && state.value.transactionId == action.transactionId
+        ) return
         val words = action.words.shuffled()
 
 

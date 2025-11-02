@@ -35,7 +35,10 @@ class LettersMatchVm(
     }
 
     private fun handleInit(action: LettersMatchAction.Init) {
-        if (state.value.isInited) return
+        if (state.value.isInited
+            && state.value.exercise == action.exerciseType
+            && state.value.transactionId == action.transactionId
+        ) return
         val words = action.words.shuffled()
 
         mutableState.value = LettersMatchState(
