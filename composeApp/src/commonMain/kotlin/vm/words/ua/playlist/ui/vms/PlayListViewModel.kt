@@ -26,6 +26,7 @@ class PlayListViewModel(
         when (action) {
             is PlayListAction.ReFetch -> handleReFetch()
             is PlayListAction.UpdateFilter -> handleUpdateFilter(action)
+            PlayListAction.LoadMore -> loadPlaylists()
         }
     }
 
@@ -93,9 +94,6 @@ class PlayListViewModel(
         }
     }
 
-    fun loadMore() {
-        loadPlaylists()
-    }
 
     companion object {
         private const val PAGE_SIZE = 20
