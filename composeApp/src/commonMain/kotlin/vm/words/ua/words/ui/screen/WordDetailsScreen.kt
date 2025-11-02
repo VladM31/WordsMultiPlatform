@@ -5,27 +5,22 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.flow.map
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.domain.models.ByteContent
-import vm.words.ua.core.domain.models.enums.DeviceFormat
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.ui.components.AppToolBar
-import vm.words.ua.core.ui.components.ErrorMessageBox
-import vm.words.ua.core.ui.components.ImageFromBytes
-import vm.words.ua.core.ui.components.PopupMenuButton
-import vm.words.ua.core.ui.components.PopupMenuItem
+import vm.words.ua.core.ui.components.*
 import vm.words.ua.core.utils.getFontSize
 import vm.words.ua.core.utils.getScaleFactor
 import vm.words.ua.core.utils.getWidthDeviceFormat
 import vm.words.ua.di.rememberInstance
-import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.words.domain.models.UserWord
 import vm.words.ua.words.domain.models.Word
@@ -44,7 +39,7 @@ fun WordDetailsScreen(
     navController: SimpleNavController,
     modifier: Modifier = Modifier
 ) {
-    val bundle = navController.getParam<WordDetailsBundle>(Screen.WordDetails.route) ?: throw IllegalStateException()
+    val bundle = navController.getParam<WordDetailsBundle>() ?: throw IllegalStateException()
     val userWord: UserWord? = bundle.userWord
     val word: Word = bundle.word
 
