@@ -23,7 +23,6 @@ import vm.words.ua.core.utils.getFontSize
 import vm.words.ua.core.utils.getImageSize
 import vm.words.ua.core.utils.getWidthDeviceFormat
 import vm.words.ua.di.rememberInstance
-import vm.words.ua.exercise.domain.mappers.toScreen
 import vm.words.ua.exercise.domain.models.data.ExerciseWordDetails
 import vm.words.ua.exercise.ui.actions.SelectingAnOptionAction
 import vm.words.ua.exercise.ui.bundles.ExerciseBundle
@@ -100,7 +99,7 @@ private fun SelectingAnOptionScreen(
     EndExerciseEffect(state.value, param, navController)
 
     // Left pane: image (if allowed) + main word
-    val leftContent = @Composable {
+    val imageContent = @Composable {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             if (state.value.enableImage()) {
                 val imageSize = getImageSize()
@@ -128,7 +127,7 @@ private fun SelectingAnOptionScreen(
     }
 
     // Right pane: options
-    val rightContent = @Composable {
+    val optionContent = @Composable {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             // Варианты ответа
             state.value.wordsToChoose.take(3).forEach { opt ->
@@ -193,12 +192,12 @@ private fun SelectingAnOptionScreen(
                             modifier = Modifier.verticalScroll(scroll),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            leftContent()
+                            imageContent()
                             Spacer(Modifier.height(12.dp))
-                            rightContent()
+                            optionContent()
                         }
                     } else {
-                        leftContent()
+                        imageContent()
                     }
                 },
                 right = {
@@ -206,7 +205,7 @@ private fun SelectingAnOptionScreen(
                     if (columns == 1) {
                         // no-op, handled above
                     } else {
-                        rightContent()
+                        optionContent()
                     }
                 }
             )
