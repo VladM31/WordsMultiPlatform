@@ -5,6 +5,7 @@ import org.kodein.di.bind
 import org.kodein.di.factory
 import org.kodein.di.instance
 import vm.words.ua.words.ui.vms.WordDetailsViewModel
+import vm.words.ua.words.ui.vms.WordsViewModel
 
 internal val viewModelWordsModule = DI.Module("viewModelWordsModule") {
     bind<WordDetailsViewModel>() with factory {
@@ -12,6 +13,13 @@ internal val viewModelWordsModule = DI.Module("viewModelWordsModule") {
             byteContentManager = instance(),
             soundManager = instance(),
             subscribeManager = instance()
+        )
+    }
+
+    bind<WordsViewModel>() with factory {
+        WordsViewModel(
+            wordManager = instance(),
+            userCacheManager = instance()
         )
     }
 }

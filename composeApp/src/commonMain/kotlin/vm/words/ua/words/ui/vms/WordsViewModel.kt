@@ -1,0 +1,126 @@
+package vm.words.ua.words.ui.vms
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import vm.words.ua.core.domain.managers.UserCacheManager
+import vm.words.ua.core.ui.models.ErrorMessage
+import vm.words.ua.words.domain.managers.WordManager
+import vm.words.ua.words.domain.models.filters.WordFilter
+import vm.words.ua.words.ui.actions.WordsAction
+import vm.words.ua.words.ui.states.WordsState
+
+class WordsViewModel(
+    private val wordManager: WordManager,
+    private val userCacheManager: UserCacheManager
+) : ViewModel() {
+
+
+    private val mutableState: MutableStateFlow<WordsState> = MutableStateFlow(
+        WordsState(
+            filter = WordFilter(
+                userId = WordFilter.UserId(id = userCacheManager.user.id, isIn = false)
+            ),
+        )
+    )
+    val state: StateFlow<WordsState> = mutableState
+
+    init {
+        loadMore(0)
+    }
+
+    fun sent(action: WordsAction) {
+        when (action) {
+            is WordsAction.SelectWord -> addWord(action.wordId)
+            is WordsAction.RemoveWord -> removeWord(action.wordId)
+            is WordsAction.Clear -> clear()
+            is WordsAction.LoadMore -> loadMore()
+            is WordsAction.UpdateFilter -> updateFilter(action.filter)
+        }
+    }
+
+    private fun loadMore() {
+        loadMore(state.value.currentPage + 1)
+    }
+
+    private fun loadMore(newPage: Int) {
+        viewModelScope.launch(Dispatchers.Default) {
+            if (state.value.hasMore.not()) {
+                return@launch
+            }
+            mutableState.apply {
+                value = value.copy(
+                    isLoading = true,
+                    error = null
+                )
+            }
+            try {
+                val paged = wordManager.findBy(state.value.filter.copy(page = newPage))
+                mutableState.apply {
+                    value = value.copy(
+                        currentPage = newPage,
+                        hasMore = paged.page.totalPages - 1 >= newPage,
+                        words = value.words + paged.content,
+                        isLoading = false,
+                        error = null
+                    )
+                }
+            } catch (e: Exception) {
+                mutableState.apply {
+                    value = value.copy(
+                        isLoading = false,
+                        error = ErrorMessage(e.message.orEmpty())
+                    )
+                }
+            }
+        }
+
+    }
+
+    private fun updateFilter(filter: WordFilter) {
+        if (state.value.filter == filter) {
+            return
+        }
+        mutableState.apply {
+            value = value.copy(
+                filter = filter,
+                currentPage = 0,
+                hasMore = true,
+                words = listOf(),
+                isLoading = true
+            )
+        }
+        loadMore(0)
+    }
+
+    private fun removeWord(wordId: String) {
+        if (state.value.selectedWords.isEmpty()) {
+            return
+        }
+        mutableState.apply {
+            value = value.copy(
+                selectedWords = value.selectedWords - wordId
+            )
+        }
+    }
+
+    private fun addWord(wordId: String) {
+        mutableState.apply {
+            value = value.copy(
+                selectedWords = value.selectedWords + wordId
+            )
+        }
+    }
+
+    private fun clear() {
+        mutableState.apply {
+            value = value.copy(
+                selectedWords = emptySet()
+            )
+        }
+    }
+
+}

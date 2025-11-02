@@ -17,6 +17,7 @@ import vm.words.ua.playlist.ui.screen.PlayListFilterScreen
 import vm.words.ua.playlist.ui.screen.PlayListScreen
 import vm.words.ua.settings.ui.screen.SettingScreen
 import vm.words.ua.words.ui.screen.WordDetailsScreen
+import vm.words.ua.words.ui.screen.WordsScreen
 
 @Composable
 fun AppNavGraph() {
@@ -92,6 +93,12 @@ fun AppNavGraph() {
 
         Screen.WordDetails.route -> {
             WordDetailsScreen(
+                navController = navController
+            )
+        }
+
+        Screen.WordList.route -> {
+            WordsScreen(
                 navController = navController
             )
         }

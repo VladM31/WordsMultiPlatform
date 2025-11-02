@@ -1,11 +1,13 @@
 package vm.words.ua.words.domain.models.filters
 
+import kotlinx.serialization.Serializable
 import vm.words.ua.core.domain.models.enums.CEFR
 import vm.words.ua.core.domain.models.enums.Language
 import vm.words.ua.core.domain.models.filters.Queryable
 import vm.words.ua.words.domain.models.enums.WordSortBy
 import vm.words.ua.words.domain.models.enums.WordType
 
+@Serializable
 data class WordFilter(
     val wordIds: Collection<String>? = null,
     val languages: Set<Language>? = null,
@@ -19,11 +21,12 @@ data class WordFilter(
     val userId: UserId? = null,
 
     val sortField: WordSortBy = WordSortBy.ORIGIN,
-    val asc: Boolean = false,
+    val asc: Boolean = true,
     val page: Int = 0,
     val size: Int = 20,
 ) : Queryable {
 
+    @Serializable
     data class UserId(
         val isIn: Boolean = false,
         val id: String? = null

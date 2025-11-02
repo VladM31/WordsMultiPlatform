@@ -7,12 +7,15 @@ sealed class Screen(val route: String) {
     data object TelegramLogin : Screen("telegram_login")
     data object ConfirmSignUp : Screen("confirm_signup")
 
+    data object WordList : Screen("word_list")
+    data object WordDetails : Screen("word_details")
+
     data object Home : Screen("home")
     data object Settings : Screen("settings")
     data object PlayList : Screen("playlist")
     data object PlayListFilter : Screen("playlist_filter")
     data object PlayListDetails : Screen("playlist_details")
-    data object WordDetails : Screen("word_details")
+
     data object ExerciseSelection : Screen("exercise_selection")
 
     data object OptionDescriptionByWords : Screen("option_description_by_words")
