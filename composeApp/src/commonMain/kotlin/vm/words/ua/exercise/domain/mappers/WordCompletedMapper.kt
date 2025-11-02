@@ -6,6 +6,7 @@ import vm.words.ua.exercise.domain.models.enums.Exercise
 import vm.words.ua.exercise.ui.states.LettersMatchState
 import vm.words.ua.exercise.ui.states.MatchWordsState
 import vm.words.ua.exercise.ui.states.SelectingAnOptionState
+import vm.words.ua.exercise.ui.states.WriteByImageAndFieldState
 
 
 fun MatchWordsState.toWordCompleted()  : WordCompleted {
@@ -37,7 +38,6 @@ fun SelectingAnOptionState.toWordCompleted()  : WordCompleted{
 fun LettersMatchState.toWordCompleted() : WordCompleted {
     val currentWord = this.currentWord()
 
-
     return WordCompleted(
         transactionId = transactionId,
         wordId = currentWord.wordId,
@@ -45,6 +45,20 @@ fun LettersMatchState.toWordCompleted() : WordCompleted {
         exerciseId = this.exercise.id,
         attempts = this.attempts,
         isCorrect = attempts < 3,
+        completedAt = Clock.System.now().toEpochMilliseconds()
+    )
+}
+
+fun WriteByImageAndFieldState.toWordCompleted(): WordCompleted {
+    val currentWord = this.currentWord()
+
+    return WordCompleted(
+        transactionId = transactionId,
+        wordId = currentWord.wordId,
+        userWordId = currentWord.userWordId,
+        exerciseId = this.exercise.id,
+        attempts = this.mistakeCount,
+        isCorrect = mistakeCount < 3,
         completedAt = Clock.System.now().toEpochMilliseconds()
     )
 }
