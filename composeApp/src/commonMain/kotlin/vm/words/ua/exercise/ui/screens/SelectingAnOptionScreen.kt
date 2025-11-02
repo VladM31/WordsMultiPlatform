@@ -219,9 +219,9 @@ private fun SelectingAnOptionScreen(
                 .fillMaxSize(),
             contentAlignment = Alignment.BottomCenter
         ) {
-            Box(Modifier.background(AppTheme.PrimaryBack).fillMaxWidth(),
+                        Box(Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.BottomCenter){
-                Button(onClick = onNext, modifier = Modifier.padding(16.dp).background(AppTheme.PrimaryBack),) {
+                                Button(onClick = onNext, modifier = Modifier.padding(16.dp)) {
                     Text("Next", fontSize = fontSize, modifier = Modifier.padding(horizontal = 32.dp))
                 }
             }
