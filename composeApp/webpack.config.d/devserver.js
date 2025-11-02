@@ -19,6 +19,11 @@ config.devServer.client = {
 // Enable source maps for better debugging
 config.devtool = 'eval-source-map';
 
-// Log webpack info
+// Allow configuring port and public path via environment variables
+const defaultPort = 7000;
+
+
+config.devServer.port = defaultPort;
+
 console.log('Webpack DevServer is configured for debugging');
 
