@@ -4,10 +4,7 @@ import org.kodein.di.DI
 import org.kodein.di.bind
 import org.kodein.di.factory
 import org.kodein.di.instance
-import vm.words.ua.exercise.ui.vm.ExerciseSelectionViewModel
-import vm.words.ua.exercise.ui.vm.LettersMatchVm
-import vm.words.ua.exercise.ui.vm.MatchWordsViewModel
-import vm.words.ua.exercise.ui.vm.SelectingAnOptionVm
+import vm.words.ua.exercise.ui.vm.*
 
 /**
  * Модуль Kodein-DI для ViewModels Exercise
@@ -35,6 +32,14 @@ internal val exerciseViewModelModule = DI.Module("exerciseViewModel") {
 
     bind<LettersMatchVm>() with factory {
         LettersMatchVm(
+            soundManager = instance(),
+            contentManager = instance(),
+            exerciseStatisticalManager = instance()
+        )
+    }
+
+    bind<WriteByImageAndFieldVm>() with factory {
+        WriteByImageAndFieldVm(
             soundManager = instance(),
             contentManager = instance(),
             exerciseStatisticalManager = instance()
