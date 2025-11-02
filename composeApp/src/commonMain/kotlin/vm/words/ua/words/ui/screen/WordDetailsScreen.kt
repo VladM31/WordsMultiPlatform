@@ -5,16 +5,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.domain.models.ByteContent
+import vm.words.ua.core.platform.AppPlatform
+import vm.words.ua.core.platform.currentOrientation
+import vm.words.ua.core.platform.currentPlatform
+import vm.words.ua.core.platform.isLandscape
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.*
 import vm.words.ua.core.utils.getFontSize
@@ -109,7 +110,10 @@ fun WordDetailsScreen(
             val maxWidth = maxWidth
             val isPhone = getWidthDeviceFormat(maxWidth).isPhone
 
-            if (isPhone) {
+            val isNotMobile = remember { setOf(AppPlatform.IOS, AppPlatform.ANDROID).contains(currentPlatform()).not() }
+            val isNotLandscape = remember { currentOrientation().isLandscape.not() }
+
+            if (isPhone && (isNotLandscape || isNotMobile)) {
                 MobileLayout(
                     word = word,
                     userWord = userWord,
@@ -166,6 +170,7 @@ private fun MobileLayout(
         FileView(
             hasSound = false,
             hideSound = true,
+            hideImage = image == null,
             image = image,
             maxWidth = maxWidth,
             isPlayingSound = state.isPlayingSound,
@@ -203,6 +208,7 @@ private fun MobileLayout(
             onPlaySound = { viewModel.sent(WordDetailsAction.PlaySound) },
             modifier = Modifier
                 .widthIn(width)
+
                 .padding(horizontal = 16.dp, vertical = 4.dp)
         )
 
@@ -227,6 +233,8 @@ private fun DesktopLayout(
     ) {
         // Left Column - Text Content
         val leftScrollState = rememberScrollState()
+        val fileViewScrollState = rememberScrollState()
+
         val scale = getScaleFactor(maxWidth)
         val contentWidth = (400 * scale).dp
         val contentHeight = (500 * scale).dp * 1.2f
@@ -236,7 +244,7 @@ private fun DesktopLayout(
                 .widthIn(min = 300.dp, max = contentWidth)
                 .heightIn(max = contentHeight)
                 .verticalScroll(leftScrollState)
-                .padding(start = 4.dp, end = 4.dp, top = 16.dp, bottom = 16.dp),
+                .padding(16.dp),
             verticalArrangement = Arrangement.Top
         ) {
             WordDetailsContent(
@@ -255,14 +263,16 @@ private fun DesktopLayout(
         // Right Column - Image and Sound
         FileView(
             hasSound = wordState.sound != null,
+            hideImage = wordState.image == null,
             image = image,
             maxWidth = maxWidth,
             isPlayingSound = state.isPlayingSound,
             onPlaySound = { viewModel.sent(WordDetailsAction.PlaySound) },
             modifier = Modifier
                 .widthIn(min = 300.dp, max = contentWidth)
-                .heightIn(max = contentHeight)
+                .heightIn(min = contentHeight / 2, max = contentHeight)
                 .padding(start = 4.dp, end = 4.dp, top = 16.dp, bottom = 16.dp)
+                .verticalScroll(fileViewScrollState)
         )
     }
 }
@@ -270,7 +280,6 @@ private fun DesktopLayout(
 @Composable
 private fun FileView(
     hasSound: Boolean,
-
     maxWidth: Dp = Dp.Unspecified,
     image: ByteContent? = null,
     modifier: Modifier = Modifier,
@@ -283,10 +292,9 @@ private fun FileView(
     val imageSize = (300 * scale).dp
 
     Column(
-        modifier = modifier
-            .padding(horizontal = 8.dp, vertical = 8.dp),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         if (hideImage.not()){
             ImageFromBytes(

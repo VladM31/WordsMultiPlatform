@@ -58,6 +58,9 @@ fun WordsScreen(
             onAdditionalClick = {
 //                navController.navigate(Screen.PlayListFilter, state.filter)
             },
+            onBackClick = {
+                navController.popBackStack()
+            },
             additionalButtonImage = painterResource(Res.drawable.find)
         )
 
