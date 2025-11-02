@@ -28,6 +28,7 @@ import vm.words.ua.exercise.domain.models.data.ExerciseWordDetails
 import vm.words.ua.exercise.ui.actions.SelectingAnOptionAction
 import vm.words.ua.exercise.ui.bundles.ExerciseBundle
 import vm.words.ua.exercise.ui.componets.OptionCard
+import vm.words.ua.exercise.ui.effects.EndExerciseEffect
 import vm.words.ua.exercise.ui.utils.isSoundAfterAnswer
 import vm.words.ua.exercise.ui.utils.isSoundBeforeAnswer
 import vm.words.ua.exercise.ui.utils.toOptionText
@@ -96,23 +97,7 @@ private fun SelectingAnOptionScreen(
         )
     }
 
-    LaunchedEffect(state.value.isEnd) {
-        if (!state.value.isEnd) {
-            return@LaunchedEffect
-        }
-        if (state.value.exercise != param.currentExercise){
-            return@LaunchedEffect
-        }
-        if (param.isLast) {
-            navController.popBackStack()
-            return@LaunchedEffect
-        }
-        val bundle = param.toNext(state.value.words)
-        param.nextExercise.toScreen().let { nextExercise ->
-            navController.navigateAndClearCurrent(nextExercise, bundle)
-        }
-    }
-
+    EndExerciseEffect(state.value, param, navController)
 
     // Left pane: image (if allowed) + main word
     val leftContent = @Composable {

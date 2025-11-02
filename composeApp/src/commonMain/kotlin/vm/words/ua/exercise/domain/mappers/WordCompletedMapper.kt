@@ -42,7 +42,7 @@ fun LettersMatchState.toWordCompleted() : WordCompleted {
         transactionId = transactionId,
         wordId = currentWord.wordId,
         userWordId = currentWord.userWordId,
-        exerciseId = this.exerciseType.id,
+        exerciseId = this.exercise.id,
         attempts = this.attempts,
         isCorrect = attempts < 3,
         completedAt = Clock.System.now().toEpochMilliseconds()

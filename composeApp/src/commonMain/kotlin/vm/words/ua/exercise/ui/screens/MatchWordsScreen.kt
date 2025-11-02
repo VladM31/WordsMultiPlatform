@@ -17,6 +17,7 @@ import vm.words.ua.exercise.domain.mappers.toScreen
 import vm.words.ua.exercise.ui.actions.MatchWordsAction
 import vm.words.ua.exercise.ui.bundles.ExerciseBundle
 import vm.words.ua.exercise.ui.componets.MatchWordCard
+import vm.words.ua.exercise.ui.effects.EndExerciseEffect
 import vm.words.ua.exercise.ui.vm.MatchWordsViewModel
 import vm.words.ua.navigation.SimpleNavController
 
@@ -38,22 +39,7 @@ fun MatchWordsScreen(
         )
     }
 
-    LaunchedEffect(state.value.isEnd) {
-        if (!state.value.isEnd) {
-            return@LaunchedEffect
-        }
-        if (state.value.transactionId != param.transactionId){
-            return@LaunchedEffect
-        }
-        if (param.isLast) {
-            navController.popBackStack()
-            return@LaunchedEffect
-        }
-        val bundle = param.toNext(state.value.words)
-        param.nextExercise.toScreen().let { nextExercise ->
-            navController.navigateAndClearCurrent(nextExercise, bundle)
-        }
-    }
+    EndExerciseEffect(state.value, param, navController)
 
     Column(
         modifier = Modifier

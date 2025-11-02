@@ -39,7 +39,7 @@ class LettersMatchVm(
             isActiveSubscribe = action.isActiveSubscribe,
             originalWord = words[0].original,
             transactionId = action.transactionId,
-            exerciseType = action.exerciseType,
+            exercise = action.exerciseType,
             letters = words[0].original.trim().map { LettersMatchState.Letter.from(it) }.shuffled()
         )
     }

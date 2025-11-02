@@ -1,7 +1,6 @@
 package vm.words.ua.exercise.ui.screens
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -34,12 +33,12 @@ import vm.words.ua.exercise.domain.mappers.toScreen
 import vm.words.ua.exercise.ui.actions.LettersMatchAction
 import vm.words.ua.exercise.ui.bundles.ExerciseBundle
 import vm.words.ua.exercise.ui.componets.NextButton
+import vm.words.ua.exercise.ui.effects.EndExerciseEffect
 import vm.words.ua.exercise.ui.states.LettersMatchState
 import vm.words.ua.exercise.ui.utils.toText
 import vm.words.ua.exercise.ui.vm.LettersMatchVm
 import vm.words.ua.navigation.SimpleNavController
 import wordsmultiplatform.composeapp.generated.resources.Res
-import wordsmultiplatform.composeapp.generated.resources.add
 import wordsmultiplatform.composeapp.generated.resources.plus_one
 
 @Composable
@@ -86,18 +85,7 @@ private fun LettersMatchScreen(
         )
     }
 
-    LaunchedEffect(state.value.isEnd) {
-        if (!state.value.isEnd) return@LaunchedEffect
-        if (state.value.transactionId != param.transactionId) return@LaunchedEffect
-        if (param.isLast) {
-            navController.popBackStack()
-            return@LaunchedEffect
-        }
-        val bundle = param.toNext(state.value.words)
-        param.nextExercise.toScreen().let { nextExercise ->
-            navController.navigateAndClearCurrent(nextExercise, bundle)
-        }
-    }
+    EndExerciseEffect(state.value, param, navController)
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -144,7 +132,7 @@ private fun Content(
     ) {
         item {
             Text(
-                text = state.value.currentWord().toText(state.value.exerciseType),
+                text = state.value.currentWord().toText(state.value.exercise),
                 color = AppTheme.PrimaryColor,
                 fontSize = fontSize,
                 textAlign = TextAlign.Center,

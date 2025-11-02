@@ -1,5 +1,5 @@
 package vm.words.ua.core.ui.states
 
-interface EndetableState {
+interface EndetableState { 
     val isEnd: Boolean
 }

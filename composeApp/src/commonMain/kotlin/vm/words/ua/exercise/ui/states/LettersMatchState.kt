@@ -18,15 +18,15 @@ data class LettersMatchState(
     val errorLetter: ErrorLetter? = null,
     val grades: List<Int> = emptyList(),
 
-    val transactionId: String = "",
-    val exerciseType: Exercise = Exercise.LETTERS_MATCH_BY_TRANSLATION,
+    override val transactionId: String = "",
+    override val exercise: Exercise = Exercise.LETTERS_MATCH_BY_TRANSLATION,
 
     val wordIndex: Int = 0,
-    val words: List<ExerciseWordDetails> = emptyList(),
+    override val words: List<ExerciseWordDetails> = emptyList(),
     val isActiveSubscribe: Boolean = false,
     val isInited: Boolean = false,
     override val isEnd: Boolean = false,
-) : EndetableState{
+) : ExerciseState{
 
     fun currentLetterChar() = originalWord[letterIndex]
 
