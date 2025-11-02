@@ -21,7 +21,7 @@ actual fun registerBackHandler(navController: SimpleNavController) {
                 }
                 val keyCode = e.keyCode
                 val isAlt = e.isAltDown
-                if (keyCode == KeyEvent.VK_BACK_SPACE || keyCode == KeyEvent.VK_ESCAPE || (isAlt && keyCode == KeyEvent.VK_LEFT)) {
+                if (keyCode == KeyEvent.VK_ESCAPE || (isAlt && keyCode == KeyEvent.VK_LEFT)) {
                     val handled = navController.popBackStack()
                     if (handled) {
                         e.consume()
