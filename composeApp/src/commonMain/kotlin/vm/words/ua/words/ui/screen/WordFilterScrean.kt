@@ -58,7 +58,7 @@ import wordsmultiplatform.composeapp.generated.resources.delete
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WordFilterScrean(
+fun WordFilterScreen(
     navController: SimpleNavController,
     modifier: Modifier = Modifier
 ) {
