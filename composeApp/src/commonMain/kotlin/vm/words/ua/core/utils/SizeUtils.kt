@@ -36,10 +36,19 @@ fun getIconButtonSize() : Dp{
 @Composable
 fun getFontSize() : TextUnit{
     val scale = getScaleFactor()
-    return remember {
+    return remember(scale) {
         (24 * scale).sp
     }
 }
+
+@Composable
+fun getLabelFontSize(): TextUnit {
+    val fontSize = getFontSize()
+    return remember(fontSize) {
+        fontSize * 0.7f
+    }
+}
+
 
 @Composable
 fun getImageSize() : Dp{

@@ -43,6 +43,7 @@ import vm.words.ua.core.domain.models.enums.CEFR
 import vm.words.ua.core.domain.models.enums.Language
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
+import vm.words.ua.core.ui.components.SingleSelectInput
 import vm.words.ua.core.ui.components.TextInput
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
@@ -67,8 +68,6 @@ fun WordFilterScreen(
     val listState = rememberLazyListState()
 
     // Local UI states
-    var originalLangExpanded by remember { mutableStateOf(false) }
-    var translateLangExpanded by remember { mutableStateOf(false) }
     var sortByExpanded by remember { mutableStateOf(false) }
     var cefrExpanded by remember { mutableStateOf(false) }
     var categoryInput by remember { mutableStateOf(TextFieldValue("")) }
@@ -123,63 +122,15 @@ fun WordFilterScreen(
 
                 // 2. Single select originalLang with ability to clear
                 item {
-                    Box {
-                        ExposedDropdownMenuBox(
-                            expanded = originalLangExpanded,
-                            onExpandedChange = { originalLangExpanded = it }
-                        ) {
-                            OutlinedTextField(
-                                value = state.originalLang?.titleCase ?: "None",
-                                onValueChange = {},
-                                readOnly = true,
-                                label = {
-                                    Text(
-                                        "Original language",
-                                        color = AppTheme.PrimaryGreen
-                                    )
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .menuAnchor(),
-                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = originalLangExpanded) },
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = AppTheme.PrimaryGreen,
-                                    unfocusedBorderColor = AppTheme.PrimaryGreen.copy(alpha = 0.5f),
-                                    focusedTextColor = AppTheme.PrimaryGreen,
-                                    unfocusedTextColor = AppTheme.PrimaryGreen,
-                                    cursorColor = AppTheme.PrimaryGreen
-                                )
-                            )
-                            ExposedDropdownMenu(
-                                expanded = originalLangExpanded,
-                                onDismissRequest = { originalLangExpanded = false },
-                                modifier = Modifier.background(AppTheme.PrimaryBack)
-                            ) {
-                                DropdownMenuItem(
-                                    text = { Text("None", color = AppTheme.PrimaryGreen) },
-                                    onClick = {
-                                        viewModel.sent(WordFilterAction.SetOriginalLang(null))
-                                        originalLangExpanded = false
-                                    }
-                                )
-                                Language.entries.filter { it != Language.UNDEFINED }
-                                    .forEach { lang ->
-                                        DropdownMenuItem(
-                                            text = {
-                                                Text(
-                                                    lang.titleCase,
-                                                    color = AppTheme.PrimaryGreen
-                                                )
-                                            },
-                                            onClick = {
-                                                viewModel.sent(WordFilterAction.SetOriginalLang(lang))
-                                                originalLangExpanded = false
-                                            }
-                                        )
-                                    }
-                            }
-                        }
-                    }
+                    SingleSelectInput(
+                        value = state.originalLang,
+                        items = Language.entries.filter { it != Language.UNDEFINED },
+                        label = "Original language",
+                        toLabel = { it.titleCase },
+                        showNone = true,
+                        noneLabel = "",
+                        onSelect = { viewModel.sent(WordFilterAction.SetOriginalLang(it)) }
+                    )
                 }
 
                 // 3. Translate input
@@ -191,67 +142,15 @@ fun WordFilterScreen(
 
                 // 4. Single select translateLang with ability to clear
                 item {
-                    Box {
-                        ExposedDropdownMenuBox(
-                            expanded = translateLangExpanded,
-                            onExpandedChange = { translateLangExpanded = it }
-                        ) {
-                            OutlinedTextField(
-                                value = state.translateLang?.titleCase ?: "None",
-                                onValueChange = {},
-                                readOnly = true,
-                                label = {
-                                    Text(
-                                        "Translate language",
-                                        color = AppTheme.PrimaryGreen
-                                    )
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .menuAnchor(),
-                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = translateLangExpanded) },
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = AppTheme.PrimaryGreen,
-                                    unfocusedBorderColor = AppTheme.PrimaryGreen.copy(alpha = 0.5f),
-                                    focusedTextColor = AppTheme.PrimaryGreen,
-                                    unfocusedTextColor = AppTheme.PrimaryGreen,
-                                    cursorColor = AppTheme.PrimaryGreen
-                                )
-                            )
-                            ExposedDropdownMenu(
-                                expanded = translateLangExpanded,
-                                onDismissRequest = { translateLangExpanded = false },
-                                modifier = Modifier.background(AppTheme.PrimaryBack)
-                            ) {
-                                DropdownMenuItem(
-                                    text = { Text("None", color = AppTheme.PrimaryGreen) },
-                                    onClick = {
-                                        viewModel.sent(WordFilterAction.SetTranslateLang(null))
-                                        translateLangExpanded = false
-                                    }
-                                )
-                                Language.entries.filter { it != Language.UNDEFINED }
-                                    .forEach { lang ->
-                                        DropdownMenuItem(
-                                            text = {
-                                                Text(
-                                                    lang.titleCase,
-                                                    color = AppTheme.PrimaryGreen
-                                                )
-                                            },
-                                            onClick = {
-                                                viewModel.sent(
-                                                    WordFilterAction.SetTranslateLang(
-                                                        lang
-                                                    )
-                                                )
-                                                translateLangExpanded = false
-                                            }
-                                        )
-                                    }
-                            }
-                        }
-                    }
+                    SingleSelectInput(
+                        value = state.translateLang,
+                        items = Language.entries.filter { it != Language.UNDEFINED },
+                        label = "Translate language",
+                        toLabel = { it.titleCase },
+                        showNone = true,
+                        noneLabel = "",
+                        onSelect = { viewModel.sent(WordFilterAction.SetTranslateLang(it)) }
+                    )
                 }
 
                 // 5. Multi select CEFRs with proper multi-selector
@@ -493,5 +392,3 @@ fun WordFilterScreen(
         }
     }
 }
-
-

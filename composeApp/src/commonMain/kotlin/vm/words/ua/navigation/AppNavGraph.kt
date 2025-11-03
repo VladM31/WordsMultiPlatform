@@ -10,14 +10,23 @@ import vm.words.ua.auth.ui.screen.SignUpScreen
 import vm.words.ua.auth.ui.screen.TelegramLoginScreen
 import vm.words.ua.core.ui.screen.UpdateScreen
 import vm.words.ua.di.DiContainer
-import vm.words.ua.exercise.ui.screens.*
+import vm.words.ua.exercise.ui.screens.DescriptionByWordsScreen
+import vm.words.ua.exercise.ui.screens.ExerciseSelectionScreen
+import vm.words.ua.exercise.ui.screens.LetterMatchByDescriptionScreen
+import vm.words.ua.exercise.ui.screens.LetterMatchByTranslationScreen
+import vm.words.ua.exercise.ui.screens.MatchWordsScreen
+import vm.words.ua.exercise.ui.screens.WordByDescriptionsScreen
+import vm.words.ua.exercise.ui.screens.WordByOriginalsScreen
+import vm.words.ua.exercise.ui.screens.WordByTranslatesScreen
+import vm.words.ua.exercise.ui.screens.WriteByImageAndDescriptionScreen
+import vm.words.ua.exercise.ui.screens.WriteByImageAndTranslationScreen
 import vm.words.ua.main.ui.screen.HomeScreen
 import vm.words.ua.playlist.ui.screen.PlayListDetailsScreen
 import vm.words.ua.playlist.ui.screen.PlayListFilterScreen
 import vm.words.ua.playlist.ui.screen.PlayListScreen
 import vm.words.ua.settings.ui.screen.SettingScreen
 import vm.words.ua.words.ui.screen.WordDetailsScreen
-import vm.words.ua.words.ui.screen.WordFilterScrean
+import vm.words.ua.words.ui.screen.WordFilterScreen
 import vm.words.ua.words.ui.screen.WordsScreen
 
 @Composable
@@ -93,7 +102,7 @@ fun AppNavGraph() {
         }
 
         Screen.WordFilter.route -> {
-            WordFilterScrean(
+            WordFilterScreen(
                 navController = navController
             )
         }
