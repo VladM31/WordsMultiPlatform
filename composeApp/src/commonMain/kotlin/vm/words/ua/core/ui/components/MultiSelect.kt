@@ -10,6 +10,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -18,9 +19,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppTheme
+import vm.words.ua.core.utils.getFontSize
+import vm.words.ua.core.utils.getLabelFontSize
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,11 +35,13 @@ fun <T> MultiSelect(
     toLabel: (T) -> String,
     onToggle: (T) -> Unit,
     label: String = "Select",
+    emptyText: String = "",
     modifier: Modifier = Modifier
 ) {
     val selectedSet = selected?.toSet() ?: emptySet()
     val selectedText =
-        if (selectedSet.isEmpty()) "Any" else selectedSet.joinToString(", ") { toLabel(it) }
+        if (selectedSet.isEmpty()) emptyText else selectedSet.joinToString(", ") { toLabel(it) }
+    val fontSize = getFontSize()
 
     var expanded by remember { mutableStateOf(false) }
 
@@ -47,8 +54,9 @@ fun <T> MultiSelect(
             value = selectedText,
             onValueChange = {},
             readOnly = true,
-            label = { Text(label, color = AppTheme.PrimaryGreen) },
-            modifier = Modifier.fillMaxWidth(),
+            label = { Text(label, color = AppTheme.PrimaryGreen, fontSize = getLabelFontSize()) },
+            modifier = Modifier.fillMaxWidth().menuAnchor(MenuAnchorType.PrimaryNotEditable),
+            textStyle = TextStyle(fontSize = fontSize),
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = AppTheme.PrimaryGreen,
@@ -68,7 +76,10 @@ fun <T> MultiSelect(
                 val isChecked = selectedSet.contains(item)
                 DropdownMenuItem(
                     text = {
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Checkbox(
                                 checked = isChecked,
                                 onCheckedChange = { onToggle(item) },
@@ -78,7 +89,7 @@ fun <T> MultiSelect(
                                     checkmarkColor = AppTheme.PrimaryBack
                                 )
                             )
-                            Text(toLabel(item), color = AppTheme.PrimaryGreen)
+                            Text(toLabel(item), color = AppTheme.PrimaryGreen, fontSize = fontSize)
                         }
                     },
                     onClick = { onToggle(item) }
