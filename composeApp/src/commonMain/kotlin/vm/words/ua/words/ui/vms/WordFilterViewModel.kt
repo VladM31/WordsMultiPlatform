@@ -3,6 +3,7 @@ package vm.words.ua.words.ui.vms
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import vm.words.ua.core.domain.models.enums.CEFR
 import vm.words.ua.words.domain.mappers.toWordFilterState
 import vm.words.ua.words.ui.actions.WordFilterAction
 import vm.words.ua.words.ui.states.WordFilterState
@@ -24,9 +25,16 @@ class WordFilterViewModel : ViewModel() {
             is WordFilterAction.Init -> {
                 handleInit(action)
             }
-
-            is WordFilterAction.SetCefr -> state.value.copy(cefrs = action.value?.let { listOf(it) })
+            is WordFilterAction.SetCefr -> toggleCefr(action.value)
+            is WordFilterAction.SetCefrs -> state.value.copy(cefrs = action.value)
         }
+    }
+
+    private fun toggleCefr(value: CEFR?): WordFilterState {
+        if (value == null) return state.value.copy(cefrs = null)
+        val current = state.value.cefrs?.toMutableSet() ?: mutableSetOf()
+        if (current.contains(value)) current.remove(value) else current.add(value)
+        return state.value.copy(cefrs = if (current.isEmpty()) null else current)
     }
 
     private fun handleInit(action: WordFilterAction.Init) =

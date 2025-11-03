@@ -5,10 +5,13 @@ import vm.words.ua.core.domain.models.enums.Language
 import vm.words.ua.words.domain.models.enums.WordSortBy
 
 data class WordFilterState(
-    val originalLang: Language? = null,
-    val translateLang: Language? = null,
+
+
     val original: String? = null,
+    val originalLang: Language? = null,
     val translate: String? = null,
+    val translateLang: Language? = null,
+
     val categories: List<String>? = null,
     val asc: Boolean = false,
     val sortBy: WordSortBy? = null,

@@ -16,6 +16,7 @@ import vm.words.ua.core.ui.components.Items
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
+import vm.words.ua.words.domain.models.filters.WordFilter
 import vm.words.ua.words.ui.actions.WordsAction
 import vm.words.ua.words.ui.bundles.WordDetailsBundle
 import vm.words.ua.words.ui.components.WordItem
@@ -31,13 +32,13 @@ fun WordsScreen(
     val state by viewModel.state.collectAsState()
     val listState = rememberLazyListState()
 
-//    // Check for returned filter from PlayListFilterScreen
-//    LaunchedEffect(navController.currentRoute) {
-//        val returnedFilter = navController.getReturnParam<PlayListCountFilter>()
-//        if (returnedFilter != null) {
-//            viewModel.sent(PlayListAction.UpdateFilter(returnedFilter))
-//        }
-//    }
+    // Check for returned filter from WordFilterScreen
+    LaunchedEffect(navController.currentRoute) {
+        val returnedFilter = navController.getReturnParam<WordFilter>()
+        if (returnedFilter != null) {
+            viewModel.sent(WordsAction.UpdateFilter(returnedFilter))
+        }
+    }
 
     // Load more when reaching end of list
     LaunchedEffect(listState.canScrollForward, state.isLoading) {
@@ -56,7 +57,7 @@ fun WordsScreen(
             showBackButton = true,
             showAdditionalButton = true,
             onAdditionalClick = {
-//                navController.navigate(Screen.PlayListFilter, state.filter)
+                navController.navigate(Screen.WordFilter, state.filter)
             },
             onBackClick = {
                 navController.popBackStack()

@@ -29,4 +29,6 @@ sealed class Screen(val route: String) {
 
     data object WriteByImageAndDescription : Screen("write_by_image_and_description")
     data object WriteByImageAndTranslation : Screen("write_by_image_and_translation")
+
+    data object WordFilter : Screen("word_filter")
 }
