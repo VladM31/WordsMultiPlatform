@@ -24,7 +24,10 @@ fun getFontSize(scaleFactor: Float) : TextUnit{
 
 @Composable
 fun getIconSize() : Dp{
-    return (45 * getScaleFactor()).dp
+    val scaleFactor = getScaleFactor()
+    return remember(scaleFactor) {
+        (45 * scaleFactor).dp
+    }
 }
 
 @Composable

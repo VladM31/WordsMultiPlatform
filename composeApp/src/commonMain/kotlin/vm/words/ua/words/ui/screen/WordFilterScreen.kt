@@ -2,7 +2,6 @@ package vm.words.ua.words.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,10 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
@@ -32,7 +28,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -50,10 +45,10 @@ import vm.words.ua.words.domain.mappers.toWordFilter
 import vm.words.ua.words.domain.models.enums.WordSortBy
 import vm.words.ua.words.domain.models.filters.WordFilter
 import vm.words.ua.words.ui.actions.WordFilterAction
+import vm.words.ua.words.ui.components.SortSelector
 import vm.words.ua.words.ui.vms.WordFilterViewModel
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.add
-import wordsmultiplatform.composeapp.generated.resources.arrow
 import wordsmultiplatform.composeapp.generated.resources.delete
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -167,77 +162,25 @@ fun WordFilterScreen(
 
                 // 6. Sort selector and asc toggle in one row
                 item {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        Box(Modifier.weight(1f)) {
-                            ExposedDropdownMenuBox(
-                                expanded = sortByExpanded,
-                                onExpandedChange = { sortByExpanded = it }
-                            ) {
-                                OutlinedTextField(
-                                    value = state.sortBy?.titleCase ?: "Default",
-                                    onValueChange = {},
-                                    readOnly = true,
-                                    label = { Text("Sort by", color = AppTheme.PrimaryGreen) },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .menuAnchor(),
-                                    trailingIcon = {
-                                        ExposedDropdownMenuDefaults.TrailingIcon(
-                                            expanded = sortByExpanded
-                                        )
-                                    },
-                                    colors = OutlinedTextFieldDefaults.colors(
-                                        focusedBorderColor = AppTheme.PrimaryGreen,
-                                        unfocusedBorderColor = AppTheme.PrimaryGreen.copy(alpha = 0.5f),
-                                        focusedTextColor = AppTheme.PrimaryGreen,
-                                        unfocusedTextColor = AppTheme.PrimaryGreen,
-                                        cursorColor = AppTheme.PrimaryGreen
-                                    )
+                    // Use the new generic SortSelector: provide items, selected, toLabel and handlers
+                    SortSelector(
+                        items = WordSortBy.entries.toList(),
+                        selected = state.sortBy,
+                        toLabel = { it.titleCase },
+                        label = "Sort by",
+                        expanded = sortByExpanded,
+                        onExpandedChange = { sortByExpanded = it },
+                        onSelect = { selectedSort ->
+                            viewModel.sent(
+                                WordFilterAction.SetSortBy(
+                                    selectedSort
                                 )
-                                ExposedDropdownMenu(
-                                    expanded = sortByExpanded,
-                                    onDismissRequest = { sortByExpanded = false },
-                                    modifier = Modifier.background(AppTheme.PrimaryBack)
-                                ) {
-                                    DropdownMenuItem(
-                                        text = { Text("Default", color = AppTheme.PrimaryGreen) },
-                                        onClick = {
-                                            viewModel.sent(WordFilterAction.SetSortBy(null))
-                                            sortByExpanded = false
-                                        }
-                                    )
-                                    WordSortBy.entries.forEach { sort ->
-                                        DropdownMenuItem(
-                                            text = {
-                                                Text(
-                                                    sort.titleCase,
-                                                    color = AppTheme.PrimaryGreen
-                                                )
-                                            },
-                                            onClick = {
-                                                viewModel.sent(WordFilterAction.SetSortBy(sort))
-                                                sortByExpanded = false
-                                            }
-                                        )
-                                    }
-                                }
-                            }
-                        }
-
-                        IconButton(
-                            onClick = { viewModel.sent(WordFilterAction.SetAsc(!state.asc)) }
-                        ) {
-                            Icon(
-                                painter = painterResource(Res.drawable.arrow),
-                                contentDescription = if (state.asc) "Ascending" else "Descending",
-                                tint = AppTheme.PrimaryGreen,
-                                modifier = Modifier.rotate(if (state.asc) -90f else 90f)
                             )
-                        }
-                    }
+                        },
+                        asc = state.asc,
+                        onToggleAsc = { viewModel.sent(WordFilterAction.SetAsc(it)) },
+                        expansionMode = vm.words.ua.words.ui.components.ExpansionMode.Dropdown
+                    )
                 }
 
                 // 7. Categories input + list of added items with remove
