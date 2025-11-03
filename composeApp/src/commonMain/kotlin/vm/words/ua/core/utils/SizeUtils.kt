@@ -1,6 +1,7 @@
 package vm.words.ua.core.utils
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -34,7 +35,10 @@ fun getIconButtonSize() : Dp{
 
 @Composable
 fun getFontSize() : TextUnit{
-    return (24 * getScaleFactor()).sp
+    val scale = getScaleFactor()
+    return remember {
+        (24 * scale).sp
+    }
 }
 
 @Composable

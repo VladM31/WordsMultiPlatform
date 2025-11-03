@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
@@ -18,6 +19,8 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -31,6 +34,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
@@ -38,6 +43,7 @@ import vm.words.ua.core.domain.models.enums.CEFR
 import vm.words.ua.core.domain.models.enums.Language
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
+import vm.words.ua.core.ui.components.TextInput
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.words.domain.mappers.toWordFilter
@@ -46,6 +52,8 @@ import vm.words.ua.words.domain.models.filters.WordFilter
 import vm.words.ua.words.ui.actions.WordFilterAction
 import vm.words.ua.words.ui.vms.WordFilterViewModel
 import wordsmultiplatform.composeapp.generated.resources.Res
+import wordsmultiplatform.composeapp.generated.resources.add
+import wordsmultiplatform.composeapp.generated.resources.arrow
 import wordsmultiplatform.composeapp.generated.resources.delete
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -108,19 +116,9 @@ fun WordFilterScrean(
             ) {
                 // 1. Original input
                 item {
-                    OutlinedTextField(
-                        value = state.original.orEmpty(),
-                        onValueChange = { viewModel.sent(WordFilterAction.SetOriginal(it.ifBlank { null })) },
-                        label = { Text("Original", color = AppTheme.PrimaryGreen) },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = AppTheme.PrimaryGreen,
-                            unfocusedBorderColor = AppTheme.PrimaryGreen.copy(alpha = 0.5f),
-                            focusedTextColor = AppTheme.PrimaryGreen,
-                            unfocusedTextColor = AppTheme.PrimaryGreen,
-                            cursorColor = AppTheme.PrimaryGreen
-                        )
-                    )
+                    TextInput(label = "Original", value = state.original) {
+                        viewModel.sent(WordFilterAction.SetOriginal(it))
+                    }
                 }
 
                 // 2. Single select originalLang with ability to clear
@@ -186,19 +184,9 @@ fun WordFilterScrean(
 
                 // 3. Translate input
                 item {
-                    OutlinedTextField(
-                        value = state.translate.orEmpty(),
-                        onValueChange = { viewModel.sent(WordFilterAction.SetTranslate(it.ifBlank { null })) },
-                        label = { Text("Translate", color = AppTheme.PrimaryGreen) },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = AppTheme.PrimaryGreen,
-                            unfocusedBorderColor = AppTheme.PrimaryGreen.copy(alpha = 0.5f),
-                            focusedTextColor = AppTheme.PrimaryGreen,
-                            unfocusedTextColor = AppTheme.PrimaryGreen,
-                            cursorColor = AppTheme.PrimaryGreen
-                        )
-                    )
+                    TextInput(label = "Translate", value = state.translate) {
+                        viewModel.sent(WordFilterAction.SetTranslate(it))
+                    }
                 }
 
                 // 4. Single select translateLang with ability to clear
@@ -269,7 +257,6 @@ fun WordFilterScrean(
                 // 5. Multi select CEFRs with proper multi-selector
                 item {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Text("CEFR", color = AppTheme.PrimaryGreen)
                         val selected = state.cefrs?.toSet() ?: emptySet()
                         val selectedText = if (selected.isEmpty()) {
                             "Any"
@@ -399,14 +386,15 @@ fun WordFilterScrean(
                             }
                         }
 
-                        Button(
-                            onClick = { viewModel.sent(WordFilterAction.SetAsc(!state.asc)) },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = AppTheme.PrimaryGreen,
-                                contentColor = AppTheme.PrimaryBack
-                            )
+                        IconButton(
+                            onClick = { viewModel.sent(WordFilterAction.SetAsc(!state.asc)) }
                         ) {
-                            Text(if (state.asc) "Asc" else "Desc")
+                            Icon(
+                                painter = painterResource(Res.drawable.arrow),
+                                contentDescription = if (state.asc) "Ascending" else "Descending",
+                                tint = AppTheme.PrimaryGreen,
+                                modifier = Modifier.rotate(if (state.asc) -90f else 90f)
+                            )
                         }
                     }
                 }
@@ -420,7 +408,16 @@ fun WordFilterScrean(
                         ) {
                             OutlinedTextField(
                                 value = categoryInput,
-                                onValueChange = { categoryInput = it },
+                                onValueChange = {
+                                    val newText = it.text.take(255)
+                                    val newSelectionEnd = minOf(it.selection.end, newText.length)
+                                    val newSelectionStart =
+                                        minOf(it.selection.start, newText.length)
+                                    categoryInput = TextFieldValue(
+                                        text = newText,
+                                        selection = TextRange(newSelectionStart, newSelectionEnd)
+                                    )
+                                },
                                 label = { Text("Add category", color = AppTheme.PrimaryGreen) },
                                 modifier = Modifier.weight(1f),
                                 colors = OutlinedTextFieldDefaults.colors(
@@ -431,7 +428,7 @@ fun WordFilterScrean(
                                     cursorColor = AppTheme.PrimaryGreen
                                 )
                             )
-                            Button(
+                            IconButton(
                                 onClick = {
                                     val value = categoryInput.text.trim()
                                     val current =
@@ -442,11 +439,14 @@ fun WordFilterScrean(
                                         categoryInput = TextFieldValue("")
                                     }
                                 },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = AppTheme.PrimaryGreen,
-                                    contentColor = AppTheme.PrimaryBack
+                                modifier = Modifier.size(40.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(Res.drawable.add),
+                                    contentDescription = "Add",
+                                    tint = AppTheme.PrimaryGreen
                                 )
-                            ) { Text("Add") }
+                            }
                         }
 
                         val categories = state.categories ?: emptyList()
@@ -493,3 +493,5 @@ fun WordFilterScrean(
         }
     }
 }
+
+
