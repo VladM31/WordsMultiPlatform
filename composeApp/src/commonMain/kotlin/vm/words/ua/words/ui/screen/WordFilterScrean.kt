@@ -1,11 +1,19 @@
 package vm.words.ua.words.ui.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -14,7 +22,13 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
@@ -48,6 +62,7 @@ fun WordFilterScrean(
     var originalLangExpanded by remember { mutableStateOf(false) }
     var translateLangExpanded by remember { mutableStateOf(false) }
     var sortByExpanded by remember { mutableStateOf(false) }
+    var cefrExpanded by remember { mutableStateOf(false) }
     var categoryInput by remember { mutableStateOf(TextFieldValue("")) }
 
     // Get current filter from navigation params
@@ -251,55 +266,71 @@ fun WordFilterScrean(
                     }
                 }
 
-                // 5. Multi select CEFRs with toggle and set-all/clear-all controls
+                // 5. Multi select CEFRs with proper multi-selector
                 item {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text("CEFR", color = AppTheme.PrimaryGreen)
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Button(
-                                onClick = { viewModel.sent(WordFilterAction.SetCefrs(CEFR.entries.toSet())) },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = AppTheme.PrimaryGreen,
-                                    contentColor = AppTheme.PrimaryBack
-                                )
-                            ) { Text("Select all") }
-                            OutlinedButton(onClick = { viewModel.sent(WordFilterAction.SetCefrs(null)) }) {
-                                Text(
-                                    "Clear",
-                                    color = AppTheme.PrimaryGreen
-                                )
-                            }
+                        val selected = state.cefrs?.toSet() ?: emptySet()
+                        val selectedText = if (selected.isEmpty()) {
+                            "Any"
+                        } else {
+                            selected.joinToString(", ") { it.name }
                         }
-                        // Show CEFR options as toggles
-                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            val selected = state.cefrs?.toSet() ?: emptySet()
-                            CEFR.entries.chunked(3).forEach { rowItems ->
-                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    rowItems.forEach { level ->
-                                        val isSelected = selected.contains(level)
-                                        Button(
-                                            onClick = {
-                                                viewModel.sent(
-                                                    WordFilterAction.SetCefr(
-                                                        level
+
+                        ExposedDropdownMenuBox(
+                            expanded = cefrExpanded,
+                            onExpandedChange = { cefrExpanded = it }
+                        ) {
+                            OutlinedTextField(
+                                value = selectedText,
+                                onValueChange = {},
+                                readOnly = true,
+                                label = { Text("CEFR levels", color = AppTheme.PrimaryGreen) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .menuAnchor(),
+                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = cefrExpanded) },
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = AppTheme.PrimaryGreen,
+                                    unfocusedBorderColor = AppTheme.PrimaryGreen.copy(alpha = 0.5f),
+                                    focusedTextColor = AppTheme.PrimaryGreen,
+                                    unfocusedTextColor = AppTheme.PrimaryGreen,
+                                    cursorColor = AppTheme.PrimaryGreen
+                                )
+                            )
+                            ExposedDropdownMenu(
+                                expanded = cefrExpanded,
+                                onDismissRequest = { cefrExpanded = false },
+                                modifier = Modifier.background(AppTheme.PrimaryBack)
+                            ) {
+                                CEFR.entries.forEach { level ->
+                                    val isChecked = selected.contains(level)
+                                    DropdownMenuItem(
+                                        text = {
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                            ) {
+                                                Checkbox(
+                                                    checked = isChecked,
+                                                    onCheckedChange = {
+                                                        viewModel.sent(
+                                                            WordFilterAction.SetCefr(
+                                                                level
+                                                            )
+                                                        )
+                                                    },
+                                                    colors = CheckboxDefaults.colors(
+                                                        checkedColor = AppTheme.PrimaryGreen,
+                                                        uncheckedColor = AppTheme.PrimaryGreen,
+                                                        checkmarkColor = AppTheme.PrimaryBack
                                                     )
                                                 )
-                                            },
-                                            colors = if (isSelected) {
-                                                ButtonDefaults.buttonColors(
-                                                    containerColor = AppTheme.PrimaryGreen,
-                                                    contentColor = AppTheme.PrimaryBack
-                                                )
-                                            } else {
-                                                ButtonDefaults.buttonColors(
-                                                    containerColor = AppTheme.SecondaryBack,
-                                                    contentColor = AppTheme.PrimaryGreen
-                                                )
+                                                Text(level.name, color = AppTheme.PrimaryGreen)
                                             }
-                                        ) {
-                                            Text(level.name)
-                                        }
-                                    }
+                                        },
+                                        onClick = { viewModel.sent(WordFilterAction.SetCefr(level)) }
+                                    )
                                 }
                             }
                         }
