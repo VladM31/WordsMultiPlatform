@@ -13,8 +13,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -43,6 +41,7 @@ import vm.words.ua.core.domain.models.enums.CEFR
 import vm.words.ua.core.domain.models.enums.Language
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
+import vm.words.ua.core.ui.components.MultiSelect
 import vm.words.ua.core.ui.components.SingleSelectInput
 import vm.words.ua.core.ui.components.TextInput
 import vm.words.ua.di.rememberInstance
@@ -69,7 +68,6 @@ fun WordFilterScreen(
 
     // Local UI states
     var sortByExpanded by remember { mutableStateOf(false) }
-    var cefrExpanded by remember { mutableStateOf(false) }
     var categoryInput by remember { mutableStateOf(TextFieldValue("")) }
 
     // Get current filter from navigation params
@@ -153,73 +151,17 @@ fun WordFilterScreen(
                     )
                 }
 
-                // 5. Multi select CEFRs with proper multi-selector
+                // 5. Multi select CEFR using generic MultiSelect component
                 item {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        val selected = state.cefrs?.toSet() ?: emptySet()
-                        val selectedText = if (selected.isEmpty()) {
-                            "Any"
-                        } else {
-                            selected.joinToString(", ") { it.name }
-                        }
-
-                        ExposedDropdownMenuBox(
-                            expanded = cefrExpanded,
-                            onExpandedChange = { cefrExpanded = it }
-                        ) {
-                            OutlinedTextField(
-                                value = selectedText,
-                                onValueChange = {},
-                                readOnly = true,
-                                label = { Text("CEFR levels", color = AppTheme.PrimaryGreen) },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .menuAnchor(),
-                                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = cefrExpanded) },
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = AppTheme.PrimaryGreen,
-                                    unfocusedBorderColor = AppTheme.PrimaryGreen.copy(alpha = 0.5f),
-                                    focusedTextColor = AppTheme.PrimaryGreen,
-                                    unfocusedTextColor = AppTheme.PrimaryGreen,
-                                    cursorColor = AppTheme.PrimaryGreen
-                                )
-                            )
-                            ExposedDropdownMenu(
-                                expanded = cefrExpanded,
-                                onDismissRequest = { cefrExpanded = false },
-                                modifier = Modifier.background(AppTheme.PrimaryBack)
-                            ) {
-                                CEFR.entries.forEach { level ->
-                                    val isChecked = selected.contains(level)
-                                    DropdownMenuItem(
-                                        text = {
-                                            Row(
-                                                verticalAlignment = Alignment.CenterVertically,
-                                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                            ) {
-                                                Checkbox(
-                                                    checked = isChecked,
-                                                    onCheckedChange = {
-                                                        viewModel.sent(
-                                                            WordFilterAction.SetCefr(
-                                                                level
-                                                            )
-                                                        )
-                                                    },
-                                                    colors = CheckboxDefaults.colors(
-                                                        checkedColor = AppTheme.PrimaryGreen,
-                                                        uncheckedColor = AppTheme.PrimaryGreen,
-                                                        checkmarkColor = AppTheme.PrimaryBack
-                                                    )
-                                                )
-                                                Text(level.name, color = AppTheme.PrimaryGreen)
-                                            }
-                                        },
-                                        onClick = { viewModel.sent(WordFilterAction.SetCefr(level)) }
-                                    )
-                                }
-                            }
-                        }
+                        MultiSelect(
+                            items = CEFR.entries.toList(),
+                            selected = state.cefrs,
+                            toLabel = { it.name },
+                            onToggle = { level -> viewModel.sent(WordFilterAction.SetCefr(level)) },
+                            label = "CEFR levels",
+                            modifier = Modifier.fillMaxWidth()
+                        )
                     }
                 }
 
