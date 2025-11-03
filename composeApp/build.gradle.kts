@@ -98,7 +98,7 @@ kotlin {
 
 android {
     namespace = "vm.words.ua"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "vm.words.ua"

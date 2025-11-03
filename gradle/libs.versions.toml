@@ -12,7 +12,7 @@ kotlinx-datetime = "0.6.1"
 ktor = "3.0.2"
 multiplatform-settings = "1.1.1"
 # Added for Android support
-agp = "8.6.1"
+agp = "8.9.1"
 mp3spi-soundlibs = "1.9.5-1"
 tritonus-share = "0.3.7-2"
 
