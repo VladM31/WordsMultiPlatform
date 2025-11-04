@@ -21,6 +21,7 @@ import vm.words.ua.core.domain.models.enums.CEFR
 import vm.words.ua.core.domain.models.enums.Language
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.*
+import vm.words.ua.core.utils.getFontSize
 import vm.words.ua.core.utils.isNotPhoneFormat
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
@@ -60,8 +61,6 @@ fun WordFilterScreen(
     LaunchedEffect(Unit) {
         viewModel.sent(WordFilterAction.Init(currentFilter))
     }
-
-
 
     Column(
         modifier = modifier
@@ -195,7 +194,7 @@ fun WordFilterScreen(
                     contentColor = AppTheme.PrimaryBack
                 )
             ) {
-                Text("Apply Filter")
+                Text("Apply Filter", fontSize = getFontSize())
             }
         }
     }
