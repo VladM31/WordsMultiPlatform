@@ -36,8 +36,7 @@ class WordsViewModel(
 
     fun sent(action: WordsAction) {
         when (action) {
-            is WordsAction.SelectWord -> addWord(action.wordId)
-            is WordsAction.RemoveWord -> removeWord(action.wordId)
+            is WordsAction.SelectWord -> selectWord(action.wordId)
             is WordsAction.Clear -> clear()
             is WordsAction.LoadMore -> loadMore()
             is WordsAction.UpdateFilter -> updateFilter(action)
@@ -103,21 +102,18 @@ class WordsViewModel(
         loadMore(0)
     }
 
-    private fun removeWord(wordId: String) {
-        if (state.value.selectedWords.isEmpty()) {
-            return
-        }
-        mutableState.apply {
-            value = value.copy(
-                selectedWords = value.selectedWords - wordId
-            )
-        }
-    }
 
-    private fun addWord(wordId: String) {
+    private fun selectWord(wordId: String) {
+        val selectedWords = if (state.value.selectedWords.contains(wordId)) {
+            state.value.selectedWords - wordId
+        } else {
+            state.value.selectedWords + wordId
+        }
+
+
         mutableState.apply {
             value = value.copy(
-                selectedWords = value.selectedWords + wordId
+                selectedWords = selectedWords
             )
         }
     }
