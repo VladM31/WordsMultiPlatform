@@ -20,6 +20,7 @@ import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.words.ui.actions.WordsAction
 import vm.words.ua.words.ui.bundles.WordDetailsBundle
 import vm.words.ua.words.ui.bundles.WordFilterBundle
+import vm.words.ua.words.ui.components.SelectionBottomMenu
 import vm.words.ua.words.ui.components.WordItem
 import vm.words.ua.words.ui.vms.WordsViewModel
 import wordsmultiplatform.composeapp.generated.resources.Res
@@ -99,7 +100,19 @@ fun WordsScreen(
                 )
             }
         )
-
+        if (state.selectedWords.isEmpty()) {
+            return
+        }
+        SelectionBottomMenu(
+            visible = true,
+            onUnselect = {
+                viewModel.sent(WordsAction.Clear)
+            },
+            onApply = {
+                println()
+            },
+            applyLabel = "Apply(${state.selectedWords.size})"
+        )
 
     }
 }
