@@ -1,6 +1,12 @@
 package vm.words.ua.core.ui.components
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.CircularProgressIndicator
@@ -16,7 +22,7 @@ import vm.words.ua.core.ui.AppTheme
 @Composable
 fun <T> ColumnScope.Items(
     content: List<T>,
-    toKey: (Int) -> Any,
+    toKey: (List<T>, Int) -> Any,
     toItem: @Composable (index: Int, item: T) -> Unit,
     isLoading: Boolean,
     listState: LazyListState
@@ -26,7 +32,7 @@ fun <T> ColumnScope.Items(
             .weight(1f)
             .fillMaxWidth()
     ) {
-        if (content.isEmpty() && isLoading) {
+        if (isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier.align(Alignment.Center),
                 color = AppTheme.PrimaryGreen
@@ -51,7 +57,7 @@ fun <T> ColumnScope.Items(
         ) {
             items(
                 count = content.size,
-                key = toKey
+                key = { index -> toKey(content, index) }
             ) { index ->
                 toItem(index, content[index])
             }

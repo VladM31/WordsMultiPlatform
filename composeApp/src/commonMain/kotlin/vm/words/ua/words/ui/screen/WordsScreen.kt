@@ -4,7 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
@@ -72,12 +76,11 @@ fun WordsScreen(
             additionalButtonImage = painterResource(Res.drawable.find)
         )
 
-
         Items(
             content = state.words,
             listState = listState,
             isLoading = state.isLoading,
-            toKey = { index -> state.words[index].id },
+            toKey = { content, index -> content[index].id },
             toItem = { index, item ->
                 WordItem(
                     word = item,
