@@ -12,6 +12,8 @@ import vm.words.ua.words.domain.managers.WordManager
 import vm.words.ua.words.domain.models.filters.WordFilter
 import vm.words.ua.words.ui.actions.WordsAction
 import vm.words.ua.words.ui.states.WordsState
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 class WordsViewModel(
     private val wordManager: WordManager,
@@ -38,7 +40,7 @@ class WordsViewModel(
             is WordsAction.RemoveWord -> removeWord(action.wordId)
             is WordsAction.Clear -> clear()
             is WordsAction.LoadMore -> loadMore()
-            is WordsAction.UpdateFilter -> updateFilter(action.filter)
+            is WordsAction.UpdateFilter -> updateFilter(action)
         }
     }
 
@@ -59,11 +61,16 @@ class WordsViewModel(
             }
             try {
                 val paged = wordManager.findBy(state.value.filter.copy(page = newPage))
+                val newWords = if (newPage == 0) {
+                    paged.content
+                } else {
+                    state.value.words + paged.content
+                }
                 mutableState.apply {
                     value = value.copy(
                         currentPage = newPage,
                         hasMore = paged.page.totalPages - 1 >= newPage,
-                        words = value.words + paged.content,
+                        words = newWords,
                         isLoading = false,
                         error = null
                     )
@@ -80,19 +87,19 @@ class WordsViewModel(
 
     }
 
-    private fun updateFilter(filter: WordFilter) {
-        if (state.value.filter == filter) {
+    @OptIn(ExperimentalTime::class)
+    private fun updateFilter(action: WordsAction.UpdateFilter) {
+        if (state.value.filter == action.filter) {
             return
         }
-        mutableState.apply {
-            value = value.copy(
-                filter = filter,
-                currentPage = 0,
-                hasMore = true,
-                words = listOf(),
-                isLoading = true
-            )
-        }
+        mutableState.value = state.value.copy(
+            filter = action.filter,
+            currentPage = 0,
+            hasMore = true,
+            words = listOf(),
+            isLoading = true,
+            filterId = Clock.System.now().toEpochMilliseconds()
+        )
         loadMore(0)
     }
 

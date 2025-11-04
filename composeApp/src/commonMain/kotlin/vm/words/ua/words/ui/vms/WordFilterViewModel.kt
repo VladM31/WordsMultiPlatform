@@ -47,9 +47,9 @@ class WordFilterViewModel : ViewModel() {
     }
 
     private fun handleInit(action: WordFilterAction.Init) =
-        if (state.value.isInit.not()) {
+        if (state.value.filterId != action.filterId) {
             action.value.toWordFilterState().copy(
-                isInit = true
+                filterId = action.filterId
             )
         } else {
             state.value

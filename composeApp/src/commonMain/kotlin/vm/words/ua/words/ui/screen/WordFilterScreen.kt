@@ -27,8 +27,8 @@ import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.words.domain.mappers.toWordFilter
 import vm.words.ua.words.domain.models.enums.WordSortBy
-import vm.words.ua.words.domain.models.filters.WordFilter
 import vm.words.ua.words.ui.actions.WordFilterAction
+import vm.words.ua.words.ui.bundles.WordFilterBundle
 import vm.words.ua.words.ui.components.SortSelector
 import vm.words.ua.words.ui.vms.WordFilterViewModel
 import wordsmultiplatform.composeapp.generated.resources.Res
@@ -54,12 +54,18 @@ fun WordFilterScreen(
             categoryInput = TextFieldValue("")
         }
 
-    // Get current filter from navigation params
-    val currentFilter = navController.getParam<WordFilter>() ?: WordFilter()
+    val bundle = navController.getParam<WordFilterBundle>();
 
     // Initialize with current filter
     LaunchedEffect(Unit) {
-        viewModel.sent(WordFilterAction.Init(currentFilter))
+        bundle?.let {
+            viewModel.sent(
+                WordFilterAction.Init(
+                    filterId = it.filterId,
+                    value = it.filter
+                )
+            )
+        }
     }
 
     Column(
@@ -184,7 +190,12 @@ fun WordFilterScreen(
             Button(
                 onClick = {
                     val filter = state.toWordFilter()
-                    navController.popBackStack(returnParam = filter)
+                    navController.popBackStack(
+                        returnParam = WordFilterBundle(
+                            filterId = bundle?.filterId ?: 0L,
+                            filter = filter
+                        )
+                    )
                 },
                 modifier = Modifier
                     .fillMaxWidth()

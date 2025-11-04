@@ -15,6 +15,7 @@ data class WordFilterState(
     val categories: List<String>? = null,
     val asc: Boolean = false,
     val sortBy: WordSortBy? = null,
-    val isInit: Boolean = false,
     val cefrs: Collection<CEFR>? = null,
+
+    val filterId: Long = 0L,
 )

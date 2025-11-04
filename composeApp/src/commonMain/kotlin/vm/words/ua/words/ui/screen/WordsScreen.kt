@@ -4,10 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
@@ -16,9 +13,9 @@ import vm.words.ua.core.ui.components.Items
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
-import vm.words.ua.words.domain.models.filters.WordFilter
 import vm.words.ua.words.ui.actions.WordsAction
 import vm.words.ua.words.ui.bundles.WordDetailsBundle
+import vm.words.ua.words.ui.bundles.WordFilterBundle
 import vm.words.ua.words.ui.components.WordItem
 import vm.words.ua.words.ui.vms.WordsViewModel
 import wordsmultiplatform.composeapp.generated.resources.Res
@@ -31,12 +28,24 @@ fun WordsScreen(
     val viewModel = rememberInstance<WordsViewModel>()
     val state by viewModel.state.collectAsState()
     val listState = rememberLazyListState()
+    val navigateToFilter = remember {
+        {
+            val bundle = WordFilterBundle(
+                filterId = state.filterId,
+                filter = state.filter
+            )
+            navController.navigate(Screen.WordFilter, bundle)
+        }
+    }
 
     // Check for returned filter from WordFilterScreen
     LaunchedEffect(navController.currentRoute) {
-        val returnedFilter = navController.getReturnParam<WordFilter>()
-        if (returnedFilter != null) {
-            viewModel.sent(WordsAction.UpdateFilter(returnedFilter))
+        navController.getReturnParam<WordFilterBundle>()?.let {
+            viewModel.sent(
+                WordsAction.UpdateFilter(
+                    filter = it.filter
+                )
+            )
         }
     }
 
@@ -56,9 +65,7 @@ fun WordsScreen(
             title = "Words",
             showBackButton = true,
             showAdditionalButton = true,
-            onAdditionalClick = {
-                navController.navigate(Screen.WordFilter, state.filter)
-            },
+            onAdditionalClick = navigateToFilter,
             onBackClick = {
                 navController.popBackStack()
             },

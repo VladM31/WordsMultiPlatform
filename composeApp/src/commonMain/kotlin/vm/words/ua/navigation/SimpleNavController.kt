@@ -1,10 +1,7 @@
 package vm.words.ua.navigation
 
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 
 class SimpleNavController {
@@ -69,9 +66,7 @@ class SimpleNavController {
         return if (backStack.size > 1) {
             val previousRoute = backStack.last()
             // Store return parameter for previous screen
-            if (returnParam != null) {
-                returnParams[previousRoute] = returnParam
-            }
+            returnParams[previousRoute] = returnParam
             currentRoute = backStack.removeAt(backStack.lastIndex)
             true
         } else {
