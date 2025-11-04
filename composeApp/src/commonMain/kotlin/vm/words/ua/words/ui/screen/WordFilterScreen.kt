@@ -13,6 +13,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.domain.models.enums.CEFR
 import vm.words.ua.core.domain.models.enums.Language
@@ -43,6 +46,13 @@ fun WordFilterScreen(
     var sortByExpanded by remember { mutableStateOf(false) }
     var categoryInput by remember { mutableStateOf(TextFieldValue("")) }
 
+    viewModel.state.map { it.categories }
+        .distinctUntilChanged()
+        .filter { it?.isEmpty() == true }
+        .collectAsState(initial = state.categories).value?.let {
+            categoryInput = TextFieldValue("")
+        }
+
     // Get current filter from navigation params
     val currentFilter = navController.getParam<WordFilter>() ?: WordFilter()
 
@@ -50,6 +60,8 @@ fun WordFilterScreen(
     LaunchedEffect(Unit) {
         viewModel.sent(WordFilterAction.Init(currentFilter))
     }
+
+
 
     Column(
         modifier = modifier
@@ -63,16 +75,7 @@ fun WordFilterScreen(
             showAdditionalButton = true,
             additionalButtonImage = painterResource(Res.drawable.delete),
             onAdditionalClick = {
-                // Clear all fields
-                viewModel.sent(WordFilterAction.SetOriginal(null))
-                viewModel.sent(WordFilterAction.SetOriginalLang(null))
-                viewModel.sent(WordFilterAction.SetTranslate(null))
-                viewModel.sent(WordFilterAction.SetTranslateLang(null))
-                viewModel.sent(WordFilterAction.SetCategories(null))
-                viewModel.sent(WordFilterAction.SetSortBy(null))
-                viewModel.sent(WordFilterAction.SetAsc(true))
-                viewModel.sent(WordFilterAction.SetCefrs(null))
-                categoryInput = TextFieldValue("")
+                viewModel.sent(WordFilterAction.Clear)
             }
         )
 
@@ -149,6 +152,7 @@ fun WordFilterScreen(
                         items = WordSortBy.entries.toList(),
                         selected = state.sortBy,
                         toLabel = { it.titleCase },
+                        showDefault = false,
                         label = "Sort by",
                         expanded = sortByExpanded,
                         onExpandedChange = { sortByExpanded = it },

@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import vm.words.ua.core.domain.models.enums.CEFR
 import vm.words.ua.words.domain.mappers.toWordFilterState
+import vm.words.ua.words.domain.models.enums.WordSortBy
 import vm.words.ua.words.ui.actions.WordFilterAction
 import vm.words.ua.words.ui.states.WordFilterState
 
@@ -27,7 +28,15 @@ class WordFilterViewModel : ViewModel() {
             }
             is WordFilterAction.SetCefr -> toggleCefr(action.value)
             is WordFilterAction.SetCefrs -> state.value.copy(cefrs = action.value)
+            WordFilterAction.Clear -> handleClear()
         }
+    }
+
+    private fun handleClear(): WordFilterState {
+        return WordFilterState(
+            sortBy = WordSortBy.ORIGIN,
+            asc = true
+        )
     }
 
     private fun toggleCefr(value: CEFR?): WordFilterState {
