@@ -6,7 +6,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.domain.models.enums.DeviceFormat
 import vm.words.ua.core.platform.currentOrientation
+import vm.words.ua.core.platform.currentPlatform
 import vm.words.ua.core.platform.isLandscape
+import vm.words.ua.core.platform.isPhone
 
 /**
  * Calculate scale factor based on screen width
@@ -50,9 +52,12 @@ fun getWidthDeviceFormat(): DeviceFormat {
 }
 
 @Composable
-fun isNotPhoneDeviceFormatOrLandscape(): Boolean {
+fun isNotPhoneFormat(): Boolean {
     val format = getWidthDeviceFormat()
     val isLandscape = currentOrientation().isLandscape
-    return format.isPhone.not() || isLandscape
+    val platform = currentPlatform()
+    return remember(format, isLandscape) {
+        (format.isPhone && isLandscape && platform.isPhone) || format.isPhone.not()
+    }
 }
 

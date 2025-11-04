@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.utils.getFontSize
 import vm.words.ua.core.utils.getScaleFactor
-import vm.words.ua.core.utils.getWidthDeviceFormat
+import vm.words.ua.core.utils.isNotPhoneFormat
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.exercise.ui.actions.WriteByImageAndFieldAction
 import vm.words.ua.exercise.ui.bundles.ExerciseBundle
@@ -118,7 +118,10 @@ private fun WriteByImageAndFieldContent(
         return
     }
 
-    val columns = if (getWidthDeviceFormat().isPhone) 1 else 2
+    val columns = if (isNotPhoneFormat()) 2 else 1
+
+
+
     // helper: во всю ширину только если 1 колонка
     val span: (LazyGridItemSpanScope) -> GridItemSpan = {
         if (columns == 1) GridItemSpan(it.maxLineSpan) else GridItemSpan(1)
@@ -130,7 +133,6 @@ private fun WriteByImageAndFieldContent(
         } else {
             Modifier.heightIn(min = 300.dp * scale)
         }
-
     }
 
     LazyVerticalGrid(

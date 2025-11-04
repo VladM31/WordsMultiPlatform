@@ -1,44 +1,24 @@
 package vm.words.ua.words.ui.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.domain.models.enums.CEFR
 import vm.words.ua.core.domain.models.enums.Language
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.ui.components.AppToolBar
-import vm.words.ua.core.ui.components.MultiSelect
-import vm.words.ua.core.ui.components.SingleSelectInput
-import vm.words.ua.core.ui.components.TextInput
+import vm.words.ua.core.ui.components.*
+import vm.words.ua.core.utils.isNotPhoneFormat
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.words.domain.mappers.toWordFilter
@@ -48,7 +28,6 @@ import vm.words.ua.words.ui.actions.WordFilterAction
 import vm.words.ua.words.ui.components.SortSelector
 import vm.words.ua.words.ui.vms.WordFilterViewModel
 import wordsmultiplatform.composeapp.generated.resources.Res
-import wordsmultiplatform.composeapp.generated.resources.add
 import wordsmultiplatform.composeapp.generated.resources.delete
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,7 +38,6 @@ fun WordFilterScreen(
 ) {
     val viewModel = rememberInstance<WordFilterViewModel>()
     val state by viewModel.state.collectAsState()
-    val listState = rememberLazyListState()
 
     // Local UI states
     var sortByExpanded by remember { mutableStateOf(false) }
@@ -98,13 +76,17 @@ fun WordFilterScreen(
             }
         )
 
+        val columns = if (isNotPhoneFormat()) 2 else 1
+
+
         Column(modifier = Modifier.fillMaxSize()) {
-            LazyColumn(
-                state = listState,
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(columns),
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                horizontalArrangement = Arrangement.spacedBy(20.dp),
             ) {
                 // 1. Original input
                 item {
@@ -184,76 +166,13 @@ fun WordFilterScreen(
                 }
 
                 // 7. Categories input + list of added items with remove
-                item {
+                item(span = { GridItemSpan(maxLineSpan) }) {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            OutlinedTextField(
-                                value = categoryInput,
-                                onValueChange = {
-                                    val newText = it.text.take(255)
-                                    val newSelectionEnd = minOf(it.selection.end, newText.length)
-                                    val newSelectionStart =
-                                        minOf(it.selection.start, newText.length)
-                                    categoryInput = TextFieldValue(
-                                        text = newText,
-                                        selection = TextRange(newSelectionStart, newSelectionEnd)
-                                    )
-                                },
-                                label = { Text("Add category", color = AppTheme.PrimaryGreen) },
-                                modifier = Modifier.weight(1f),
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = AppTheme.PrimaryGreen,
-                                    unfocusedBorderColor = AppTheme.PrimaryGreen.copy(alpha = 0.5f),
-                                    focusedTextColor = AppTheme.PrimaryGreen,
-                                    unfocusedTextColor = AppTheme.PrimaryGreen,
-                                    cursorColor = AppTheme.PrimaryGreen
-                                )
-                            )
-                            IconButton(
-                                onClick = {
-                                    val value = categoryInput.text.trim()
-                                    val current =
-                                        state.categories?.toMutableList() ?: mutableListOf()
-                                    if (value.isNotEmpty() && current.contains(value).not()) {
-                                        current.add(value)
-                                        viewModel.sent(WordFilterAction.SetCategories(current))
-                                        categoryInput = TextFieldValue("")
-                                    }
-                                },
-                                modifier = Modifier.size(40.dp)
-                            ) {
-                                Icon(
-                                    painter = painterResource(Res.drawable.add),
-                                    contentDescription = "Add",
-                                    tint = AppTheme.PrimaryGreen
-                                )
-                            }
-                        }
-
-                        val categories = state.categories ?: emptyList()
-                        if (categories.isNotEmpty()) {
-                            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                categories.forEach { cat ->
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Text(cat, color = AppTheme.PrimaryGreen)
-                                        OutlinedButton(
-                                            onClick = {
-                                                val updated = categories.toMutableList()
-                                                    .also { it.remove(cat) }
-                                                viewModel.sent(WordFilterAction.SetCategories(if (updated.isEmpty()) null else updated))
-                                            }
-                                        ) { Text("Remove", color = AppTheme.PrimaryGreen) }
-                                    }
-                                }
-                            }
-                        }
+                        StringListInput(
+                            label = "Add category",
+                            items = state.categories,
+                            onItemsChange = { viewModel.sent(WordFilterAction.SetCategories(it)) }
+                        )
                     }
                 }
             }
