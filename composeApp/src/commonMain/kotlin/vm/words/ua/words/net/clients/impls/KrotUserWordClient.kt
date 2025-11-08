@@ -29,7 +29,7 @@ class KrotUserWordClient(
         filter: Map<String, String>
     ): PagedRespond<UserWordRespond> {
         return client.get(baseUrl) {
-            header("Authorization", "Bearer $token")
+            header("Authorization", token)
             filter.forEach { (key, value) ->
                 parameter(key, value)
             }

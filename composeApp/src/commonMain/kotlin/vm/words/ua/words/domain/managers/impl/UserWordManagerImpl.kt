@@ -6,7 +6,6 @@ import io.github.vinceglb.filekit.readBytes
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.json.Json
 import vm.words.ua.core.domain.managers.UserCacheManager
 import vm.words.ua.core.domain.models.PagedModels
 import vm.words.ua.core.net.client.FileApiClient
@@ -33,9 +32,7 @@ class UserWordManagerImpl(
     private val fileClient: FileApiClient,
 ) : UserWordManager {
 
-    private val json: Json = Json {
-        ignoreUnknownKeys = true
-    }
+
 
     private data class UploadResults(
         val imageFileName: String?,
@@ -45,7 +42,7 @@ class UserWordManagerImpl(
     override suspend fun findBy(filter: UserWordFilter): PagedModels<UserWord> {
         val paged = userWordClient.findBy(
             userCacheManager.toPair().second,
-            filter.toQueryMap(json)
+            filter.toQueryMap()
         )
 
         return PagedModels.of(paged) {

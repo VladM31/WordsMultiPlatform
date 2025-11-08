@@ -1,9 +1,21 @@
 package vm.words.ua.words.ui.components
 
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -13,7 +25,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.utils.*
+import vm.words.ua.core.utils.getScaleFactor
+import vm.words.ua.core.utils.toFormatDateTime
+import vm.words.ua.words.domain.models.UserWord
 import vm.words.ua.words.domain.models.Word
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.arrow
@@ -24,6 +38,7 @@ import wordsmultiplatform.composeapp.generated.resources.sound
 @Composable
 fun WordItem(
     word: Word,
+    userWord: UserWord? = null,
     isSelected: Boolean,
     onSelect: () -> Unit,
     onOpen: () -> Unit,
@@ -35,6 +50,7 @@ fun WordItem(
 
         val titleSize = (20 * scaleFactor).sp
         val categorySize = (16 * scaleFactor).sp
+        val dateSize = (14 * scaleFactor).sp
         val iconSize = (24 * scaleFactor).dp
         val cardPadding = (10 * scaleFactor).dp
         val horizontalPadding = (5 * scaleFactor).dp
@@ -89,6 +105,23 @@ fun WordItem(
                             fontSize = categorySize
                         )
                     }
+
+                    userWord?.createdAt?.let {
+                        Text(
+                            text = "Added at: ${it.toFormatDateTime()}",
+                            color = AppTheme.PrimaryColor,
+                            fontSize = dateSize
+                        )
+                    }
+
+                    userWord?.lastReadDate?.let {
+                        Text(
+                            text = "Last read: ${it.toFormatDateTime()}",
+                            color = AppTheme.PrimaryColor,
+                            fontSize = dateSize
+                        )
+                    }
+
                 }
 
                 // Right side icons

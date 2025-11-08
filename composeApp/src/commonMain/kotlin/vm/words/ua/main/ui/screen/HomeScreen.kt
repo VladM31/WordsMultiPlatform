@@ -20,9 +20,10 @@ fun HomeScreen(
     navController: SimpleNavController,
     modifier: Modifier = Modifier
 ) {
+
     val items = listOf(
         WordList.route to "Words",
-        "user_words" to "My Words",
+        Screen.UserWords.route to "My Words",
         "add_word" to "Add Word",
         "instruction" to "Instruction"
     )

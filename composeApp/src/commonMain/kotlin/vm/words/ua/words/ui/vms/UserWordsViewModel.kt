@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import vm.words.ua.core.ui.models.ErrorMessage
 import vm.words.ua.playlist.domain.managers.PinPlayListManager
 import vm.words.ua.playlist.domain.models.PinPlayList
 import vm.words.ua.words.domain.managers.UserWordManager
@@ -21,6 +22,7 @@ class UserWordsViewModel(
     private val mutableState: MutableStateFlow<UserWordsState> = MutableStateFlow(UserWordsState())
     val state: StateFlow<UserWordsState> = mutableState
 
+
     fun sent(action: UserWordsAction) {
         when (action) {
             is UserWordsAction.SelectWord -> handleSelectWord(action)
@@ -35,7 +37,7 @@ class UserWordsViewModel(
 
     private fun handleClear() {
         mutableState.value = mutableState.value.copy(
-            selectedWords = emptyMap()
+            selectedWords = emptySet()
         )
     }
 
@@ -47,14 +49,14 @@ class UserWordsViewModel(
 
     private fun handleSelectWord(action: UserWordsAction.SelectWord) {
         mutableState.value = mutableState.value.copy(
-            selectedWords = mutableState.value.selectedWords + (action.wordId to action.position)
+            selectedWords = mutableState.value.selectedWords + action.wordId
         )
     }
 
     private fun handleChangeFilter(action: UserWordsAction.ChangeFilter) {
         mutableState.value = mutableState.value.copy(
             filter = action.filter,
-            selectedWords = emptyMap(),
+            selectedWords = emptySet(),
             page = 0
         )
     }
@@ -65,7 +67,7 @@ class UserWordsViewModel(
         }
 
         viewModelScope.launch {
-            val pins = state.value.selectedWords.keys
+            val pins = state.value.selectedWords
                 .map {
                     PinPlayList(
                         playListId = playListId,
@@ -76,7 +78,7 @@ class UserWordsViewModel(
             pinPlayListManager.pin(pins)
 
             mutableState.value = state.value.copy(
-                selectedWords = emptyMap(),
+                selectedWords = emptySet(),
                 openPlayList = UserWordsState.OpenPlayList(playListId)
             )
 
@@ -95,7 +97,8 @@ class UserWordsViewModel(
     }
 
     private fun handleLoadMore() {
-        val nextPage = state.value.page + 1
+
+        val nextPage = if (state.value.userWords.isEmpty()) 0 else state.value.page + 1
         mutableState.value = mutableState.value.copy(
             page = nextPage
         )
@@ -104,23 +107,41 @@ class UserWordsViewModel(
 
 
     private fun loadMore(pageNumber: Int) {
+        if (state.value.isLoading) {
+            return
+        }
+        mutableState.value = mutableState.value.copy(
+            isLoading = true
+        )
         viewModelScope.launch(Dispatchers.Default) {
-            val paged = userWordManager.findBy(
-                UserWordFilter(
-                    page = pageNumber
+            try {
+                val paged = userWordManager.findBy(
+                    UserWordFilter(
+                        page = pageNumber
+                    )
                 )
-            )
 
-            val currentWords = if (pageNumber == 0) {
-                paged.content
-            } else {
-                mutableState.value.userWords + paged.content
+                val currentWords = if (pageNumber == 0) {
+                    paged.content
+                } else {
+                    mutableState.value.userWords + paged.content
+                }
+
+                mutableState.value = mutableState.value.copy(
+                    userWords = currentWords,
+                    page = pageNumber,
+                    isLoading = false,
+                    hasMore = paged.page.totalPages > pageNumber
+                )
+            } catch (e: Exception) {
+                println(e.message)
+                e.printStackTrace()
+                mutableState.value = mutableState.value.copy(
+                    isLoading = false,
+                    errorMessage = ErrorMessage(e.message.orEmpty()),
+                    hasMore = false
+                )
             }
-
-            mutableState.value = mutableState.value.copy(
-                userWords = currentWords,
-                page = pageNumber
-            )
         }
     }
 
