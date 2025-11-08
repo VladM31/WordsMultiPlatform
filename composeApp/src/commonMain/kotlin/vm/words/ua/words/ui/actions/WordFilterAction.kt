@@ -15,7 +15,6 @@ sealed interface WordFilterAction {
     data class SetSortBy(val value: WordSortBy?) : WordFilterAction
     data class Init(val filterId: Long, val value: WordFilter) : WordFilterAction
     data class SetCefr(val value: CEFR?) : WordFilterAction
-    data class SetCefrs(val value: Collection<CEFR>?) : WordFilterAction
 
     data object Clear : WordFilterAction
 }

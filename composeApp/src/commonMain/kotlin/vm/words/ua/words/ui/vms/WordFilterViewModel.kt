@@ -27,8 +27,7 @@ class WordFilterViewModel : ViewModel() {
                 handleInit(action)
             }
             is WordFilterAction.SetCefr -> toggleCefr(action.value)
-            is WordFilterAction.SetCefrs -> state.value.copy(cefrs = action.value)
-            WordFilterAction.Clear -> handleClear()
+            is WordFilterAction.Clear -> handleClear()
         }
     }
 
