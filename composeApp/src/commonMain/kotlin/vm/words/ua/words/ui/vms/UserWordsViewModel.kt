@@ -1,0 +1,128 @@
+package vm.words.ua.words.ui.vms
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import vm.words.ua.playlist.domain.managers.PinPlayListManager
+import vm.words.ua.playlist.domain.models.PinPlayList
+import vm.words.ua.words.domain.managers.UserWordManager
+import vm.words.ua.words.domain.models.filters.UserWordFilter
+import vm.words.ua.words.ui.actions.UserWordsAction
+import vm.words.ua.words.ui.states.UserWordsState
+
+class UserWordsViewModel(
+    private val userWordManager: UserWordManager,
+    private val pinPlayListManager: PinPlayListManager
+) : ViewModel() {
+
+    private val mutableState: MutableStateFlow<UserWordsState> = MutableStateFlow(UserWordsState())
+    val state: StateFlow<UserWordsState> = mutableState
+
+    fun sent(action: UserWordsAction) {
+        when (action) {
+            is UserWordsAction.SelectWord -> handleSelectWord(action)
+            is UserWordsAction.UnSelectWord -> handleUnSelectWord(action)
+            is UserWordsAction.ChangeFilter -> handleChangeFilter(action)
+            is UserWordsAction.Clear -> handleClear()
+            is UserWordsAction.PinWords -> pinWords(action.playListId)
+            is UserWordsAction.ReFetch -> handleReFetch()
+            is UserWordsAction.LoadMore -> handleLoadMore()
+        }
+    }
+
+    private fun handleClear() {
+        mutableState.value = mutableState.value.copy(
+            selectedWords = emptyMap()
+        )
+    }
+
+    private fun handleUnSelectWord(action: UserWordsAction.UnSelectWord) {
+        mutableState.value = mutableState.value.copy(
+            selectedWords = mutableState.value.selectedWords - action.wordId
+        )
+    }
+
+    private fun handleSelectWord(action: UserWordsAction.SelectWord) {
+        mutableState.value = mutableState.value.copy(
+            selectedWords = mutableState.value.selectedWords + (action.wordId to action.position)
+        )
+    }
+
+    private fun handleChangeFilter(action: UserWordsAction.ChangeFilter) {
+        mutableState.value = mutableState.value.copy(
+            filter = action.filter,
+            selectedWords = emptyMap(),
+            page = 0
+        )
+    }
+
+    private fun pinWords(playListId: String) {
+        if (state.value.selectedWords.isEmpty()) {
+            return
+        }
+
+        viewModelScope.launch {
+            val pins = state.value.selectedWords.keys
+                .map {
+                    PinPlayList(
+                        playListId = playListId,
+                        wordId = it
+                    )
+                }
+
+            pinPlayListManager.pin(pins)
+
+            mutableState.value = state.value.copy(
+                selectedWords = emptyMap(),
+                openPlayList = UserWordsState.OpenPlayList(playListId)
+            )
+
+            mutableState.value = state.value.copy(
+                openPlayList = null
+            )
+        }
+    }
+
+
+    private fun handleReFetch() {
+        mutableState.value = mutableState.value.copy(
+            page = 0
+        )
+        loadMore(state.value.page)
+    }
+
+    private fun handleLoadMore() {
+        val nextPage = state.value.page + 1
+        mutableState.value = mutableState.value.copy(
+            page = nextPage
+        )
+        loadMore(nextPage)
+    }
+
+
+    private fun loadMore(pageNumber: Int) {
+        viewModelScope.launch(Dispatchers.Default) {
+            val paged = userWordManager.findBy(
+                UserWordFilter(
+                    page = pageNumber
+                )
+            )
+
+            val currentWords = if (pageNumber == 0) {
+                paged.content
+            } else {
+                mutableState.value.userWords + paged.content
+            }
+
+            mutableState.value = mutableState.value.copy(
+                userWords = currentWords,
+                page = pageNumber
+            )
+        }
+    }
+
+
+}
