@@ -3,6 +3,8 @@ package vm.words.ua.navigation
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
 
 class SimpleNavController {
     var currentRoute by mutableStateOf<String>("loader")
@@ -13,8 +15,26 @@ class SimpleNavController {
     private val navigateParams = mutableMapOf<String, Any?>()
     private val returnParams = mutableMapOf<String, Any?>()
 
+    // Keep a ViewModelStore per route
+    private val viewModelOwners = mutableMapOf<String, RouteViewModelStoreOwner>()
+
     val isLastScreen: Boolean
         get() = backStack.size <= 1
+
+    // Simple multiplatform ViewModelStoreOwner
+    private class RouteViewModelStoreOwner : ViewModelStoreOwner {
+        private val store = ViewModelStore()
+        override val viewModelStore: ViewModelStore get() = store
+        fun clear() = store.clear()
+    }
+
+    /** Get or create ViewModelStoreOwner for a route (defaults to current). */
+    fun viewModelStoreOwner(route: String = currentRoute): ViewModelStoreOwner =
+        viewModelOwners.getOrPut(route) { RouteViewModelStoreOwner() }
+
+    private fun clearViewModelStoreOwner(route: String) {
+        viewModelOwners.remove(route)?.clear()
+    }
 
     fun navigate(screen: Screen) {
         this.navigate(screen.route)
@@ -43,11 +63,14 @@ class SimpleNavController {
     }
 
     fun navigateAndClearCurrent(route: String, param: Any?) {
+        // Clear VM store for the current route as we replace it without stacking
+        val poppedRoute = currentRoute
         currentRoute = route
         navigateParams[route] = param
         // Clear return params when navigating to new screen
         returnParams.remove(currentRoute)
         navigateListeners.forEach { it(route) }
+        clearViewModelStoreOwner(poppedRoute)
     }
 
     fun navigateAndClear(route: String) {
@@ -56,6 +79,9 @@ class SimpleNavController {
         returnParams.clear()
         currentRoute = route
         navigateListeners.forEach { it(route) }
+        // Clear all ViewModel stores since history is wiped
+        val owners = viewModelOwners.keys.toList()
+        owners.forEach { clearViewModelStoreOwner(it) }
     }
 
     fun navigateAndClear(screen: Screen) {
@@ -64,10 +90,13 @@ class SimpleNavController {
 
     fun popBackStack(returnParam: Any? = null): Boolean {
         return if (backStack.size > 1) {
+            val poppedRoute = currentRoute
             val previousRoute = backStack.last()
             // Store return parameter for previous screen
             returnParams[previousRoute] = returnParam
             currentRoute = backStack.removeAt(backStack.lastIndex)
+            // Clear ViewModel store for the popped screen
+            clearViewModelStoreOwner(poppedRoute)
             true
         } else {
             false
@@ -80,21 +109,32 @@ class SimpleNavController {
 
         val targetIndexExclusive = if (inclusive) index - 1 else index
 
+        val removedRoutes = mutableListOf<String>()
         while (backStack.size - 1 > targetIndexExclusive) {
-            backStack.removeAt(backStack.lastIndex)
+            removedRoutes += backStack.removeAt(backStack.lastIndex)
         }
 
         return if (backStack.size > 1) {
+            val poppedRoute = currentRoute
             val previousRoute = backStack.last()
             // Store return parameter for target screen
             if (returnParam != null) {
                 returnParams[previousRoute] = returnParam
             }
             currentRoute = backStack.removeAt(backStack.lastIndex)
+            // Clear VMs for removed history routes and the popped current route
+            removedRoutes.forEach { clearViewModelStoreOwner(it) }
+            clearViewModelStoreOwner(poppedRoute)
             true
         } else {
+            val poppedRoute = currentRoute
             currentRoute = "loader"
             backStack.clear()
+            // Clear all VM stores including the previously current and any removed
+            removedRoutes.forEach { clearViewModelStoreOwner(it) }
+            val owners = viewModelOwners.keys.toList()
+            owners.forEach { clearViewModelStoreOwner(it) }
+            clearViewModelStoreOwner(poppedRoute)
             true
         }
     }
@@ -115,7 +155,8 @@ class SimpleNavController {
      * Get parameter passed to current screen via navigate()
      */
     fun <T> getParamOrThrow(route: String = currentRoute): T {
-        return getParam<T>(route) ?: throw IllegalStateException("No navigation parameter for route: $route")
+        return getParam<T>(route)
+            ?: throw IllegalStateException("No navigation parameter for route: ${'$'}route")
     }
 
     /**

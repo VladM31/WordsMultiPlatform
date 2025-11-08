@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.kodein.di.direct
 import org.kodein.di.instance
+import vm.words.ua.navigation.SimpleNavController
 
 /**
  * Android-specific implementation using AndroidX ViewModel
@@ -14,8 +15,10 @@ import org.kodein.di.instance
 @Composable
 actual inline fun <reified T : Any> rememberInstance(): T {
     return if (ViewModel::class.java.isAssignableFrom(T::class.java)) {
-        // For ViewModel instances, use androidx viewModel() to survive config changes
+        // Obtain navController from DI so each route has its own ViewModelStore
+        val navController: SimpleNavController = DiContainer.di.direct.instance()
         viewModel(
+            viewModelStoreOwner = navController.viewModelStoreOwner(),
             modelClass = T::class.java as Class<ViewModel>,
             factory = object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
