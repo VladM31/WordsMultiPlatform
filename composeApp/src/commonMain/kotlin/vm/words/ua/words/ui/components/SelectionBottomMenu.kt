@@ -29,6 +29,9 @@ fun SelectionBottomMenu(
     visible: Boolean,
     onUnselect: () -> Unit,
     onApply: () -> Unit,
+    showDelete: Boolean = false,
+    deleteLabel: String = "Delete",
+    onDelete: () -> Unit = {},
     applyLabel: String = "Apply",
     modifier: Modifier = Modifier
 ) {
@@ -58,6 +61,19 @@ fun SelectionBottomMenu(
                 Text(text = "Unselect", fontSize = getLabelFontSize())
             }
 
+            if (showDelete) {
+                Button(
+                    onClick = onDelete,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = AppTheme.Error,
+                        contentColor = AppTheme.PrimaryBack
+                    ),
+                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp)
+                ) {
+                    Text(text = deleteLabel, fontSize = getLabelFontSize())
+                }
+            }
+
             Button(
                 onClick = onApply,
                 colors = ButtonDefaults.buttonColors(
@@ -71,4 +87,3 @@ fun SelectionBottomMenu(
         }
     }
 }
-

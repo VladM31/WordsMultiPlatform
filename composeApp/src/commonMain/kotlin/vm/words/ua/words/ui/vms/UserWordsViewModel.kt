@@ -26,7 +26,6 @@ class UserWordsViewModel(
     fun sent(action: UserWordsAction) {
         when (action) {
             is UserWordsAction.SelectWord -> handleSelectWord(action)
-            is UserWordsAction.UnSelectWord -> handleUnSelectWord(action)
             is UserWordsAction.ChangeFilter -> handleChangeFilter(action)
             is UserWordsAction.Clear -> handleClear()
             is UserWordsAction.PinWords -> pinWords(action.playListId)
@@ -41,13 +40,15 @@ class UserWordsViewModel(
         )
     }
 
-    private fun handleUnSelectWord(action: UserWordsAction.UnSelectWord) {
-        mutableState.value = mutableState.value.copy(
-            selectedWords = mutableState.value.selectedWords - action.wordId
-        )
-    }
+
 
     private fun handleSelectWord(action: UserWordsAction.SelectWord) {
+        if (state.value.selectedWords.contains(action.wordId)) {
+            mutableState.value = mutableState.value.copy(
+                selectedWords = mutableState.value.selectedWords - action.wordId
+            )
+            return
+        }
         mutableState.value = mutableState.value.copy(
             selectedWords = mutableState.value.selectedWords + action.wordId
         )

@@ -103,6 +103,9 @@ fun UserWordsScreen(
                 visible = true,
                 onUnselect = { viewModel.sent(UserWordsAction.Clear) },
                 onApply = { /* open playlist choose later */ },
+                showDelete = true,
+                deleteLabel = "Delete(${state.selectedWords.size})",
+                onDelete = { /* implement delete later */ },
                 applyLabel = "Apply(${state.selectedWords.size})"
             )
         }
