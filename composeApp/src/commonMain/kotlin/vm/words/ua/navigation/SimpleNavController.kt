@@ -58,11 +58,11 @@ class SimpleNavController {
         navigateListeners.forEach { it(route) }
     }
 
-    fun navigateAndClearCurrent(screen: Screen, param: Any?) {
+    fun navigateAndClearCurrent(screen: Screen, param: Any? = null) {
         this.navigateAndClearCurrent(screen.route, param)
     }
 
-    fun navigateAndClearCurrent(route: String, param: Any?) {
+    fun navigateAndClearCurrent(route: String, param: Any? = null) {
         // Clear VM store for the current route as we replace it without stacking
         val poppedRoute = currentRoute
         currentRoute = route

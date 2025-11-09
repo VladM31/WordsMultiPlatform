@@ -31,7 +31,7 @@ class AuthScreenProvider : ScreenProvider {
             }
 
             Screen.ConfirmSignUp.route -> {
-                ConfirmSignUpScreen(navController = navController, onOpenTelegramBot = {})
+                ConfirmSignUpScreen(navController = navController)
             }
 
             else -> {

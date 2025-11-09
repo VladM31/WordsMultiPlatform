@@ -15,6 +15,7 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -23,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import vm.words.ua.auth.ui.actions.SignUpAction
+import vm.words.ua.auth.ui.bundles.ConfirmSignBundle
 import vm.words.ua.auth.ui.vms.SignUpViewModel
 import vm.words.ua.core.domain.models.enums.Currency
 import vm.words.ua.core.ui.AppTheme
@@ -33,6 +35,7 @@ import vm.words.ua.core.ui.components.PrimaryButton
 import vm.words.ua.core.ui.components.SingleSelectInput
 import vm.words.ua.core.utils.isNotPhoneFormat
 import vm.words.ua.di.rememberInstance
+import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,7 +48,16 @@ fun SignUpScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
-
+    LaunchedEffect(state.success) {
+        if (state.success) {
+            navController.navigateAndClearCurrent(
+                Screen.ConfirmSignUp, ConfirmSignBundle(
+                    phoneNumber = state.phoneNumber,
+                    password = state.password
+                )
+            )
+        }
+    }
 
 
     Column(
