@@ -13,12 +13,15 @@ import vm.words.ua.core.domain.models.ByteContent
 import vm.words.ua.core.ui.models.ErrorMessage
 import vm.words.ua.subscribes.domain.managers.SubscribeCacheManager
 import vm.words.ua.words.domain.managers.SoundManager
+import vm.words.ua.words.domain.managers.UserWordManager
+import vm.words.ua.words.domain.models.DeleteUserWord
 import vm.words.ua.words.ui.actions.WordDetailsAction
 import vm.words.ua.words.ui.states.WordDetailsState
 
 class WordDetailsViewModel(
     private val byteContentManager: ByteContentManager,
     private val soundManager: SoundManager,
+    private val userWordManager: UserWordManager,
     private val subscribeManager: SubscribeCacheManager
 ) : ViewModel() {
 
@@ -94,9 +97,16 @@ class WordDetailsViewModel(
 
 
     private fun handleDelete() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             try {
-                // TODO: Delete UserWord through manager
+                userWordManager.delete(
+                    listOf(
+                        DeleteUserWord(
+                            state.value.userWord?.id.orEmpty(),
+                            state.value.word?.id.orEmpty()
+                        )
+                    )
+                )
                 mutableState.value = mutableState.value.copy(isDeleted = true)
             } catch (e: Exception) {
                 e.printStackTrace()

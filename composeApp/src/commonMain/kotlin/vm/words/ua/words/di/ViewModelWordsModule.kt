@@ -16,7 +16,8 @@ internal val viewModelWordsModule = DI.Module("viewModelWordsModule") {
         WordDetailsViewModel(
             byteContentManager = instance(),
             soundManager = instance(),
-            subscribeManager = instance()
+            subscribeManager = instance(),
+            userWordManager = instance()
         )
     }
 
