@@ -73,7 +73,7 @@ fun PlayListScreen(
 
         BottomNavBar(
             currentRoute = Screen.PlayList,
-            onNavigate = { route -> navController.navigate(route) }
+            onNavigate = { route -> navController.navigateAndClear(route) }
         )
     }
 }

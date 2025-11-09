@@ -42,6 +42,8 @@ fun HomeScreen(
                 .weight(1f)
         )
 
-        BottomNavBar(currentRoute = Screen.Home, onNavigate = { route -> navController.navigate(route) })
+        BottomNavBar(
+            currentRoute = Screen.Home,
+            onNavigate = { route -> navController.navigateAndClear(route) })
     }
 }

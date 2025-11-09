@@ -49,7 +49,7 @@ class SimpleNavController {
         navigate(route, null)
     }
 
-    fun navigate(route: String, param: Any?) {
+    private fun navigate(route: String, param: Any?) {
         backStack.add(currentRoute)
         currentRoute = route
         navigateParams[route] = param
@@ -73,7 +73,7 @@ class SimpleNavController {
         clearViewModelStoreOwner(poppedRoute)
     }
 
-    fun navigateAndClear(route: String) {
+    private fun navigateAndClear(route: String) {
         backStack.clear()
         navigateParams.clear()
         returnParams.clear()
@@ -89,7 +89,7 @@ class SimpleNavController {
     }
 
     fun popBackStack(returnParam: Any? = null): Boolean {
-        return if (backStack.size > 1) {
+        return if (backStack.isNotEmpty()) {
             val poppedRoute = currentRoute
             val previousRoute = backStack.last()
             // Store return parameter for previous screen
