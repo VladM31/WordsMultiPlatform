@@ -6,11 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.launch
 import org.kodein.di.instance
 import vm.words.ua.core.domain.managers.UserCacheManager
 import vm.words.ua.core.ui.AppTheme
@@ -27,7 +23,6 @@ fun SettingScreen(
     navController: SimpleNavController,
     modifier: Modifier = Modifier
 ) {
-    val textSize = remember { 40.sp }
     val userCacheManager: UserCacheManager by DiContainer.di.instance()
 
     val buttons = remember {
