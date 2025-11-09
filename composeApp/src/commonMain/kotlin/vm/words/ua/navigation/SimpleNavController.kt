@@ -185,4 +185,51 @@ class SimpleNavController {
     fun removeNavigateListener(listener: (String) -> Unit) {
         navigateListeners.remove(listener)
     }
+
+    fun navigateAndClear(screen: Screen, until: Screen, include: Boolean = false) {
+        val untilRoute = until.route
+        // If until is the current route
+        if (untilRoute == currentRoute) {
+            if (include) {
+                // Clear everything and navigate
+                navigateAndClear(screen)
+            } else {
+                // Just regular navigation keeps current on stack
+                navigate(screen)
+            }
+            return
+        }
+
+        // Find last occurrence of until route in back stack
+        val index = backStack.lastIndexOf(untilRoute)
+        if (index == -1) {
+            // Fallback: until not found, behave like full clear
+            navigateAndClear(screen)
+            return
+        }
+
+        // Determine preserved routes
+        val preservedCount = if (include) index else index + 1
+        val preserved = backStack.take(preservedCount).toMutableList()
+
+        // Routes removed (everything after preserved plus currentRoute)
+        val removed = backStack.drop(preservedCount).toMutableList().apply { add(currentRoute) }
+
+        // Clean params & ViewModelStores for removed routes
+        removed.forEach { r ->
+            navigateParams.remove(r)
+            returnParams.remove(r)
+            clearViewModelStoreOwner(r)
+        }
+
+        // Replace back stack with preserved
+        backStack.clear()
+        backStack.addAll(preserved)
+
+        // Perform navigation WITHOUT pushing old current route (custom behavior)
+        currentRoute = screen.route
+        navigateParams[screen.route] = null
+        returnParams.remove(currentRoute)
+        navigateListeners.forEach { it(screen.route) }
+    }
 }
