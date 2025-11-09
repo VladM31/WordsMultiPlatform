@@ -11,12 +11,16 @@ data class PinUserWordsState(
 
     val image: PlatformFile? = null,
     val sound: PlatformFile? = null,
+    val updateId: String? = null,
+    val currentUpdateId: String? = null,
 
     val isInited: Boolean = false,
     override val isEnd: Boolean = false,
 ) : EndetableState {
 
     val hasFiles get() = image != null || sound != null
+
+    val hasUpdate get() = updateId != currentUpdateId && updateId != null
 
     val currentWord: Word?
         get() = words.getOrNull(index)

@@ -17,6 +17,8 @@ import vm.words.ua.words.domain.models.WordByteContent
 import vm.words.ua.words.domain.utils.downloadWordByteContent
 import vm.words.ua.words.ui.actions.PinUserWordsAction
 import vm.words.ua.words.ui.states.PinUserWordsState
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 class PinUserWordsViewModel(
     private val userWordManager: UserWordManager,
@@ -96,21 +98,24 @@ class PinUserWordsViewModel(
         }
     }
 
+    @OptIn(ExperimentalUuidApi::class)
     private fun handleSetImage(action: PinUserWordsAction.SetImage) {
         setNewValue {
             it.copy(
                 image = action.image,
+                updateId = Uuid.random().toString()
 
-                )
+            )
         }
     }
 
+    @OptIn(ExperimentalUuidApi::class)
     private fun handleSetSound(action: PinUserWordsAction.SetSound) {
         setNewValue {
             it.copy(
                 sound = action.sound,
-
-                )
+                updateId = Uuid.random().toString()
+            )
         }
     }
 
@@ -169,11 +174,14 @@ class PinUserWordsViewModel(
         if (START_INDEX == state.value.index) return
         val newIndex = state.value.index + 1
         if (newIndex >= state.value.words.size) return
+        val word = state.value.words[newIndex]
         setNewValue { state ->
             state.copy(
                 index = newIndex,
-                sound = null,
-                image = null,
+                sound = word.customSound,
+                image = word.customImage,
+                currentUpdateId = null,
+                updateId = null
             )
         }
     }
@@ -181,12 +189,15 @@ class PinUserWordsViewModel(
     private fun previousWord() {
         val newIndex = state.value.index - 1
         if (newIndex < 0) return
+        val word = state.value.words[newIndex]
 
         setNewValue { state ->
             state.copy(
                 index = newIndex,
-                sound = null,
-                image = null,
+                sound = word.customSound,
+                image = word.customImage,
+                currentUpdateId = null,
+                updateId = null
             )
         }
     }
@@ -198,6 +209,11 @@ class PinUserWordsViewModel(
 
         word.customImage = state.value.image
         word.customSound = state.value.sound
+        setNewValue {
+            it.copy(
+                currentUpdateId = state.value.updateId
+            )
+        }
     }
 
 

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -40,6 +41,7 @@ import vm.words.ua.core.ui.components.ImageFromPlatformFile
 import vm.words.ua.core.ui.components.PrimaryButton
 import vm.words.ua.core.utils.getFontSize
 import vm.words.ua.core.utils.getIconSize
+import vm.words.ua.core.utils.getImageSize
 import vm.words.ua.core.utils.isNotPhoneFormat
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
@@ -212,8 +214,9 @@ private fun ImageMenu(
             ImageFromPlatformFile(
                 file = it,
                 modifier = Modifier
+                    .heightIn(max = getImageSize()) // apply height constraint first
                     .fillMaxWidth()
-                    .aspectRatio(1f)
+                    .aspectRatio(1f, matchHeightConstraintsFirst = true)
             )
         }
 
@@ -363,13 +366,13 @@ private fun WordNavigator(
                 contentColor = AppTheme.PrimaryGreen
             )
         ) {
-            Text("Previous", fontSize = getFontSize())
+            Text("⬅", fontSize = getFontSize())
         }
 
         OutlinedButton(
             onClick = { viewModel.sent(PinUserWordsAction.SaveFiles) },
-            modifier = Modifier.weight(1f),
-            enabled = state.hasFiles,
+            modifier = Modifier.weight(2f),
+            enabled = state.hasUpdate,
             colors = ButtonDefaults.outlinedButtonColors(
                 contentColor = AppTheme.PrimaryGreen
             )
@@ -389,7 +392,7 @@ private fun WordNavigator(
                 contentColor = AppTheme.PrimaryGreen
             )
         ) {
-            Text("Next", fontSize = getFontSize())
+            Text("⮕", fontSize = getFontSize())
         }
     }
 }
