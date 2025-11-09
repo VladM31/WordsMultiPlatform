@@ -1,31 +1,21 @@
 package vm.words.ua.core.platform
 
-@OptIn(kotlin.js.ExperimentalJsExport::class)
-actual fun getDeviceName(): String {
-    val nav = try {
-        js("(typeof navigator !== 'undefined' ? navigator : null)") as dynamic
-    } catch (e: Throwable) {
-        null
-    }
+/**
+ * WASM build cannot reliably use dynamic `js(...)` interop in arbitrary code paths.
+ * Instead expose a simple setter that the JS host can call after the module is
+ * initialized to provide the real user agent (or any device string).
+ */
 
-    return try {
-        val platform: String? = nav?.platform as? String
-        val userAgent: String? = nav?.userAgent as? String
-        val vendor: String? = nav?.vendor as? String
+// Mutable storage that the host can set. Defaults to a generic label.
+var wasmDeviceUserAgent: String = "Web Browser"
 
-        val manufacturer = when {
-            !vendor.isNullOrBlank() -> vendor
-            !platform.isNullOrBlank() -> platform
-            else -> "WASM"
-        }
-        val model = userAgent ?: platform ?: ""
-
-        if (model.startsWith(manufacturer ?: "", ignoreCase = true)) {
-            model.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
-        } else {
-            "${manufacturer?.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }} $model".trim()
-        }
-    } catch (e: Throwable) {
-        "WASM"
-    }
+// Public setter — the JS host should call this after initializing the WASM module.
+// Example host call (see instructions in code comments below):
+//   const ua = navigator.userAgent || navigator.platform || 'Web Browser';
+//   moduleName.setWasmDeviceUserAgent(ua);
+fun setWasmDeviceUserAgent(name: String) {
+    wasmDeviceUserAgent = name
 }
+
+// Provide the actual implementation used by common code
+actual fun getDeviceName(): String = wasmDeviceUserAgent

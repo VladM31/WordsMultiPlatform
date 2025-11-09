@@ -1,11 +1,13 @@
 package vm.words.ua.core.platform
 
+import kotlinx.browser.window
+
 actual fun getDeviceName(): String {
-    val nav = js("(typeof navigator !== 'undefined' ? navigator : null)") as dynamic
     return try {
-        val platform: String? = nav?.platform as? String
-        val userAgent: String? = nav?.userAgent as? String
-        val vendor: String? = nav?.vendor as? String
+        val platform: String? = window.navigator.platform
+        val userAgent: String? = window.navigator.userAgent
+        val vendor: String? =
+            if (window.navigator.asDynamic().vendor != undefined) window.navigator.asDynamic().vendor as? String else null
 
         val manufacturer = when {
             !vendor.isNullOrBlank() -> vendor
@@ -14,12 +16,12 @@ actual fun getDeviceName(): String {
         }
         val model = userAgent ?: platform ?: ""
 
-        if (model.startsWith(manufacturer ?: "", ignoreCase = true)) {
+        if (model.startsWith(manufacturer, ignoreCase = true)) {
             model.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
         } else {
-            "${manufacturer?.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }} $model".trim()
+            "${manufacturer.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }} $model".trim()
         }
-    } catch (e: Throwable) {
+    } catch (_: Throwable) {
         "Browser"
     }
 }
