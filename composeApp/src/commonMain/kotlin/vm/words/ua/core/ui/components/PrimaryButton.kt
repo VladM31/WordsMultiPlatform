@@ -16,11 +16,10 @@ fun PrimaryButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    maxWidth: androidx.compose.ui.unit.Dp = androidx.compose.ui.unit.Dp.Unspecified
+    enabled: Boolean = true
 ) {
 
-    val scaleFactor = getScaleFactor(maxWidth)
+    val scaleFactor = getScaleFactor()
     val fontSize = getFontSize(0.75f * scaleFactor)
 
     Button(

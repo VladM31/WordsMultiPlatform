@@ -62,6 +62,12 @@ class SignUpViewModel(
             mutableState.value = state.value.copy(error = ErrorMessage(message = errorMessage))
             return
         }
+        if (state.value.agreed.not()) {
+            mutableState.value = state.value.copy(
+                error = ErrorMessage(message = "You must agree to the terms and conditions")
+            )
+            return
+        }
 
         viewModelScope.launch(Dispatchers.Default) {
             try {
