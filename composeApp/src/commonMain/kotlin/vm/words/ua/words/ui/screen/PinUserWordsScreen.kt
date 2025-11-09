@@ -8,12 +8,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -29,10 +32,14 @@ import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.PickerResultLauncher
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.name
+import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
+import vm.words.ua.core.ui.components.ImageFromPlatformFile
 import vm.words.ua.core.ui.components.PrimaryButton
 import vm.words.ua.core.utils.getFontSize
+import vm.words.ua.core.utils.getIconSize
+import vm.words.ua.core.utils.getImageSize
 import vm.words.ua.core.utils.isNotPhoneFormat
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
@@ -40,6 +47,8 @@ import vm.words.ua.words.ui.actions.PinUserWordsAction
 import vm.words.ua.words.ui.bundles.PinUserWordsBundle
 import vm.words.ua.words.ui.states.PinUserWordsState
 import vm.words.ua.words.ui.vms.PinUserWordsViewModel
+import wordsmultiplatform.composeapp.generated.resources.Res
+import wordsmultiplatform.composeapp.generated.resources.delete
 
 @Composable
 fun PinUserWordsScreen(
@@ -129,7 +138,7 @@ fun PinUserWordsScreen(
 
                 // Image picker
                 item {
-                    ImageMenu(state, imagePicker)
+                    ImageMenu(state, imagePicker, viewModel)
                 }
 
                 // Sound picker
@@ -188,8 +197,10 @@ private fun TopMenu(
 @Composable
 private fun ImageMenu(
     state: PinUserWordsState,
-    imagePicker: PickerResultLauncher
+    imagePicker: PickerResultLauncher,
+    viewModel: PinUserWordsViewModel
 ) {
+
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
             text = "Custom Image",
@@ -197,17 +208,49 @@ private fun ImageMenu(
             fontSize = getFontSize()
         )
 
-        OutlinedButton(
-            onClick = { imagePicker.launch() },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = AppTheme.PrimaryGreen
+        state.image?.let {
+            ImageFromPlatformFile(
+                file = it,
+                modifier = Modifier.size(getImageSize())
             )
-        ) {
-            Text(
-                text = if (state.image != null) "Change Image" else "Select Image",
-                fontSize = getFontSize()
-            )
+        }
+
+
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+
+            ) {
+            OutlinedButton(
+                onClick = { imagePicker.launch() },
+                modifier = Modifier.weight(3f),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = AppTheme.PrimaryGreen
+                )
+            ) {
+                Text(
+                    text = if (state.image != null) "Change Image" else "Select Image",
+                    fontSize = getFontSize()
+                )
+            }
+            if (state.image == null) {
+                return@Row
+            }
+            IconButton(
+                onClick = {
+                    viewModel.sent(PinUserWordsAction.SetImage(null))
+                },
+                modifier = Modifier
+                    .size(getIconSize())
+                    .weight(1f)
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.delete),
+                    contentDescription = "Remove",
+                    tint = AppTheme.PrimaryGreen,
+                    modifier = Modifier.size(getIconSize())
+                )
+            }
         }
 
         state.image?.let { file ->
