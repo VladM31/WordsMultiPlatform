@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import vm.words.ua.core.domain.managers.UserCacheManager
 import vm.words.ua.core.ui.models.ErrorMessage
 import vm.words.ua.words.domain.managers.WordManager
+import vm.words.ua.words.domain.models.Word
 import vm.words.ua.words.domain.models.filters.WordFilter
 import vm.words.ua.words.ui.actions.WordsAction
 import vm.words.ua.words.ui.states.WordsState
@@ -36,7 +37,7 @@ class WordsViewModel(
 
     fun sent(action: WordsAction) {
         when (action) {
-            is WordsAction.SelectWord -> selectWord(action.wordId)
+            is WordsAction.SelectWord -> selectWord(action.word)
             is WordsAction.Clear -> clear()
             is WordsAction.LoadMore -> loadMore()
             is WordsAction.UpdateFilter -> updateFilter(action)
@@ -103,11 +104,11 @@ class WordsViewModel(
     }
 
 
-    private fun selectWord(wordId: String) {
-        val selectedWords = if (state.value.selectedWords.contains(wordId)) {
-            state.value.selectedWords - wordId
+    private fun selectWord(word: Word) {
+        val selectedWords = if (state.value.selectedWords.contains(word.id)) {
+            state.value.selectedWords - word.id
         } else {
-            state.value.selectedWords + wordId
+            state.value.selectedWords + (word.id to word)
         }
 
 
@@ -121,7 +122,7 @@ class WordsViewModel(
     private fun clear() {
         mutableState.apply {
             value = value.copy(
-                selectedWords = emptySet()
+                selectedWords = emptyMap()
             )
         }
     }

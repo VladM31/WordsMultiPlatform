@@ -18,6 +18,7 @@ import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.words.ui.actions.WordsAction
+import vm.words.ua.words.ui.bundles.PinUserWordsBundle
 import vm.words.ua.words.ui.bundles.WordDetailsBundle
 import vm.words.ua.words.ui.bundles.WordFilterBundle
 import vm.words.ua.words.ui.components.SelectionBottomMenu
@@ -87,7 +88,7 @@ fun WordsScreen(
                     word = item,
                     isSelected = state.selectedWords.contains(item.id),
                     onSelect = {
-                        viewModel.sent(WordsAction.SelectWord(item.id))
+                        viewModel.sent(WordsAction.SelectWord(item))
                     },
                     onOpen = {
                         navController.navigate(
@@ -109,7 +110,12 @@ fun WordsScreen(
                 viewModel.sent(WordsAction.Clear)
             },
             onApply = {
-                println()
+                navController.navigate(
+                    Screen.PinUserWords,
+                    PinUserWordsBundle(
+                        words = state.selectedWords.values
+                    )
+                )
             },
             applyLabel = "Apply(${state.selectedWords.size})"
         )

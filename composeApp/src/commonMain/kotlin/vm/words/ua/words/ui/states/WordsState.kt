@@ -7,7 +7,7 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 data class WordsState @OptIn(ExperimentalTime::class) constructor(
-    val selectedWords: Set<String> = emptySet(),
+    val selectedWords: Map<String, Word> = mapOf(),
     val filter: WordFilter = WordFilter(),
     val words: List<Word> = emptyList(),
     val isLoading: Boolean = true,
