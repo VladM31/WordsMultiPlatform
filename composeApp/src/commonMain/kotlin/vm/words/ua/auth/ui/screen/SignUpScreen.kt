@@ -7,28 +7,32 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import vm.words.ua.auth.ui.actions.SignUpAction
+import vm.words.ua.auth.ui.vms.SignUpViewModel
+import vm.words.ua.core.domain.models.enums.Currency
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppTextField
 import vm.words.ua.core.ui.components.AppToolBar
+import vm.words.ua.core.ui.components.ErrorMessageBox
 import vm.words.ua.core.ui.components.PrimaryButton
+import vm.words.ua.core.ui.components.SingleSelectInput
+import vm.words.ua.core.utils.isNotPhoneFormat
+import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,27 +40,13 @@ import vm.words.ua.navigation.SimpleNavController
 fun SignUpScreen(
     navController: SimpleNavController,
     modifier: Modifier = Modifier,
-    onSignUp: (
-        phone: String,
-        password: String,
-        email: String,
-        firstName: String,
-        lastName: String,
-        currency: String
-    ) -> Unit = { _, _, _, _, _, _ -> }
+    viewModel: SignUpViewModel = rememberInstance()
+
 ) {
-    val scrollState = rememberScrollState()
+    val state by viewModel.state.collectAsState()
 
-    var phoneState by remember { mutableStateOf("") }
-    var passwordState by remember { mutableStateOf("") }
-    var emailState by remember { mutableStateOf("") }
-    var firstNameState by remember { mutableStateOf("") }
-    var lastNameState by remember { mutableStateOf("") }
-    var agreedToTerms by remember { mutableStateOf(false) }
 
-    var expanded by remember { mutableStateOf(false) }
-    var selectedCurrency by remember { mutableStateOf("USD") }
-    val currencies = listOf("USD", "EUR", "UAH")
+
 
     Column(
         modifier = modifier
@@ -65,118 +55,89 @@ fun SignUpScreen(
     ) {
         AppToolBar(
             title = "Sign Up",
+            showBackButton = true,
             onBackClick = { navController.popBackStack() }
         )
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Column(
+        val columns = if (isNotPhoneFormat()) 2 else 1
+
+        Column(modifier = Modifier.fillMaxSize()) {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(columns),
                 modifier = Modifier
                     .weight(1f)
-                    .verticalScroll(scrollState),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                horizontalArrangement = Arrangement.spacedBy(20.dp),
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        AppTextField(
-                            value = phoneState,
-                            onValueChange = { phoneState = it },
-                            label = "Phone number",
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                item {
+                    AppTextField(
+                        value = state.phoneNumber,
+                        onValueChange = { viewModel.sent(SignUpAction.SetPhoneNumber(it)) },
+                        label = "Phone number",
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
 
-                        AppTextField(
-                            value = passwordState,
-                            onValueChange = { passwordState = it },
-                            label = "Password",
-                            modifier = Modifier.fillMaxWidth(),
-                            isPassword = true
-                        )
+                item {
+                    AppTextField(
+                        value = state.password,
+                        onValueChange = { viewModel.sent(SignUpAction.SetPassword(it)) },
+                        label = "Password",
+                        modifier = Modifier.fillMaxWidth(),
+                        isPassword = true
+                    )
+                }
 
-                        AppTextField(
-                            value = emailState,
-                            onValueChange = { emailState = it },
-                            label = "Email",
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
+                item {
+                    AppTextField(
+                        value = state.firstName,
+                        onValueChange = { viewModel.sent(SignUpAction.SetFirstName(it)) },
+                        label = "First name",
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
 
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        AppTextField(
-                            value = firstNameState,
-                            onValueChange = { firstNameState = it },
-                            label = "First name",
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                item {
+                    AppTextField(
+                        value = state.lastName,
+                        onValueChange = { viewModel.sent(SignUpAction.SetLastName(it)) },
+                        label = "Last name",
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
 
-                        AppTextField(
-                            value = lastNameState,
-                            onValueChange = { lastNameState = it },
-                            label = "Last name",
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                item {
+                    AppTextField(
+                        value = state.email.orEmpty(),
+                        onValueChange = { viewModel.sent(SignUpAction.SetEmail(it)) },
+                        label = "Email",
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
 
-                        ExposedDropdownMenuBox(
-                            expanded = expanded,
-                            onExpandedChange = { expanded = !expanded }
-                        ) {
-                            AppTextField(
-                                value = selectedCurrency,
-                                onValueChange = {},
-                                label = "Currency",
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .menuAnchor(MenuAnchorType.PrimaryNotEditable)
-                            )
+                item {
+                    SingleSelectInput(
+                        value = state.currency,
+                        items = Currency.entries.toList(),
+                        label = "Original language",
+                        toLabel = { it.name },
+                        showNone = true,
+                        noneLabel = "",
+                        onSelect = { viewModel.sent(SignUpAction.SetCurrency(it ?: Currency.USD)) },
+                    )
 
-                            ExposedDropdownMenu(
-                                expanded = expanded,
-                                onDismissRequest = { expanded = false },
-                                modifier = Modifier.background(AppTheme.PrimaryBack)
-                            ) {
-                                currencies.forEach { currency ->
-                                    DropdownMenuItem(
-                                        text = {
-                                            Text(
-                                                text = currency,
-                                                color = AppTheme.PrimaryColor
-                                            )
-                                        },
-                                        onClick = {
-                                            selectedCurrency = currency
-                                            expanded = false
-                                        }
-                                    )
-                                }
-                            }
-                        }
-                    }
                 }
             }
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.Center,
             ) {
                 Checkbox(
-                    checked = agreedToTerms,
-                    onCheckedChange = { agreedToTerms = it },
+                    checked = state.agreed,
+                    onCheckedChange = { viewModel.sent(SignUpAction.SetAgreed(it)) },
                     colors = CheckboxDefaults.colors(
                         checkedColor = AppTheme.PrimaryColor,
                         uncheckedColor = AppTheme.PrimaryColor,
@@ -193,21 +154,15 @@ fun SignUpScreen(
             PrimaryButton(
                 text = "Submit",
                 onClick = {
-                    if (agreedToTerms) {
-                        onSignUp(
-                            phoneState,
-                            passwordState,
-                            emailState,
-                            firstNameState,
-                            lastNameState,
-                            selectedCurrency
-                        )
-                        navController.navigate("confirm_signup")
-                    }
+                    viewModel.sent(SignUpAction.Submit)
                 },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = agreedToTerms
+                modifier = Modifier.width(300.dp).padding(bottom = 10.dp).align(CenterHorizontally),
+                enabled = state.agreed
             )
+        }
+
+        state.error?.let {
+            ErrorMessageBox(message = it)
         }
     }
 }

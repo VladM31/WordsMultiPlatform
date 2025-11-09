@@ -12,3 +12,7 @@ fun String.titleCase() : String {
 
     return this[0].titlecaseChar() + substring(1).lowercase().replace("_", " ")
 }
+
+fun String.toNumbersOnly(): String {
+    return this.replace(Regex("[^0-9]"), "")
+}

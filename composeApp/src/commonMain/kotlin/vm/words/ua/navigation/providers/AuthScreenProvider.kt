@@ -20,7 +20,7 @@ class AuthScreenProvider : ScreenProvider {
             }
 
             Screen.SignUp.route -> {
-                SignUpScreen(navController = navController, onSignUp = { _, _, _, _, _, _ -> })
+                SignUpScreen(navController = navController)
             }
 
             Screen.TelegramLogin.route -> {

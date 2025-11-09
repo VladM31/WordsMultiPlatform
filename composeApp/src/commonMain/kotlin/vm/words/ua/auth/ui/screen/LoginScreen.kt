@@ -1,7 +1,12 @@
 package vm.words.ua.auth.ui.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -13,7 +18,10 @@ import kotlinx.coroutines.flow.map
 import vm.words.ua.auth.ui.components.LoginForm
 import vm.words.ua.auth.ui.vms.LoginViewModel
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.ui.components.*
+import vm.words.ua.core.ui.components.AppToolBar
+import vm.words.ua.core.ui.components.CenteredContainer
+import vm.words.ua.core.ui.components.ErrorMessageBox
+import vm.words.ua.core.ui.components.VerticalCenteredContainer
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
@@ -55,13 +63,12 @@ fun LoginScreen(
                 VerticalCenteredContainer(
                     modifier = Modifier.padding(16.dp)
                 ) {
-                    // Get actual maxWidth inside CenteredContainer
                     BoxWithConstraints {
                         LoginForm(
                             viewModel = viewModel,
                             maxWidth = boxMaxWith,
-                            onJoinNowClick = { navController.navigate("signup") },
-                            onTelegramClick = { navController.navigate("telegram_login") }
+                            onJoinNowClick = { navController.navigate(Screen.SignUp) },
+                            onTelegramClick = { navController.navigate(Screen.TelegramLogin) }
                         )
                     }
 

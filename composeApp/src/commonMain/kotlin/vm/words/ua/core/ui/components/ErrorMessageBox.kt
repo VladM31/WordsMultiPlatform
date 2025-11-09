@@ -17,9 +17,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.models.ErrorMessage
+import vm.words.ua.core.utils.getFontSize
+import vm.words.ua.core.utils.getScaleFactor
 
 @Composable
 fun ErrorMessageBox(
@@ -51,7 +52,7 @@ fun ErrorMessageBox(
         Text(
             text = message.message,
             color = AppTheme.PrimaryColor,
-            fontSize = 14.sp,
+            fontSize = getFontSize(),
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
@@ -65,34 +66,50 @@ private fun ErrorMessageAlertDialog(
     onDismiss: (() -> Unit)? = null
 ) {
     var visible by remember(message.id) { mutableStateOf(true) }
+    val scale = getScaleFactor()
 
-    if (visible) {
-        AlertDialog(
-            onDismissRequest = {
+    val fontSize = remember {
+        getFontSize(scale) * 0.85
+    }
+    val heightFontSize = remember {
+        getFontSize(scale) * 0.92
+    }
+
+    if (visible.not()) {
+        return
+    }
+
+
+    AlertDialog(
+        onDismissRequest = {
+            visible = false
+            onDismiss?.invoke()
+        },
+        confirmButton = {
+            TextButton(onClick = {
                 visible = false
                 onDismiss?.invoke()
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    visible = false
-                    onDismiss?.invoke()
-                }) {
-                    Text(text = "OK")
-                }
-            },
-            title = null,
-            text = {
+            }) {
                 Text(
-                    text = message.message,
+                    text = "OK",
                     color = AppTheme.PrimaryColor,
-                    fontSize = 14.sp,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
+                    fontSize = getFontSize(),
                 )
-            },
-            modifier = modifier.border(1.dp, AppTheme.PrimaryColor, RoundedCornerShape(8.dp)),
-            shape = RoundedCornerShape(8.dp),
-            containerColor = AppTheme.PrimaryBack
-        )
-    }
+            }
+        },
+        title = null,
+        text = {
+            Text(
+                text = message.message,
+                color = AppTheme.PrimaryColor,
+                fontSize = fontSize,
+                textAlign = TextAlign.Center,
+                lineHeight = heightFontSize,
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
+        modifier = modifier.border(1.dp, AppTheme.PrimaryColor, RoundedCornerShape(8.dp)),
+        shape = RoundedCornerShape(8.dp),
+        containerColor = AppTheme.PrimaryBack
+    )
 }

@@ -4,7 +4,7 @@ import vm.words.ua.core.domain.models.enums.Currency
 import vm.words.ua.core.ui.models.ErrorMessage
 
 
-internal data class SignUpState(
+data class SignUpState(
     val success: Boolean = false,
     val error: ErrorMessage? = null,
     val phoneNumber: String = "",

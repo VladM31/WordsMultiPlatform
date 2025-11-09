@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.utils.getFontSize
-import vm.words.ua.core.utils.getScaleFactor
+import vm.words.ua.core.utils.getLabelFontSize
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,7 +33,6 @@ fun AppTextField(
     isPassword: Boolean = false
 ) {
     BoxWithConstraints {
-        val scaleFactor = getScaleFactor(boxMaxWidth)
         val primaryColor70 = AppTheme.PrimaryColor.copy(alpha = 0.7f)
 
         OutlinedTextField(
@@ -41,10 +40,10 @@ fun AppTextField(
             onValueChange = onValueChange,
             modifier = modifier,
             label = if (label != null) {
-                { Text(label, color = primaryColor70, fontSize = getFontSize(scaleFactor * 0.85f)) }
+                { Text(label, color = primaryColor70, fontSize = getLabelFontSize()) }
             } else null,
             singleLine = singleLine,
-            textStyle = androidx.compose.material3.LocalTextStyle.current.copy(fontSize = getFontSize(scaleFactor * 0.9f)),
+            textStyle = androidx.compose.material3.LocalTextStyle.current.copy(fontSize = getFontSize()),
             visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
             keyboardOptions = KeyboardOptions(keyboardType = if (isPassword) KeyboardType.Password else KeyboardType.Text),
             colors = OutlinedTextFieldDefaults.colors(
