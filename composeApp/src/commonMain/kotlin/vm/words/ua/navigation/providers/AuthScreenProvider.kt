@@ -25,9 +25,8 @@ class AuthScreenProvider : ScreenProvider {
 
             Screen.TelegramLogin.route -> {
                 TelegramLoginScreen(
-                    navController = navController,
-                    onSubmit = {},
-                    onOpenTelegram = {})
+                    navController = navController
+                )
             }
 
             Screen.ConfirmSignUp.route -> {

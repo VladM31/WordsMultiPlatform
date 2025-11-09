@@ -12,6 +12,7 @@ import vm.words.ua.auth.domain.managers.TelegramAuthManager
 import vm.words.ua.auth.ui.actions.TelegramLoginAction
 import vm.words.ua.auth.ui.states.TelegramLoginState
 import vm.words.ua.core.ui.models.ErrorMessage
+import vm.words.ua.core.utils.toNumbersOnly
 import vm.words.ua.validation.Validator
 import vm.words.ua.validation.schemes.ValidationScheme
 import vm.words.ua.validation.schemes.isPhoneNumber
@@ -56,7 +57,7 @@ class TelegramLoginVm(
     }
 
     private fun handlePhoneNumber(action: TelegramLoginAction.SetPhoneNumber) {
-        mutableState.value = mutableState.value.copy(phoneNumber = action.value)
+        mutableState.value = mutableState.value.copy(phoneNumber = action.value.toNumbersOnly())
     }
 
     private fun handleSubmit() {

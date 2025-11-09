@@ -24,9 +24,9 @@ import vm.words.ua.auth.ui.vms.LoginViewModel
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppTextField
 import vm.words.ua.core.ui.components.PrimaryButton
-import vm.words.ua.core.utils.getScaleFactor
 import vm.words.ua.core.utils.getFontSize
 import vm.words.ua.core.utils.getIconSize
+import vm.words.ua.core.utils.getScaleFactor
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.telegram_image
 
@@ -105,7 +105,7 @@ fun LoginForm(
             Image(
                 painterResource(Res.drawable.telegram_image),
                 contentDescription = "telegram",
-                modifier = Modifier.size(getIconSize(scaleFactor)).clickable { onTelegramClick() }
+                modifier = Modifier.size(getIconSize() * 1.5f).clickable { onTelegramClick() }
             )
         }
     }

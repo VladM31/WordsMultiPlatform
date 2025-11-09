@@ -5,6 +5,8 @@ import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import vm.words.ua.auth.net.clients.TelegramAuthClient
 import vm.words.ua.auth.net.requests.TelegramAuthLoginReq
 import vm.words.ua.auth.net.requests.TelegramAuthStartLoginReq
@@ -21,6 +23,7 @@ class KrotTelegramAuthClient(
 
     override suspend fun startLogin(request: TelegramAuthStartLoginReq): String {
         val respond = httpClient.post("${baseUrl}/telegram-start-login") {
+            contentType(ContentType.Application.Json)
             setBody(request)
         }
         return respond.bodyAsText()
@@ -28,6 +31,7 @@ class KrotTelegramAuthClient(
 
     override suspend fun login(request: TelegramAuthLoginReq): TelegramLoginRespond {
         val respond = httpClient.post("${baseUrl}/telegram-login") {
+            contentType(ContentType.Application.Json)
             setBody(request)
         }
         return respond.body()

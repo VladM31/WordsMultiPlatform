@@ -7,9 +7,9 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.utils.getFontSize
-import vm.words.ua.core.utils.getScaleFactor
 
 @Composable
 fun PrimaryButton(
@@ -19,8 +19,7 @@ fun PrimaryButton(
     enabled: Boolean = true
 ) {
 
-    val scaleFactor = getScaleFactor()
-    val fontSize = getFontSize(0.75f * scaleFactor)
+    val fontSize = getFontSize()
 
     Button(
         onClick = onClick,
@@ -31,7 +30,7 @@ fun PrimaryButton(
             contentColor = AppTheme.PrimaryBack
         )
     ) {
-        Text(text, fontSize = fontSize)
+        Text(text, fontSize = fontSize, textAlign = TextAlign.Center)
     }
 }
 
