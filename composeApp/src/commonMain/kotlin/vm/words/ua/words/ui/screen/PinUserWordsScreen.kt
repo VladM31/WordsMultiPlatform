@@ -150,7 +150,8 @@ fun PinUserWordsScreen(
                 item {
                     SoundMenu(
                         state = state,
-                        soundPicker = soundPicker
+                        soundPicker = soundPicker,
+                        viewModel = viewModel
                     )
                 }
             }
@@ -284,7 +285,8 @@ private fun ImageMenu(
 @Composable
 private fun SoundMenu(
     state: PinUserWordsState,
-    soundPicker: PickerResultLauncher
+    soundPicker: PickerResultLauncher,
+    viewModel: PinUserWordsViewModel
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
@@ -293,17 +295,42 @@ private fun SoundMenu(
             fontSize = getFontSize()
         )
 
-        OutlinedButton(
-            onClick = { soundPicker.launch() },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = AppTheme.PrimaryGreen
-            )
-        ) {
-            Text(
-                text = if (state.sound != null) "Change Sound" else "Select Sound",
-                fontSize = getFontSize()
-            )
+
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+
+            ) {
+            OutlinedButton(
+                onClick = { soundPicker.launch() },
+                modifier = Modifier.weight(3f),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = AppTheme.PrimaryGreen
+                )
+            ) {
+                Text(
+                    text = if (state.sound != null) "Change Sound" else "Select Sound",
+                    fontSize = getFontSize()
+                )
+            }
+            if (state.sound == null) {
+                return@Row
+            }
+            IconButton(
+                onClick = {
+                    viewModel.sent(PinUserWordsAction.SetSound(null))
+                },
+                modifier = Modifier
+                    .size(getIconSize())
+                    .weight(1f)
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.delete),
+                    contentDescription = "Remove",
+                    tint = AppTheme.PrimaryGreen,
+                    modifier = Modifier.size(getIconSize())
+                )
+            }
         }
 
         state.sound?.let { file ->
@@ -344,7 +371,6 @@ private fun BottomMenu(
         PrimaryButton(
             text = "Pin All Words",
             onClick = {
-                viewModel.sent(PinUserWordsAction.SaveFiles)
                 viewModel.sent(PinUserWordsAction.Pin)
             },
             modifier = Modifier.fillMaxWidth()
