@@ -7,6 +7,7 @@ import org.kodein.di.instance
 import vm.words.ua.auth.ui.vms.ConfirmSignUpVm
 import vm.words.ua.auth.ui.vms.LoginViewModel
 import vm.words.ua.auth.ui.vms.SignUpViewModel
+import vm.words.ua.auth.ui.vms.TelegramLoginVm
 
 internal val viewModelDi = DI.Module("viewModel") {
     bind<LoginViewModel>() with factory {
@@ -25,6 +26,13 @@ internal val viewModelDi = DI.Module("viewModel") {
     bind<ConfirmSignUpVm>() with factory {
         ConfirmSignUpVm(
             authManager = instance()
+        )
+    }
+
+    bind<TelegramLoginVm>() with factory {
+        TelegramLoginVm(
+            telegramAuthManager = instance(),
+            authHistoryManager = instance()
         )
     }
 }

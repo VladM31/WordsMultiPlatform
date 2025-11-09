@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TelegramAuthStartLoginReq(
-    val phoneNumber: String
+    val phoneNumber: String,
+    val deviceName: String?
 )
 

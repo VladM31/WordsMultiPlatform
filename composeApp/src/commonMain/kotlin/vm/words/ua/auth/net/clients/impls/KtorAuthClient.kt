@@ -1,10 +1,17 @@
-package vm.words.ua.auth.net.clients
+package vm.words.ua.auth.net.clients.impls
 
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.get
+import io.ktor.client.request.parameter
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import io.ktor.http.isSuccess
+import vm.words.ua.auth.net.clients.AuthClient
 import vm.words.ua.auth.net.requests.LoginRequest
 import vm.words.ua.auth.net.requests.SignUpRequest
 import vm.words.ua.auth.net.responses.AuthResponse
@@ -17,7 +24,6 @@ import vm.words.ua.core.config.AppRemoteConfig
 class KtorAuthClient(
     private val client: HttpClient
 ) : AuthClient {
-
 
 
     override suspend fun logIn(request: LoginRequest): AuthResponse {
@@ -56,20 +62,21 @@ class KtorAuthClient(
                 val success = response.bodyAsText().toBoolean()
                 SignUpResponse(success = success)
             } else {
-                SignUpResponse.error(
+                SignUpResponse.Companion.error(
                     message = "Error: ${response.status.value}, body: ${response.bodyAsText()}"
                 )
             }
         } catch (e: Exception) {
-            SignUpResponse.error(message = "Error: ${e.message}")
+            SignUpResponse.Companion.error(message = "Error: ${e.message}")
         }
     }
 
     override suspend fun isRegistered(phoneNumber: String): Boolean {
         return try {
-            val response: HttpResponse = client.get("${AppRemoteConfig.baseUrl}/auth/is-registered") {
-                parameter("phoneNumber", phoneNumber)
-            }
+            val response: HttpResponse =
+                client.get("${AppRemoteConfig.baseUrl}/auth/is-registered") {
+                    parameter("phoneNumber", phoneNumber)
+                }
 
             if (response.status.isSuccess()) {
                 response.bodyAsText().toBoolean()
@@ -85,4 +92,3 @@ class KtorAuthClient(
         TODO("Not yet implemented")
     }
 }
-

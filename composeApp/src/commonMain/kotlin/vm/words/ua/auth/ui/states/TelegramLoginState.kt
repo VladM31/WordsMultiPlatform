@@ -4,7 +4,7 @@ import vm.words.ua.core.ui.models.ErrorMessage
 import vm.words.ua.core.ui.states.EndetableState
 import vm.words.ua.core.ui.states.ErrorableState
 
-internal data class TelegramLoginState(
+data class TelegramLoginState(
     val code: String = "",
     val phoneNumber: String = "",
     val isLoading: Boolean = false,

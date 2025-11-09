@@ -7,8 +7,10 @@ import org.kodein.di.singleton
 import vm.words.ua.auth.domain.managers.AuthHistoryManager
 import vm.words.ua.auth.domain.managers.AuthHistorySettingsFactory
 import vm.words.ua.auth.domain.managers.AuthManager
+import vm.words.ua.auth.domain.managers.TelegramAuthManager
 import vm.words.ua.auth.domain.managers.impls.AuthHistoryManagerImpl
 import vm.words.ua.auth.domain.managers.impls.AuthManagerImpl
+import vm.words.ua.auth.domain.managers.impls.TelegramAuthManagerImpl
 
 internal val managerDi = DI.Module("manager") {
     // HTTP клиент (singleton)
@@ -22,6 +24,13 @@ internal val managerDi = DI.Module("manager") {
     bind<AuthHistoryManager>() with singleton {
         AuthHistoryManagerImpl(
             settings = AuthHistorySettingsFactory.create()
+        )
+    }
+
+    bind<TelegramAuthManager>() with singleton {
+        TelegramAuthManagerImpl(
+            telegramAuthClient = instance(),
+            userCacheManager = instance()
         )
     }
 }
