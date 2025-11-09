@@ -15,6 +15,7 @@ data class PinUserWordsState(
     val currentUpdateId: String? = null,
 
     val isPlay: Boolean = false,
+    val isLoading: Boolean = false,
 
     val isInited: Boolean = false,
     override val isEnd: Boolean = false,

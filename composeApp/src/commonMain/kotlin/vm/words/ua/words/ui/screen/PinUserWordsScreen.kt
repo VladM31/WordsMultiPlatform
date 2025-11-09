@@ -106,6 +106,16 @@ fun PinUserWordsScreen(
             onBackClick = { navController.popBackStack() }
         )
 
+        if (state.isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = AppTheme.PrimaryGreen)
+            }
+            return@Column
+        }
+
         if (state.isInited.not()) {
             Box(
                 modifier = Modifier.fillMaxSize(),

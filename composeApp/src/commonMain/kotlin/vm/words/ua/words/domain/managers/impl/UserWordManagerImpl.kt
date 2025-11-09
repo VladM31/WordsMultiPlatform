@@ -99,8 +99,8 @@ class UserWordManagerImpl(
                 if (bytes.isEmpty()) return@let null
                 val req = SaveFileRequest(content = bytes, fileName = img.name)
                 fileClient.uploadFile(req).fileName
-            } catch (_: Throwable) {
-                println($$"UserWordManager: Image upload failed: ${t.message}")
+            } catch (e: Throwable) {
+                println("UserWordManager: Image upload failed: ${e.message}")
                 null
             }
         }

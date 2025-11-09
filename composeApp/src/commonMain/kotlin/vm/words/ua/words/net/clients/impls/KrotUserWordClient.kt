@@ -42,6 +42,7 @@ class KrotUserWordClient(
     ) {
         client.post(baseUrl) {
             header("Authorization", "Bearer $token")
+            header("Content-Type", "application/json")
             setBody(requests)
         }
     }
@@ -52,6 +53,7 @@ class KrotUserWordClient(
     ) {
         client.post("$baseUrl/pin") {
             header("Authorization", "Bearer $token")
+            header("Content-Type", "application/json")
             setBody(requests)
         }
     }
@@ -62,6 +64,7 @@ class KrotUserWordClient(
     ) {
         client.post("$baseUrl/delete") {
             header("Authorization", "Bearer $token")
+            header("Content-Type", "application/json")
             setBody(requests)
         }
     }

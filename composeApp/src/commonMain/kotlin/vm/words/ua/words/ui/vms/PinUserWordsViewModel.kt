@@ -108,6 +108,12 @@ class PinUserWordsViewModel(
     private fun handlePin() {
         if (state.value.words.isEmpty()) return
 
+        setNewValue {
+            it.copy(
+                isLoading = true
+            )
+        }
+
         viewModelScope.launch(Dispatchers.Default) {
             state.value.words.toPinWords().runCatching {
                 userWordManager.pin(this@runCatching)
@@ -116,7 +122,8 @@ class PinUserWordsViewModel(
             }
 
             mutableState.value = state.value.copy(
-                isEnd = true
+                isEnd = true,
+                isLoading = false
             )
         }
     }

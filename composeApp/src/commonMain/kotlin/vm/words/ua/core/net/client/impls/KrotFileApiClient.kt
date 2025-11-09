@@ -1,6 +1,7 @@
 package vm.words.ua.core.net.client.impls
 
 import io.ktor.client.HttpClient
+import io.ktor.client.plugins.timeout
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.client.request.header
@@ -39,6 +40,12 @@ class KrotFileApiClient(
         val response: HttpResponse = httpClient.post(textToAudioUrl) {
             header(HttpHeaders.Authorization, "Bearer ${userCacheManager.token.value}")
             contentType(ContentType.Application.Json)
+            // Per-request timeout: 60 seconds
+            timeout {
+                requestTimeoutMillis = 60_000
+                connectTimeoutMillis = 60_000
+                socketTimeoutMillis = 60_000
+            }
             setBody(json.encodeToString(request))
         }
 
@@ -63,6 +70,12 @@ class KrotFileApiClient(
             }
         ) {
             header(HttpHeaders.Authorization, "Bearer ${userCacheManager.token.value}")
+            // Per-request timeout: 60 seconds
+            timeout {
+                requestTimeoutMillis = 60_000
+                connectTimeoutMillis = 60_000
+                socketTimeoutMillis = 60_000
+            }
         }
 
         if (!response.status.isSuccess()) {
