@@ -2,6 +2,7 @@ package vm.words.ua.core.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
@@ -88,20 +89,21 @@ fun ImageFromBytes(
         }
     }
 
+    // Respect external sizing: if caller provided a modifier, use it as-is; otherwise apply default size.
+    val finalModifier = if (modifier == Modifier) Modifier.size(width, height) else modifier
+
     Box(
-        modifier = modifier.size(width, height),
+        modifier = finalModifier,
         contentAlignment = Alignment.Center
     ) {
         when {
-            isLoading -> {
-                CircularProgressIndicator()
-            }
+            isLoading -> CircularProgressIndicator()
             imageBitmap != null -> {
                 Image(
                     bitmap = imageBitmap!!,
                     contentDescription = contentDescription,
                     contentScale = contentScale,
-                    modifier = Modifier.size(width, height)
+                    modifier = Modifier.fillMaxSize()
                 )
             }
             imageBytes == null -> {
@@ -109,7 +111,7 @@ fun ImageFromBytes(
                     painter = defaultPaint,
                     contentDescription = contentDescription,
                     contentScale = contentScale,
-                    modifier = Modifier.size(width, height)
+                    modifier = Modifier.fillMaxSize()
                 )
             }
         }
@@ -145,4 +147,3 @@ fun SimpleImageFromBytes(
         )
     }
 }
-

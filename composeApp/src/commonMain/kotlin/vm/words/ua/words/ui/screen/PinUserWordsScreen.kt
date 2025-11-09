@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -39,7 +40,6 @@ import vm.words.ua.core.ui.components.ImageFromPlatformFile
 import vm.words.ua.core.ui.components.PrimaryButton
 import vm.words.ua.core.utils.getFontSize
 import vm.words.ua.core.utils.getIconSize
-import vm.words.ua.core.utils.getImageSize
 import vm.words.ua.core.utils.isNotPhoneFormat
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
@@ -211,7 +211,9 @@ private fun ImageMenu(
         state.image?.let {
             ImageFromPlatformFile(
                 file = it,
-                modifier = Modifier.size(getImageSize())
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
             )
         }
 
@@ -391,4 +393,3 @@ private fun WordNavigator(
         }
     }
 }
-
