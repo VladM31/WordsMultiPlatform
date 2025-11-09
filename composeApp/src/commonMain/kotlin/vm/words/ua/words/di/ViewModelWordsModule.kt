@@ -4,6 +4,7 @@ import org.kodein.di.DI
 import org.kodein.di.bind
 import org.kodein.di.factory
 import org.kodein.di.instance
+import vm.words.ua.words.ui.vms.UserWordFilterVm
 import vm.words.ua.words.ui.vms.UserWordsViewModel
 import vm.words.ua.words.ui.vms.WordDetailsViewModel
 import vm.words.ua.words.ui.vms.WordFilterViewModel
@@ -34,5 +35,9 @@ internal val viewModelWordsModule = DI.Module("viewModelWordsModule") {
             userWordManager = instance(),
             pinPlayListManager = instance()
         )
+    }
+
+    bind<UserWordFilterVm>() with factory {
+        UserWordFilterVm()
     }
 }

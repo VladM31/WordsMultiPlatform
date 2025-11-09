@@ -25,6 +25,7 @@ import vm.words.ua.playlist.ui.screen.PlayListDetailsScreen
 import vm.words.ua.playlist.ui.screen.PlayListFilterScreen
 import vm.words.ua.playlist.ui.screen.PlayListScreen
 import vm.words.ua.settings.ui.screen.SettingScreen
+import vm.words.ua.words.ui.screen.UserWordFilterScreen
 import vm.words.ua.words.ui.screen.UserWordsScreen
 import vm.words.ua.words.ui.screen.WordDetailsScreen
 import vm.words.ua.words.ui.screen.WordFilterScreen
@@ -116,6 +117,12 @@ fun AppNavGraph() {
 
         Screen.WordList.route -> {
             WordsScreen(
+                navController = navController
+            )
+        }
+
+        Screen.UserWordsFilter.route -> {
+            UserWordFilterScreen(
                 navController = navController
             )
         }

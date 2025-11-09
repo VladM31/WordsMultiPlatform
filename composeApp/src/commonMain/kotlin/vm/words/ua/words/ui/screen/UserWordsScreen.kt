@@ -21,6 +21,7 @@ import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.words.ui.actions.UserWordsAction
+import vm.words.ua.words.ui.bundles.UserWordFilterBundle
 import vm.words.ua.words.ui.bundles.WordDetailsBundle
 import vm.words.ua.words.ui.components.SelectionBottomMenu
 import vm.words.ua.words.ui.components.WordItem
@@ -55,6 +56,16 @@ fun UserWordsScreen(
         }
     }
 
+    LaunchedEffect(navController.currentRoute) {
+        navController.getReturnParam<UserWordFilterBundle>()?.let {
+            viewModel.sent(
+                UserWordsAction.UpdateFilter(
+                    filter = it.filter
+                )
+            )
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -64,7 +75,12 @@ fun UserWordsScreen(
             title = "User Words",
             showBackButton = true,
             showAdditionalButton = true,
-            onAdditionalClick = { /* no-op for now */ },
+            onAdditionalClick = {
+                navController.navigate(
+                    Screen.UserWordsFilter,
+                    UserWordFilterBundle(state.filter)
+                )
+            },
             onBackClick = { navController.popBackStack() },
             additionalButtonImage = painterResource(Res.drawable.find)
         )

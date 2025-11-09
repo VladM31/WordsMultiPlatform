@@ -10,7 +10,6 @@ import vm.words.ua.core.ui.models.ErrorMessage
 import vm.words.ua.playlist.domain.managers.PinPlayListManager
 import vm.words.ua.playlist.domain.models.PinPlayList
 import vm.words.ua.words.domain.managers.UserWordManager
-import vm.words.ua.words.domain.models.filters.UserWordFilter
 import vm.words.ua.words.ui.actions.UserWordsAction
 import vm.words.ua.words.ui.states.UserWordsState
 
@@ -26,7 +25,7 @@ class UserWordsViewModel(
     fun sent(action: UserWordsAction) {
         when (action) {
             is UserWordsAction.SelectWord -> handleSelectWord(action)
-            is UserWordsAction.ChangeFilter -> handleChangeFilter(action)
+            is UserWordsAction.UpdateFilter -> handleChangeFilter(action)
             is UserWordsAction.Clear -> handleClear()
             is UserWordsAction.PinWords -> pinWords(action.playListId)
             is UserWordsAction.ReFetch -> handleReFetch()
@@ -54,12 +53,19 @@ class UserWordsViewModel(
         )
     }
 
-    private fun handleChangeFilter(action: UserWordsAction.ChangeFilter) {
+    private fun handleChangeFilter(action: UserWordsAction.UpdateFilter) {
+        if (state.value.filter == action.filter) {
+            return
+        }
+
         mutableState.value = mutableState.value.copy(
             filter = action.filter,
             selectedWords = emptySet(),
-            page = 0
+            page = 0,
+            isLoading = false,
+            hasMore = true,
         )
+        loadMore(state.value.page)
     }
 
     private fun pinWords(playListId: String) {
@@ -108,18 +114,17 @@ class UserWordsViewModel(
 
 
     private fun loadMore(pageNumber: Int) {
-        if (state.value.isLoading) {
+        if (state.value.run { isLoading || hasMore.not() }) {
             return
         }
+
         mutableState.value = mutableState.value.copy(
             isLoading = true
         )
         viewModelScope.launch(Dispatchers.Default) {
             try {
                 val paged = userWordManager.findBy(
-                    UserWordFilter(
-                        page = pageNumber
-                    )
+                    state.value.filter.copy(page = pageNumber)
                 )
 
                 val currentWords = if (pageNumber == 0) {

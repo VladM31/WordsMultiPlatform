@@ -4,7 +4,7 @@ import vm.words.ua.words.domain.models.filters.UserWordFilter
 
 sealed interface UserWordsAction {
     data class SelectWord(val wordId: String) : UserWordsAction
-    data class ChangeFilter(val filter: UserWordFilter) : UserWordsAction
+    data class UpdateFilter(val filter: UserWordFilter) : UserWordsAction
     data object Clear : UserWordsAction
     data class PinWords(val playListId: String) : UserWordsAction
     data object ReFetch : UserWordsAction
