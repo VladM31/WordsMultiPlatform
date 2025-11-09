@@ -46,7 +46,8 @@ internal val viewModelWordsModule = DI.Module("viewModelWordsModule") {
         PinUserWordsViewModel(
             userWordManager = instance(),
             subscribeCacheManager = instance(),
-            byteContentManager = instance()
+            byteContentManager = instance(),
+            soundManager = instance()
         )
     }
 }

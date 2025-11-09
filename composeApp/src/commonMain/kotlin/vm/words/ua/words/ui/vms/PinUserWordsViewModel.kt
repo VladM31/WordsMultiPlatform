@@ -2,6 +2,7 @@ package vm.words.ua.words.ui.vms
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.github.vinceglb.filekit.readBytes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -9,8 +10,11 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import vm.words.ua.core.domain.managers.ByteContentManager
+import vm.words.ua.core.domain.models.ByteContent
 import vm.words.ua.subscribes.domain.managers.SubscribeCacheManager
+import vm.words.ua.words.domain.managers.SoundManager
 import vm.words.ua.words.domain.managers.UserWordManager
 import vm.words.ua.words.domain.models.PinUserWord
 import vm.words.ua.words.domain.models.WordByteContent
@@ -23,7 +27,8 @@ import kotlin.uuid.Uuid
 class PinUserWordsViewModel(
     private val userWordManager: UserWordManager,
     private val subscribeCacheManager: SubscribeCacheManager,
-    private val byteContentManager: ByteContentManager
+    private val byteContentManager: ByteContentManager,
+    private val soundManager: SoundManager
 ) : ViewModel() {
 
     private val mutableState: MutableStateFlow<PinUserWordsState> =
@@ -69,7 +74,35 @@ class PinUserWordsViewModel(
             is PinUserWordsAction.SetSound -> {
                 handleSetSound(action)
             }
+
+            is PinUserWordsAction.PlaySound -> {
+                handlePlaySound()
+            }
+
+
         }
+    }
+
+    private fun handlePlaySound() {
+        val soundUri = state.value.sound ?: return
+        setNewValue { it.copy(isPlay = true) }
+
+        viewModelScope.launch(Dispatchers.Default) {
+            try {
+                val content = soundUri.readBytes()
+
+                withContext(Dispatchers.Main) {
+                    soundManager.playSound(ByteContent(content))
+                }
+
+            } catch (e: Exception) {
+                println("PinUserWordsViewModel - handlePlaySound: ${e.message}")
+            } finally {
+                setNewValue { it.copy(isPlay = false) }
+            }
+
+        }
+
     }
 
     private fun handlePin() {

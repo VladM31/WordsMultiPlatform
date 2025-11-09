@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -42,6 +43,7 @@ import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.ImageFromPlatformFile
 import vm.words.ua.core.ui.components.PrimaryButton
 import vm.words.ua.core.utils.getFontSize
+import vm.words.ua.core.utils.getIconButtonSize
 import vm.words.ua.core.utils.getIconSize
 import vm.words.ua.core.utils.getImageSize
 import vm.words.ua.core.utils.isNotPhoneFormat
@@ -54,6 +56,7 @@ import vm.words.ua.words.ui.states.PinUserWordsState
 import vm.words.ua.words.ui.vms.PinUserWordsViewModel
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.delete
+import wordsmultiplatform.composeapp.generated.resources.sound
 
 @Composable
 fun PinUserWordsScreen(
@@ -295,6 +298,29 @@ private fun SoundMenu(
             fontSize = getFontSize()
         )
 
+        state.sound?.let {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(10.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Button(
+                    onClick = { viewModel.sent(PinUserWordsAction.PlaySound) },
+                    enabled = state.isPlay.not(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (state.isPlay) AppTheme.PrimaryGray else AppTheme.PrimaryColor,
+                    ),
+                    modifier = Modifier
+                        .size(getIconButtonSize() * 1.5f)
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.sound),
+                        contentDescription = "Play sound",
+                        tint = AppTheme.PrimaryBack,
+                        modifier = Modifier.size(getIconSize() * 1.5f)
+                    )
+                }
+            }
+        }
 
 
         Row(
