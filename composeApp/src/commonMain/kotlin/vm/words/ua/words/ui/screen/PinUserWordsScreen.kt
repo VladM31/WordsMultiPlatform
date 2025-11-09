@@ -35,6 +35,8 @@ import io.github.vinceglb.filekit.dialogs.compose.PickerResultLauncher
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.name
 import org.jetbrains.compose.resources.painterResource
+import vm.words.ua.core.platform.currentPlatform
+import vm.words.ua.core.platform.isWeb
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.ImageFromPlatformFile
@@ -44,6 +46,7 @@ import vm.words.ua.core.utils.getIconSize
 import vm.words.ua.core.utils.getImageSize
 import vm.words.ua.core.utils.isNotPhoneFormat
 import vm.words.ua.di.rememberInstance
+import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.words.ui.actions.PinUserWordsAction
 import vm.words.ua.words.ui.bundles.PinUserWordsBundle
@@ -70,7 +73,7 @@ fun PinUserWordsScreen(
     // Navigate back when pinning is complete
     LaunchedEffect(state.isEnd) {
         if (state.isEnd) {
-            navController.popBackStack()
+            navController.navigateAndClear(Screen.UserWords, Screen.Home)
         }
     }
 
@@ -354,6 +357,10 @@ private fun WordNavigator(
     viewModel: PinUserWordsViewModel,
     state: PinUserWordsState
 ) {
+    val platform = currentPlatform()
+    val leftArrow = if (platform.isWeb) "<" else "⬅"
+    val rightArrow = if (platform.isWeb) ">" else "⮕"
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -366,7 +373,7 @@ private fun WordNavigator(
                 contentColor = AppTheme.PrimaryGreen
             )
         ) {
-            Text("⬅", fontSize = getFontSize())
+            Text(leftArrow, fontSize = getFontSize())
         }
 
         OutlinedButton(
@@ -392,7 +399,7 @@ private fun WordNavigator(
                 contentColor = AppTheme.PrimaryGreen
             )
         ) {
-            Text("⮕", fontSize = getFontSize())
+            Text(rightArrow, fontSize = getFontSize())
         }
     }
 }
