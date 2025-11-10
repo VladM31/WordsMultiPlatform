@@ -8,6 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -20,6 +23,7 @@ import vm.words.ua.core.ui.components.Items
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
+import vm.words.ua.playlist.ui.components.SelectPlayListDialog
 import vm.words.ua.words.ui.actions.UserWordsAction
 import vm.words.ua.words.ui.bundles.UserWordFilterBundle
 import vm.words.ua.words.ui.bundles.WordDetailsBundle
@@ -36,6 +40,9 @@ fun UserWordsScreen(
     val viewModel = rememberInstance<UserWordsViewModel>()
     val state by viewModel.state.collectAsState()
     val listState = rememberLazyListState()
+    var showPlayListSelector by remember {
+        mutableStateOf(false)
+    }
 
     // Pull-to-refresh behavior when scrolled to top and a trigger occurs
     LaunchedEffect(Unit) {
@@ -114,14 +121,29 @@ fun UserWordsScreen(
             return
         }
 
-        if (state.selectedWords.isNotEmpty()) {
+        if (showPlayListSelector) {
+            SelectPlayListDialog(
+                onDismiss = { showPlayListSelector = false },
+                onPin = { playlistId ->
+                    viewModel.sent(
+                        UserWordsAction.PinWords(
+                            playListId = playlistId
+                        )
+                    )
+                    showPlayListSelector = false
+                    navController.navigateAndClear(Screen.PlayList)
+                }
+            )
+        }
+
+        if (state.selectedWords.isNotEmpty() && showPlayListSelector.not()) {
             SelectionBottomMenu(
                 visible = true,
                 onUnselect = { viewModel.sent(UserWordsAction.Clear) },
-                onApply = { /* open playlist choose later */ },
-                showDelete = true,
+                onApply = { showPlayListSelector = true },
+                showDelete = false,
                 deleteLabel = "Delete(${state.selectedWords.size})",
-                onDelete = { /* implement delete later */ },
+                onDelete = { },
                 applyLabel = "Apply(${state.selectedWords.size})"
             )
         }
