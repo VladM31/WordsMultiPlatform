@@ -11,6 +11,7 @@ import vm.words.ua.navigation.providers.CoreScreenProvider
 import vm.words.ua.navigation.providers.ExerciseScreenProvider
 import vm.words.ua.navigation.providers.MainScreenProvider
 import vm.words.ua.navigation.providers.PlayListScreenProvider
+import vm.words.ua.navigation.providers.SettingScreenProvider
 import vm.words.ua.navigation.providers.WordsScreenProvider
 
 @Composable
@@ -25,6 +26,7 @@ fun AppNavGraph() {
         WordsScreenProvider(),
         PlayListScreenProvider(),
         ExerciseScreenProvider(),
+        SettingScreenProvider()
     )
 
     val route = navController.currentRoute

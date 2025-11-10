@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.auth.ui.actions.SignUpAction
 import vm.words.ua.auth.ui.bundles.ConfirmSignBundle
 import vm.words.ua.auth.ui.vms.SignUpViewModel
@@ -37,6 +38,8 @@ import vm.words.ua.core.utils.isNotPhoneFormat
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
+import wordsmultiplatform.composeapp.generated.resources.Res
+import wordsmultiplatform.composeapp.generated.resources.info_in_circle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,7 +71,12 @@ fun SignUpScreen(
         AppToolBar(
             title = "Sign Up",
             showBackButton = true,
-            onBackClick = { navController.popBackStack() }
+            onBackClick = { navController.popBackStack() },
+            showAdditionalButton = true,
+            additionalButtonImage = painterResource(Res.drawable.info_in_circle),
+            onAdditionalClick = {
+                navController.navigate(Screen.Policy)
+            }
         )
 
         val columns = if (isNotPhoneFormat()) 2 else 1

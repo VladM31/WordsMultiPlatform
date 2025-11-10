@@ -8,6 +8,7 @@ import vm.words.ua.exercise.di.exerciseModule
 import vm.words.ua.learning.di.learningModule
 import vm.words.ua.navigation.di.navigationModule
 import vm.words.ua.playlist.di.playlistModule
+import vm.words.ua.settings.di.settingsModule
 import vm.words.ua.subscribes.di.subscribesModule
 import vm.words.ua.words.di.wordsModule
 
@@ -24,6 +25,7 @@ val appModules = DI {
     import(learningModule)
     import(exerciseModule)
     import(playlistModule)
+    import(settingsModule)
 }
 
 object DiContainer {

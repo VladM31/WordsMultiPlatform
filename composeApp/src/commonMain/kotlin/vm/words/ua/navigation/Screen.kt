@@ -11,7 +11,11 @@ sealed class Screen(val route: String) {
     data object WordDetails : Screen("word_details")
 
     data object Home : Screen("home")
+
+
     data object Settings : Screen("settings")
+    data object Policy : Screen("policy")
+
     data object PlayList : Screen("playlist")
     data object PlayListFilter : Screen("playlist_filter")
     data object PlayListDetails : Screen("playlist_details")
