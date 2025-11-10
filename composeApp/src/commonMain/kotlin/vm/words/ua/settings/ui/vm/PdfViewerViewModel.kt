@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import vm.words.ua.core.domain.managers.ByteContentManager
+import vm.words.ua.core.ui.models.ErrorMessage
 import vm.words.ua.settings.ui.states.PdfViewState
 
 open class PdfViewerViewModel(
@@ -19,14 +20,26 @@ open class PdfViewerViewModel(
 
     init {
         viewModelScope.launch(Dispatchers.Default) {
-            loadPolicyPdf()
+            loadPdf()
         }
     }
 
-    private suspend fun loadPolicyPdf() {
-        val content = byteContentManager.downloadByteContent(linkProvider.invoke())
-        mutableState.value = mutableState.value.copy(
-            content = content
-        )
+    private suspend fun loadPdf() {
+        try {
+            val content = byteContentManager.downloadByteContent(
+                url = linkProvider.invoke(),
+                needAuth = false
+            )
+            mutableState.value = mutableState.value.copy(
+                content = content
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            mutableState.value = mutableState.value.copy(
+                errorMessage = ErrorMessage(
+                    e.message ?: "Unknown error occurred while loading PDF."
+                )
+            )
+        }
     }
 }

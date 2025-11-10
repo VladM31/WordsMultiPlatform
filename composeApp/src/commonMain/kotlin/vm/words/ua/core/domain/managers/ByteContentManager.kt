@@ -4,5 +4,5 @@ import vm.words.ua.core.domain.models.ByteContent
 
 interface ByteContentManager {
 
-    suspend fun downloadByteContent(url: String): ByteContent
+    suspend fun downloadByteContent(url: String, needAuth: Boolean = true): ByteContent
 }

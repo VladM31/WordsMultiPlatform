@@ -12,9 +12,12 @@ class ByteContentManagerImpl(
     private val httpClient: HttpClient,
     private val userCacheManager: UserCacheManager
 ) : ByteContentManager {
-    override suspend fun downloadByteContent(url: String): ByteContent {
+    override suspend fun downloadByteContent(url: String, needAuth: Boolean): ByteContent {
         val respond = httpClient.get(url) {
-            header("Authorization", "Bearer ${userCacheManager.token.value}")
+            if (needAuth) {
+                header("Authorization", "Bearer ${userCacheManager.token.value}")
+            }
+
         }
         return ByteContent(respond.bodyAsBytes())
     }
