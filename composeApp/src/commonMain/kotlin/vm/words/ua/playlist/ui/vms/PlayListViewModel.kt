@@ -27,6 +27,19 @@ class PlayListViewModel(
             is PlayListAction.ReFetch -> handleReFetch()
             is PlayListAction.UpdateFilter -> handleUpdateFilter(action)
             PlayListAction.LoadMore -> loadPlaylists()
+            is PlayListAction.Create -> handleCreate(action.name)
+        }
+    }
+
+    private fun handleCreate(name: String) {
+        viewModelScope.launch {
+            try {
+                playListManager.save(listOf(vm.words.ua.playlist.domain.models.SavePlayList(name)))
+                handleReFetch()
+            } catch (e: Exception) {
+                mutableState.value =
+                    mutableState.value.copy(error = e.message ?: "Failed to create playlist")
+            }
         }
     }
 

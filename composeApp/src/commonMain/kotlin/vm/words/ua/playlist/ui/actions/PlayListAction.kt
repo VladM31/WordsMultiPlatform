@@ -6,5 +6,5 @@ sealed interface PlayListAction {
     data object ReFetch : PlayListAction
     data object LoadMore : PlayListAction
     data class UpdateFilter(val filter: PlayListCountFilter) : PlayListAction
+    data class Create(val name: String) : PlayListAction
 }
-
