@@ -11,11 +11,11 @@ actual class SoundManagerImpl actual constructor() : SoundManager {
         stopSound()
 
         try {
-            val blob = js("new Blob([new Uint8Array(args[0])], {type: 'audio/mpeg'})", byteContent.bytes)
-            val url = js("URL.createObjectURL(blob)")
+            val blob = js("new Blob([new Uint8Array(${byteContent.bytes})], {type: 'audio/mpeg'})")
+            val url = js("URL.createObjectURL(${blob})")
 
-            audioElement = js("new Audio(url)")
-            (audioElement as dynamic).play()
+            audioElement = js("new Audio(${url})")
+            audioElement.play()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -24,12 +24,11 @@ actual class SoundManagerImpl actual constructor() : SoundManager {
     override suspend fun stopSound() {
         audioElement?.let {
             try {
-                js("it.pause()")
-                js("it.currentTime = 0")
+                it.pause()
+                it.currentTime = 0.0
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
 }
-

@@ -21,13 +21,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.auth.ui.actions.SignUpAction
 import vm.words.ua.auth.ui.bundles.ConfirmSignBundle
 import vm.words.ua.auth.ui.vms.SignUpViewModel
+import vm.words.ua.core.config.AppRemoteConfig
 import vm.words.ua.core.domain.models.enums.Currency
+import vm.words.ua.core.platform.AppPlatform
+import vm.words.ua.core.platform.currentPlatform
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppTextField
 import vm.words.ua.core.ui.components.AppToolBar
@@ -50,6 +54,7 @@ fun SignUpScreen(
 
 ) {
     val state by viewModel.state.collectAsState()
+    val uriHandler = LocalUriHandler.current
 
     LaunchedEffect(state.success) {
         if (state.success) {
@@ -75,7 +80,14 @@ fun SignUpScreen(
             showAdditionalButton = true,
             additionalButtonImage = painterResource(Res.drawable.info_in_circle),
             onAdditionalClick = {
-                navController.navigate(Screen.Policy)
+                if (currentPlatform() != AppPlatform.WASM) {
+                    navController.navigate(Screen.Policy)
+                    return@AppToolBar
+                }
+                val str = AppRemoteConfig.policyLink
+                val policyUrl = "https://docs.google.com/gview?url=$str&embedded=true"
+
+                uriHandler.openUri(policyUrl)
             }
         )
 

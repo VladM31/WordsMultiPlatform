@@ -65,6 +65,10 @@ kotlin {
                 implementation("androidx.core:core-ktx:1.13.1")
                 implementation(libs.ktor.client.okhttp)
                 implementation(libs.ktor.client.android)
+                // Use maintained fork on Maven Central
+                implementation("com.github.mhiew:android-pdf-viewer:3.2.0-beta.1")
+                // PDF rendering for Android
+
             }
         }
 
@@ -73,6 +77,8 @@ kotlin {
                 implementation(compose.desktop.currentOs)
                 implementation(libs.kotlinx.coroutinesSwing)
                 implementation(libs.ktor.client.okhttp)
+                // PDF rendering for JVM/Desktop
+                implementation("org.apache.pdfbox:pdfbox:2.0.30")
                 implementation(libs.mp3spi)
                 implementation(libs.tritonus.share)
             }
@@ -81,12 +87,15 @@ kotlin {
         jsMain {
             dependencies {
                 implementation(libs.ktor.client.js)
+                implementation(npm("pdfjs-dist", "4.7.76"))
+                implementation(compose.html.core)
             }
         }
 
         val wasmJsMain by getting {
             dependencies {
                 implementation(libs.ktor.client.js)
+                implementation(npm("pdfjs-dist", "4.7.76"))
             }
         }
 
