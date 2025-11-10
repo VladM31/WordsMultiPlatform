@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import vm.words.ua.main.ui.screen.HomeScreen
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.ScreenProvider
+import vm.words.ua.settings.ui.screen.InstructionScreen
 
 class MainScreenProvider : ScreenProvider {
     @Composable
@@ -14,6 +15,9 @@ class MainScreenProvider : ScreenProvider {
         when (route) {
             Screen.Home.route -> {
                 HomeScreen(navController = navController)
+            }
+            Screen.Instruction.route -> {
+                InstructionScreen(navController = navController)
             }
             else -> {
                 return false
