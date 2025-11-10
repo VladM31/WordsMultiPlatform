@@ -8,7 +8,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import org.kodein.di.instance
+import vm.words.ua.core.config.AppRemoteConfig
 import vm.words.ua.core.domain.managers.UserCacheManager
+import vm.words.ua.core.platform.AppPlatform
+import vm.words.ua.core.platform.currentPlatform
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.BottomNavBar
@@ -24,6 +27,7 @@ fun SettingScreen(
     modifier: Modifier = Modifier
 ) {
     val userCacheManager: UserCacheManager by DiContainer.di.instance()
+    val uriHandler = androidx.compose.ui.platform.LocalUriHandler.current
 
     val buttons = remember {
         listOf(
@@ -31,7 +35,16 @@ fun SettingScreen(
             GridButtonItem("History"),
             GridButtonItem("Plan"),
             GridButtonItem("Profile"),
-            GridButtonItem("Policy"),
+            GridButtonItem("Policy") {
+                if (currentPlatform() != AppPlatform.WASM) {
+                    navController.navigate(Screen.Policy)
+                    return@GridButtonItem
+                }
+                val str = AppRemoteConfig.policyLink
+                val policyUrl = "https://docs.google.com/gview?url=$str&embedded=true"
+
+                uriHandler.openUri(policyUrl)
+            },
             GridButtonItem("Log Out") {
                 userCacheManager.clear()
             }
