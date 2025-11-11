@@ -1,67 +1,91 @@
-This is a Kotlin Multiplatform project targeting iOS, Web, Desktop (JVM).
+# WordsMultiPlatform
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+WordsMultiPlatform is a cross-platform application for working with a dictionary/words (viewing, filtering, and managing
+word cards). The project is written in Kotlin Multiplatform and provides interfaces for Android, iOS, Web (WASM/JS), and
+Desktop (JVM) using shared code.
 
-* [/iosApp](./iosApp/iosApp) contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+## Summary
 
-* [/shared](./shared/src) is for the code that will be shared between all targets in the project.
-  The most important subfolder is [commonMain](./shared/src/commonMain/kotlin). If preferred, you
-  can add code to the platform-specific folders here too.
+The app allows storing and browsing words, applying filters, paging through results, and selecting highlighted words.
+Main scenarios:
 
-### Build and Run Desktop (JVM) Application
+- Viewing a paginated list of words
+- Applying filters (by user and other attributes)
+- Selecting/deselecting words (multiple selection)
+- Synchronization/loading of data via domain managers
 
-To build and run the development version of the desktop app, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:run
-  ```
-- on Windows
-  ```shell
+The project is split into a `shared` module (business logic) and `composeApp` (UI implemented with Compose
+Multiplatform). There is also a native iOS project in `iosApp`.
+
+## Technologies
+
+The project uses the following key technologies and libraries:
+
+- Kotlin Multiplatform (KMP) — shared code for multiple targets
+- Compose Multiplatform — UI for Desktop / Web / Android (shared UI layer)
+- Kotlin Coroutines + StateFlow — asynchronous programming and state management
+- Gradle (Kotlin DSL) — project build system
+- Kotlin/WASM and Kotlin/JS — web targets (WASM preferred for modern browsers)
+- JVM target — for the Desktop application
+- iOS (SwiftUI entry point) — native container for the mobile UI
+- (Optional) Firebase — Android configuration files (google-services.json) and setup instructions are present
+- Common libraries: Ktor (HTTP), kotlinx-datetime, Coil (image loading) — exact dependencies are listed in
+  `gradle/libs.versions.toml` and `build.gradle.kts`.
+
+> Note: the exact set of external libraries can be found in `build.gradle.kts` and `gradle/libs.versions.toml`.
+
+## Repository structure (simplified)
+
+- /composeApp — main Compose Multiplatform module (UI + platform-specific code)
+  - src/commonMain — common code for all targets
+  - src/androidMain, src/iosMain, src/jsMain, src/jvmMain — platform-specific implementations
+- /shared — shared business logic and models
+- /iosApp — iOS container (Swift/SwiftUI)
+- /gradle, /build — build configuration and outputs
+
+## How to run (Windows)
+
+Build and run via Gradle. Example commands (run from the repository root in Windows command prompt):
+
+- Run Desktop (JVM):
+
   .\gradlew.bat :composeApp:run
-  ```
 
-### Build and Run Web Application
+- Run Web (WASM) in development mode:
 
-To build and run the development version of the web app, use the run configuration from the run widget
-in your IDE's toolbar or run it directly from the terminal:
-- for the Wasm target (faster, modern browsers):
-  - on macOS/Linux
-    ```shell
-    ./gradlew :composeApp:wasmJsBrowserDevelopmentRun
-    ```
-  - on Windows
-    ```shell
     .\gradlew.bat :composeApp:wasmJsBrowserDevelopmentRun
-    ```
-- for the JS target (slower, supports older browsers):
-  - on macOS/Linux
-    ```shell
-    ./gradlew :composeApp:jsBrowserDevelopmentRun
-    ```
-  - on Windows
-    ```shell
+
+- Run Web (JS) in development mode:
+
     .\gradlew.bat :composeApp:jsBrowserDevelopmentRun
-    ```
 
-### Build and Run iOS Application
+- iOS: open the `iosApp` folder in Xcode and run from Xcode (macOS required).
 
-To build and run the development version of the iOS app, use the run configuration from the run widget
-in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+If the project uses services such as Firebase, follow the instructions in `FIREBASE_SETUP.md` and `ANDROID_SETUP.md`.
 
----
+## Useful files
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html),
-[Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform/#compose-multiplatform),
-[Kotlin/Wasm](https://kotl.in/wasm/)…
+- `FIREBASE_SETUP.md` — how to configure Firebase (if needed)
+- `ANDROID_SETUP.md` — Android build and setup instructions
+- `gradle/libs.versions.toml` — dependency versions
 
-We would appreciate your feedback on Compose/Web and Kotlin/Wasm in the public Slack channel [#compose-web](https://slack-chats.kotlinlang.org/c/compose-web).
-If you face any issues, please report them on [YouTrack](https://youtrack.jetbrains.com/newIssue?project=CMP).
+## For developers
+
+- Shared business logic lives in `shared` and `composeApp/src/commonMain` — changes there apply to all targets.
+- The UI is implemented in `composeApp` using Compose Multiplatform.
+- Screen state is typically managed with `StateFlow` in ViewModels (for example, `WordsViewModel`); asynchronous work
+  uses Coroutines.
+
+## Possible improvements / additions
+
+- API/backend documentation (if an external server is used)
+- Example tests and CI configuration
+- Detailed description of data models and structures
+
+## License
+
+This project is distributed under a proprietary license. See the `LICENSE` file in the repository root for full terms:
+
+- `LICENSE` — Proprietary License Agreement (© 2025 VladM31). Use is permitted for personal, educational, or research
+  purposes; commercial use requires written permission. For commercial licensing inquiries contact
+  javacamp2021@gmail.com
