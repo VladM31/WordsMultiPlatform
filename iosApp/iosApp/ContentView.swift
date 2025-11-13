@@ -9,10 +9,17 @@ struct ComposeView: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
+private extension Color {
+    static let appBackground = Color(red: 0.07, green: 0.07, blue: 0.08) // ~#121315
+}
+
 struct ContentView: View {
     var body: some View {
-        ComposeView()
-            .ignoresSafeArea()
+        ZStack {
+            Color.appBackground
+                .ignoresSafeArea() // cover entire screen including notch
+            ComposeView()
+        }
     }
 }
 

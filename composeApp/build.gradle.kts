@@ -183,7 +183,7 @@ tasks.register("installAndRunDebug") {
             val adbPath = android.adbExecutable.absolutePath
             println("Using ADB: $adbPath")
 
-            exec {
+            project.exec {
                 commandLine(adbPath, "shell", "am", "start", "-n", "vm.words.ua/.MainActivity")
             }
 
@@ -193,4 +193,67 @@ tasks.register("installAndRunDebug") {
             println("You can manually launch the app from your device.")
         }
     }
+}
+
+// Custom task to run iOS app in simulator
+tasks.register("iosSimulatorArm64Run") {
+    group = "ios"
+    description = "Build and run the iOS app on ARM64 simulator (M1/M2 Mac)"
+    dependsOn("linkDebugFrameworkIosSimulatorArm64")
+
+    doLast {
+        println("📱 Building iOS app for simulator...")
+
+        val xcodebuildPath = "/usr/bin/xcodebuild"
+
+        // Build the iOS app
+        println("🔨 Building with xcodebuild...")
+        project.exec {
+            workingDir = file("${rootProject.projectDir}/iosApp")
+            commandLine(
+                xcodebuildPath,
+                "-project", "iosApp.xcodeproj",
+                "-scheme", "iosApp",
+                "-configuration", "Debug",
+                "-sdk", "iphonesimulator",
+                "-destination", "platform=iOS Simulator,name=iPhone 17 Pro",
+                "build"
+            )
+        }
+
+        println("🚀 Launching iOS Simulator...")
+        // App is built to Xcode's DerivedData directory
+        val homeDir = System.getProperty("user.home")
+        val appPath = "$homeDir/Library/Developer/Xcode/DerivedData/iosApp-bxpfibllityukmdutqwcfggofsxj/Build/Products/Debug-iphonesimulator/WordsMultiPlatform.app"
+
+        try {
+            // Boot simulator if needed
+            project.exec {
+                commandLine("xcrun", "simctl", "boot", "iPhone 17 Pro")
+                isIgnoreExitValue = true
+            }
+
+            // Install app
+            project.exec {
+                commandLine("xcrun", "simctl", "install", "booted", appPath)
+            }
+
+            // Launch app
+            project.exec {
+                commandLine("xcrun", "simctl", "launch", "booted", "vm.words.ua.WordsMultiPlatform")
+            }
+
+            println("✅ iOS app launched successfully on simulator!")
+        } catch (e: Exception) {
+            println("❌ Failed to launch: ${e.message}")
+            println("You can open Xcode and run manually")
+        }
+    }
+}
+
+// Shortcut task for iOS simulator
+tasks.register("iosRun") {
+    group = "ios"
+    description = "Build and run iOS app (shortcut)"
+    dependsOn("iosSimulatorArm64Run")
 }
