@@ -1,5 +1,6 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -28,6 +29,19 @@ kotlin {
     wasmJs {
         browser()
         binaries.executable()
+    }
+
+    val xcf = XCFramework()
+
+    listOf(
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach { iosTarget ->
+        iosTarget.binaries.framework {
+            baseName = "ComposeApp"
+            isStatic = true
+            xcf.add(this)
+        }
     }
     
     sourceSets {
@@ -96,6 +110,18 @@ kotlin {
             dependencies {
                 implementation(libs.ktor.client.js)
                 implementation(npm("pdfjs-dist", "4.7.76"))
+            }
+        }
+
+        // Darwin engine for iOS targets
+        val iosArm64Main by getting {
+            dependencies {
+                implementation(libs.ktor.client.darwin)
+            }
+        }
+        val iosSimulatorArm64Main by getting {
+            dependencies {
+                implementation(libs.ktor.client.darwin)
             }
         }
 

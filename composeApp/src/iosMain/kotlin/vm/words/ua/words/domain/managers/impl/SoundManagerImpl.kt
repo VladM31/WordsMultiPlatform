@@ -6,15 +6,10 @@ import vm.words.ua.words.domain.managers.SoundManager
 actual class SoundManagerImpl actual constructor() : SoundManager {
 
     override suspend fun playSound(byteContent: ByteContent) {
-        // iOS implementation using AVAudioPlayer
-        playAudioFromBytes(byteContent.bytes)
+        // TODO: Implement AVAudioPlayer-based playback. No-op for now on iOS.
     }
 
     override suspend fun stopSound() {
-        stopAudio()
+        // TODO: Implement stop for AVAudioPlayer. No-op for now on iOS.
     }
-
-    private external fun playAudioFromBytes(bytes: ByteArray)
-    private external fun stopAudio()
 }
-

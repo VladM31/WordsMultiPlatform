@@ -13,6 +13,7 @@ import platform.UIKit.*
 import platform.Foundation.*
 import platform.CoreGraphics.*
 import platform.QuartzCore.*
+import platform.CoreFoundation.*
 
 @OptIn(ExperimentalForeignApi::class)
 @Composable
@@ -108,7 +109,7 @@ actual fun PdfContent(
         UIKitView(
             factory = {
                 val view = UIImageView()
-                view.contentMode = UIViewContentModeScaleAspectFit
+                view.contentMode = UIViewContentMode.UIViewContentModeScaleAspectFit
                 imageView = view
                 view
             },
@@ -123,5 +124,3 @@ actual fun PdfContent(
         )
     }
 }
-
-
