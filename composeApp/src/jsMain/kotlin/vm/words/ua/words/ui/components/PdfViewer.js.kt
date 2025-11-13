@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.await
@@ -74,7 +75,8 @@ actual fun PdfContent(
     onPageCountChanged: (Int) -> Unit,
     onError: (String) -> Unit,
     onScaleChange: (Float) -> Unit,
-    onOffsetChange: (Float, Float) -> Unit
+    onOffsetChange: (Float, Float) -> Unit,
+    modifier: Modifier
 ) {
     // Уникальный id канваса для привязки pdf.js
     val canvasId = remember { "pdf-canvas-${Random.nextInt(1, 1_000_000)}" }

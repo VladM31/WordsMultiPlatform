@@ -41,6 +41,8 @@ kotlin {
             baseName = "ComposeApp"
             isStatic = true
             xcf.add(this)
+            // Линкуем PDFKit для корректного рендера PDFView
+            linkerOpts("-framework", "PDFKit")
         }
     }
     

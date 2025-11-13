@@ -40,7 +40,8 @@ actual fun PdfContent(
     onPageCountChanged: (Int) -> Unit,
     onError: (String) -> Unit,
     onScaleChange: (Float) -> Unit,
-    onOffsetChange: (Float, Float) -> Unit
+    onOffsetChange: (Float, Float) -> Unit,
+    modifier: Modifier
 ) {
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
     var pdfRenderer by remember { mutableStateOf<PdfRenderer?>(null) }

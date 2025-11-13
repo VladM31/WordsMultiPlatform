@@ -35,7 +35,8 @@ actual fun PdfContent(
     onPageCountChanged: (Int) -> Unit,
     onError: (String) -> Unit,
     onScaleChange: (Float) -> Unit,
-    onOffsetChange: (Float, Float) -> Unit
+    onOffsetChange: (Float, Float) -> Unit,
+    modifier: Modifier
 ) {
     var image by remember { mutableStateOf<BufferedImage?>(null) }
     var document by remember { mutableStateOf<PDDocument?>(null) }

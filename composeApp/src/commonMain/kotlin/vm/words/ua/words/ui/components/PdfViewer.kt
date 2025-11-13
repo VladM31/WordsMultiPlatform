@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -104,7 +105,10 @@ fun PdfViewer(
                         onPageCountChanged = { totalPages = it },
                         onError = onError,
                         onScaleChange = {},
-                        onOffsetChange = { _, _ -> }
+                        onOffsetChange = { _, _ -> },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(600.dp)
                     )
                 }
             }
@@ -122,7 +126,6 @@ fun PdfViewer(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .wrapContentHeight()
                         ) {
                             // Render each page; pass scale; offsets not per-page in continuous mode
                             PdfContent(
@@ -134,7 +137,10 @@ fun PdfViewer(
                                 onPageCountChanged = {},
                                 onError = onError,
                                 onScaleChange = { new -> scale = new.coerceIn(0.5f, 3f) },
-                                onOffsetChange = { _, _ -> }
+                                onOffsetChange = { _, _ -> },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(600.dp)
                             )
                         }
                     }
@@ -206,5 +212,6 @@ expect fun PdfContent(
     onPageCountChanged: (Int) -> Unit,
     onError: (String) -> Unit,
     onScaleChange: (Float) -> Unit,
-    onOffsetChange: (Float, Float) -> Unit
+    onOffsetChange: (Float, Float) -> Unit,
+    modifier: Modifier = Modifier
 )

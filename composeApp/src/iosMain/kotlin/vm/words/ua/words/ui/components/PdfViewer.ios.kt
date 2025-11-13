@@ -1,21 +1,19 @@
 package vm.words.ua.words.ui.components
 
-import androidx.compose.foundation.gestures.detectTransformGestures
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.interop.UIKitView
-import kotlinx.cinterop.*
-import platform.UIKit.*
+import androidx.compose.ui.graphics.Color
 import platform.Foundation.*
-import platform.CoreGraphics.*
-import platform.QuartzCore.*
-import platform.CoreFoundation.*
+import platform.PDFKit.*
+import platform.UIKit.*
+import kotlinx.cinterop.*
+import kotlin.ranges.coerceIn
 
-@OptIn(ExperimentalForeignApi::class)
+@OptIn(ExperimentalForeignApi::class, kotlinx.cinterop.BetaInteropApi::class)
 @Composable
 actual fun PdfContent(
     pdfData: ByteArray,
@@ -26,101 +24,128 @@ actual fun PdfContent(
     onPageCountChanged: (Int) -> Unit,
     onError: (String) -> Unit,
     onScaleChange: (Float) -> Unit,
-    onOffsetChange: (Float, Float) -> Unit
+    onOffsetChange: (Float, Float) -> Unit,
+    modifier: Modifier
 ) {
-    var pdfDocument by remember { mutableStateOf<CGPDFDocumentRef?>(null) }
-    var imageView by remember { mutableStateOf<UIImageView?>(null) }
+    var pdfDocument by remember { mutableStateOf<PDFDocument?>(null) }
+    var pdfViewRef by remember { mutableStateOf<PDFView?>(null) }
+    var pdfNsData by remember { mutableStateOf<NSData?>(null) }
+    var ignoreExternalScale by remember { mutableStateOf(false) }
+
+    // базовый масштаб "fit"
+    var baseScaleFactor by remember { mutableStateOf<Double?>(null) }
 
     DisposableEffect(pdfData) {
+        if (pdfData.isEmpty()) {
+            onError("Empty PDF data")
+            pdfDocument = null
+            pdfNsData = null
+            onPageCountChanged(0)
+            return@DisposableEffect onDispose {}
+        }
+
         val nsData = pdfData.usePinned { pinned ->
             NSData.create(bytes = pinned.addressOf(0), length = pdfData.size.toULong())
         }
+        pdfNsData = nsData
+        val document = PDFDocument(data = nsData)
+        pdfDocument = document
+        onPageCountChanged(document.pageCount.toInt())
 
-        val dataProvider = CGDataProviderCreateWithCFData(nsData as CFDataRef)
+        // при новом документе сбрасываем базовый масштаб
+        baseScaleFactor = null
 
-        dataProvider?.let {
-            val document = CGPDFDocumentCreateWithProvider(it)
-            pdfDocument = document
-
-            document?.let { doc ->
-                val pageCount = CGPDFDocumentGetNumberOfPages(doc).toInt()
-                onPageCountChanged(pageCount)
-            }
-        }
+        pdfViewRef?.setDocument(document)
 
         onDispose {
-            // Cleanup handled by ARC
+            pdfDocument = null
+            pdfNsData = null
+            pdfViewRef = null
+            baseScaleFactor = null
         }
     }
 
     LaunchedEffect(pdfDocument, currentPage) {
-        pdfDocument?.let { document ->
-            try {
-                val pageNumber = currentPage + 1 // PDF pages are 1-indexed
-                val page = CGPDFDocumentGetPage(document, pageNumber.toULong())
-
-                page?.let { pdfPage ->
-                    val pageRect = CGPDFPageGetBoxRect(pdfPage, kCGPDFMediaBox)
-                    val width = pageRect.useContents { size.width }
-                    val height = pageRect.useContents { size.height }
-
-                    // Create bitmap context
-                    UIGraphicsBeginImageContextWithOptions(
-                        CGSizeMake(width * 2.0, height * 2.0),
-                        false,
-                        0.0
-                    )
-
-                    val context = UIGraphicsGetCurrentContext()
-                    context?.let { ctx ->
-                        // White background
-                        CGContextSetRGBFillColor(ctx, 1.0, 1.0, 1.0, 1.0)
-                        CGContextFillRect(ctx, CGRectMake(0.0, 0.0, width * 2.0, height * 2.0))
-
-                        // Flip coordinate system for PDF rendering
-                        CGContextTranslateCTM(ctx, 0.0, height * 2.0)
-                        CGContextScaleCTM(ctx, 2.0, -2.0)
-
-                        // Draw PDF page
-                        CGContextDrawPDFPage(ctx, pdfPage)
-
-                        val image = UIGraphicsGetImageFromCurrentImageContext()
-                        UIGraphicsEndImageContext()
-
-                        imageView?.setImage(image)
-                    }
-                }
-            } catch (e: Exception) {
-                onError("Failed to render page: ${e.message}")
-            }
+        val doc = pdfDocument ?: return@LaunchedEffect
+        val view = pdfViewRef ?: return@LaunchedEffect
+        val pageCount = doc.pageCount.toInt()
+        if (pageCount == 0) return@LaunchedEffect
+        val clampedIndex = currentPage.coerceIn(0, pageCount - 1)
+        val targetPage = doc.pageAtIndex(clampedIndex.toULong())
+        if (targetPage != null && view.currentPage != targetPage) {
+            view.goToPage(targetPage)
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .pointerInput(Unit) {
-                detectTransformGestures { _, pan, zoom, _ ->
-                    onScaleChange(scale * zoom)
-                    onOffsetChange(pan.x, pan.y)
-                }
-            }
-    ) {
+    // применяем scale как множитель к baseScaleFactor (1f = fit)
+    LaunchedEffect(scale, pdfViewRef, baseScaleFactor) {
+        val view = pdfViewRef ?: return@LaunchedEffect
+        val base = baseScaleFactor ?: return@LaunchedEffect
+        if (ignoreExternalScale) return@LaunchedEffect
+
+        val target = (base * scale.toDouble())
+            .coerceIn(view.minScaleFactor, view.maxScaleFactor)
+
+        if (kotlin.math.abs(view.scaleFactor - target) > 0.0001) {
+            view.autoScales = false
+            view.setScaleFactor(target)
+        }
+    }
+
+    Box(modifier = modifier.fillMaxSize().background(Color.White)) {
         UIKitView(
             factory = {
-                val view = UIImageView()
-                view.contentMode = UIViewContentMode.UIViewContentModeScaleAspectFit
-                imageView = view
-                view
+                val pdfView = PDFView().apply {
+                    setFrame(platform.CoreGraphics.CGRectMake(0.0, 0.0, 100.0, 100.0))
+                    setTranslatesAutoresizingMaskIntoConstraints(true)
+                    backgroundColor = UIColor.whiteColor
+                    clipsToBounds = true
+                    autoScales = true
+                    userInteractionEnabled = true
+                    setOpaque(true)
+                }
+                pdfViewRef = pdfView
+                pdfView
             },
-            modifier = Modifier
-                .fillMaxSize()
-                .graphicsLayer(
-                    scaleX = scale,
-                    scaleY = scale,
-                    translationX = offsetX,
-                    translationY = offsetY
-                )
+            update = { view ->
+                val doc = pdfDocument ?: return@UIKitView
+                if (view.document != doc) {
+                    view.document = doc
+                    view.autoScales = true
+
+                    val pageCount = doc.pageCount.toInt()
+                    if (pageCount > 0) {
+                        val pageIndex = currentPage.coerceIn(0, pageCount - 1)
+                        doc.pageAtIndex(pageIndex.toULong())?.let { page ->
+                            view.goToPage(page)
+                        }
+                    }
+
+                    view.setNeedsLayout()
+                    view.layoutIfNeeded()
+                    view.setNeedsDisplay()
+
+                    // один раз сохраняем масштаб, который дал autoScales ("fit")
+                    if (baseScaleFactor == null) {
+                        baseScaleFactor = view.scaleFactor
+                    }
+                } else {
+                    val pageCount = doc.pageCount.toInt()
+                    if (pageCount > 0) {
+                        val pageIndex = currentPage.coerceIn(0, pageCount - 1)
+                        val targetPage = doc.pageAtIndex(pageIndex.toULong())
+                        if (targetPage != null && view.currentPage != targetPage) {
+                            view.goToPage(targetPage)
+                        }
+                    }
+                }
+            },
+            onResize = { view, rect ->
+                view.setFrame(rect)
+                view.setNeedsLayout()
+            },
+            interactive = true,
+            modifier = Modifier.fillMaxSize()
         )
     }
 }
