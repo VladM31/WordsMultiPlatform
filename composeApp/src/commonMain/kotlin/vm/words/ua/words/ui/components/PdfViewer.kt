@@ -2,6 +2,7 @@ package vm.words.ua.words.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -35,6 +37,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import vm.words.ua.core.platform.AppPlatform
+import vm.words.ua.core.platform.currentPlatform
 
 /**
  * Multiplatform PDF Viewer with pagination and zoom support
@@ -54,19 +58,15 @@ fun PdfViewer(
     var currentPage by remember { mutableStateOf(initialPage) }
     var totalPages by remember { mutableStateOf(0) }
     var scale by remember { mutableStateOf(1f) }
-    var pageCountInitialized by remember { mutableStateOf(false) }
 
     val listState = rememberLazyListState()
 
-    // Scroll to initial page once total pages known
     LaunchedEffect(totalPages) {
-        if (totalPages > 0 && !pageCountInitialized) {
-            pageCountInitialized = true
+        if (totalPages > 0) {
             if (initialPage in 0 until totalPages) listState.scrollToItem(initialPage)
         }
     }
 
-    // Derive currently visible page (closest to viewport center)
     val visiblePageIndex by remember {
         derivedStateOf {
             val layoutInfo = listState.layoutInfo
@@ -82,120 +82,175 @@ fun PdfViewer(
         }
     }
 
-    // Update current page reactively (separate from composition of individual items)
     LaunchedEffect(visiblePageIndex) {
         if (visiblePageIndex != currentPage) currentPage = visiblePageIndex
     }
 
     Box(modifier = modifier.fillMaxSize()) {
-        when {
-            totalPages == 0 -> {
-                // Load first page only to obtain total page count (hidden)
-                Box(Modifier.fillMaxSize()) {
-                    CircularProgressIndicator(Modifier.align(Alignment.Center))
-                }
-                // Invisible composable just to trigger page count callback
-                Box(Modifier.size(1.dp)) {
-                    PdfContent(
-                        pdfData = pdfData,
-                        currentPage = 0,
-                        scale = 1f,
-                        offsetX = 0f,
-                        offsetY = 0f,
-                        onPageCountChanged = { totalPages = it },
-                        onError = onError,
-                        onScaleChange = {},
-                        onOffsetChange = { _, _ -> },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(600.dp)
-                    )
-                }
-            }
-
-            else -> {
-                // Continuous vertical scroll of pages
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    contentPadding = PaddingValues(16.dp)
-                ) {
-                    items(totalPages, key = { it }) { pageIndex ->
-                        // Removed side-effect assignment to currentPage here
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        ) {
-                            // Render each page; pass scale; offsets not per-page in continuous mode
-                            PdfContent(
-                                pdfData = pdfData,
-                                currentPage = pageIndex,
-                                scale = scale,
-                                offsetX = 0f,
-                                offsetY = 0f,
-                                onPageCountChanged = {},
-                                onError = onError,
-                                onScaleChange = { new -> scale = new.coerceIn(0.5f, 3f) },
-                                onOffsetChange = { _, _ -> },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(600.dp)
-                            )
-                        }
-                    }
-                }
-            }
+        if (currentPlatform() == AppPlatform.IOS) {
+            IOSPdfViewer(pdfData, onError)
+            return
+        }
+        if (totalPages == 0) {
+            EmptyPageViewer(pdfData, onError)
+            return
         }
 
-        // Floating compact zoom controls (non-intrusive)
-        if (totalPages > 0) {
-            Column(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(12.dp),
-                horizontalAlignment = Alignment.End
+        PagesViewer(
+            listState, totalPages, pdfData, scale,
+            { new -> scale = new.coerceIn(0.5f, 3f) },
+            onError
+        )
+
+        ViewMenu(
+            totalPages,
+            scale,
+            currentPage
+        ) { scale = it }
+    }
+}
+
+@Composable
+private fun BoxScope.ViewMenu(
+    totalPages: Int,
+    scale: Float,
+    currentPage: Int,
+    onScaleChange: (Float) -> Unit,
+) {
+    if (totalPages > 0) {
+        return
+    }
+    if (totalPages > 0) {
+        Column(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(12.dp),
+            horizontalAlignment = Alignment.End
+        )
+        {
+            Surface(
+                shape = MaterialTheme.shapes.small,
+                tonalElevation = 4.dp,
+                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f)
             ) {
-                Surface(
-                    shape = MaterialTheme.shapes.small,
-                    tonalElevation = 4.dp,
-                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f)
+                Row(
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        IconButton(onClick = { scale = (scale / 1.15f).coerceAtLeast(0.5f) }) {
-                            Icon(Icons.Default.Remove, contentDescription = "Zoom Out")
-                        }
-                        Text(
-                            text = "${(scale * 100).toInt()}%",
-                            style = MaterialTheme.typography.labelMedium,
-                            modifier = Modifier.padding(horizontal = 4.dp)
-                        )
-                        IconButton(onClick = { scale = (scale * 1.15f).coerceAtMost(3f) }) {
-                            Icon(Icons.Default.Add, contentDescription = "Zoom In")
-                        }
-                        IconButton(onClick = { scale = 1f }) {
-                            Icon(Icons.Default.Refresh, contentDescription = "Reset Zoom")
-                        }
+
+                    IconButton(onClick = { onScaleChange((scale / 1.15f).coerceAtLeast(0.5f)) }) {
+                        Icon(Icons.Default.Remove, contentDescription = "Zoom Out")
+                    }
+                    Text(
+                        text = "${(scale * 100).toInt()}%",
+                        style = MaterialTheme.typography.labelMedium,
+                        modifier = Modifier.padding(horizontal = 4.dp)
+                    )
+                    IconButton(onClick = {  onScaleChange((scale * 1.15f).coerceAtMost(3f)) }) {
+                        Icon(Icons.Default.Add, contentDescription = "Zoom In")
+                    }
+                    IconButton(onClick = { onScaleChange(1f) }) {
+                        Icon(Icons.Default.Refresh, contentDescription = "Reset Zoom")
                     }
                 }
-                Spacer(Modifier.height(8.dp))
-                Surface(
-                    shape = MaterialTheme.shapes.small,
-                    tonalElevation = 4.dp,
-                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f)
-                ) {
-                    Text(
-                        text = "Page ${currentPage + 1} / $totalPages",
-                        style = MaterialTheme.typography.labelMedium,
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
-                    )
-                }
+            }
+            Spacer(Modifier.height(8.dp))
+            Surface(
+                shape = MaterialTheme.shapes.small,
+                tonalElevation = 4.dp,
+                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f)
+            ) {
+                Text(
+                    text = "Page ${currentPage + 1} / $totalPages",
+                    style = MaterialTheme.typography.labelMedium,
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                )
             }
         }
     }
+}
+
+@Composable
+private fun PagesViewer(
+    listState: LazyListState,
+    totalPages: Int,
+    pdfData: ByteArray,
+    scale: Float,
+    onScaleChange: (Float) -> Unit,
+    onError: (String) -> Unit
+) {
+
+    LazyColumn(
+        state = listState,
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        contentPadding = PaddingValues(16.dp)
+    ) {
+        items(totalPages, key = { it }) { pageIndex ->
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                PdfContent(
+                    pdfData = pdfData,
+                    currentPage = pageIndex,
+                    scale = scale,
+                    offsetX = 0f,
+                    offsetY = 0f,
+                    onPageCountChanged = {},
+                    onError = onError,
+                    onScaleChange = onScaleChange,
+                    onOffsetChange = { _, _ -> },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(600.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun EmptyPageViewer(pdfData: ByteArray, onError: (String) -> Unit) {
+    Box(Modifier.fillMaxSize()) {
+        CircularProgressIndicator(Modifier.align(Alignment.Center))
+    }
+    Box(Modifier.size(1.dp)) {
+        PdfContent(
+            pdfData = pdfData,
+            currentPage = 0,
+            scale = 1f,
+            offsetX = 0f,
+            offsetY = 0f,
+            onPageCountChanged = { },
+            onError = onError,
+            onScaleChange = {},
+            onOffsetChange = { _, _ -> },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(600.dp)
+        )
+    }
+}
+
+@Composable
+private fun IOSPdfViewer(pdfData: ByteArray, onError: (String) -> Unit) {
+    var scale by remember { mutableStateOf(1f) }
+
+    PdfContent(
+        pdfData = pdfData,
+        currentPage = 0,
+        scale = scale,
+        offsetX = 0f,
+        offsetY = 0f,
+        onPageCountChanged = {},
+        onError = onError,
+        onScaleChange = { new -> scale = new.coerceIn(0.5f, 3f) },
+        onOffsetChange = { _, _ -> },
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(600.dp)
+    )
 }
 
 /**
