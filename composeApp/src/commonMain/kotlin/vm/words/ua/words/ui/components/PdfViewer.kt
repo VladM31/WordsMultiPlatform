@@ -7,13 +7,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -87,19 +85,29 @@ fun PdfViewer(
     }
 
     Box(modifier = modifier.fillMaxSize()) {
+        println(currentPlatform())
         if (currentPlatform() == AppPlatform.IOS) {
             IOSPdfViewer(pdfData, onError)
             return
         }
+        // Show initial loader until we know page count. When PdfContent reports pages, totalPages gets updated.
         if (totalPages == 0) {
-            EmptyPageViewer(pdfData, onError)
+            EmptyPageViewer(pdfData, onError) { reported ->
+                if (reported > 0 && totalPages == 0) {
+                    totalPages = reported
+                }
+            }
             return
         }
 
         PagesViewer(
             listState, totalPages, pdfData, scale,
             { new -> scale = new.coerceIn(0.5f, 3f) },
-            onError
+            onError,
+            onPageCountChanged = { reported ->
+                // If for some reason page count changes (unlikely) keep the max
+                if (reported > totalPages) totalPages = reported
+            }
         )
 
         ViewMenu(
@@ -117,55 +125,53 @@ private fun BoxScope.ViewMenu(
     currentPage: Int,
     onScaleChange: (Float) -> Unit,
 ) {
-    if (totalPages > 0) {
+    // Previous logic mistakenly returned when totalPages > 0, preventing menu display.
+    if (totalPages == 0) {
         return
     }
-    if (totalPages > 0) {
-        Column(
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(12.dp),
-            horizontalAlignment = Alignment.End
-        )
-        {
-            Surface(
-                shape = MaterialTheme.shapes.small,
-                tonalElevation = 4.dp,
-                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f)
+    Column(
+        modifier = Modifier
+            .align(Alignment.TopEnd)
+            .padding(12.dp),
+        horizontalAlignment = Alignment.End
+    ) {
+        Surface(
+            shape = MaterialTheme.shapes.small,
+            tonalElevation = 4.dp,
+            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f)
+        ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
 
-                    IconButton(onClick = { onScaleChange((scale / 1.15f).coerceAtLeast(0.5f)) }) {
-                        Icon(Icons.Default.Remove, contentDescription = "Zoom Out")
-                    }
-                    Text(
-                        text = "${(scale * 100).toInt()}%",
-                        style = MaterialTheme.typography.labelMedium,
-                        modifier = Modifier.padding(horizontal = 4.dp)
-                    )
-                    IconButton(onClick = {  onScaleChange((scale * 1.15f).coerceAtMost(3f)) }) {
-                        Icon(Icons.Default.Add, contentDescription = "Zoom In")
-                    }
-                    IconButton(onClick = { onScaleChange(1f) }) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Reset Zoom")
-                    }
+                IconButton(onClick = { onScaleChange((scale / 1.15f).coerceAtLeast(0.5f)) }) {
+                    Icon(Icons.Default.Remove, contentDescription = "Zoom Out")
+                }
+                Text(
+                    text = "${(scale * 100).toInt()}%",
+                    style = MaterialTheme.typography.labelMedium,
+                    modifier = Modifier.padding(horizontal = 4.dp)
+                )
+                IconButton(onClick = { onScaleChange((scale * 1.15f).coerceAtMost(3f)) }) {
+                    Icon(Icons.Default.Add, contentDescription = "Zoom In")
+                }
+                IconButton(onClick = { onScaleChange(1f) }) {
+                    Icon(Icons.Default.Refresh, contentDescription = "Reset Zoom")
                 }
             }
-            Spacer(Modifier.height(8.dp))
-            Surface(
-                shape = MaterialTheme.shapes.small,
-                tonalElevation = 4.dp,
-                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f)
-            ) {
-                Text(
-                    text = "Page ${currentPage + 1} / $totalPages",
-                    style = MaterialTheme.typography.labelMedium,
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
-                )
-            }
+        }
+        Spacer(Modifier.height(8.dp))
+        Surface(
+            shape = MaterialTheme.shapes.small,
+            tonalElevation = 4.dp,
+            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f)
+        ) {
+            Text(
+                text = "Page ${currentPage + 1} / $totalPages",
+                style = MaterialTheme.typography.labelMedium,
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+            )
         }
     }
 }
@@ -177,7 +183,8 @@ private fun PagesViewer(
     pdfData: ByteArray,
     scale: Float,
     onScaleChange: (Float) -> Unit,
-    onError: (String) -> Unit
+    onError: (String) -> Unit,
+    onPageCountChanged: (Int) -> Unit
 ) {
 
     LazyColumn(
@@ -197,7 +204,7 @@ private fun PagesViewer(
                     scale = scale,
                     offsetX = 0f,
                     offsetY = 0f,
-                    onPageCountChanged = {},
+                    onPageCountChanged = onPageCountChanged,
                     onError = onError,
                     onScaleChange = onScaleChange,
                     onOffsetChange = { _, _ -> },
@@ -211,10 +218,11 @@ private fun PagesViewer(
 }
 
 @Composable
-private fun EmptyPageViewer(pdfData: ByteArray, onError: (String) -> Unit) {
+private fun EmptyPageViewer(pdfData: ByteArray, onError: (String) -> Unit, onPageCountChanged: (Int) -> Unit) {
     Box(Modifier.fillMaxSize()) {
         CircularProgressIndicator(Modifier.align(Alignment.Center))
     }
+    // Hidden PdfContent to discover page count then update state.
     Box(Modifier.size(1.dp)) {
         PdfContent(
             pdfData = pdfData,
@@ -222,7 +230,7 @@ private fun EmptyPageViewer(pdfData: ByteArray, onError: (String) -> Unit) {
             scale = 1f,
             offsetX = 0f,
             offsetY = 0f,
-            onPageCountChanged = { },
+            onPageCountChanged = onPageCountChanged,
             onError = onError,
             onScaleChange = {},
             onOffsetChange = { _, _ -> },

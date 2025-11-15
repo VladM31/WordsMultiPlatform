@@ -4,26 +4,116 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.rendering.PDFRenderer
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
+import java.util.concurrent.ConcurrentHashMap
+
+private object PdfDesktopCache {
+    internal data class Entry(
+        val document: PDDocument,
+        val renderer: PDFRenderer,
+        val renderMutex: Mutex,
+        var refCount: Int,
+        var activeRenders: Int = 0,
+        var isClosing: Boolean = false
+    )
+    private val cache = ConcurrentHashMap<Int, Entry>()
+
+    @Synchronized
+    fun acquire(data: ByteArray): Entry? {
+        val key = data.contentHashCode()
+        val existing = cache[key]
+        if (existing != null) {
+            existing.refCount++
+            println("DEBUG Cache: Reusing entry, refCount=${existing.refCount}")
+            return existing
+        }
+        return try {
+            val doc = PDDocument.load(ByteArrayInputStream(data))
+            val entry = Entry(doc, PDFRenderer(doc), Mutex(), 1)
+            cache[key] = entry
+            println("DEBUG Cache: Created new entry, pages=${doc.numberOfPages}")
+            entry
+        } catch (e: Exception) {
+            println("DEBUG Cache: Failed to load PDF: ${e.message}")
+            null
+        }
+    }
+
+    @Synchronized
+    fun startRender(data: ByteArray): Boolean {
+        val key = data.contentHashCode()
+        val entry = cache[key]
+        if (entry == null) {
+            println("DEBUG Cache: startRender - entry not found in cache")
+            return false
+        }
+        if (entry.isClosing) {
+            println("DEBUG Cache: startRender - entry is closing")
+            return false
+        }
+        entry.activeRenders++
+        println("DEBUG Cache: startRender OK, activeRenders=${entry.activeRenders}")
+        return true
+    }
+
+    @Synchronized
+    fun endRender(data: ByteArray) {
+        val key = data.contentHashCode()
+        val entry = cache[key] ?: return
+        entry.activeRenders--
+        println("DEBUG Cache: endRender called, activeRenders=${entry.activeRenders}, refCount=${entry.refCount}, isClosing=${entry.isClosing}")
+
+        // Check if we should cleanup: last render finished and refCount is 0
+        if (entry.activeRenders <= 0 && entry.refCount <= 0) {
+            entry.isClosing = true
+            try {
+                entry.document.close()
+                println("DEBUG Cache: Document closed after last render finished")
+            } catch (e: Exception) {
+                println("DEBUG Cache: Error closing document in endRender: ${e.message}")
+            }
+            cache.remove(key)
+        }
+    }
+
+    @Synchronized
+    fun release(data: ByteArray) {
+        val key = data.contentHashCode()
+        val entry = cache[key] ?: return
+        entry.refCount--
+        println("DEBUG Cache: release called, refCount=${entry.refCount}, activeRenders=${entry.activeRenders}")
+
+        // CRITICAL: Only close when BOTH refCount is 0 AND no active renders
+        // Do NOT set isClosing flag prematurely as it blocks new renders
+        if (entry.refCount <= 0 && entry.activeRenders <= 0) {
+            entry.isClosing = true
+            try {
+                entry.document.close()
+                println("DEBUG Cache: Document closed and removed from cache")
+            } catch (e: Exception) {
+                println("DEBUG Cache: Error closing document: ${e.message}")
+            }
+            cache.remove(key)
+        } else if (entry.refCount <= 0) {
+            // Refcount is 0 but active renders still running - defer cleanup
+            println("DEBUG Cache: Waiting for ${entry.activeRenders} active renders to finish before closing")
+        }
+    }
+}
 
 @Composable
 actual fun PdfContent(
@@ -39,56 +129,68 @@ actual fun PdfContent(
     modifier: Modifier
 ) {
     var image by remember { mutableStateOf<BufferedImage?>(null) }
-    var document by remember { mutableStateOf<PDDocument?>(null) }
-    var renderer by remember { mutableStateOf<PDFRenderer?>(null) }
-    val scope = rememberCoroutineScope()
+    var pageCountReported by remember { mutableStateOf(false) }
+    var cacheEntry by remember { mutableStateOf<PdfDesktopCache.Entry?>(null) }
 
     DisposableEffect(pdfData) {
-        scope.launch {
-            try {
-                val doc = withContext(Dispatchers.IO) {
-                    PDDocument.load(ByteArrayInputStream(pdfData))
-                }
-                document = doc
-                renderer = PDFRenderer(doc)
-                onPageCountChanged(doc.numberOfPages)
-            } catch (e: Exception) {
-                onError("Failed to load PDF: ${e.message}")
+        val entry = PdfDesktopCache.acquire(pdfData)
+        if (entry == null) {
+            onError("Failed to load PDF")
+            onPageCountChanged(0)
+            return@DisposableEffect onDispose {}
+        } else {
+            cacheEntry = entry
+            if (!pageCountReported) {
+                onPageCountChanged(entry.document.numberOfPages)
+                pageCountReported = true
             }
         }
-
         onDispose {
-            try {
-                document?.close()
-            } catch (_: Exception) {
-                // Ignore close errors
-            }
+            image = null
+            cacheEntry = null
+            PdfDesktopCache.release(pdfData)
         }
     }
 
-    LaunchedEffect(renderer, currentPage) {
-        val pdfRenderer = renderer
-        if (pdfRenderer != null) {
-            try {
-                val pageImage = withContext(Dispatchers.IO) {
-                    // Render at 2x resolution for better quality
-                    pdfRenderer.renderImageWithDPI(currentPage, 144f)
+    LaunchedEffect(pageCountReported) { /* marker effect to acknowledge state usage */ }
+
+    LaunchedEffect(cacheEntry, currentPage) {
+        val entry = cacheEntry ?: return@LaunchedEffect
+
+        // Mark that we're starting a render operation (this checks isClosing internally)
+        if (!PdfDesktopCache.startRender(pdfData)) {
+            println("DEBUG: startRender returned false for page $currentPage")
+            return@LaunchedEffect
+        }
+
+        try {
+            val pageImage = entry.renderMutex.withLock {
+                withContext(Dispatchers.IO) {
+                    entry.renderer.renderImageWithDPI(currentPage, 144f)
                 }
-                image = pageImage
-            } catch (e: Exception) {
-                onError("Failed to render page: ${e.message}")
             }
+            image = pageImage
+            println("DEBUG: Successfully rendered page $currentPage")
+        } catch (_: CancellationException) {
+            // Ignore cancellation
+        } catch (e: Exception) {
+            println("DEBUG: Render error on page $currentPage: ${e.message}")
+            onError("Failed to render page: ${e.message}")
+        } finally {
+            PdfDesktopCache.endRender(pdfData)
         }
     }
 
     image?.let { img ->
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
-                .pointerInput(Unit) {
+                .pointerInput(scale, offsetX, offsetY) {
                     detectTransformGestures { _, pan, zoom, _ ->
-                        onScaleChange(scale * zoom)
-                        onOffsetChange(pan.x, pan.y)
+                        onScaleChange((scale * zoom).coerceIn(0.5f, 3f))
+                        if (scale > 1f) {
+                            onOffsetChange(pan.x + offsetX, pan.y + offsetY)
+                        }
                     }
                 }
         ) {
@@ -108,4 +210,3 @@ actual fun PdfContent(
         }
     }
 }
-
