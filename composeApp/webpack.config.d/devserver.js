@@ -22,7 +22,7 @@ if (config.mode === 'development') {
   config.devtool = 'eval-source-map';
 
   // Allow configuring port and public path via environment variables
-  const defaultPort = 7000;
+  const defaultPort = 9000;
   config.devServer.port = defaultPort;
 
   console.log('Webpack DevServer is configured for debugging');
