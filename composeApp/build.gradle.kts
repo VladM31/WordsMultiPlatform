@@ -165,6 +165,16 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "vm.words.ua"
             packageVersion = "1.0.0"
+
+            macOS {
+                // путь до .icns относительно этого build.gradle.kts
+                iconFile.set(project.file("icon.icns"))
+            }
+
+            // если захочешь иконку отдельно под Windows — можно так:
+            // windows {
+            //     iconFile.set(project.file("icon.ico"))
+            // }
         }
     }
 }
