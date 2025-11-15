@@ -3,6 +3,7 @@ package vm.words.ua.words.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.interop.UIKitView
@@ -35,6 +36,9 @@ actual fun PdfContent(
     // базовый масштаб "fit"
     var baseScaleFactor by remember { mutableStateOf<Double?>(null) }
 
+    // aspect ratio текущей страницы (width / height)
+    var pageAspectRatio by remember { mutableStateOf<Float?>(null) }
+
     DisposableEffect(pdfData) {
         if (pdfData.isEmpty()) {
             onError("Empty PDF data")
@@ -65,6 +69,7 @@ actual fun PdfContent(
         }
     }
 
+    // переход на нужную страницу
     LaunchedEffect(pdfDocument, currentPage) {
         val doc = pdfDocument ?: return@LaunchedEffect
         val view = pdfViewRef ?: return@LaunchedEffect
@@ -74,6 +79,22 @@ actual fun PdfContent(
         val targetPage = doc.pageAtIndex(clampedIndex.toULong())
         if (targetPage != null && view.currentPage != targetPage) {
             view.goToPage(targetPage)
+        }
+    }
+
+    // считаем aspect ratio текущей страницы
+    LaunchedEffect(pdfDocument, currentPage) {
+        val doc = pdfDocument ?: return@LaunchedEffect
+        val pageCount = doc.pageCount.toInt()
+        if (pageCount == 0) return@LaunchedEffect
+        val clampedIndex = currentPage.coerceIn(0, pageCount - 1)
+        val page = doc.pageAtIndex(clampedIndex.toULong()) ?: return@LaunchedEffect
+
+        val rect = page.boundsForBox(kPDFDisplayBoxMediaBox)
+        val width = rect.useContents { size.width }
+        val height = rect.useContents { size.height }
+        if (width > 0 && height > 0) {
+            pageAspectRatio = (width / height).toFloat()
         }
     }
 
@@ -92,7 +113,17 @@ actual fun PdfContent(
         }
     }
 
-    Box(modifier = modifier.fillMaxSize().background(Color.White)) {
+    // если знаем aspect ratio — подстраиваем высоту под страницу
+    val boxModifier =
+        pageAspectRatio?.let { ratio ->
+            modifier
+                .background(Color.White)
+                .aspectRatio(ratio)
+        } ?: modifier
+            .fillMaxSize()
+            .background(Color.White)
+
+    Box(modifier = boxModifier) {
         UIKitView(
             factory = {
                 val pdfView = PDFView()
@@ -103,8 +134,8 @@ actual fun PdfContent(
                     backgroundColor = UIColor.whiteColor
                     clipsToBounds = true
 
-                    // 🔴 ГОЛОВНЕ: показуємо тільки одну сторінку
-                    displayMode = kPDFDisplaySinglePage      // або PDFDisplayModeSinglePage – що підкаже IDE
+                    // показываем только одну страницу
+                    displayMode = kPDFDisplaySinglePage
                     displaysAsBook = false
                     displaysPageBreaks = false
 
@@ -113,7 +144,7 @@ actual fun PdfContent(
                     setOpaque(true)
                 }
 
-                // 🟩 ВИМКНУТИ ВНУТРІШНІЙ СКРОЛЛ
+                // выключаем внутренний scroll
                 pdfView.subviews
                     .filterIsInstance<UIScrollView>()
                     .forEach {
