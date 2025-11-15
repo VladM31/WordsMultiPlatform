@@ -152,7 +152,7 @@ fun SignUpScreen(
                     SingleSelectInput(
                         value = state.currency,
                         items = Currency.entries.toList(),
-                        label = "Original language",
+                        label = "Currency",
                         toLabel = { it.name },
                         showNone = true,
                         noneLabel = "",
