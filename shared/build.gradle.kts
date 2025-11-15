@@ -20,8 +20,8 @@ kotlin {
         }
     }
     
-    jvm()
-    
+    jvm("desktop")
+
     js {
         browser()
     }

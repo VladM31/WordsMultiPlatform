@@ -18,8 +18,8 @@ kotlin {
         }
     }
 
-    jvm()
-    
+    jvm("desktop")
+
     js {
         browser()
         binaries.executable()
@@ -88,7 +88,7 @@ kotlin {
             }
         }
 
-        jvmMain {
+        val desktopMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation(libs.kotlinx.coroutinesSwing)

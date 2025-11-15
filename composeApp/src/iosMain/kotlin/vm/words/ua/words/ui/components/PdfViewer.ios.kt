@@ -2,19 +2,21 @@ package vm.words.ua.words.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.interop.UIKitView
 import androidx.compose.ui.graphics.Color
+import kotlinx.cinterop.*
 import platform.Foundation.*
 import platform.PDFKit.*
 import platform.UIKit.*
-import kotlinx.cinterop.*
+import platform.CoreGraphics.*
+import kotlin.math.abs
 import kotlin.ranges.coerceIn
 
-@OptIn(ExperimentalForeignApi::class, kotlinx.cinterop.BetaInteropApi::class)
+@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 @Composable
 actual fun PdfContent(
     pdfData: ByteArray,
@@ -31,14 +33,17 @@ actual fun PdfContent(
     var pdfDocument by remember { mutableStateOf<PDFDocument?>(null) }
     var pdfViewRef by remember { mutableStateOf<PDFView?>(null) }
     var pdfNsData by remember { mutableStateOf<NSData?>(null) }
-    var ignoreExternalScale by remember { mutableStateOf(false) }
 
-    // базовый масштаб "fit"
+    // базовый масштаб “fit” (то, что дал autoScales)
     var baseScaleFactor by remember { mutableStateOf<Double?>(null) }
 
-    // aspect ratio текущей страницы (width / height)
+    // чтобы не ловить цикл при синхронизации scale <-> scaleFactor
+    var ignoreExternalScale by remember { mutableStateOf(false) }
+
+    // соотношение сторон текущей страницы (width / height)
     var pageAspectRatio by remember { mutableStateOf<Float?>(null) }
 
+    // загрузка документа
     DisposableEffect(pdfData) {
         if (pdfData.isEmpty()) {
             onError("Empty PDF data")
@@ -56,10 +61,9 @@ actual fun PdfContent(
         pdfDocument = document
         onPageCountChanged(document.pageCount.toInt())
 
-        // при новом документе сбрасываем базовый масштаб
         baseScaleFactor = null
 
-        pdfViewRef?.setDocument(document)
+        pdfViewRef?.document = document
 
         onDispose {
             pdfDocument = null
@@ -69,36 +73,40 @@ actual fun PdfContent(
         }
     }
 
-    // переход на нужную страницу
+    // перейти на нужную страницу + посчитать aspect ratio
     LaunchedEffect(pdfDocument, currentPage) {
         val doc = pdfDocument ?: return@LaunchedEffect
-        val view = pdfViewRef ?: return@LaunchedEffect
-        val pageCount = doc.pageCount.toInt()
-        if (pageCount == 0) return@LaunchedEffect
-        val clampedIndex = currentPage.coerceIn(0, pageCount - 1)
-        val targetPage = doc.pageAtIndex(clampedIndex.toULong())
-        if (targetPage != null && view.currentPage != targetPage) {
-            view.goToPage(targetPage)
-        }
-    }
+        val view = pdfViewRef
 
-    // считаем aspect ratio текущей страницы
-    LaunchedEffect(pdfDocument, currentPage) {
-        val doc = pdfDocument ?: return@LaunchedEffect
         val pageCount = doc.pageCount.toInt()
         if (pageCount == 0) return@LaunchedEffect
+
         val clampedIndex = currentPage.coerceIn(0, pageCount - 1)
         val page = doc.pageAtIndex(clampedIndex.toULong()) ?: return@LaunchedEffect
 
-        val rect = page.boundsForBox(kPDFDisplayBoxMediaBox)
-        val width = rect.useContents { size.width }
-        val height = rect.useContents { size.height }
-        if (width > 0 && height > 0) {
-            pageAspectRatio = (width / height).toFloat()
+        view?.let {
+            if (it.currentPage != page) {
+                it.goToPage(page)
+            }
+        }
+
+        // размеры страницы
+        val rect = page.boundsForBox(kPDFDisplayBoxCropBox)
+        val w = rect.useContents { size.width }
+        val h = rect.useContents { size.height }
+
+        if (w > 0 && h > 0) {
+            val rotation = page.rotation.toInt() % 360
+            val ratio = if (rotation == 90 || rotation == 270) {
+                (h / w).toFloat()
+            } else {
+                (w / h).toFloat()
+            }
+            pageAspectRatio = ratio
         }
     }
 
-    // применяем scale как множитель к baseScaleFactor (1f = fit)
+    // применяем внешний scale (кнопки + / -)
     LaunchedEffect(scale, pdfViewRef, baseScaleFactor) {
         val view = pdfViewRef ?: return@LaunchedEffect
         val base = baseScaleFactor ?: return@LaunchedEffect
@@ -107,34 +115,25 @@ actual fun PdfContent(
         val target = (base * scale.toDouble())
             .coerceIn(view.minScaleFactor, view.maxScaleFactor)
 
-        if (kotlin.math.abs(view.scaleFactor - target) > 0.0001) {
+        if (abs(view.scaleFactor - target) > 0.0001) {
             view.autoScales = false
             view.setScaleFactor(target)
         }
     }
 
-    // если знаем aspect ratio — подстраиваем высоту под страницу
-    val boxModifier =
-        pageAspectRatio?.let { ratio ->
-            modifier
-                .background(Color.White)
-                .aspectRatio(ratio)
-        } ?: modifier
-            .fillMaxSize()
+    Box(
+        modifier = modifier
             .background(Color.White)
-
-    Box(modifier = boxModifier) {
+    ) {
         UIKitView(
             factory = {
-                val pdfView = PDFView()
-                pdfView.setFrame(platform.CoreGraphics.CGRectMake(0.0, 0.0, 100.0, 100.0))
-
-                pdfView.apply {
+                val pdfView = PDFView(
+                    frame = CGRectMake(0.0, 0.0, 100.0, 100.0)
+                ).apply {
                     setTranslatesAutoresizingMaskIntoConstraints(true)
                     backgroundColor = UIColor.whiteColor
                     clipsToBounds = true
 
-                    // показываем только одну страницу
                     displayMode = kPDFDisplaySinglePage
                     displaysAsBook = false
                     displaysPageBreaks = false
@@ -144,21 +143,27 @@ actual fun PdfContent(
                     setOpaque(true)
                 }
 
-                // выключаем внутренний scroll
-                pdfView.subviews
-                    .filterIsInstance<UIScrollView>()
-                    .forEach {
-                        it.scrollEnabled = false
-                        it.bounces = false
-                        it.alwaysBounceVertical = false
-                        it.alwaysBounceHorizontal = false
+                // подписка на изменение масштаба (pinch-zoom и т.п.)
+                NSNotificationCenter.defaultCenter.addObserverForName(
+                    name = PDFViewScaleChangedNotification,
+                    `object` = pdfView,
+                    queue = NSOperationQueue.mainQueue
+                ) { _ ->
+                    val base = baseScaleFactor
+                    if (base != null) {
+                        val factor = pdfView.scaleFactor / base
+                        ignoreExternalScale = true
+                        onScaleChange(factor.toFloat())
+                        ignoreExternalScale = false
                     }
+                }
 
                 pdfViewRef = pdfView
                 pdfView
             },
             update = { view ->
                 val doc = pdfDocument ?: return@UIKitView
+
                 if (view.document != doc) {
                     view.document = doc
                     view.autoScales = true
@@ -175,27 +180,22 @@ actual fun PdfContent(
                     view.layoutIfNeeded()
                     view.setNeedsDisplay()
 
-                    // один раз сохраняем масштаб, который дал autoScales ("fit")
+                    // сохраняем “fit”-масштаб один раз
                     if (baseScaleFactor == null) {
                         baseScaleFactor = view.scaleFactor
                     }
-                } else {
-                    val pageCount = doc.pageCount.toInt()
-                    if (pageCount > 0) {
-                        val pageIndex = currentPage.coerceIn(0, pageCount - 1)
-                        val targetPage = doc.pageAtIndex(pageIndex.toULong())
-                        if (targetPage != null && view.currentPage != targetPage) {
-                            view.goToPage(targetPage)
-                        }
-                    }
                 }
             },
+            // 🔥 ВАЖНО: обновляем frame под размер Compose-ячейки
             onResize = { view, rect ->
                 view.setFrame(rect)
                 view.setNeedsLayout()
             },
+            // 🔥 ВАЖНО: пропускаем тапы/жесты в PDFView (pinch-zoom)
             interactive = true,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(pageAspectRatio ?: 1f)
         )
     }
 }
