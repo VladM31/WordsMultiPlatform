@@ -95,15 +95,34 @@ actual fun PdfContent(
     Box(modifier = modifier.fillMaxSize().background(Color.White)) {
         UIKitView(
             factory = {
-                val pdfView = PDFView().apply {
-                    setFrame(platform.CoreGraphics.CGRectMake(0.0, 0.0, 100.0, 100.0))
+                val pdfView = PDFView()
+                pdfView.setFrame(platform.CoreGraphics.CGRectMake(0.0, 0.0, 100.0, 100.0))
+
+                pdfView.apply {
                     setTranslatesAutoresizingMaskIntoConstraints(true)
                     backgroundColor = UIColor.whiteColor
                     clipsToBounds = true
+
+                    // 🔴 ГОЛОВНЕ: показуємо тільки одну сторінку
+                    displayMode = kPDFDisplaySinglePage      // або PDFDisplayModeSinglePage – що підкаже IDE
+                    displaysAsBook = false
+                    displaysPageBreaks = false
+
                     autoScales = true
                     userInteractionEnabled = true
                     setOpaque(true)
                 }
+
+                // 🟩 ВИМКНУТИ ВНУТРІШНІЙ СКРОЛЛ
+                pdfView.subviews
+                    .filterIsInstance<UIScrollView>()
+                    .forEach {
+                        it.scrollEnabled = false
+                        it.bounces = false
+                        it.alwaysBounceVertical = false
+                        it.alwaysBounceHorizontal = false
+                    }
+
                 pdfViewRef = pdfView
                 pdfView
             },
