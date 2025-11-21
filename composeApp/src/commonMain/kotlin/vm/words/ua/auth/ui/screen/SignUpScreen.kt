@@ -1,13 +1,7 @@
 package vm.words.ua.auth.ui.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Checkbox
@@ -21,23 +15,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.auth.ui.actions.SignUpAction
 import vm.words.ua.auth.ui.bundles.ConfirmSignBundle
 import vm.words.ua.auth.ui.vms.SignUpViewModel
-import vm.words.ua.core.config.AppRemoteConfig
 import vm.words.ua.core.domain.models.enums.Currency
-import vm.words.ua.core.platform.AppPlatform
-import vm.words.ua.core.platform.currentPlatform
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.ui.components.AppTextField
-import vm.words.ua.core.ui.components.AppToolBar
-import vm.words.ua.core.ui.components.ErrorMessageBox
-import vm.words.ua.core.ui.components.PrimaryButton
-import vm.words.ua.core.ui.components.SingleSelectInput
+import vm.words.ua.core.ui.components.*
 import vm.words.ua.core.utils.isNotPhoneFormat
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.Screen
@@ -54,7 +40,6 @@ fun SignUpScreen(
 
 ) {
     val state by viewModel.state.collectAsState()
-    val uriHandler = LocalUriHandler.current
 
     LaunchedEffect(state.success) {
         if (state.success) {
@@ -80,14 +65,7 @@ fun SignUpScreen(
             showAdditionalButton = true,
             additionalButtonImage = painterResource(Res.drawable.info_in_circle),
             onAdditionalClick = {
-                if (currentPlatform() != AppPlatform.WASM) {
-                    navController.navigate(Screen.Policy)
-                    return@AppToolBar
-                }
-                val str = AppRemoteConfig.policyLink
-                val policyUrl = "https://docs.google.com/gview?url=$str&embedded=true"
-
-                uriHandler.openUri(policyUrl)
+                navController.navigate(Screen.Policy)
             }
         )
 

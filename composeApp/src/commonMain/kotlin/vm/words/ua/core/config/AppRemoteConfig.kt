@@ -3,7 +3,11 @@ package vm.words.ua.core.config
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.serialization.json.Json
+import vm.words.ua.core.domain.models.DocItem
+import vm.words.ua.core.domain.models.DocItemType
 import vm.words.ua.core.domain.models.RemoteConfigData
+import vm.words.ua.core.platform.currentPlatform
+import vm.words.ua.core.platform.isWeb
 
 
 object AppRemoteConfig {
@@ -16,20 +20,30 @@ object AppRemoteConfig {
         isLenient = true
     }
 
+
     val baseUrl: String
         get() = configData?.baseUrl ?: "https://study-words.com"
 
-    val instructionLastUpdate: String
-        get() = configData?.instructionLastUpdate ?: "2025-10-06T22:35:29.604559800+03:00"
 
-    val instructionLink: String
-        get() = configData?.instructionLink ?: "https://raw.githubusercontent.com/VladM31/AndroidWordApplication/refs/heads/master/documents/instruction/en_instruction.pdf"
+    val instruction: DocItem
+        get() {
+            val type = if (currentPlatform().isWeb) {
+                DocItemType.WEB
+            } else {
+                DocItemType.DEFAULT_TYPE
+            }
+            return configData?.instructions?.find { it.type == type } ?: DocItem()
+        }
 
-    val policyLastUpdateAt: String
-        get() = configData?.policyLastUpdateAt ?: "2025-10-12T01:52:29.604559800+03:00"
-
-    val policyLink: String
-        get() = configData?.policyLink ?: "https://raw.githubusercontent.com/VladM31/AndroidWordApplication/refs/heads/master/documents/policy/en_policy.pdf"
+    val policy: DocItem
+        get() {
+            val type = if (currentPlatform().isWeb) {
+                DocItemType.WEB
+            } else {
+                DocItemType.DEFAULT_TYPE
+            }
+            return configData?.policies?.find { it.type == type } ?: DocItem()
+        }
 
     val telegramBotLink: String
         get() = configData?.telegramBotLink ?: "https://t.me/needlework_number_bot"
@@ -38,7 +52,7 @@ object AppRemoteConfig {
         get() = configData?.updateLink ?: "https://github.com/VladM31/AndroidWordApplication/releases/download/Card_Payment/Words-dev-v2.0.1.apk"
 
     val version: String
-        get() = configData?.version ?: "2.0.1"
+        get() = configData?.version ?: "0.0.1"
 
     val currentVersion: String = "0.0.1"
 
