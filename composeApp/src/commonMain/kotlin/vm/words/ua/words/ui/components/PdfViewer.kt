@@ -1,17 +1,6 @@
 package vm.words.ua.words.ui.components
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -19,24 +8,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Remove
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.platform.AppPlatform
 import vm.words.ua.core.platform.currentPlatform
+import vm.words.ua.core.utils.getWidthDeviceFormat
 
 /**
  * Multiplatform PDF Viewer with pagination and zoom support
@@ -187,6 +167,9 @@ private fun PagesViewer(
     onPageCountChanged: (Int) -> Unit
 ) {
 
+    val basePageHeight = 600.dp
+    val deviceFormat = getWidthDeviceFormat()
+
     LazyColumn(
         state = listState,
         modifier = Modifier.fillMaxSize(),
@@ -194,9 +177,17 @@ private fun PagesViewer(
         contentPadding = PaddingValues(16.dp)
     ) {
         items(totalPages, key = { it }) { pageIndex ->
+            val resultScale = if (scale > 1 && deviceFormat.isPhone.not()) scale * 1.6f else scale
+
+            val pageHeight = remember(resultScale) {
+                (basePageHeight * scale).coerceIn(300.dp, 2400.dp)
+            }
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .height(pageHeight)
+                    .clipToBounds() // не даём изображению вылезти за пределы Box
             ) {
                 PdfContent(
                     pdfData = pdfData,
@@ -208,9 +199,7 @@ private fun PagesViewer(
                     onError = onError,
                     onScaleChange = onScaleChange,
                     onOffsetChange = { _, _ -> },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(600.dp)
+                    modifier = Modifier.fillMaxSize()
                 )
             }
         }

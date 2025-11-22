@@ -2,17 +2,15 @@ package vm.words.ua.words.ui.components
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import vm.words.ua.core.net.client.RenderedPdfClient
@@ -34,17 +32,14 @@ actual fun PdfContent(
     onOffsetChange: (Float, Float) -> Unit,
     modifier: Modifier
 ) {
-    val baseUrl = remember { pdfData.decodeToString() }
+    val baseUrl = remember(pdfData) { pdfData.decodeToString() }
     val renderClient = rememberInstance<RenderedPdfClient>()
-    val fullWidth = appWidthDp()
+    val pageBaseWidth = appWidthDp() * 0.95f
 
-    var imageContent by remember(currentPage) { mutableStateOf<ByteArray?>(null) }
-    var isLoading by remember(currentPage) { mutableStateOf(true) }
+    var imageContent by remember(currentPage, baseUrl) { mutableStateOf<ByteArray?>(null) }
+    var isLoading by remember(currentPage, baseUrl) { mutableStateOf(true) }
 
-    // Убрал remember - теперь width пересчитывается при каждом изменении scale
-    val width = fullWidth * 0.95f * scale
-
-    LaunchedEffect(currentPage) {
+    LaunchedEffect(currentPage, baseUrl) {
         isLoading = true
         try {
             val result = withContext(Dispatchers.Default) {
@@ -62,10 +57,9 @@ actual fun PdfContent(
 
     Box(
         modifier = modifier
-            .width(width)
-            .height(Dp.Unspecified)
-            .pointerInput(Unit) {
-                // Примитивный зум: даблклик – увеличить, лонгтап – уменьшить
+            .clipToBounds()          // чтобы страница не вылазила и не перекрывала другие
+            .pointerInput(scale) {
+                // простые жесты зума
                 detectTapGestures(
                     onDoubleTap = {
                         val newScale = (scale + 0.25f).coerceAtMost(3f)
@@ -83,18 +77,20 @@ actual fun PdfContent(
                 color = AppTheme.PrimaryGreen,
                 modifier = Modifier.align(Alignment.Center)
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            return@Box
-        }
-
-        imageContent?.let {
-            ImageFromBytes(
-                imageBytes = it,
-                contentScale = ContentScale.Fit,
-                modifier = Modifier.align(Alignment.TopCenter)
-                    .width(width)
-                    .height(Dp.Unspecified)
-            )
+        } else {
+            imageContent?.let { bytes ->
+                ImageFromBytes(
+                    imageBytes = bytes,
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .width(pageBaseWidth)
+                        .graphicsLayer(
+                            scaleX = scale,
+                            scaleY = scale
+                        )
+                )
+            }
         }
     }
 }
