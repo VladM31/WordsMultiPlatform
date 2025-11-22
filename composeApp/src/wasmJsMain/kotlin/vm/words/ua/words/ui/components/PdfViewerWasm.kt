@@ -21,7 +21,6 @@ import vm.words.ua.core.ui.components.ImageFromBytes
 import vm.words.ua.core.utils.appWidthDp
 import vm.words.ua.di.rememberInstance
 
-
 @Composable
 actual fun PdfContent(
     pdfData: ByteArray,
@@ -35,22 +34,15 @@ actual fun PdfContent(
     onOffsetChange: (Float, Float) -> Unit,
     modifier: Modifier
 ) {
-    val baseUrl = remember {
-        pdfData.decodeToString()
-    }
-
+    val baseUrl = remember { pdfData.decodeToString() }
     val renderClient = rememberInstance<RenderedPdfClient>()
     val fullWidth = appWidthDp()
 
-    var imageContent by remember(currentPage) {
-        mutableStateOf<ByteArray?>(null)
-    }
-
+    var imageContent by remember(currentPage) { mutableStateOf<ByteArray?>(null) }
     var isLoading by remember(currentPage) { mutableStateOf(true) }
 
-    val width = remember(scale, fullWidth) {
-        fullWidth * 0.95f * scale
-    }
+    // Убрал remember - теперь width пересчитывается при каждом изменении scale
+    val width = fullWidth * 0.95f * scale
 
     LaunchedEffect(currentPage) {
         isLoading = true
@@ -85,13 +77,14 @@ actual fun PdfContent(
                 )
             }
     ) {
-
         if (isLoading) {
-            CircularProgressIndicator(color = AppTheme.PrimaryGreen, modifier = Modifier.align(Alignment.Center))
+            CircularProgressIndicator(
+                color = AppTheme.PrimaryGreen,
+                modifier = Modifier.align(Alignment.Center)
+            )
             Spacer(modifier = Modifier.height(8.dp))
             return@Box
         }
-
 
         imageContent?.let {
             ImageFromBytes(
@@ -102,7 +95,5 @@ actual fun PdfContent(
                 modifier = Modifier.align(Alignment.TopCenter)
             )
         }
-
-
     }
 }
