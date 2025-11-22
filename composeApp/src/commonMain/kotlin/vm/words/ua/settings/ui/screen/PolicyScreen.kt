@@ -3,13 +3,10 @@ package vm.words.ua.settings.ui.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
+import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.ErrorMessageBox
@@ -18,6 +15,8 @@ import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.settings.ui.vm.PolicyViewModel
 import vm.words.ua.words.ui.components.PdfViewer
+import wordsmultiplatform.composeapp.generated.resources.Res
+import wordsmultiplatform.composeapp.generated.resources.download
 
 @Composable
 fun PolicyScreen(
@@ -26,6 +25,7 @@ fun PolicyScreen(
 ) {
     val state by viewModel.state.collectAsState()
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    val uriHandler = LocalUriHandler.current
 
     Column(
         modifier = Modifier
@@ -35,7 +35,12 @@ fun PolicyScreen(
         AppToolBar(
             title = "Privacy Policy",
             showBackButton = true,
-            onBackClick = { navController.popBackStack() }
+            onBackClick = { navController.popBackStack() },
+            additionalButtonImage = painterResource(Res.drawable.download),
+            showAdditionalButton = true,
+            onAdditionalClick = {
+                uriHandler.openUri(state.link)
+            }
         )
 
         state.content?.bytes?.let { bytes ->

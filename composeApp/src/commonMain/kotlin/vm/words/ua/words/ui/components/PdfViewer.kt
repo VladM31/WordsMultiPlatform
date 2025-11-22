@@ -69,7 +69,7 @@ fun PdfViewer(
             IOSPdfViewer(pdfData, onError)
             return
         }
-        // Show initial loader until we know page count. When PdfContent reports pages, totalPages gets updated.
+
         if (totalPages == 0) {
             EmptyPageViewer(pdfData, onError) { reported ->
                 if (reported > 0 && totalPages == 0) {
@@ -104,7 +104,7 @@ private fun BoxScope.ViewMenu(
     currentPage: Int,
     onScaleChange: (Float) -> Unit,
 ) {
-    // Previous logic mistakenly returned when totalPages > 0, preventing menu display.
+
     if (totalPages == 0) {
         return
     }
@@ -200,7 +200,7 @@ private fun PagesViewer(
                 Spacer(Modifier.height(space))
             }
             Box(
-                modifier = modifier // не даём изображению вылезти за пределы Box
+                modifier = modifier
             ) {
                 PdfContent(
                     pdfData = pdfData,

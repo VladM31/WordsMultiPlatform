@@ -20,7 +20,11 @@ open class PdfViewerViewModel(
     private val linkProvider: () -> String
 ) : ViewModel() {
 
-    protected val mutableState = MutableStateFlow(PdfViewState())
+    protected val mutableState = MutableStateFlow(
+        PdfViewState(
+            link = linkProvider(),
+        )
+    )
     val state: StateFlow<PdfViewState> = mutableState
 
     init {
