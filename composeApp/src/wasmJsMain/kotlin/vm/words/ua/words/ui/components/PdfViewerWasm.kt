@@ -3,8 +3,8 @@ package vm.words.ua.words.ui.components
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -62,7 +62,8 @@ actual fun PdfContent(
 
     Box(
         modifier = modifier
-            .fillMaxSize()
+            .width(width)
+            .height(Dp.Unspecified)
             .pointerInput(Unit) {
                 // Примитивный зум: даблклик – увеличить, лонгтап – уменьшить
                 detectTapGestures(
@@ -90,9 +91,9 @@ actual fun PdfContent(
             ImageFromBytes(
                 imageBytes = it,
                 contentScale = ContentScale.Fit,
-                width = width,
-                height = Dp.Unspecified,
                 modifier = Modifier.align(Alignment.TopCenter)
+                    .width(width)
+                    .height(Dp.Unspecified)
             )
         }
     }
