@@ -25,7 +25,8 @@ class KrotRenderedPdfClient(
         link: String,
         pageIndex: Int
     ): RenderedPdfPageRespond {
-        val url = link.replace(PAGE_INDEX_NAME, pageIndex.toString())
+
+        val url = "$link$pageIndex/"
         return getRespond(url)
     }
 

@@ -2,11 +2,16 @@ package vm.words.ua.settings.ui.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.ktor.utils.io.charsets.*
+import io.ktor.utils.io.core.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import vm.words.ua.core.domain.managers.ByteContentManager
+import vm.words.ua.core.domain.models.ByteContent
+import vm.words.ua.core.platform.currentPlatform
+import vm.words.ua.core.platform.isWeb
 import vm.words.ua.core.ui.models.ErrorMessage
 import vm.words.ua.settings.ui.states.PdfViewState
 
@@ -25,6 +30,12 @@ open class PdfViewerViewModel(
     }
 
     private suspend fun loadPdf() {
+        if (currentPlatform().isWeb) {
+            mutableState.value = mutableState.value.copy(
+                content = ByteContent(linkProvider.invoke().toByteArray(Charsets.UTF_8)),
+            )
+            return
+        }
         try {
             val content = byteContentManager.downloadByteContent(
                 url = linkProvider.invoke(),
