@@ -16,7 +16,6 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.platform.AppPlatform
 import vm.words.ua.core.platform.currentPlatform
-import vm.words.ua.core.utils.getWidthDeviceFormat
 
 /**
  * Multiplatform PDF Viewer with pagination and zoom support
@@ -168,7 +167,7 @@ private fun PagesViewer(
 ) {
 
     val basePageHeight = 600.dp
-    val deviceFormat = getWidthDeviceFormat()
+    val isWasm = currentPlatform() == AppPlatform.WASM
 
     LazyColumn(
         state = listState,
@@ -177,17 +176,31 @@ private fun PagesViewer(
         contentPadding = PaddingValues(16.dp)
     ) {
         items(totalPages, key = { it }) { pageIndex ->
-            val resultScale = if (scale > 1 && deviceFormat.isPhone.not()) scale * 1.6f else scale
+            val space = if (scale > 1) 10.dp * 1.4f else 4.dp
 
-            val pageHeight = remember(resultScale) {
-                (basePageHeight * scale).coerceIn(300.dp, 2400.dp)
+            val pageHeight = remember(scale) {
+                if (isWasm) {
+                    (basePageHeight * scale).coerceIn(300.dp, 2400.dp)
+                } else {
+                    basePageHeight
+                }
+
             }
 
+            var modifier = Modifier
+                .fillMaxWidth()
+                .height(pageHeight)
+
+            if (isWasm) {
+                modifier = modifier
+                    .clipToBounds()
+            }
+
+            if (isWasm) {
+                Spacer(Modifier.height(space))
+            }
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(pageHeight)
-                    .clipToBounds() // не даём изображению вылезти за пределы Box
+                modifier = modifier // не даём изображению вылезти за пределы Box
             ) {
                 PdfContent(
                     pdfData = pdfData,
@@ -201,6 +214,9 @@ private fun PagesViewer(
                     onOffsetChange = { _, _ -> },
                     modifier = Modifier.fillMaxSize()
                 )
+            }
+            if (isWasm) {
+                Spacer(Modifier.height(space))
             }
         }
     }
