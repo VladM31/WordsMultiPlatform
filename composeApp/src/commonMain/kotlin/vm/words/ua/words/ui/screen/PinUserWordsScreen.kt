@@ -18,16 +18,12 @@ import androidx.compose.ui.unit.dp
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.PickerResultLauncher
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
-import io.github.vinceglb.filekit.name
-import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.platform.currentPlatform
 import vm.words.ua.core.platform.isWeb
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.PrimaryButton
 import vm.words.ua.core.utils.getFontSize
-import vm.words.ua.core.utils.getIconButtonSize
-import vm.words.ua.core.utils.getIconSize
 import vm.words.ua.core.utils.isNotPhoneFormat
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.Screen
@@ -35,11 +31,9 @@ import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.words.ui.actions.PinUserWordsAction
 import vm.words.ua.words.ui.bundles.PinUserWordsBundle
 import vm.words.ua.words.ui.components.SelectImageMenu
+import vm.words.ua.words.ui.components.SelectSoundMenu
 import vm.words.ua.words.ui.states.PinUserWordsState
 import vm.words.ua.words.ui.vms.PinUserWordsViewModel
-import wordsmultiplatform.composeapp.generated.resources.Res
-import wordsmultiplatform.composeapp.generated.resources.delete
-import wordsmultiplatform.composeapp.generated.resources.sound
 
 @Composable
 fun PinUserWordsScreen(
@@ -223,91 +217,21 @@ private fun SoundMenu(
     soundPicker: PickerResultLauncher,
     viewModel: PinUserWordsViewModel
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(
-            text = "Custom Sound",
-            color = AppTheme.PrimaryColor,
-            fontSize = getFontSize()
-        )
+    val underText = state.currentWord?.originalImage?.let {
+        "Original sound available"
+    }
 
-        state.sound?.let {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(10.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Button(
-                    onClick = { viewModel.sent(PinUserWordsAction.PlaySound) },
-                    enabled = state.isPlay.not(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if (state.isPlay) AppTheme.PrimaryGray else AppTheme.PrimaryColor,
-                    ),
-                    modifier = Modifier
-                        .size(getIconButtonSize() * 1.5f)
-                ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.sound),
-                        contentDescription = "Play sound",
-                        tint = AppTheme.PrimaryBack,
-                        modifier = Modifier.size(getIconSize() * 1.5f)
-                    )
-                }
-            }
+    SelectSoundMenu(
+        sound = state.sound,
+        soundPicker = soundPicker,
+        title = "Custom Sound",
+        underText = underText,
+        isPlay = state.isPlay,
+        onPlayClick = {
+            viewModel.sent(PinUserWordsAction.PlaySound)
         }
-
-
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-
-            ) {
-            OutlinedButton(
-                onClick = { soundPicker.launch() },
-                modifier = Modifier.weight(3f),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = AppTheme.PrimaryGreen
-                )
-            ) {
-                Text(
-                    text = if (state.sound != null) "Change Sound" else "Select Sound",
-                    fontSize = getFontSize()
-                )
-            }
-            if (state.sound == null) {
-                return@Row
-            }
-            IconButton(
-                onClick = {
-                    viewModel.sent(PinUserWordsAction.SetSound(null))
-                },
-                modifier = Modifier
-                    .size(getIconSize())
-                    .weight(1f)
-            ) {
-                Icon(
-                    painter = painterResource(Res.drawable.delete),
-                    contentDescription = "Remove",
-                    tint = AppTheme.PrimaryGreen,
-                    modifier = Modifier.size(getIconSize())
-                )
-            }
-        }
-
-        state.sound?.let { file ->
-            Text(
-                text = "Selected: ${file.name}",
-                color = AppTheme.PrimaryGreen,
-                fontSize = getFontSize() * 0.85f,
-                lineHeight = getFontSize()
-            )
-        }
-
-        state.currentWord?.originalSound?.let {
-            Text(
-                text = "Original sound available",
-                color = AppTheme.PrimaryColor.copy(alpha = 0.6f),
-                fontSize = getFontSize() * 0.85f,
-                lineHeight = getFontSize()
-            )
-        }
+    ) {
+        viewModel.sent(PinUserWordsAction.SetSound(null))
     }
 }
 
