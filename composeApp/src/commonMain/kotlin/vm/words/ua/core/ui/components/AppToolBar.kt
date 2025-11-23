@@ -1,14 +1,7 @@
 package vm.words.ua.core.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -24,10 +17,12 @@ import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.utils.getScaleFactor
+import vm.words.ua.hints.ui.utils.ViewHintStep
+import vm.words.ua.hints.ui.utils.viewHint
+import vm.words.ua.navigation.SimpleNavController
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.arrow
 import wordsmultiplatform.composeapp.generated.resources.setting
-import vm.words.ua.navigation.SimpleNavController
 
 @Composable
 fun AppToolBar(
@@ -38,8 +33,12 @@ fun AppToolBar(
     onAdditionalClick: (() -> Unit)? = null,
     showBackButton: Boolean = true,
     showAdditionalButton: Boolean = false,
-    additionalButtonImage: Painter = painterResource(Res.drawable.setting)
+    additionalButtonImage: Painter = painterResource(Res.drawable.setting),
+    currentStepHint: ViewHintStep? = null,
+    additionalButtonStepHint: ViewHintStep? = null,
 ) {
+
+
     BoxWithConstraints(
         modifier = modifier
             .fillMaxWidth()
@@ -54,6 +53,7 @@ fun AppToolBar(
 
         val iconSize = (40 * scaleFactor).dp
         val buttonSize = iconSize * 1.2f
+        val additionalButtonModifier = Modifier.size(iconSize)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -72,7 +72,7 @@ fun AppToolBar(
                     showBackButton = showBackButton,
                     buttonSize = buttonSize,
                     iconSize = iconSize,
-                    backButtonImage=  backButtonImage
+                    backButtonImage = backButtonImage
                 )
 
                 // Title
@@ -94,7 +94,12 @@ fun AppToolBar(
                     showAdditionalButton = showAdditionalButton,
                     additionalButtonImage = additionalButtonImage,
                     buttonSize = buttonSize,
-                    iconSize = iconSize
+                    modifier = additionalButtonStepHint?.let {
+                        additionalButtonModifier.viewHint(
+                            it,
+                            currentStepHint
+                        )
+                    } ?: additionalButtonModifier
                 )
             }
         }
@@ -108,8 +113,8 @@ private fun BackButton(
     backButtonImage: Painter,
     buttonSize: Dp,
     iconSize: Dp
-){
-    if (showBackButton.not()){
+) {
+    if (showBackButton.not()) {
         Box(modifier = Modifier.size(buttonSize))
         return
     }
@@ -133,9 +138,9 @@ private fun AdditionalButton(
     showAdditionalButton: Boolean = false,
     additionalButtonImage: Painter = painterResource(Res.drawable.setting),
     buttonSize: Dp,
-    iconSize: Dp
-){
-    if (showAdditionalButton.not()){
+    modifier: Modifier
+) {
+    if (showAdditionalButton.not()) {
         Box(modifier = Modifier.size(buttonSize))
         return
     }
@@ -148,7 +153,7 @@ private fun AdditionalButton(
             painter = additionalButtonImage,
             contentDescription = "More",
             tint = AppTheme.PrimaryColor,
-            modifier = Modifier.size(iconSize)
+            modifier = modifier
         )
     }
 }
