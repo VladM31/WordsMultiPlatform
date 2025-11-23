@@ -5,4 +5,8 @@ import vm.words.ua.core.domain.managers.ByteContentManager
 
 class InstructionViewModel(
     byteContentManager: ByteContentManager
-) : PdfViewerViewModel(byteContentManager, { AppRemoteConfig.instruction.link })
+) : PdfViewerViewModel(
+    byteContentManager = byteContentManager,
+    linkProvider = { AppRemoteConfig.instruction.link },
+    defaultLinkProvider = { AppRemoteConfig.defaultInstruction.link }
+)

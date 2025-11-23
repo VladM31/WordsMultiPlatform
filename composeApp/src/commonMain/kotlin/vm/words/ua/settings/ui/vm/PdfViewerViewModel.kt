@@ -17,7 +17,8 @@ import vm.words.ua.settings.ui.states.PdfViewState
 
 open class PdfViewerViewModel(
     private val byteContentManager: ByteContentManager,
-    private val linkProvider: () -> String
+    private val linkProvider: () -> String,
+    private val defaultLinkProvider: () -> String,
 ) : ViewModel() {
 
     protected val mutableState = MutableStateFlow(
@@ -37,6 +38,7 @@ open class PdfViewerViewModel(
         if (currentPlatform().isWeb) {
             mutableState.value = mutableState.value.copy(
                 content = ByteContent(linkProvider.invoke().toByteArray(Charsets.UTF_8)),
+                link = defaultLinkProvider()
             )
             return
         }

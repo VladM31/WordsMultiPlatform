@@ -35,6 +35,11 @@ object AppRemoteConfig {
             return configData?.instructions?.find { it.type == type } ?: DocItem()
         }
 
+    val defaultInstruction: DocItem
+        get() {
+            return configData?.instructions?.find { it.type == DocItemType.DEFAULT_TYPE } ?: DocItem()
+        }
+
     val policy: DocItem
         get() {
             val type = if (currentPlatform().isWeb) {
@@ -43,6 +48,11 @@ object AppRemoteConfig {
                 DocItemType.DEFAULT_TYPE
             }
             return configData?.policies?.find { it.type == type } ?: DocItem()
+        }
+
+    val defaultPolicy: DocItem
+        get() {
+            return configData?.policies?.find { it.type == DocItemType.DEFAULT_TYPE } ?: DocItem()
         }
 
     val telegramBotLink: String

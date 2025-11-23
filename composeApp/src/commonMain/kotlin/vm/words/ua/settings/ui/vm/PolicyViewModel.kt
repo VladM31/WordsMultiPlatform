@@ -5,4 +5,8 @@ import vm.words.ua.core.domain.managers.ByteContentManager
 
 class PolicyViewModel(
     byteContentManager: ByteContentManager
-) : PdfViewerViewModel(byteContentManager, { AppRemoteConfig.policy.link })
+) : PdfViewerViewModel(
+    byteContentManager = byteContentManager,
+    linkProvider = { AppRemoteConfig.policy.link },
+    defaultLinkProvider = { AppRemoteConfig.defaultPolicy.link }
+)
