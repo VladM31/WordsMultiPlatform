@@ -76,11 +76,11 @@ private object PdfDesktopCache {
         val entry = cache[key] ?: return
         entry.activeRenders--
         println("DEBUG Cache: endRender called, activeRenders=${entry.activeRenders}, refCount=${entry.refCount}, isClosing=${entry.isClosing}")
-
+        
         // Check if we should cleanup: last render finished and refCount is 0
         if (entry.activeRenders <= 0 && entry.refCount <= 0) {
             entry.isClosing = true
-            try {
+            try { 
                 entry.document.close()
                 println("DEBUG Cache: Document closed after last render finished")
             } catch (e: Exception) {

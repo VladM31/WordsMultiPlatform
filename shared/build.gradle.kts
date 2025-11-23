@@ -21,7 +21,7 @@ kotlin {
     }
     
     jvm("desktop")
-
+    
     js {
         browser()
     }
