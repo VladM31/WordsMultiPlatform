@@ -56,9 +56,9 @@ class DefaultAddWordVm(
 
         when (action) {
             is DefaultAddWordAction.Add -> handleAdd()
-            is DefaultAddWordAction.ChangeLanguage -> setLanguage(action)
-            is DefaultAddWordAction.ChangeTranslationLanguage -> setTranslationLanguage(action)
-            is DefaultAddWordAction.SetWord -> setWord(action)
+            is DefaultAddWordAction.SetOriginalLang -> setLanguage(action)
+            is DefaultAddWordAction.SetTranslationLanguage -> setTranslationLanguage(action)
+            is DefaultAddWordAction.SetOriginalWord -> setWord(action)
             is DefaultAddWordAction.SetTranslation -> setTranslation(action)
             is DefaultAddWordAction.SetDescription -> setDescription(action)
             is DefaultAddWordAction.SetCategory -> setCategory(action)
@@ -71,7 +71,7 @@ class DefaultAddWordVm(
     }
 
     private fun DefaultAddWordState.toInsertWord() = SaveWord(
-        word = word,
+        word = originalWord,
         language = language,
         translationLanguage = translationLanguage,
         translation = translation,
@@ -108,16 +108,16 @@ class DefaultAddWordVm(
         }
     }
 
-    private fun setLanguage(action: DefaultAddWordAction.ChangeLanguage) {
+    private fun setLanguage(action: DefaultAddWordAction.SetOriginalLang) {
         mutableState.value = mutableState.value.copy(language = action.language)
     }
 
-    private fun setTranslationLanguage(action: DefaultAddWordAction.ChangeTranslationLanguage) {
+    private fun setTranslationLanguage(action: DefaultAddWordAction.SetTranslationLanguage) {
         mutableState.value = mutableState.value.copy(translationLanguage = action.language)
     }
 
-    private fun setWord(action: DefaultAddWordAction.SetWord) {
-        mutableState.value = mutableState.value.copy(word = action.word)
+    private fun setWord(action: DefaultAddWordAction.SetOriginalWord) {
+        mutableState.value = mutableState.value.copy(originalWord = action.word)
     }
 
     private fun setTranslation(action: DefaultAddWordAction.SetTranslation) {
@@ -154,7 +154,7 @@ class DefaultAddWordVm(
             return
         }
         mutableState.value = state.value.copy(
-            word = action.word.original,
+            originalWord = action.word.original,
             language = action.word.lang,
             translationLanguage = action.word.translateLang,
             translation = action.word.translate,

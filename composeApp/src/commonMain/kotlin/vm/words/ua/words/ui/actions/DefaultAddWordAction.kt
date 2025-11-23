@@ -8,10 +8,10 @@ import vm.words.ua.words.domain.models.Word
 sealed interface DefaultAddWordAction {
     data object Add : DefaultAddWordAction
 
-    data class ChangeLanguage(val language: Language) : DefaultAddWordAction
-    data class ChangeTranslationLanguage(val language: Language) : DefaultAddWordAction
+    data class SetOriginalLang(val language: Language) : DefaultAddWordAction
+    data class SetTranslationLanguage(val language: Language) : DefaultAddWordAction
 
-    data class SetWord(val word: String) : DefaultAddWordAction
+    data class SetOriginalWord(val word: String) : DefaultAddWordAction
     data class SetTranslation(val translation: String) : DefaultAddWordAction
     data class SetDescription(val description: String) : DefaultAddWordAction
     data class SetCategory(val category: String) : DefaultAddWordAction

@@ -8,7 +8,7 @@ import vm.words.ua.core.ui.states.EndetableState
 import vm.words.ua.core.ui.states.ErrorableState
 
 data class DefaultAddWordState(
-    val word: String = "",
+    val originalWord: String = "",
     val language: Language = Language.ENGLISH,
     val translationLanguage: Language = Language.ENGLISH,
     val translation: String = "",

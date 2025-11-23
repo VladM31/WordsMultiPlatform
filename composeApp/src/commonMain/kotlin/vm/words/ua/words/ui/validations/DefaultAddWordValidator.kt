@@ -12,7 +12,7 @@ val defaultAddWordValidator: (StateFlow<DefaultAddWordState>) -> Validator<Defau
 
 
         add(
-            DefaultAddWordState::word,
+            DefaultAddWordState::originalWord,
             ValidationScheme.stringSchema("Word")
                 .notBlank()
                 .length(min = 2, max = 255)

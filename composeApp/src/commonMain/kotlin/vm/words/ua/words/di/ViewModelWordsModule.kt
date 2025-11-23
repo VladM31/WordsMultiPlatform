@@ -1,15 +1,7 @@
 package vm.words.ua.words.di
 
-import org.kodein.di.DI
-import org.kodein.di.bind
-import org.kodein.di.factory
-import org.kodein.di.instance
-import vm.words.ua.words.ui.vms.PinUserWordsViewModel
-import vm.words.ua.words.ui.vms.UserWordFilterVm
-import vm.words.ua.words.ui.vms.UserWordsViewModel
-import vm.words.ua.words.ui.vms.WordDetailsViewModel
-import vm.words.ua.words.ui.vms.WordFilterViewModel
-import vm.words.ua.words.ui.vms.WordsViewModel
+import org.kodein.di.*
+import vm.words.ua.words.ui.vms.*
 
 internal val viewModelWordsModule = DI.Module("viewModelWordsModule") {
     bind<WordDetailsViewModel>() with factory {
@@ -49,6 +41,13 @@ internal val viewModelWordsModule = DI.Module("viewModelWordsModule") {
             subscribeCacheManager = instance(),
             byteContentManager = instance(),
             soundManager = instance()
+        )
+    }
+
+    bind<DefaultAddWordVm>() with singleton {
+        DefaultAddWordVm(
+            wordManager = instance(),
+            subscribeCacheManager = instance()
         )
     }
 }

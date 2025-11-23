@@ -3,12 +3,7 @@ package vm.words.ua.navigation.providers
 import androidx.compose.runtime.Composable
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.ScreenProvider
-import vm.words.ua.words.ui.screen.PinUserWordsScreen
-import vm.words.ua.words.ui.screen.UserWordFilterScreen
-import vm.words.ua.words.ui.screen.UserWordsScreen
-import vm.words.ua.words.ui.screen.WordDetailsScreen
-import vm.words.ua.words.ui.screen.WordFilterScreen
-import vm.words.ua.words.ui.screen.WordsScreen
+import vm.words.ua.words.ui.screen.*
 
 class WordsScreenProvider : ScreenProvider {
     @Composable
@@ -39,6 +34,10 @@ class WordsScreenProvider : ScreenProvider {
 
             Screen.PinUserWords.route -> {
                 PinUserWordsScreen(navController = navController)
+            }
+
+            Screen.DefaultAddWord.route -> {
+                DefaultAddWordScreen(navController = navController)
             }
 
             else -> {

@@ -24,7 +24,7 @@ fun HomeScreen(
     val buttons = listOf(
         GridButtonItem("Words") { navController.navigate(WordList) },
         GridButtonItem("My Words") { navController.navigate(Screen.UserWords) },
-//        GridButtonItem("Add Word") { navController.navigate(WordList) },
+        GridButtonItem("Add Word") { navController.navigate(Screen.DefaultAddWord) },
         GridButtonItem("Instruction") {
             navController.navigate(Screen.Instruction)
         }
