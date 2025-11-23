@@ -1,28 +1,12 @@
 package vm.words.ua.words.ui.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -42,11 +26,7 @@ import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.ImageFromPlatformFile
 import vm.words.ua.core.ui.components.PrimaryButton
-import vm.words.ua.core.utils.getFontSize
-import vm.words.ua.core.utils.getIconButtonSize
-import vm.words.ua.core.utils.getIconSize
-import vm.words.ua.core.utils.getImageSize
-import vm.words.ua.core.utils.isNotPhoneFormat
+import vm.words.ua.core.utils.*
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
@@ -68,17 +48,7 @@ fun PinUserWordsScreen(
 
     val bundle = navController.getParamOrThrow<PinUserWordsBundle>()
 
-    // Initialize with words from bundle
-    LaunchedEffect(Unit) {
-        viewModel.sent(PinUserWordsAction.Load(bundle.words))
-    }
 
-    // Navigate back when pinning is complete
-    LaunchedEffect(state.isEnd) {
-        if (state.isEnd) {
-            navController.navigateAndClear(Screen.UserWords, Screen.Home)
-        }
-    }
 
     // File pickers for current word
     val imagePicker = rememberFilePickerLauncher(
@@ -93,7 +63,17 @@ fun PinUserWordsScreen(
 
     val columns = if (isNotPhoneFormat()) 2 else 1
 
+    // Initialize with words from bundle
+    LaunchedEffect(Unit) {
+        viewModel.sent(PinUserWordsAction.Load(bundle.words))
+    }
 
+    // Navigate back when pinning is complete
+    LaunchedEffect(state.isEnd) {
+        if (state.isEnd) {
+            navController.navigateAndClear(Screen.UserWords, Screen.Home)
+        }
+    }
 
     Column(
         modifier = modifier
