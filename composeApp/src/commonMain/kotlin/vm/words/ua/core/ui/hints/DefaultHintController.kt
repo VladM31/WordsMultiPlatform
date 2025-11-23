@@ -2,8 +2,12 @@ package vm.words.ua.core.ui.hints
 
 import androidx.compose.runtime.*
 import vm.words.ua.hints.ui.utils.ViewHintStep
+import vm.words.ua.utils.storage.AppStorage
 import vm.words.ua.utils.storage.managers.KeyValueStorage
 
+private val STORE = AppStorage.create(
+    name = "hint_controller"
+)
 
 data class DefaultHintController(
     val currentStep: ViewHintStep,
@@ -12,7 +16,7 @@ data class DefaultHintController(
 
 @Composable
 fun createDefaultHintController(
-    storage: KeyValueStorage,
+    storage: KeyValueStorage = STORE,
     key: String,
     lastIndex: Int,
     undefinedStep: ViewHintStep,

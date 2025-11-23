@@ -4,13 +4,9 @@ import androidx.compose.runtime.Composable
 import vm.words.ua.core.ui.hints.createDefaultHintController
 import vm.words.ua.hints.domain.models.HintPosition
 import vm.words.ua.hints.ui.utils.ViewHintStep
-import vm.words.ua.utils.storage.AppStorage
 
 private const val LAST_INDEX = 7
-private const val VALUE_KEY = "value"
-private val STORE = AppStorage.create(
-    name = "home_screen_hint_controller_v1"
-)
+private const val VALUE_KEY = "home_screen_v1"
 
 enum class HomeScreenHintStep(
     override val text: String,
@@ -60,7 +56,6 @@ data class HomeScreenHintController(
 @Composable
 fun createHomeScreenHintController(): HomeScreenHintController {
     val defaultController = createDefaultHintController(
-        storage = STORE,
         key = VALUE_KEY,
         lastIndex = LAST_INDEX,
         undefinedStep = HomeScreenHintStep.UNDEFINED,
