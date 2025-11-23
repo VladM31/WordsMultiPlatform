@@ -75,9 +75,9 @@ fun SimpleHintHost(
                 text = hint.text,
                 modifier = Modifier.align(
                     when (hint.position) {
-                        HintPosition.Top -> Alignment.TopCenter
-                        HintPosition.Center -> Alignment.Center
-                        HintPosition.Bottom -> Alignment.BottomCenter
+                        HintPosition.TOP -> Alignment.TopCenter
+                        HintPosition.CENTER -> Alignment.Center
+                        HintPosition.BOTTOM -> Alignment.BottomCenter
                     }
                 )
             )

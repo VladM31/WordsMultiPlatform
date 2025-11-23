@@ -20,9 +20,9 @@ fun HintBubble(
 ) {
     Box(
         modifier = modifier
-            .padding(48.dp)
+            .padding(24.dp)
             .background(AppTheme.Black.copy(alpha = 0.6f), shape = RoundedCornerShape(8.dp))
-            .padding(horizontal = 32.dp, vertical = 24.dp),
+            .padding(horizontal = 16.dp, vertical = 12.dp),
     ) {
         BasicText(
             text = text,

@@ -8,29 +8,29 @@ import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import vm.words.ua.hints.domain.models.HintPosition
 
-interface SimpleHintArgs {
+interface ViewHintStep {
     val text: String
     val position: HintPosition
 }
 
 fun Modifier.viewHint(
-    args: SimpleHintArgs,
-    current: SimpleHintArgs,
+    step: ViewHintStep,
+    current: ViewHintStep?,
 ): Modifier {
     return viewHint(
-        text = args.text,
-        position = args.position,
-        visible = current == args,
+        text = step.text,
+        position = step.position,
+        visible = current == step,
     )
 }
 
 fun Modifier.viewHint(
-    args: SimpleHintArgs,
+    step: ViewHintStep,
     visible: Boolean,
 ): Modifier {
     return viewHint(
-        text = args.text,
-        position = args.position,
+        text = step.text,
+        position = step.position,
         visible = visible,
     )
 }

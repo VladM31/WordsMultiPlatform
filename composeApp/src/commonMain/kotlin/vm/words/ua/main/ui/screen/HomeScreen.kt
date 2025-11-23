@@ -11,6 +11,10 @@ import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.BottomNavBar
 import vm.words.ua.core.ui.components.ButtonsGrid
 import vm.words.ua.core.ui.components.GridButtonItem
+import vm.words.ua.hints.ui.components.SimpleHintHost
+import vm.words.ua.hints.ui.utils.viewHint
+import vm.words.ua.main.ui.hints.HomeScreenHintStep
+import vm.words.ua.main.ui.hints.createHomeScreenHintController
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.Screen.WordList
 import vm.words.ua.navigation.SimpleNavController
@@ -20,33 +24,68 @@ fun HomeScreen(
     navController: SimpleNavController,
     modifier: Modifier = Modifier
 ) {
+    val hintController = createHomeScreenHintController()
 
     val buttons = listOf(
-        GridButtonItem("Words") { navController.navigate(WordList) },
-        GridButtonItem("My Words") { navController.navigate(Screen.UserWords) },
-        GridButtonItem("Add Word") { navController.navigate(Screen.DefaultAddWord) },
-        GridButtonItem("Instruction") {
+        GridButtonItem(
+            text = "Words",
+            modifier = Modifier.viewHint(
+                step = HomeScreenHintStep.WORDS_BUTTON,
+                current = hintController.currentStep
+            )
+        ) { navController.navigate(WordList) },
+        GridButtonItem(
+            text = "My Words",
+            modifier = Modifier.viewHint(
+                step = HomeScreenHintStep.MY_WORDS_BUTTON,
+                current = hintController.currentStep
+            )
+        ) { navController.navigate(Screen.UserWords) },
+        GridButtonItem(
+            text = "Add Word",
+            modifier = Modifier.viewHint(
+                step = HomeScreenHintStep.ADD_WORD_BUTTON,
+                current = hintController.currentStep
+            )
+        ) { navController.navigate(Screen.DefaultAddWord) },
+        GridButtonItem(
+            text = "Instruction",
+            modifier = Modifier.viewHint(
+                step = HomeScreenHintStep.INSTRUCTION_BUTTON,
+                current = hintController.currentStep
+            )
+        ) {
             navController.navigate(Screen.Instruction)
         }
 
     )
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(AppTheme.PrimaryBack)
+    SimpleHintHost(
+        onNext = hintController.doNext,
     ) {
-        AppToolBar(title = "Menu", showBackButton = false)
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .background(AppTheme.PrimaryBack)
+        ) {
+            AppToolBar(title = "", showBackButton = false)
 
-        ButtonsGrid(
-            items = buttons,
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-        )
+            ButtonsGrid(
+                items = buttons,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            )
 
-        BottomNavBar(
-            currentRoute = Screen.Home,
-            onNavigate = { route -> navController.navigateAndClear(route) })
+            BottomNavBar(
+                currentRoute = Screen.Home,
+                playListHintStep = HomeScreenHintStep.PLAY_LIST_BUTTON,
+                homeHintStep = HomeScreenHintStep.HOME_BUTTON,
+                settingHintStep = HomeScreenHintStep.SETTINGS_BUTTON,
+                currentHintStep = hintController.currentStep,
+            ) { route ->
+                navController.navigateAndClear(route)
+            }
+        }
     }
 }

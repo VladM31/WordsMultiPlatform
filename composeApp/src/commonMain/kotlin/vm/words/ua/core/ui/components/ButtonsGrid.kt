@@ -87,7 +87,7 @@ fun ButtonsGrid(
                         Button(
                             onClick = item.onClick,
                             colors = buttonColors,
-                            modifier = Modifier
+                            modifier = item.modifier
                                 .width(itemWidth)
                                 .heightIn(min = minButtonHeight)
                         ) {
