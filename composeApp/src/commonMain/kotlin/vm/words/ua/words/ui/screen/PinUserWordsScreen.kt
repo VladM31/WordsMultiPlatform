@@ -24,14 +24,17 @@ import vm.words.ua.core.platform.currentPlatform
 import vm.words.ua.core.platform.isWeb
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
-import vm.words.ua.core.ui.components.ImageFromPlatformFile
 import vm.words.ua.core.ui.components.PrimaryButton
-import vm.words.ua.core.utils.*
+import vm.words.ua.core.utils.getFontSize
+import vm.words.ua.core.utils.getIconButtonSize
+import vm.words.ua.core.utils.getIconSize
+import vm.words.ua.core.utils.isNotPhoneFormat
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.words.ui.actions.PinUserWordsAction
 import vm.words.ua.words.ui.bundles.PinUserWordsBundle
+import vm.words.ua.words.ui.components.SelectImageMenu
 import vm.words.ua.words.ui.states.PinUserWordsState
 import vm.words.ua.words.ui.vms.PinUserWordsViewModel
 import wordsmultiplatform.composeapp.generated.resources.Res
@@ -200,78 +203,17 @@ private fun ImageMenu(
     viewModel: PinUserWordsViewModel
 ) {
 
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(
-            text = "Custom Image",
-            color = AppTheme.PrimaryColor,
-            fontSize = getFontSize()
-        )
+    val underText = state.currentWord?.originalImage?.let {
+        "Original image available"
+    }
 
-        state.image?.let {
-            ImageFromPlatformFile(
-                file = it,
-                modifier = Modifier
-                    .heightIn(max = getImageSize()) // apply height constraint first
-                    .fillMaxWidth()
-                    .aspectRatio(1f, matchHeightConstraintsFirst = true)
-            )
-        }
-
-
-
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-
-            ) {
-            OutlinedButton(
-                onClick = { imagePicker.launch() },
-                modifier = Modifier.weight(3f),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = AppTheme.PrimaryGreen
-                )
-            ) {
-                Text(
-                    text = if (state.image != null) "Change Image" else "Select Image",
-                    fontSize = getFontSize()
-                )
-            }
-            if (state.image == null) {
-                return@Row
-            }
-            IconButton(
-                onClick = {
-                    viewModel.sent(PinUserWordsAction.SetImage(null))
-                },
-                modifier = Modifier
-                    .size(getIconSize())
-                    .weight(1f)
-            ) {
-                Icon(
-                    painter = painterResource(Res.drawable.delete),
-                    contentDescription = "Remove",
-                    tint = AppTheme.PrimaryGreen,
-                    modifier = Modifier.size(getIconSize())
-                )
-            }
-        }
-
-        state.image?.let { file ->
-            Text(
-                text = "Selected: ${file.name}",
-                color = AppTheme.PrimaryGreen,
-                fontSize = getFontSize() * 0.85f,
-                lineHeight = getFontSize()
-            )
-        }
-
-        state.currentWord?.originalImage?.let {
-            Text(
-                text = "Original image available",
-                color = AppTheme.PrimaryColor.copy(alpha = 0.6f),
-                fontSize = getFontSize() * 0.85f,
-                lineHeight = getFontSize()
-            )
-        }
+    SelectImageMenu(
+        title = "Custom Image",
+        image = state.image,
+        imagePicker = imagePicker,
+        underText = underText
+    ) {
+        viewModel.sent(PinUserWordsAction.SetImage(null))
     }
 }
 
