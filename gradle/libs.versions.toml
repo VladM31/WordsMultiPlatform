@@ -15,6 +15,7 @@ multiplatform-settings = "1.1.1"
 agp = "8.9.1"
 mp3spi-soundlibs = "1.9.5-1"
 tritonus-share = "0.3.7-2"
+hints = "2.0.1"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -40,6 +41,7 @@ ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "k
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 mp3spi = { module = "com.googlecode.soundlibs:mp3spi", version.ref = "mp3spi-soundlibs" }
 tritonus-share = { module = "com.googlecode.soundlibs:tritonus-share", version.ref = "tritonus-share" }
+compose-hints = { module = "com.viktormykhailiv:compose-hints", version.ref = "hints" }
 
 [plugins]
 composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "composeHotReload" }
