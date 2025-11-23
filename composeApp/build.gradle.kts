@@ -83,7 +83,7 @@ kotlin {
                 implementation(libs.ktor.client.android)
                 // Use maintained fork on Maven Central
                 implementation("com.github.mhiew:android-pdf-viewer:3.2.0-beta.1")
-                // PDF rendering for Android
+                implementation("androidx.security:security-crypto:1.1.0")
 
             }
         }
