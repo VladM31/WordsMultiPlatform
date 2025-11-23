@@ -84,7 +84,7 @@ fun SelectImageMenu(
                 text = "Selected: ${file.name}",
                 color = AppTheme.PrimaryGreen,
                 fontSize = getFontSize() * 0.85f,
-                lineHeight = getFontSize()
+                lineHeight = getFontSize() * 1.1f
             )
         }
 
@@ -93,7 +93,7 @@ fun SelectImageMenu(
                 text = it,
                 color = AppTheme.PrimaryColor.copy(alpha = 0.6f),
                 fontSize = getFontSize() * 0.85f,
-                lineHeight = getFontSize()
+                lineHeight = getFontSize() * 1.1f
             )
         }
 
