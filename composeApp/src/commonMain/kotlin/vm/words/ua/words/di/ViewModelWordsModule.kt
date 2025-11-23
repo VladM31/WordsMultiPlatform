@@ -47,7 +47,8 @@ internal val viewModelWordsModule = DI.Module("viewModelWordsModule") {
     bind<DefaultAddWordVm>() with singleton {
         DefaultAddWordVm(
             wordManager = instance(),
-            subscribeCacheManager = instance()
+            subscribeCacheManager = instance(),
+            soundManager = instance()
         )
     }
 }

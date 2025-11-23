@@ -2,14 +2,19 @@ package vm.words.ua.words.ui.vms
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.github.vinceglb.filekit.readBytes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import vm.words.ua.core.domain.models.ByteContent
 import vm.words.ua.core.ui.models.ErrorMessage
 import vm.words.ua.subscribes.domain.managers.SubscribeCacheManager
 import vm.words.ua.validation.schemes.length
 import vm.words.ua.validation.schemes.notBlank
+import vm.words.ua.words.domain.managers.SoundManager
 import vm.words.ua.words.domain.managers.UserWordManager
 import vm.words.ua.words.domain.models.SaveWord
 import vm.words.ua.words.ui.actions.DefaultAddWordAction
@@ -18,7 +23,8 @@ import vm.words.ua.words.ui.validations.defaultAddWordValidator
 
 class DefaultAddWordVm(
     private val wordManager: UserWordManager,
-    private val subscribeCacheManager: SubscribeCacheManager
+    private val subscribeCacheManager: SubscribeCacheManager,
+    private val soundManager: SoundManager
 ) : ViewModel() {
 
     private val mutableState = MutableStateFlow(DefaultAddWordState())
@@ -66,8 +72,37 @@ class DefaultAddWordVm(
             is DefaultAddWordAction.SetNeedSound -> setNeedSound(action)
             is DefaultAddWordAction.SetSound -> setSound(action)
             is DefaultAddWordAction.SetImage -> setImage(action)
+            is DefaultAddWordAction.PlaySound -> {
+                handlePlaySound()
+            }
             else -> {}
         }
+    }
+
+    private fun handlePlaySound() {
+        val soundUri = state.value.sound ?: return
+        mutableState.update {
+            it.copy(isPlaying = true)
+        }
+
+
+        viewModelScope.launch(Dispatchers.Default) {
+            try {
+                val content = soundUri.readBytes()
+
+                withContext(Dispatchers.Main) {
+                    soundManager.playSound(ByteContent(content))
+                }
+            } catch (e: Exception) {
+                println("PinUserWordsViewModel - handlePlaySound: ${e.message}")
+            } finally {
+                mutableState.update {
+                    it.copy(isPlaying = false)
+                }
+            }
+
+        }
+
     }
 
     private fun DefaultAddWordState.toInsertWord() = SaveWord(
