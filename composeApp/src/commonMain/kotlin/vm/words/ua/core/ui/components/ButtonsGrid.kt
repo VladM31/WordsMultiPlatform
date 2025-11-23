@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import vm.words.ua.core.ui.AppTheme
-import androidx.compose.foundation.layout.BoxWithConstraints
 import vm.words.ua.core.utils.getScaleFactor
 
 /**
@@ -21,6 +20,7 @@ import vm.words.ua.core.utils.getScaleFactor
  */
 data class GridButtonItem(
     val text: String,
+    val modifier: Modifier = Modifier,
     val onClick: () -> Unit = {}
 )
 
