@@ -1,6 +1,9 @@
 package vm.words.ua.words.di
 
-import org.kodein.di.*
+import org.kodein.di.DI
+import org.kodein.di.bind
+import org.kodein.di.factory
+import org.kodein.di.instance
 import vm.words.ua.words.ui.vms.*
 
 internal val viewModelWordsModule = DI.Module("viewModelWordsModule") {
@@ -44,7 +47,7 @@ internal val viewModelWordsModule = DI.Module("viewModelWordsModule") {
         )
     }
 
-    bind<DefaultAddWordVm>() with singleton {
+    bind<DefaultAddWordVm>() with factory {
         DefaultAddWordVm(
             wordManager = instance(),
             subscribeCacheManager = instance(),
