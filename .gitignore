@@ -20,3 +20,4 @@ node_modules/
 /composeApp/src/commonMain/kotlin/vm/words/ua/PinUserWordScreen.kt
 /config.json
 /composeApp/config/home_screen_hint_controller_v1.properties
+/composeApp/config/

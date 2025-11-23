@@ -63,8 +63,8 @@ fun SimpleHintHost(
                                 anchorRect.top,
                                 anchorRect.right,
                                 anchorRect.bottom,
-                                radiusX = 16.dp.toPx(),
-                                radiusY = 16.dp.toPx(),
+                                radiusX = 12.dp.toPx(),
+                                radiusY = 12.dp.toPx(),
                                 paint = paint
                             )
                         }
