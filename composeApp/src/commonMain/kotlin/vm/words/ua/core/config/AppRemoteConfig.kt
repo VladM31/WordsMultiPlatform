@@ -6,8 +6,8 @@ import kotlinx.serialization.json.Json
 import vm.words.ua.core.domain.models.DocItem
 import vm.words.ua.core.domain.models.DocItemType
 import vm.words.ua.core.domain.models.RemoteConfigData
+import vm.words.ua.core.platform.AppPlatform
 import vm.words.ua.core.platform.currentPlatform
-import vm.words.ua.core.platform.isWeb
 
 
 object AppRemoteConfig {
@@ -27,7 +27,7 @@ object AppRemoteConfig {
 
     val instruction: DocItem
         get() {
-            val type = if (currentPlatform().isWeb) {
+            val type = if (currentPlatform() == AppPlatform.WASM) {
                 DocItemType.WEB
             } else {
                 DocItemType.DEFAULT_TYPE
@@ -42,7 +42,7 @@ object AppRemoteConfig {
 
     val policy: DocItem
         get() {
-            val type = if (currentPlatform().isWeb) {
+            val type = if (currentPlatform() == AppPlatform.WASM) {
                 DocItemType.WEB
             } else {
                 DocItemType.DEFAULT_TYPE
