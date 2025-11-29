@@ -1,25 +1,45 @@
 package vm.words.ua.words.ui.components
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.toComposeImageBitmap
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.await
 import org.khronos.webgl.Uint8Array
+import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
-import org.w3c.dom.events.WheelEvent
 import kotlin.js.Promise
-import kotlin.random.Random
+import org.jetbrains.skia.Image as SkiaImage
 
 // ---------- ВСПОМОГАТЕЛЬНОЕ ----------
 
-private fun ByteArray.toUint8Array(): Uint8Array {
-    val result = Uint8Array(size)
-    val dyn = result.asDynamic()
-    for (i in indices) {
-        dyn[i] = this[i].toInt() and 0xFF
+private fun ByteArray.toUint8Array(): Uint8Array =
+    Uint8Array(this.toTypedArray())
+
+private fun dataUrlToBytes(dataUrl: String): ByteArray {
+    val commaIndex = dataUrl.indexOf(',')
+    if (commaIndex < 0) return ByteArray(0)
+    val base64 = dataUrl.substring(commaIndex + 1)
+    // стандартный браузерный atob
+    val binary = window.atob(base64)
+    val bytes = ByteArray(binary.length)
+    for (i in binary.indices) {
+        bytes[i] = binary[i].code.toByte()
     }
-    return result
+    return bytes
+}
+
+private fun dataUrlToImageBitmap(dataUrl: String): ImageBitmap {
+    val bytes = dataUrlToBytes(dataUrl)
+    if (bytes.isEmpty()) error("Empty PNG data from canvas")
+    val skiaImage = SkiaImage.makeFromEncoded(bytes)
+    return skiaImage.toComposeImageBitmap()
 }
 
 // ---------- pdf.js externals ----------
@@ -44,8 +64,13 @@ external interface PdfDocument {
 }
 
 external interface PdfPage {
-    fun getViewport(params: dynamic): dynamic
+    fun getViewport(params: dynamic): PdfViewport
     fun render(params: dynamic): PdfRenderTask
+}
+
+external interface PdfViewport {
+    val width: Number
+    val height: Number
 }
 
 external interface PdfRenderTask {
@@ -68,18 +93,17 @@ actual fun PdfContent(
     onOffsetChange: (Float, Float) -> Unit,
     modifier: Modifier
 ) {
-    val canvasId = remember { "pdf-canvas-${Random.nextInt(1, 1_000_000)}" }
+    var pdf by remember { mutableStateOf<PdfDocument?>(null) }
+    var pageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
 
-    // Настраиваем workerSrc
+    // workerSrc
     LaunchedEffect(Unit) {
         try {
             val version = try {
-                PdfJs.asDynamic().version as? String
-            } catch (_: dynamic) {
-                null
-            } ?: "4.7.76"
-
-            // ВАЖНО: именно pdf.worker.min.mjs, а не .js
+                PdfJs.version
+            } catch (e: dynamic) {
+                "4.7.76"
+            }
             PdfJs.GlobalWorkerOptions.workerSrc =
                 "https://cdn.jsdelivr.net/npm/pdfjs-dist@$version/build/pdf.worker.min.mjs"
         } catch (e: dynamic) {
@@ -87,35 +111,18 @@ actual fun PdfContent(
         }
     }
 
-    var pdf by remember(pdfData) { mutableStateOf<PdfDocument?>(null) }
-
-    // Создаём canvas вручную через DOM (без Compose Web)
-    LaunchedEffect(Unit) {
-        if (document.getElementById(canvasId) == null) {
-            val container = document.getElementById("pdf-container")
-                ?: document.createElement("div").apply {
-                    id = "pdf-container"
-                    document.body?.appendChild(this)
-                }
-
-            val canvas = document.createElement("canvas") as HTMLCanvasElement
-            canvas.id = canvasId
-            canvas.style.width = "100%"
-            canvas.style.minHeight = "120px"
-            canvas.style.background = "transparent"
-            canvas.style.cursor = "grab"
-            container.appendChild(canvas)
-        }
-    }
-
-    // Загружаем PDF при смене данных
+    // загрузка PDF
     LaunchedEffect(pdfData) {
+        pdf?.destroy()
+        pdf = null
+        pageBitmap = null
+
         if (pdfData.isEmpty()) {
             onError("Empty PDF data")
             return@LaunchedEffect
         }
         try {
-            val params = js("{}")
+            val params = js("({})")
             params.data = pdfData.toUint8Array()
             val task = PdfJs.getDocument(params)
             val doc = task.promise.await()
@@ -127,99 +134,58 @@ actual fun PdfContent(
         }
     }
 
-    // Рендер текущей страницы
-    LaunchedEffect(pdf, currentPage, scale, offsetX, offsetY) {
+    // рендер страницы в ImageBitmap
+    LaunchedEffect(pdf, currentPage, scale) {
         val doc = pdf ?: return@LaunchedEffect
+        if (currentPage !in 0 until doc.numPages) return@LaunchedEffect
+
         try {
             val page = doc.getPage(currentPage + 1).await()
-            val canvas = document.getElementById(canvasId) as? HTMLCanvasElement ?: return@LaunchedEffect
-            val ctx = canvas.getContext("2d") ?: return@LaunchedEffect
 
             val cssScale = scale.coerceIn(0.25f, 6f)
-            val viewportParams = js("{}")
+            val viewportParams = js("({})")
             viewportParams.scale = cssScale
+
             val viewport = page.getViewport(viewportParams)
+            val w = viewport.width.toDouble()
+            val h = viewport.height.toDouble()
 
-            val dpr = window.devicePixelRatio
-            val w = (viewport.width as Number).toDouble()
-            val h = (viewport.height as Number).toDouble()
+            val canvas = document.createElement("canvas") as HTMLCanvasElement
+            canvas.width = w.toInt()
+            canvas.height = h.toInt()
 
-            canvas.width = (w * dpr).toInt()
-            canvas.height = (h * dpr).toInt()
-            canvas.style.width = "${w}px"
-            canvas.style.height = "${h}px"
+            val ctx = canvas.getContext("2d") as? CanvasRenderingContext2D
+                ?: return@LaunchedEffect
 
-            val ctx2d = ctx.asDynamic()
-            ctx2d.setTransform(dpr, 0, 0, dpr, 0, 0)
-            ctx2d.clearRect(0, 0, w, h)
-
-            val renderParams = js("{}")
+            val renderParams = js("({})")
             renderParams.canvasContext = ctx
             renderParams.viewport = viewport
-            renderParams.transform = arrayOf(1, 0, 0, 1, offsetX.toDouble(), offsetY.toDouble())
 
             page.render(renderParams).promise.await()
+
+            val dataUrl = canvas.toDataURL("image/png")
+            pageBitmap = dataUrlToImageBitmap(dataUrl)
         } catch (e: dynamic) {
             console.error("PdfContent: render error", e)
             onError(e?.message?.toString() ?: "Failed to render page")
         }
     }
 
-    // Зум и панорамирование
-    DisposableEffect(canvasId, scale, offsetX, offsetY) {
-        val canvas = document.getElementById(canvasId) as? HTMLCanvasElement
-        if (canvas == null) return@DisposableEffect onDispose { }
+    // offset пока не используем, но сигнатуру поддерживаем
+    DisposableEffect(Unit) {
+        onOffsetChange(0f, 0f)
+        onDispose { pdf?.destroy() }
+    }
 
-        var dragging = false
-        var lastX = 0.0
-        var lastY = 0.0
-
-        val onWheel: (dynamic) -> Unit = { ev ->
-            val e = ev.unsafeCast<WheelEvent>()
-            if (e.ctrlKey) {
-                e.preventDefault()
-                val factor = if (e.deltaY > 0) 1 / 1.1f else 1.1f
-                val newScale = (scale * factor).coerceIn(0.25f, 6f)
-                if (newScale != scale) onScaleChange(newScale)
-            }
-        }
-
-        val onDown: (dynamic) -> Unit = { e ->
-            dragging = true
-            canvas.style.cursor = "grabbing"
-            val ev = e.asDynamic()
-            lastX = ev.clientX as Double
-            lastY = ev.clientY as Double
-        }
-
-        val onUp: (dynamic) -> Unit = {
-            dragging = false
-            canvas.style.cursor = "grab"
-        }
-
-        val onMove: (dynamic) -> Unit = { e ->
-            if (dragging) {
-                val ev = e.asDynamic()
-                val x = ev.clientX as Double
-                val y = ev.clientY as Double
-                val dx = (x - lastX).toFloat()
-                val dy = (y - lastY).toFloat()
-                lastX = x
-                lastY = y
-                onOffsetChange(offsetX + dx, offsetY + dy)
-            }
-        }
-
-        canvas.addEventListener("wheel", onWheel, js("{ passive: false }"))
-        canvas.addEventListener("pointerdown", onDown)
-        window.addEventListener("pointerup", onUp)
-        window.addEventListener("pointermove", onMove)
-
-        onDispose {
-            canvas.removeEventListener("wheel", onWheel)
-            canvas.removeEventListener("pointerdown", onDown)
-            window.removeEventListener("pointerup", onUp)
-            window.removeEventListener("pointermove", onMove)
+    // обычный Compose UI: LazyColumn его нормально скроллит
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+        val bmp = pageBitmap
+        if (bmp != null) {
+            Image(
+                bitmap = bmp,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize()
+            )
         }
     }
 }
