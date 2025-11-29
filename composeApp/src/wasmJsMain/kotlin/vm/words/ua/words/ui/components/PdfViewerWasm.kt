@@ -8,9 +8,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import vm.words.ua.core.net.client.RenderedPdfClient
@@ -32,9 +32,13 @@ actual fun PdfContent(
     onOffsetChange: (Float, Float) -> Unit,
     modifier: Modifier
 ) {
+    // pdfData у тебя — это строка-URL
     val baseUrl = remember(pdfData) { pdfData.decodeToString() }
     val renderClient = rememberInstance<RenderedPdfClient>()
-    val pageBaseWidth = appWidthDp() * 0.95f
+
+    val appWith = appWidthDp()
+    // базовая ширина страницы (95% ширины окна)
+    val pageBaseWidth = remember { appWith * 0.95f }
 
     var imageContent by remember(currentPage, baseUrl) { mutableStateOf<ByteArray?>(null) }
     var isLoading by remember(currentPage, baseUrl) { mutableStateOf(true) }
@@ -57,9 +61,9 @@ actual fun PdfContent(
 
     Box(
         modifier = modifier
-            .clipToBounds()          // чтобы страница не вылазила и не перекрывала другие
+            .clipToBounds()          // чтобы страница не вылазила
             .pointerInput(scale) {
-                // простые жесты зума
+                // жесты зума
                 detectTapGestures(
                     onDoubleTap = {
                         val newScale = (scale + 0.25f).coerceAtMost(3f)
@@ -79,16 +83,15 @@ actual fun PdfContent(
             )
         } else {
             imageContent?.let { bytes ->
+                // ВАЖНО: масштаб задаём через ширину, а не graphicsLayer
+                val widthWithScale = (pageBaseWidth * scale).coerceAtLeast(100.dp)
+
                 ImageFromBytes(
                     imageBytes = bytes,
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
                         .align(Alignment.TopCenter)
-                        .width(pageBaseWidth)
-                        .graphicsLayer(
-                            scaleX = scale,
-                            scaleY = scale
-                        )
+                        .width(widthWithScale)
                 )
             }
         }
