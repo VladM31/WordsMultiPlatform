@@ -32,12 +32,10 @@ actual fun PdfContent(
     onOffsetChange: (Float, Float) -> Unit,
     modifier: Modifier
 ) {
-    // pdfData у тебя — это строка-URL
     val baseUrl = remember(pdfData) { pdfData.decodeToString() }
     val renderClient = rememberInstance<RenderedPdfClient>()
 
     val appWith = appWidthDp()
-    // базовая ширина страницы (95% ширины окна)
     val pageBaseWidth = remember { appWith * 0.95f }
 
     var imageContent by remember(currentPage, baseUrl) { mutableStateOf<ByteArray?>(null) }
