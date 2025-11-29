@@ -1,19 +1,8 @@
 package vm.words.ua.core.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.MenuAnchorType
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import vm.words.ua.core.ui.AppTheme
@@ -30,6 +19,7 @@ fun <T> SingleSelectInput(
     showNone: Boolean = true,
     noneLabel: String = "",
     onSelect: (T?) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val fontSize = getFontSize()
     val labelFontSize = getLabelFontSize()
@@ -45,7 +35,7 @@ fun <T> SingleSelectInput(
             readOnly = true,
             textStyle = TextStyle(fontSize = fontSize),
             label = { Text(label, color = AppTheme.PrimaryGreen, fontSize = labelFontSize) },
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .menuAnchor(MenuAnchorType.PrimaryNotEditable),
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },

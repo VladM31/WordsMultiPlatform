@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import vm.words.ua.core.domain.managers.ByteContentManager
 import vm.words.ua.core.domain.models.ByteContent
+import vm.words.ua.core.platform.AppPlatform
 import vm.words.ua.core.platform.currentPlatform
-import vm.words.ua.core.platform.isWeb
 import vm.words.ua.core.ui.models.ErrorMessage
 import vm.words.ua.settings.ui.states.PdfViewState
 
@@ -35,7 +35,7 @@ open class PdfViewerViewModel(
     }
 
     private suspend fun loadPdf() {
-        if (currentPlatform().isWeb) {
+        if (currentPlatform() == AppPlatform.WASM) {
             mutableState.value = mutableState.value.copy(
                 content = ByteContent(linkProvider.invoke().toByteArray(Charsets.UTF_8)),
                 link = defaultLinkProvider()

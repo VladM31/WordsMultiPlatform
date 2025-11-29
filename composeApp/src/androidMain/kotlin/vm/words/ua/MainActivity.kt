@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import vm.words.ua.auth.domain.managers.AuthHistorySettingsFactory
 import vm.words.ua.core.domain.managers.SettingsFactory
+import vm.words.ua.utils.storage.AndroidStorageConfig
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,6 +16,7 @@ class MainActivity : ComponentActivity() {
             // Initialize Android-specific factories
             SettingsFactory.init(this)
             AuthHistorySettingsFactory.init(this)
+            AndroidStorageConfig.init(this)
 
             setContent {
                 App()

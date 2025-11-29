@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Words</title>
+    <link rel="icon" type="image/webp" href="icon.webp">
+
+    <!-- Preconnect for Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Noto Sans Symbols2 provides broader symbol coverage (arrow glyphs etc.) -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Symbols2&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans&display=swap">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            box-sizing: border-box;
+            /* Add symbol-supporting font as a fallback for web so characters like ⮕ and ⬅ render */
+            font-family: 'Noto Sans Symbols2', 'Noto Sans JP', 'Noto Sans', 'Segoe UI Symbol', 'Segoe UI', system-ui, -apple-system, 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+    </style>
+    <script type="application/javascript" src="composeApp.js"></script>
+
+
+</head>
+<body>
+<!-- ComposeViewport сам создаст <canvas> внутри body -->
+</body>
+</html>
