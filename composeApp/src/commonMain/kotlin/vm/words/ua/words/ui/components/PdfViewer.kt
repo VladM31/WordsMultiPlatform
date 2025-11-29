@@ -16,6 +16,7 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.platform.AppPlatform
 import vm.words.ua.core.platform.currentPlatform
+import vm.words.ua.core.platform.isWeb
 
 /**
  * Multiplatform PDF Viewer with pagination and zoom support
@@ -167,7 +168,7 @@ private fun PagesViewer(
 ) {
 
     val basePageHeight = 600.dp
-    val isWasm = currentPlatform() == AppPlatform.WASM
+    val isWeb = currentPlatform().isWeb
 
     LazyColumn(
         state = listState,
@@ -179,7 +180,7 @@ private fun PagesViewer(
             val space = if (scale > 1) 10.dp * 1.4f else 4.dp
 
             val pageHeight = remember(scale) {
-                if (isWasm) {
+                if (isWeb) {
                     (basePageHeight * scale).coerceIn(300.dp, 2400.dp)
                 } else {
                     basePageHeight
@@ -191,12 +192,12 @@ private fun PagesViewer(
                 .fillMaxWidth()
                 .height(pageHeight)
 
-            if (isWasm) {
+            if (isWeb) {
                 modifier = modifier
                     .clipToBounds()
             }
 
-            if (isWasm) {
+            if (isWeb) {
                 Spacer(Modifier.height(space))
             }
             Box(
@@ -215,7 +216,7 @@ private fun PagesViewer(
                     modifier = Modifier.fillMaxSize()
                 )
             }
-            if (isWasm) {
+            if (isWeb) {
                 Spacer(Modifier.height(space))
             }
         }
