@@ -1,14 +1,12 @@
 package vm.words.ua.words.ui.components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.toComposeImageBitmap
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -30,6 +28,7 @@ private object PdfDesktopCache {
         var activeRenders: Int = 0,
         var isClosing: Boolean = false
     )
+
     private val cache = ConcurrentHashMap<Int, Entry>()
 
     @Synchronized
@@ -77,7 +76,6 @@ private object PdfDesktopCache {
         entry.activeRenders--
         println("DEBUG Cache: endRender called, activeRenders=${entry.activeRenders}, refCount=${entry.refCount}, isClosing=${entry.isClosing}")
 
-        // Check if we should cleanup: last render finished and refCount is 0
         if (entry.activeRenders <= 0 && entry.refCount <= 0) {
             entry.isClosing = true
             try {
@@ -97,8 +95,6 @@ private object PdfDesktopCache {
         entry.refCount--
         println("DEBUG Cache: release called, refCount=${entry.refCount}, activeRenders=${entry.activeRenders}")
 
-        // CRITICAL: Only close when BOTH refCount is 0 AND no active renders
-        // Do NOT set isClosing flag prematurely as it blocks new renders
         if (entry.refCount <= 0 && entry.activeRenders <= 0) {
             entry.isClosing = true
             try {
@@ -109,7 +105,6 @@ private object PdfDesktopCache {
             }
             cache.remove(key)
         } else if (entry.refCount <= 0) {
-            // Refcount is 0 but active renders still running - defer cleanup
             println("DEBUG Cache: Waiting for ${entry.activeRenders} active renders to finish before closing")
         }
     }
@@ -152,14 +147,10 @@ actual fun PdfContent(
         }
     }
 
-    LaunchedEffect(pageCountReported) { /* marker effect to acknowledge state usage */ }
-
     LaunchedEffect(cacheEntry, currentPage) {
         val entry = cacheEntry ?: return@LaunchedEffect
 
-        // Mark that we're starting a render operation (this checks isClosing internally)
         if (!PdfDesktopCache.startRender(pdfData)) {
-            println("DEBUG: startRender returned false for page $currentPage")
             return@LaunchedEffect
         }
 
@@ -170,11 +161,8 @@ actual fun PdfContent(
                 }
             }
             image = pageImage
-            println("DEBUG: Successfully rendered page $currentPage")
         } catch (_: CancellationException) {
-            // Ignore cancellation
         } catch (e: Exception) {
-            println("DEBUG: Render error on page $currentPage: ${e.message}")
             onError("Failed to render page: ${e.message}")
         } finally {
             PdfDesktopCache.endRender(pdfData)
@@ -182,29 +170,17 @@ actual fun PdfContent(
     }
 
     image?.let { img ->
+        val bitmap = remember(img) { img.toComposeImageBitmap() }
+
         Box(
             modifier = modifier
                 .fillMaxSize()
-                .pointerInput(scale, offsetX, offsetY) {
-                    detectTransformGestures { _, pan, zoom, _ ->
-                        onScaleChange((scale * zoom).coerceIn(0.5f, 3f))
-                        if (scale > 1f) {
-                            onOffsetChange(pan.x + offsetX, pan.y + offsetY)
-                        }
-                    }
-                }
+                .clipToBounds()
         ) {
             Image(
-                bitmap = img.toComposeImageBitmap(),
+                bitmap = bitmap,
                 contentDescription = "PDF Page ${currentPage + 1}",
-                modifier = Modifier
-                    .fillMaxSize()
-                    .graphicsLayer(
-                        scaleX = scale,
-                        scaleY = scale,
-                        translationX = offsetX,
-                        translationY = offsetY
-                    ),
+                modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Fit
             )
         }

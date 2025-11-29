@@ -168,7 +168,9 @@ private fun PagesViewer(
 ) {
 
     val basePageHeight = 600.dp
-    val isWeb = currentPlatform().isWeb
+    val isScalable = remember {
+        currentPlatform().isWeb || currentPlatform() == AppPlatform.JVM
+    }
 
     LazyColumn(
         state = listState,
@@ -180,7 +182,7 @@ private fun PagesViewer(
             val space = if (scale > 1) 10.dp * 1.4f else 4.dp
 
             val pageHeight = remember(scale) {
-                if (isWeb) {
+                if (isScalable) {
                     (basePageHeight * scale).coerceIn(300.dp, 2400.dp)
                 } else {
                     basePageHeight
@@ -192,12 +194,12 @@ private fun PagesViewer(
                 .fillMaxWidth()
                 .height(pageHeight)
 
-            if (isWeb) {
+            if (isScalable) {
                 modifier = modifier
                     .clipToBounds()
             }
 
-            if (isWeb) {
+            if (isScalable) {
                 Spacer(Modifier.height(space))
             }
             Box(
@@ -216,7 +218,7 @@ private fun PagesViewer(
                     modifier = Modifier.fillMaxSize()
                 )
             }
-            if (isWeb) {
+            if (isScalable) {
                 Spacer(Modifier.height(space))
             }
         }
