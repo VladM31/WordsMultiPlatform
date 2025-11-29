@@ -10,12 +10,15 @@ pluginManagement {
                 includeGroupAndSubgroups("com.google")
             }
         }
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         mavenCentral()
         gradlePluginPortal()
     }
 }
 
 dependencyResolutionManagement {
+    // ВАЖНО: используем только репозитории из settings
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google {
             mavenContent {
@@ -26,9 +29,8 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
-        maven {
-            url = uri("https://www.jitpack.io")
-        }
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        maven("https://www.jitpack.io")
     }
 }
 

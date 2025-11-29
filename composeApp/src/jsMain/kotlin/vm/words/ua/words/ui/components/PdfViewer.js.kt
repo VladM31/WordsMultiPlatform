@@ -17,7 +17,6 @@ import org.w3c.dom.HTMLCanvasElement
 import kotlin.js.Promise
 import org.jetbrains.skia.Image as SkiaImage
 
-// ---------- ВСПОМОГАТЕЛЬНОЕ ----------
 
 private fun ByteArray.toUint8Array(): Uint8Array =
     Uint8Array(this.toTypedArray())
@@ -111,7 +110,6 @@ actual fun PdfContent(
         }
     }
 
-    // загрузка PDF
     LaunchedEffect(pdfData) {
         pdf?.destroy()
         pdf = null
