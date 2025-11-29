@@ -128,9 +128,12 @@ actual fun PdfContent(
             val doc = task.promise.await()
             pdf = doc
             onPageCountChanged(doc.numPages)
-        } catch (e: dynamic) {
+        } catch (e: Throwable) {
+            if (e.message?.contains("coroutine scope left the composition") == true) {
+                return@LaunchedEffect
+            }
             console.error("PdfContent: load error", e)
-            onError(e?.message?.toString() ?: "Failed to load PDF")
+            onError(e.message ?: "Failed to load PDF")
         }
     }
 
@@ -165,9 +168,13 @@ actual fun PdfContent(
 
             val dataUrl = canvas.toDataURL("image/png")
             pageBitmap = dataUrlToImageBitmap(dataUrl)
-        } catch (e: dynamic) {
+        } catch (e: Throwable) {
+            if (e.message?.contains("coroutine scope left the composition") == true) {
+                // старая корутина отменилась из-за нового scale/страницы — это ок
+                return@LaunchedEffect
+            }
             console.error("PdfContent: render error", e)
-            onError(e?.message?.toString() ?: "Failed to render page")
+            onError(e.message ?: "Failed to render page")
         }
     }
 
