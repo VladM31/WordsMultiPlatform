@@ -137,7 +137,6 @@ actual fun PdfContent(
         }
     }
 
-    // рендер страницы в ImageBitmap
     LaunchedEffect(pdf, currentPage, scale) {
         val doc = pdf ?: return@LaunchedEffect
         if (currentPage !in 0 until doc.numPages) return@LaunchedEffect
@@ -170,7 +169,6 @@ actual fun PdfContent(
             pageBitmap = dataUrlToImageBitmap(dataUrl)
         } catch (e: Throwable) {
             if (e.message?.contains("coroutine scope left the composition") == true) {
-                // старая корутина отменилась из-за нового scale/страницы — это ок
                 return@LaunchedEffect
             }
             console.error("PdfContent: render error", e)
@@ -178,18 +176,15 @@ actual fun PdfContent(
         }
     }
 
-    // offset пока не используем, но сигнатуру поддерживаем
     DisposableEffect(Unit) {
         onOffsetChange(0f, 0f)
         onDispose { pdf?.destroy() }
     }
 
-    // обычный Compose UI: LazyColumn его нормально скроллит
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
-        val bmp = pageBitmap
-        if (bmp != null) {
+        pageBitmap?.let {
             Image(
-                bitmap = bmp,
+                bitmap = it,
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize()
             )
