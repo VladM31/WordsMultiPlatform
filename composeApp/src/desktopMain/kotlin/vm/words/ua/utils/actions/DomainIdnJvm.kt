@@ -1,4 +1,4 @@
-package vm.words.ua.validation.actions
+package vm.words.ua.utils.actions
 
 import java.net.IDN
 

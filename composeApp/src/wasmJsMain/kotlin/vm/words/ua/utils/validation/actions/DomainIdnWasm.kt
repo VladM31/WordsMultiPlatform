@@ -1,4 +1,4 @@
-package vm.words.ua.validation.actions
+package vm.words.ua.utils.validation.actions
 
 actual fun domainToAscii(domain: String): String? {
     // wasm/wasmJs target: no builtin IDN conversion here.

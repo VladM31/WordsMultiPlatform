@@ -1,25 +1,21 @@
 package vm.words.ua.utils.validation
 
 import kotlinx.coroutines.flow.StateFlow
-import kotlin.collections.set
-import kotlin.text.isBlank
-import kotlin.text.isNotBlank
-import kotlin.text.orEmpty
 
 typealias SupplierMapper  <T,U>   = (T) -> U
 
 class Validator<T>(
     private val state: StateFlow<T>
 ) {
-    private val container: MutableMap<vm.words.ua.utils.validation.SupplierMapper<T, *>, vm.words.ua.utils.validation.schemes.ValidationScheme<*>> =
+    private val container: MutableMap<SupplierMapper<T, *>, vm.words.ua.utils.validation.schemes.ValidationScheme<*>> =
         mutableMapOf()
 
 
     fun <U> add(
-        mapper: vm.words.ua.utils.validation.SupplierMapper<T, U>,
+        mapper: SupplierMapper<T, U>,
         scheme: vm.words.ua.utils.validation.schemes.ValidationScheme<U>
     ) {
-        container[mapper] set scheme
+        container[mapper] = scheme
     }
 
     fun validate(prefix: String = ""): String {

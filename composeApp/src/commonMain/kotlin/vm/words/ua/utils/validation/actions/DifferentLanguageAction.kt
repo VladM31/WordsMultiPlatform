@@ -1,11 +1,14 @@
 package vm.words.ua.utils.validation.actions
 
-class DifferentLanguageAction<T : vm.words.ua.utils.validation.models.DifferentLanguageable> :
-    vm.words.ua.utils.validation.actions.ValidAction<T> {
-    override fun validate(value: T): vm.words.ua.utils.validation.models.ValidResult {
+import vm.words.ua.utils.validation.models.DifferentLanguageable
+import vm.words.ua.utils.validation.models.ValidResult
+
+class DifferentLanguageAction<T : DifferentLanguageable> :
+    ValidAction<T> {
+    override fun validate(value: T): ValidResult {
         if (value.getLanguage() == value.getSecondLanguage()) {
-            return _root_ide_package_.vm.words.ua.utils.validation.models.ValidResult.Companion.invalid("Languages should be different")
+            return ValidResult.invalid("Languages should be different")
         }
-        return _root_ide_package_.vm.words.ua.utils.validation.models.ValidResult.Companion.valid()
+        return ValidResult.valid()
     }
 }
