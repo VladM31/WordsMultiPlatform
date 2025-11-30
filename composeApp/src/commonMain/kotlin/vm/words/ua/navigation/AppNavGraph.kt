@@ -3,6 +3,7 @@ package vm.words.ua.navigation
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import org.kodein.di.instance
 import vm.words.ua.core.platform.AppPlatform
 import vm.words.ua.core.platform.currentPlatform
@@ -19,6 +20,14 @@ private val noInternetSupportRoutes = setOf(
     Screen.Settings,
     Screen.PlayList,
     Screen.PlayListFilter
+).map { it.route }
+
+private val noHomeBtmSupportRoutes = setOf(
+    Screen.UpdateApp,
+    Screen.Login,
+    Screen.SignUp,
+    Screen.TelegramLogin,
+    Screen.ConfirmSignUp
 ).map { it.route }
 
 @Composable
@@ -39,10 +48,14 @@ fun AppNavGraph() {
     val route = navController.currentRoute
     val isOnline = hasInternet()
     val platform = currentPlatform()
+    val showHomeBtn = remember(isOnline, route) {
+        platform != AppPlatform.JS && noHomeBtmSupportRoutes.contains(route).not()
+    }
 
     if (isOnline.not() && (noInternetSupportRoutes.contains(route).not() || platform == AppPlatform.JS)) {
         NoInternetBanner(
-            navController = navController
+            navController = navController,
+            showHomeBtn = showHomeBtn
         )
         return
     }

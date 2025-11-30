@@ -21,7 +21,21 @@ kotlin {
     jvm("desktop")
 
     js {
-        browser()
+        browser {
+            commonWebpackConfig {
+                sourceMaps = false
+            }
+
+            // ⚡ DEV: занимает 2–6 секунд
+            runTask {
+                devtool = "eval"
+            }
+
+            // ⚡ PROD: безопасно отключаем только source maps
+            webpackTask {
+                devtool = "none"  // НЕЛЬЗЯ менять mode!!!
+            }
+        }
         binaries.executable()
     }
 

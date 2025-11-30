@@ -19,7 +19,8 @@ import vm.words.ua.navigation.SimpleNavController
 @Composable
 fun NoInternetBanner(
     modifier: Modifier = Modifier,
-    navController: SimpleNavController
+    navController: SimpleNavController,
+    showHomeBtn: Boolean = true
 ) {
     val platform = currentPlatform()
     val fontSize = rememberFontSize()
@@ -74,14 +75,15 @@ fun NoInternetBanner(
                             text = instruction,
                             color = AppTheme.ColorScheme.onErrorContainer.copy(alpha = 0.8f),
                             style = MaterialTheme.typography.bodySmall,
-                            fontSize = fontSize
+                            fontSize = fontSize,
+                            lineHeight = fontSize * 1.1f
                         )
                     }
 
 
                 }
 
-                if (platform == AppPlatform.JS) {
+                if (showHomeBtn.not()) {
                     return@Column
                 }
 
