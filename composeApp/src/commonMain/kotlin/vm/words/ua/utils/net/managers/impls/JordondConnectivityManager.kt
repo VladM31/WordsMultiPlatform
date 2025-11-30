@@ -18,7 +18,6 @@ class JordondConnectivityManager(
     override val isOnline: StateFlow<Boolean> =
         MutableStateFlow(false).also { boolFlow ->
             scope.launch {
-                // README показывает, что есть flow statusUpdates :contentReference[oaicite:2]{index=2}
                 connectivity.statusUpdates.collect { s ->
                     _status.value = s
                     boolFlow.value = s is Connectivity.Status.Connected
@@ -31,7 +30,7 @@ class JordondConnectivityManager(
     }
 
     suspend fun checkOnce(): Boolean =
-        connectivity.status() is Connectivity.Status.Connected  // есть suspend-функция status() :contentReference[oaicite:3]{index=3}
+        connectivity.status() is Connectivity.Status.Connected
 
     fun stop() {
         connectivity.stop()
