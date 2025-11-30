@@ -17,9 +17,9 @@ import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.utils.getScaleFactor
-import vm.words.ua.hints.ui.utils.ViewHintStep
-import vm.words.ua.hints.ui.utils.viewHint
 import vm.words.ua.navigation.SimpleNavController
+import vm.words.ua.utils.hints.ui.utils.ViewHintStep
+import vm.words.ua.utils.hints.ui.utils.viewHint
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.arrow
 import wordsmultiplatform.composeapp.generated.resources.setting

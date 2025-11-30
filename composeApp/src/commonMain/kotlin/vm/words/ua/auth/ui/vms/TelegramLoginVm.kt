@@ -13,9 +13,7 @@ import vm.words.ua.auth.ui.actions.TelegramLoginAction
 import vm.words.ua.auth.ui.states.TelegramLoginState
 import vm.words.ua.core.ui.models.ErrorMessage
 import vm.words.ua.core.utils.toNumbersOnly
-import vm.words.ua.validation.Validator
-import vm.words.ua.validation.schemes.ValidationScheme
-import vm.words.ua.validation.schemes.isPhoneNumber
+import vm.words.ua.utils.validation.schemes.isPhoneNumber
 
 class TelegramLoginVm(
     private val telegramAuthManager: TelegramAuthManager,
@@ -28,12 +26,13 @@ class TelegramLoginVm(
         )
     )
     val state: StateFlow<TelegramLoginState> = mutableState
-    private val validator = Validator(state)
+    private val validator = _root_ide_package_.vm.words.ua.utils.validation.Validator(state)
 
     init {
         validator.add(
             { it.phoneNumber },
-            ValidationScheme.stringSchema("Phone number").isPhoneNumber()
+            _root_ide_package_.vm.words.ua.utils.validation.schemes.ValidationScheme.stringSchema("Phone number")
+                .isPhoneNumber()
         )
     }
 

@@ -1,45 +1,45 @@
 package vm.words.ua.words.ui.validations
 
 import kotlinx.coroutines.flow.StateFlow
-import vm.words.ua.validation.Validator
-import vm.words.ua.validation.schemes.ValidationScheme
-import vm.words.ua.validation.schemes.length
-import vm.words.ua.validation.schemes.notBlank
+import vm.words.ua.utils.validation.schemes.length
+import vm.words.ua.utils.validation.schemes.notBlank
 import vm.words.ua.words.ui.states.DefaultAddWordState
 
-val defaultAddWordValidator: (StateFlow<DefaultAddWordState>) -> Validator<DefaultAddWordState> = { state ->
-    Validator(state).apply {
+val defaultAddWordValidator: (StateFlow<DefaultAddWordState>) -> vm.words.ua.utils.validation.Validator<DefaultAddWordState> =
+    { state ->
+        _root_ide_package_.vm.words.ua.utils.validation.Validator(state).apply {
 
 
         add(
             DefaultAddWordState::originalWord,
-            ValidationScheme.stringSchema("Word")
+            _root_ide_package_.vm.words.ua.utils.validation.schemes.ValidationScheme.stringSchema("Word")
                 .notBlank()
                 .length(min = 2, max = 255)
         )
 
         add(
             DefaultAddWordState::translation,
-            ValidationScheme.stringSchema("Translation")
+            _root_ide_package_.vm.words.ua.utils.validation.schemes.ValidationScheme.stringSchema("Translation")
 
         )
 
         add(
             DefaultAddWordState::category,
-            ValidationScheme.stringSchema("Category")
+            _root_ide_package_.vm.words.ua.utils.validation.schemes.ValidationScheme.stringSchema("Category")
                 .length(min = 0, max = 255)
                 .notBlank(canBeEmpty = true)
         )
 
         add(
             DefaultAddWordState::description,
-            ValidationScheme.stringSchema("Description")
+            _root_ide_package_.vm.words.ua.utils.validation.schemes.ValidationScheme.stringSchema("Description")
                 .length(min = 0, max = 1000)
                 .notBlank(canBeEmpty = true)
         )
 
         add(
-            { it }, ValidationScheme<DefaultAddWordState>("Language")
+            { it },
+            _root_ide_package_.vm.words.ua.utils.validation.schemes.ValidationScheme<DefaultAddWordState>("Language")
                 .difLanguage()
         )
     }

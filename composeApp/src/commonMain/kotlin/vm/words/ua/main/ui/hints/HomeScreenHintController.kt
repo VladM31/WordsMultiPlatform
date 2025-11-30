@@ -2,8 +2,8 @@ package vm.words.ua.main.ui.hints
 
 import androidx.compose.runtime.Composable
 import vm.words.ua.core.ui.hints.createDefaultHintController
-import vm.words.ua.hints.domain.models.HintPosition
-import vm.words.ua.hints.ui.utils.ViewHintStep
+import vm.words.ua.utils.hints.domain.models.HintPosition
+import vm.words.ua.utils.hints.ui.utils.ViewHintStep
 
 private const val LAST_INDEX = 7
 private const val VALUE_KEY = "home_screen_v1"

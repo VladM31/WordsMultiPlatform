@@ -22,8 +22,8 @@ import vm.words.ua.core.ui.components.PrimaryButton
 import vm.words.ua.core.utils.getScaleFactor
 import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberIconSize
-import vm.words.ua.hints.ui.utils.ViewHintStep
-import vm.words.ua.hints.ui.utils.viewHint
+import vm.words.ua.utils.hints.ui.utils.ViewHintStep
+import vm.words.ua.utils.hints.ui.utils.viewHint
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.telegram_image
 

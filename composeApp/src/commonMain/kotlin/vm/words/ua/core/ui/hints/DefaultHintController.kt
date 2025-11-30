@@ -1,7 +1,7 @@
 package vm.words.ua.core.ui.hints
 
 import androidx.compose.runtime.*
-import vm.words.ua.hints.ui.utils.ViewHintStep
+import vm.words.ua.utils.hints.ui.utils.ViewHintStep
 import vm.words.ua.utils.storage.AppStorage
 import vm.words.ua.utils.storage.managers.KeyValueStorage
 

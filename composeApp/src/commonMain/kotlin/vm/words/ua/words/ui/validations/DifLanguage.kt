@@ -1,21 +1,18 @@
 package vm.words.ua.words.ui.validations
 
-import vm.words.ua.validation.actions.ValidAction
-import vm.words.ua.validation.models.ValidResult
-import vm.words.ua.validation.schemes.ValidationScheme
 import vm.words.ua.words.ui.states.DefaultAddWordState
 
 
-private object DifLanguageAction : ValidAction<DefaultAddWordState> {
-    override fun validate(value: DefaultAddWordState): ValidResult {
+private object DifLanguageAction : vm.words.ua.utils.validation.actions.ValidAction<DefaultAddWordState> {
+    override fun validate(value: DefaultAddWordState): vm.words.ua.utils.validation.models.ValidResult {
         return if (value.language != value.translationLanguage) {
-            ValidResult.valid()
+            _root_ide_package_.vm.words.ua.utils.validation.models.ValidResult.valid()
         } else {
-            ValidResult.invalid("Languages must be different")
+            _root_ide_package_.vm.words.ua.utils.validation.models.ValidResult.invalid("Languages must be different")
         }
     }
 }
 
-fun ValidationScheme<DefaultAddWordState>.difLanguage(): ValidationScheme<DefaultAddWordState> {
+fun vm.words.ua.utils.validation.schemes.ValidationScheme<DefaultAddWordState>.difLanguage(): vm.words.ua.utils.validation.schemes.ValidationScheme<DefaultAddWordState> {
     return add(DifLanguageAction)
 }

@@ -12,8 +12,8 @@ import kotlinx.coroutines.withContext
 import vm.words.ua.core.domain.models.ByteContent
 import vm.words.ua.core.ui.models.ErrorMessage
 import vm.words.ua.subscribes.domain.managers.SubscribeCacheManager
-import vm.words.ua.validation.schemes.length
-import vm.words.ua.validation.schemes.notBlank
+import vm.words.ua.utils.validation.schemes.length
+import vm.words.ua.utils.validation.schemes.notBlank
 import vm.words.ua.words.domain.managers.SoundManager
 import vm.words.ua.words.domain.managers.UserWordManager
 import vm.words.ua.words.domain.models.SaveWord

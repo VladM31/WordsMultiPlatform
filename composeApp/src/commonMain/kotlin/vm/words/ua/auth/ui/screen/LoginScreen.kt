@@ -19,9 +19,9 @@ import vm.words.ua.core.ui.components.CenteredContainer
 import vm.words.ua.core.ui.components.ErrorMessageBox
 import vm.words.ua.core.ui.components.VerticalCenteredContainer
 import vm.words.ua.di.rememberInstance
-import vm.words.ua.hints.ui.components.SimpleHintHost
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
+import vm.words.ua.utils.hints.ui.components.SimpleHintHost
 
 @Composable
 fun LoginScreen(

@@ -11,9 +11,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.hints.ui.utils.ViewHintStep
-import vm.words.ua.hints.ui.utils.viewHint
 import vm.words.ua.navigation.Screen
+import vm.words.ua.utils.hints.ui.utils.ViewHintStep
+import vm.words.ua.utils.hints.ui.utils.viewHint
 import wordsmultiplatform.composeapp.generated.resources.*
 
 @Composable

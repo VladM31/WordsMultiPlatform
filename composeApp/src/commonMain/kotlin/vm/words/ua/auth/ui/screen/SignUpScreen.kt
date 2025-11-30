@@ -28,10 +28,10 @@ import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.*
 import vm.words.ua.core.utils.isNotPhoneFormat
 import vm.words.ua.di.rememberInstance
-import vm.words.ua.hints.ui.components.SimpleHintHost
-import vm.words.ua.hints.ui.utils.viewHint
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
+import vm.words.ua.utils.hints.ui.components.SimpleHintHost
+import vm.words.ua.utils.hints.ui.utils.viewHint
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.info_in_circle
 

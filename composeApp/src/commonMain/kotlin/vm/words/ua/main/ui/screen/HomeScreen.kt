@@ -12,13 +12,13 @@ import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.BottomNavBar
 import vm.words.ua.core.ui.components.ButtonsGrid
 import vm.words.ua.core.ui.components.GridButtonItem
-import vm.words.ua.hints.ui.components.SimpleHintHost
-import vm.words.ua.hints.ui.utils.viewHint
 import vm.words.ua.main.ui.hints.HomeScreenHintStep
 import vm.words.ua.main.ui.hints.createHomeScreenHintController
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.Screen.WordList
 import vm.words.ua.navigation.SimpleNavController
+import vm.words.ua.utils.hints.ui.components.SimpleHintHost
+import vm.words.ua.utils.hints.ui.utils.viewHint
 import vm.words.ua.utils.net.hasInternet
 
 @Composable
