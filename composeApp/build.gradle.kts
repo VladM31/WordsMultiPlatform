@@ -24,7 +24,7 @@ kotlin {
         browser()
         binaries.executable()
     }
-    
+
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         browser()
@@ -45,37 +45,43 @@ kotlin {
             linkerOpts("-framework", "PDFKit")
         }
     }
-    
-    sourceSets {
-        commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.animation)
-            implementation(compose.material3)
-            implementation(compose.materialIconsExtended)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.viewmodelCompose)
-            implementation(libs.androidx.lifecycle.runtimeCompose)
-            implementation(libs.androidx.navigation.compose)
-            implementation(libs.kotlinx.serialization.json)
-            implementation(libs.kotlinx.datetime)
-            implementation(libs.multiplatform.settings)
-            implementation("org.kodein.di:kodein-di:7.21.0")
-            implementation(libs.ktor.client.core)
-            implementation(libs.ktor.client.content.negotiation)
-            implementation(libs.ktor.serialization.kotlinx.json)
-            implementation(libs.ktor.client.logging)
-            implementation(projects.shared)
 
-            implementation("io.github.vinceglb:filekit-core:0.12.0")
-            implementation("io.github.vinceglb:filekit-dialogs:0.12.0")
-            implementation("io.github.vinceglb:filekit-dialogs-compose:0.12.0")
-            implementation("io.github.vinceglb:filekit-coil:0.12.0")
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(compose.runtime)
+                implementation(compose.foundation)
+                implementation(compose.animation)
+                implementation(compose.material3)
+                implementation(compose.materialIconsExtended)
+                implementation(compose.ui)
+                implementation(compose.components.resources)
+                implementation(compose.components.uiToolingPreview)
+                implementation(libs.androidx.lifecycle.viewmodelCompose)
+                implementation(libs.androidx.lifecycle.runtimeCompose)
+                implementation(libs.androidx.navigation.compose)
+                implementation(libs.kotlinx.serialization.json)
+                implementation(libs.kotlinx.datetime)
+                implementation(libs.multiplatform.settings)
+                implementation("org.kodein.di:kodein-di:7.21.0")
+                implementation(libs.ktor.client.core)
+                implementation(libs.ktor.client.content.negotiation)
+                implementation(libs.ktor.serialization.kotlinx.json)
+                implementation(libs.ktor.client.logging)
+                implementation(projects.shared)
+
+                implementation("io.github.vinceglb:filekit-core:0.12.0")
+                implementation("io.github.vinceglb:filekit-dialogs:0.12.0")
+                implementation("io.github.vinceglb:filekit-dialogs-compose:0.12.0")
+                implementation("io.github.vinceglb:filekit-coil:0.12.0")
+
+                // Connectivity: общая часть для всех платформ
+                implementation(libs.connectivity.core)
+                implementation(libs.connectivity.compose)
+            }
         }
 
-        androidMain {
+        val androidMain by getting {
             dependencies {
                 implementation("androidx.activity:activity-compose:1.9.3")
                 implementation("androidx.core:core-ktx:1.13.1")
@@ -84,7 +90,6 @@ kotlin {
                 // Use maintained fork on Maven Central
                 implementation("com.github.mhiew:android-pdf-viewer:3.2.0-beta.1")
                 implementation("androidx.security:security-crypto:1.1.0")
-
             }
         }
 
@@ -100,7 +105,7 @@ kotlin {
             }
         }
 
-        jsMain {
+        val jsMain by getting {
             dependencies {
                 implementation(libs.ktor.client.js)
                 implementation(npm("pdfjs-dist", "4.7.76"))
@@ -115,20 +120,48 @@ kotlin {
             }
         }
 
-        // Darwin engine for iOS targets
         val iosArm64Main by getting {
             dependencies {
                 implementation(libs.ktor.client.darwin)
             }
         }
+
         val iosSimulatorArm64Main by getting {
             dependencies {
                 implementation(libs.ktor.client.darwin)
             }
         }
 
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
+        val commonTest by getting {
+            dependencies {
+                implementation(libs.kotlin.test)
+            }
+        }
+
+        // Девайсный sourceSet: Android + iOS, нативный мониторинг сети
+        val deviceMain by creating {
+            dependsOn(commonMain)
+            androidMain.dependsOn(this)
+            iosArm64Main.dependsOn(this)
+            iosSimulatorArm64Main.dependsOn(this)
+
+            dependencies {
+                implementation(libs.connectivity.device)
+                implementation(libs.connectivity.compose.device)
+            }
+        }
+
+        // HTTP-sourceSet: Desktop JVM + JS + Wasm, мониторинг через HTTP-пинги
+        val httpMain by creating {
+            dependsOn(commonMain)
+            desktopMain.dependsOn(this)
+            jsMain.dependsOn(this)
+            wasmJsMain.dependsOn(this)
+
+            dependencies {
+                implementation(libs.connectivity.http)
+                implementation(libs.connectivity.compose.http)
+            }
         }
     }
 }

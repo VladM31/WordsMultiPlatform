@@ -21,6 +21,7 @@ import vm.words.ua.core.utils.getScaleFactor
 data class GridButtonItem(
     val text: String,
     val modifier: Modifier = Modifier,
+    val isAvailable: Boolean = true,
     val onClick: () -> Unit = {}
 )
 
@@ -87,6 +88,7 @@ fun ButtonsGrid(
                         Button(
                             onClick = item.onClick,
                             colors = buttonColors,
+                            enabled = item.isAvailable,
                             modifier = item.modifier
                                 .width(itemWidth)
                                 .heightIn(min = minButtonHeight)

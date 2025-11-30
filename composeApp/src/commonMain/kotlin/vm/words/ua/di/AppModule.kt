@@ -10,6 +10,7 @@ import vm.words.ua.navigation.di.navigationModule
 import vm.words.ua.playlist.di.playlistModule
 import vm.words.ua.settings.di.settingsModule
 import vm.words.ua.subscribes.di.subscribesModule
+import vm.words.ua.utils.net.di.newUtilsModule
 import vm.words.ua.words.di.wordsModule
 
 
@@ -19,6 +20,7 @@ import vm.words.ua.words.di.wordsModule
 val appModules = DI {
     import(navigationModule)
     import(coreModule)
+    import(newUtilsModule)
     import(authModules)
     import(subscribesModule)
     import(wordsModule)
