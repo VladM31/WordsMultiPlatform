@@ -151,6 +151,15 @@ kotlin {
             }
         }
 
+        // Create a shared iOS source set that aggregates iOS-specific actuals placed in src/iosMain
+        // and make platform-specific iosArm64Main / iosSimulatorArm64Main depend on it.
+        val iosMain by creating {
+            dependsOn(deviceMain)
+            // Add any iOS-only dependencies here if needed
+        }
+        iosArm64Main.dependsOn(iosMain)
+        iosSimulatorArm64Main.dependsOn(iosMain)
+
         // HTTP-sourceSet: Desktop JVM + JS + Wasm, мониторинг через HTTP-пинги
         val httpMain by creating {
             dependsOn(commonMain)
