@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
@@ -18,6 +19,7 @@ import vm.words.ua.main.ui.hints.createHomeScreenHintController
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.Screen.WordList
 import vm.words.ua.navigation.SimpleNavController
+import vm.words.ua.utils.net.hasInternet
 
 @Composable
 fun HomeScreen(
@@ -25,40 +27,46 @@ fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
     val hintController = createHomeScreenHintController()
+    val isOnline = hasInternet()
 
-    val buttons = listOf(
-        GridButtonItem(
-            text = "Words",
-            modifier = Modifier.viewHint(
-                step = HomeScreenHintStep.WORDS_BUTTON,
-                current = hintController.currentStep
-            )
-        ) { navController.navigate(WordList) },
-        GridButtonItem(
-            text = "My Words",
-            modifier = Modifier.viewHint(
-                step = HomeScreenHintStep.MY_WORDS_BUTTON,
-                current = hintController.currentStep
-            )
-        ) { navController.navigate(Screen.UserWords) },
-        GridButtonItem(
-            text = "Add Word",
-            modifier = Modifier.viewHint(
-                step = HomeScreenHintStep.ADD_WORD_BUTTON,
-                current = hintController.currentStep
-            )
-        ) { navController.navigate(Screen.DefaultAddWord) },
-        GridButtonItem(
-            text = "Instruction",
-            modifier = Modifier.viewHint(
-                step = HomeScreenHintStep.INSTRUCTION_BUTTON,
-                current = hintController.currentStep
-            )
-        ) {
-            navController.navigate(Screen.Instruction)
-        }
+    val buttons = remember(isOnline) {
+        listOf(
+            GridButtonItem(
+                text = "Words",
+                isAvailable = isOnline,
+                modifier = Modifier.viewHint(
+                    step = HomeScreenHintStep.WORDS_BUTTON,
+                    current = hintController.currentStep
+                )
+            ) { navController.navigate(WordList) },
+            GridButtonItem(
+                text = "My Words",
+                modifier = Modifier.viewHint(
+                    step = HomeScreenHintStep.MY_WORDS_BUTTON,
+                    current = hintController.currentStep
+                )
+            ) { navController.navigate(Screen.UserWords) },
+            GridButtonItem(
+                text = "Add Word",
+                isAvailable = isOnline,
+                modifier = Modifier.viewHint(
+                    step = HomeScreenHintStep.ADD_WORD_BUTTON,
+                    current = hintController.currentStep
+                )
+            ) { navController.navigate(Screen.DefaultAddWord) },
+            GridButtonItem(
+                text = "Instruction",
+                isAvailable = isOnline,
+                modifier = Modifier.viewHint(
+                    step = HomeScreenHintStep.INSTRUCTION_BUTTON,
+                    current = hintController.currentStep
+                )
+            ) {
+                navController.navigate(Screen.Instruction)
+            }
 
-    )
+        )
+    }
 
     SimpleHintHost(
         onNext = hintController.doNext,

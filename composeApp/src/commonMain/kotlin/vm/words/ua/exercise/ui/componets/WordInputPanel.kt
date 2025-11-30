@@ -15,8 +15,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.utils.getFontSize
 import vm.words.ua.core.utils.getScaleFactor
+import vm.words.ua.core.utils.rememberFontSize
 
 @Composable
 fun WordInputPanel(
@@ -34,7 +34,7 @@ fun WordInputPanel(
     val icon: Dp = remember(scale) {
         50.dp * scale
     }
-    val fontSize: TextUnit = getFontSize()
+    val fontSize: TextUnit = rememberFontSize()
 
 
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {

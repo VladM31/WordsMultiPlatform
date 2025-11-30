@@ -9,18 +9,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.models.ErrorMessage
-import vm.words.ua.core.utils.getFontSize
 import vm.words.ua.core.utils.getScaleFactor
+import vm.words.ua.core.utils.rememberFontSize
 
 @Composable
 fun ErrorMessageBox(
@@ -52,7 +48,7 @@ fun ErrorMessageBox(
         Text(
             text = message.message,
             color = AppTheme.PrimaryColor,
-            fontSize = getFontSize(),
+            fontSize = rememberFontSize(),
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
@@ -69,10 +65,10 @@ private fun ErrorMessageAlertDialog(
     val scale = getScaleFactor()
 
     val fontSize = remember {
-        getFontSize(scale) * 0.85
+        rememberFontSize(scale) * 0.85
     }
     val heightFontSize = remember {
-        getFontSize(scale) * 0.92
+        rememberFontSize(scale) * 0.92
     }
 
     if (visible.not()) {
@@ -93,7 +89,7 @@ private fun ErrorMessageAlertDialog(
                 Text(
                     text = "OK",
                     color = AppTheme.PrimaryColor,
-                    fontSize = getFontSize(),
+                    fontSize = rememberFontSize(),
                 )
             }
         },

@@ -5,21 +5,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,8 +17,8 @@ import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.CenteredContainer
-import vm.words.ua.core.utils.getFontSize
 import vm.words.ua.core.utils.getScaleFactor
+import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.playlist.domain.models.filters.PlayListCountFilter
@@ -36,7 +26,6 @@ import vm.words.ua.playlist.ui.actions.PlayListFilterAction
 import vm.words.ua.playlist.ui.vms.PlayListFilterViewModel
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.delete
-import wordsmultiplatform.composeapp.generated.resources.find
 
 @Composable
 fun PlayListFilterScreen(
@@ -94,7 +83,7 @@ fun PlayListFilterScreen(
             modifier = Modifier.weight(1f).fillMaxWidth()
         ) {
             val scaleFactor = getScaleFactor(maxWidth)
-            val inputTextSize = getFontSize(scaleFactor)
+            val inputTextSize = rememberFontSize(scaleFactor)
             val labelTextSize = inputTextSize * 0.95f
             val titleTextSize = inputTextSize * 1.2f
             val buttonTextSize = (30 * scaleFactor).sp

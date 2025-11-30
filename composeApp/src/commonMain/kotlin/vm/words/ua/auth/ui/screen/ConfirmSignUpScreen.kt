@@ -1,14 +1,7 @@
 package vm.words.ua.auth.ui.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,7 +26,7 @@ import vm.words.ua.core.config.AppRemoteConfig
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.PrimaryButton
-import vm.words.ua.core.utils.getFontSize
+import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
@@ -117,8 +110,8 @@ fun ConfirmSignUpScreen(
                     Text(
                         text = "Confirm your account",
                         color = AppTheme.PrimaryColor,
-                        fontSize = getFontSize() * 1.6f,
-                        lineHeight = getFontSize() * 1.65f,
+                        fontSize = rememberFontSize() * 1.6f,
+                        lineHeight = rememberFontSize() * 1.65f,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center
                     )
@@ -128,8 +121,8 @@ fun ConfirmSignUpScreen(
                     Text(
                         text = "We sent a confirmation message. Please follow the link in the message to finish registration.",
                         color = AppTheme.PrimaryColor.copy(alpha = 0.9f),
-                        fontSize = getFontSize() * 1.05f,
-                        lineHeight = getFontSize() * 1.1f,
+                        fontSize = rememberFontSize() * 1.05f,
+                        lineHeight = rememberFontSize() * 1.1f,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .fillMaxWidth(0.95f)
@@ -140,7 +133,7 @@ fun ConfirmSignUpScreen(
                     Text(
                         text = "Sent to: ${bundle.phoneNumber}",
                         color = AppTheme.PrimaryGreen,
-                        fontSize = getFontSize() * 0.95f,
+                        fontSize = rememberFontSize() * 0.95f,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(bottom = 18.dp)
                     )

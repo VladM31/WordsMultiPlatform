@@ -11,7 +11,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.utils.getFontSize
+import vm.words.ua.core.utils.rememberFontSize
 
 @Composable
 fun HintBubble(
@@ -29,8 +29,8 @@ fun HintBubble(
             style = TextStyle(
                 color = AppTheme.White,
                 textAlign = TextAlign.Center,
-                fontSize = getFontSize() * 1.3f,
-                lineHeight = getFontSize() * 1.4f
+                fontSize = rememberFontSize() * 1.3f,
+                lineHeight = rememberFontSize() * 1.4f
             ),
         )
     }

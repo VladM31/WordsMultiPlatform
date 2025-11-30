@@ -4,28 +4,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.MenuAnchorType
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.utils.getFontSize
 import vm.words.ua.core.utils.getLabelFontSize
+import vm.words.ua.core.utils.rememberFontSize
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,7 +28,7 @@ fun <T> MultiSelect(
     val selectedSet = selected?.toSet() ?: emptySet()
     val selectedText =
         if (selectedSet.isEmpty()) emptyText else selectedSet.joinToString(", ") { toLabel(it) }
-    val fontSize = getFontSize()
+    val fontSize = rememberFontSize()
 
     var expanded by remember { mutableStateOf(false) }
 

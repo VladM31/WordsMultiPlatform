@@ -12,9 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.components.AppToolBar
-import vm.words.ua.core.utils.getFontSize
 import vm.words.ua.core.utils.getScaleFactor
 import vm.words.ua.core.utils.isNotPhoneFormat
+import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.exercise.ui.actions.WriteByImageAndFieldAction
 import vm.words.ua.exercise.ui.bundles.ExerciseBundle
@@ -58,7 +58,7 @@ private fun WriteByImageAndFieldScreen(
 ) {
     val state = viewModel.state.collectAsState()
     val param = navController.getParamOrThrow<ExerciseBundle>()
-    val fontSize = getFontSize()
+    val fontSize = rememberFontSize()
 
 
     LaunchedEffect(Unit) {

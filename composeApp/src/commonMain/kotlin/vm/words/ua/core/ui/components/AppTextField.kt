@@ -18,8 +18,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.utils.getFontSize
 import vm.words.ua.core.utils.getLabelFontSize
+import vm.words.ua.core.utils.rememberFontSize
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,7 +43,7 @@ fun AppTextField(
                 { Text(label, color = primaryColor70, fontSize = getLabelFontSize()) }
             } else null,
             singleLine = singleLine,
-            textStyle = androidx.compose.material3.LocalTextStyle.current.copy(fontSize = getFontSize()),
+            textStyle = androidx.compose.material3.LocalTextStyle.current.copy(fontSize = rememberFontSize()),
             visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
             keyboardOptions = KeyboardOptions(keyboardType = if (isPassword) KeyboardType.Password else KeyboardType.Text),
             colors = OutlinedTextFieldDefaults.colors(

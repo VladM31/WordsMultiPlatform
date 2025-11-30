@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.utils.getFontSize
+import vm.words.ua.core.utils.rememberFontSize
 
 @Composable
 fun PrimaryButton(
@@ -19,7 +19,7 @@ fun PrimaryButton(
     enabled: Boolean = true
 ) {
 
-    val fontSize = getFontSize()
+    val fontSize = rememberFontSize()
 
     Button(
         onClick = onClick,

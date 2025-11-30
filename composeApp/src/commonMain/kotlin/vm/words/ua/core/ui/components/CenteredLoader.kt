@@ -1,17 +1,7 @@
 package vm.words.ua.core.ui.components
 
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,7 +11,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.utils.getFontSize
+import vm.words.ua.core.utils.rememberFontSize
 
 @Composable
 fun CenteredLoader(
@@ -29,7 +19,7 @@ fun CenteredLoader(
     message: String? = null,
     size: Dp = 48.dp
 ) {
-    val fontSize = getFontSize()
+    val fontSize = rememberFontSize()
 
     val infiniteTransition = rememberInfiniteTransition()
     val alphaAnim = infiniteTransition.animateFloat(

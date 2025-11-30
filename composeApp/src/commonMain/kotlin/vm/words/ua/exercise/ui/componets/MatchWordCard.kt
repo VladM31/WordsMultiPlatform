@@ -27,17 +27,17 @@ fun MatchWordCard(
     enabled: Boolean
 ) {
     val containerColor = when {
-        isMatched -> AppTheme.ColorSchema.primaryContainer.copy(alpha = 0.5f)
-        isMistake -> AppTheme.ColorSchema.errorContainer
-        isSelected -> AppTheme.ColorSchema.primary
-        else -> AppTheme.ColorSchema.surface
+        isMatched -> AppTheme.ColorScheme.primaryContainer.copy(alpha = 0.5f)
+        isMistake -> AppTheme.ColorScheme.errorContainer
+        isSelected -> AppTheme.ColorScheme.primary
+        else -> AppTheme.ColorScheme.surface
     }
 
     val contentColor = when {
-        isMatched -> AppTheme.ColorSchema.onSurface.copy(alpha = 0.8f)
-        isMistake -> AppTheme.ColorSchema.error
-        isSelected -> AppTheme.ColorSchema.onPrimary
-        else -> AppTheme.ColorSchema.primary
+        isMatched -> AppTheme.ColorScheme.onSurface.copy(alpha = 0.8f)
+        isMistake -> AppTheme.ColorScheme.error
+        isSelected -> AppTheme.ColorScheme.onPrimary
+        else -> AppTheme.ColorScheme.primary
     }
 
     Card(

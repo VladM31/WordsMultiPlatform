@@ -10,11 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,11 +21,10 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
-import vm.words.ua.core.utils.getFontSize
 import vm.words.ua.core.utils.getScaleFactor
 import vm.words.ua.core.utils.getWidthDeviceFormat
+import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.di.rememberInstance
-import vm.words.ua.exercise.domain.mappers.toScreen
 import vm.words.ua.exercise.ui.actions.LettersMatchAction
 import vm.words.ua.exercise.ui.bundles.ExerciseBundle
 import vm.words.ua.exercise.ui.componets.NextButton
@@ -70,7 +65,7 @@ private fun LettersMatchScreen(
 ) {
     val state = viewModel.state.collectAsState()
     val param = navController.getParamOrThrow<ExerciseBundle>()
-    val fontSize = getFontSize()
+    val fontSize = rememberFontSize()
 
 
     LaunchedEffect(Unit) {

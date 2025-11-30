@@ -19,9 +19,9 @@ import vm.words.ua.auth.ui.vms.LoginViewModel
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppTextField
 import vm.words.ua.core.ui.components.PrimaryButton
-import vm.words.ua.core.utils.getFontSize
-import vm.words.ua.core.utils.getIconSize
 import vm.words.ua.core.utils.getScaleFactor
+import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberIconSize
 import vm.words.ua.hints.ui.utils.ViewHintStep
 import vm.words.ua.hints.ui.utils.viewHint
 import wordsmultiplatform.composeapp.generated.resources.Res
@@ -75,7 +75,7 @@ fun LoginForm(
             Text(
                 text = "Join now",
                 color = AppTheme.PrimaryColor,
-                fontSize = getFontSize(scaleFactor * textWeight),
+                fontSize = rememberFontSize(scaleFactor * textWeight),
                 modifier = Modifier
                     .viewHint(LoginScreenHintStep.SIGN_UP_LINK, currentHintStep)
                     .clickable { onJoinNowClick() }
@@ -97,7 +97,7 @@ fun LoginForm(
         Text(
             text = "Sign in with",
             color = AppTheme.PrimaryColor,
-            fontSize = getFontSize(scaleFactor * textWeight)
+            fontSize = rememberFontSize(scaleFactor * textWeight)
         )
 
         Spacer(modifier = Modifier.size((8 * scaleFactor).dp))
@@ -109,7 +109,7 @@ fun LoginForm(
             Image(
                 painterResource(Res.drawable.telegram_image),
                 contentDescription = "telegram",
-                modifier = Modifier.size(getIconSize() * 1.5f).clickable { onTelegramClick() }
+                modifier = Modifier.size(rememberIconSize() * 1.5f).clickable { onTelegramClick() }
                     .viewHint(LoginScreenHintStep.TELEGRAM_LOGIN_BUTTON, currentHintStep)
             )
         }

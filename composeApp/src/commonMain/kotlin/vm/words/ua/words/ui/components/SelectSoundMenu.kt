@@ -10,9 +10,9 @@ import io.github.vinceglb.filekit.dialogs.compose.PickerResultLauncher
 import io.github.vinceglb.filekit.name
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.utils.getFontSize
 import vm.words.ua.core.utils.getIconButtonSize
-import vm.words.ua.core.utils.getIconSize
+import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberIconSize
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.delete
 import wordsmultiplatform.composeapp.generated.resources.sound
@@ -31,7 +31,7 @@ fun SelectSoundMenu(
         Text(
             text = title,
             color = AppTheme.PrimaryColor,
-            fontSize = getFontSize()
+            fontSize = rememberFontSize()
         )
 
         sound?.let {
@@ -52,7 +52,7 @@ fun SelectSoundMenu(
                         painter = painterResource(Res.drawable.sound),
                         contentDescription = "Play sound",
                         tint = AppTheme.PrimaryBack,
-                        modifier = Modifier.size(getIconSize() * 1.5f)
+                        modifier = Modifier.size(rememberIconSize() * 1.5f)
                     )
                 }
             }
@@ -72,7 +72,7 @@ fun SelectSoundMenu(
             ) {
                 Text(
                     text = if (sound != null) "Change Sound" else "Select Sound",
-                    fontSize = getFontSize()
+                    fontSize = rememberFontSize()
                 )
             }
             if (sound == null) {
@@ -81,14 +81,14 @@ fun SelectSoundMenu(
             IconButton(
                 onClick = onRemoveSound,
                 modifier = Modifier
-                    .size(getIconSize())
+                    .size(rememberIconSize())
                     .weight(1f)
             ) {
                 Icon(
                     painter = painterResource(Res.drawable.delete),
                     contentDescription = "Remove",
                     tint = AppTheme.PrimaryGreen,
-                    modifier = Modifier.size(getIconSize())
+                    modifier = Modifier.size(rememberIconSize())
                 )
             }
         }
@@ -97,8 +97,8 @@ fun SelectSoundMenu(
             Text(
                 text = "Selected: ${file.name}",
                 color = AppTheme.PrimaryGreen,
-                fontSize = getFontSize() * 0.85f,
-                lineHeight = getFontSize()
+                fontSize = rememberFontSize() * 0.85f,
+                lineHeight = rememberFontSize()
             )
         }
 
@@ -106,8 +106,8 @@ fun SelectSoundMenu(
             Text(
                 text = it,
                 color = AppTheme.PrimaryColor.copy(alpha = 0.6f),
-                fontSize = getFontSize() * 0.85f,
-                lineHeight = getFontSize() * 1.1f
+                fontSize = rememberFontSize() * 0.85f,
+                lineHeight = rememberFontSize() * 1.1f
             )
         }
     }

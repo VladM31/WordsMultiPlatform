@@ -11,9 +11,9 @@ import io.github.vinceglb.filekit.name
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.ImageFromPlatformFile
-import vm.words.ua.core.utils.getFontSize
-import vm.words.ua.core.utils.getIconSize
 import vm.words.ua.core.utils.getImageSize
+import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberIconSize
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.delete
 
@@ -30,7 +30,7 @@ fun SelectImageMenu(
         Text(
             text = title,
             color = AppTheme.PrimaryColor,
-            fontSize = getFontSize()
+            fontSize = rememberFontSize()
         )
 
         image?.let {
@@ -58,7 +58,7 @@ fun SelectImageMenu(
             ) {
                 Text(
                     text = if (image != null) "Change Image" else "Select Image",
-                    fontSize = getFontSize()
+                    fontSize = rememberFontSize()
                 )
             }
             if (image == null) {
@@ -67,14 +67,14 @@ fun SelectImageMenu(
             IconButton(
                 onClick = onRemoveImage,
                 modifier = Modifier
-                    .size(getIconSize())
+                    .size(rememberIconSize())
                     .weight(1f)
             ) {
                 Icon(
                     painter = painterResource(Res.drawable.delete),
                     contentDescription = "Remove",
                     tint = AppTheme.PrimaryGreen,
-                    modifier = Modifier.size(getIconSize())
+                    modifier = Modifier.size(rememberIconSize())
                 )
             }
         }
@@ -83,8 +83,8 @@ fun SelectImageMenu(
             Text(
                 text = "Selected: ${file.name}",
                 color = AppTheme.PrimaryGreen,
-                fontSize = getFontSize() * 0.85f,
-                lineHeight = getFontSize() * 1.1f
+                fontSize = rememberFontSize() * 0.85f,
+                lineHeight = rememberFontSize() * 1.1f
             )
         }
 
@@ -92,8 +92,8 @@ fun SelectImageMenu(
             Text(
                 text = it,
                 color = AppTheme.PrimaryColor.copy(alpha = 0.6f),
-                fontSize = getFontSize() * 0.85f,
-                lineHeight = getFontSize() * 1.1f
+                fontSize = rememberFontSize() * 0.85f,
+                lineHeight = rememberFontSize() * 1.1f
             )
         }
 

@@ -27,9 +27,9 @@ fun PlayListItem(
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         val scaleFactor = getScaleFactor(maxWidth)
 
-        val titleSize = getFontSize(scaleFactor)
+        val titleSize = rememberFontSize(scaleFactor)
         val detailsSize = (14 * scaleFactor).sp
-        val iconSize = getIconSize(scaleFactor)
+        val iconSize = rememberIconSize(scaleFactor)
         val buttonSize = getIconButtonSize(scaleFactor)
         val cardPadding = (16 * scaleFactor).dp
         val horizontalPadding = (16 * scaleFactor).dp

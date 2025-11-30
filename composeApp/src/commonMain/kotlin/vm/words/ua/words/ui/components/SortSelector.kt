@@ -2,26 +2,10 @@ package vm.words.ua.words.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MenuAnchorType
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,9 +16,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.utils.getFontSize
-import vm.words.ua.core.utils.getIconSize
 import vm.words.ua.core.utils.getLabelFontSize
+import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberIconSize
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.arrow
 
@@ -95,7 +79,7 @@ fun <T> SortSelector(
                                     expanded = isExpanded
                                 )
                             },
-                            textStyle = TextStyle(fontSize = getFontSize()),
+                            textStyle = TextStyle(fontSize = rememberFontSize()),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = AppTheme.PrimaryGreen,
                                 unfocusedBorderColor = AppTheme.PrimaryGreen.copy(alpha = 0.5f),
@@ -160,7 +144,7 @@ fun <T> SortSelector(
                         },
                         modifier = Modifier
                             .fillMaxWidth(),
-                        textStyle = TextStyle(fontSize = getFontSize()),
+                        textStyle = TextStyle(fontSize = rememberFontSize()),
                         trailingIcon = {
                             ExposedDropdownMenuDefaults.TrailingIcon(
                                 expanded = isExpanded
@@ -199,7 +183,7 @@ fun <T> SortSelector(
                                             Text(
                                                 "Default",
                                                 color = AppTheme.PrimaryGreen,
-                                                fontSize = getFontSize()
+                                                fontSize = rememberFontSize()
                                             )
                                         }
                                     }
@@ -216,7 +200,7 @@ fun <T> SortSelector(
                                             Text(
                                                 toLabel(item),
                                                 color = AppTheme.PrimaryGreen,
-                                                fontSize = getFontSize()
+                                                fontSize = rememberFontSize()
                                             )
                                         }
                                     }
@@ -232,7 +216,7 @@ fun <T> SortSelector(
 
         IconButton(
             onClick = { onToggleAsc(!asc) },
-            modifier = Modifier.size(getIconSize())
+            modifier = Modifier.size(rememberIconSize())
         ) {
             Icon(
                 painter = painterResource(Res.drawable.arrow),

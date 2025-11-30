@@ -1,21 +1,8 @@
 package vm.words.ua.core.ui.components
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextRange
@@ -24,9 +11,9 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.utils.getFontSize
-import vm.words.ua.core.utils.getIconSize
 import vm.words.ua.core.utils.getLabelFontSize
+import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberIconSize
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.add
 
@@ -72,7 +59,7 @@ fun StringListInput(
                 },
                 label = { Text(label, color = AppTheme.PrimaryGreen, fontSize = getLabelFontSize()) },
                 modifier = Modifier.weight(1f),
-                textStyle = TextStyle(fontSize = getFontSize()),
+                textStyle = TextStyle(fontSize = rememberFontSize()),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = AppTheme.PrimaryGreen,
                     unfocusedBorderColor = AppTheme.PrimaryGreen.copy(alpha = 0.5f),
@@ -91,7 +78,7 @@ fun StringListInput(
                         inputValue = TextFieldValue("")
                     }
                 },
-                modifier = Modifier.size(getIconSize())
+                modifier = Modifier.size(rememberIconSize())
             ) {
                 Icon(
                     painter = painterResource(Res.drawable.add),
@@ -112,14 +99,14 @@ fun StringListInput(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(item, color = AppTheme.PrimaryGreen, fontSize = getFontSize())
+                    Text(item, color = AppTheme.PrimaryGreen, fontSize = rememberFontSize())
                     OutlinedButton(
                         onClick = {
                             val updated = currentItems.toMutableList().also { it.remove(item) }
                             onItemsChange(if (updated.isEmpty()) null else updated)
                         }
                     ) {
-                        Text(removeButtonText, color = AppTheme.PrimaryGreen, fontSize = getFontSize())
+                        Text(removeButtonText, color = AppTheme.PrimaryGreen, fontSize = rememberFontSize())
                     }
                 }
             }

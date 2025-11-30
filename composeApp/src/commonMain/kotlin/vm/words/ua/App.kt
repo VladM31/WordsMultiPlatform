@@ -4,7 +4,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import vm.words.ua.core.ui.AppTheme
@@ -12,8 +15,6 @@ import vm.words.ua.core.ui.components.AuthWatcher
 import vm.words.ua.core.ui.screen.LoaderScreen
 import vm.words.ua.core.utils.AppWindowProvider
 import vm.words.ua.navigation.AppNavGraph
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 
 
 @Composable
@@ -21,8 +22,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 fun App() = AppWindowProvider {
 
 
+
     MaterialTheme(
-        colorScheme = AppTheme.ColorSchema
+        colorScheme = AppTheme.ColorScheme
     ) {
         Surface(
             modifier = Modifier.fillMaxSize(),

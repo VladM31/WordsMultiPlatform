@@ -18,7 +18,6 @@ pluginManagement {
 
 dependencyResolutionManagement {
     // ВАЖНО: используем только репозитории из settings
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google {
             mavenContent {

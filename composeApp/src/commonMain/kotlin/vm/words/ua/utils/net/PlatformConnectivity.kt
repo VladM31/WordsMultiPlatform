@@ -22,3 +22,8 @@ fun rememberAppConnectivityState(): ConnectivityState {
 
     return state
 }
+
+@Composable
+fun hasInternet(): Boolean {
+    return rememberAppConnectivityState().isConnected
+}

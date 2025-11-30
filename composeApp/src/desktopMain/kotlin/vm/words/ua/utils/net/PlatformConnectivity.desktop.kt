@@ -7,6 +7,6 @@ actual fun createConnectivity(): Connectivity =
         autoStart = true
         urls("cloudflare.com", "study-words.com")
         port = 80
-        pollingIntervalMs = 10.minutes
+        pollingIntervalMs = 15.seconds
         timeoutMs = 5.seconds
     }

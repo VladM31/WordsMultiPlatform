@@ -23,8 +23,8 @@ import vm.words.ua.core.platform.isWeb
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.PrimaryButton
-import vm.words.ua.core.utils.getFontSize
 import vm.words.ua.core.utils.isNotPhoneFormat
+import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
@@ -110,7 +110,7 @@ fun PinUserWordsScreen(
                 Text(
                     text = "No words to pin",
                     color = AppTheme.PrimaryColor,
-                    fontSize = getFontSize()
+                    fontSize = rememberFontSize()
                 )
             }
         }
@@ -171,19 +171,19 @@ private fun TopMenu(
             Text(
                 text = "Word ${state.index + 1} of ${state.words.size}",
                 color = AppTheme.PrimaryGreen,
-                fontSize = getFontSize() * 0.9f,
+                fontSize = rememberFontSize() * 0.9f,
             )
             state.currentWord?.let { word ->
                 Text(
                     text = word.original,
                     color = AppTheme.PrimaryColor,
-                    fontSize = getFontSize() * 1.4f,
+                    fontSize = rememberFontSize() * 1.4f,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = word.lang.titleCase,
                     color = AppTheme.PrimaryColor.copy(alpha = 0.7f),
-                    fontSize = getFontSize() * 0.95f
+                    fontSize = rememberFontSize() * 0.95f
                 )
             }
         }
@@ -281,7 +281,7 @@ private fun WordNavigator(
                 contentColor = AppTheme.PrimaryGreen
             )
         ) {
-            Text(leftArrow, fontSize = getFontSize())
+            Text(leftArrow, fontSize = rememberFontSize())
         }
 
         OutlinedButton(
@@ -292,7 +292,7 @@ private fun WordNavigator(
                 contentColor = AppTheme.PrimaryGreen
             )
         ) {
-            Text("Save", fontSize = getFontSize())
+            Text("Save", fontSize = rememberFontSize())
         }
 
 
@@ -307,7 +307,7 @@ private fun WordNavigator(
                 contentColor = AppTheme.PrimaryGreen
             )
         ) {
-            Text(rightArrow, fontSize = getFontSize())
+            Text(rightArrow, fontSize = rememberFontSize())
         }
     }
 }

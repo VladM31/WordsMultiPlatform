@@ -1,32 +1,11 @@
 package vm.words.ua.words.ui.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
@@ -38,14 +17,10 @@ import vm.words.ua.core.platform.currentOrientation
 import vm.words.ua.core.platform.currentPlatform
 import vm.words.ua.core.platform.isLandscape
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.ui.components.AppToolBar
-import vm.words.ua.core.ui.components.ErrorMessageBox
-import vm.words.ua.core.ui.components.ImageFromBytes
-import vm.words.ua.core.ui.components.PopupMenuButton
-import vm.words.ua.core.ui.components.PopupMenuItem
-import vm.words.ua.core.utils.getFontSize
+import vm.words.ua.core.ui.components.*
 import vm.words.ua.core.utils.getScaleFactor
 import vm.words.ua.core.utils.getWidthDeviceFormat
+import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.words.domain.models.UserWord
@@ -359,7 +334,7 @@ private fun WordDetailsContent(
     word: Word,
     modifier: Modifier = Modifier
 ) {
-    val fontSize = getFontSize()
+    val fontSize = rememberFontSize()
     val lineHeight = remember(fontSize) {
         fontSize * 1.3f
     }
@@ -421,7 +396,7 @@ private fun UserWordDetails(
     userWord: UserWord
 ) {
     val scale = getScaleFactor(maxWidth)
-    val fontSize = getFontSize(scale) * 0.7f
+    val fontSize = rememberFontSize(scale) * 0.7f
 
     Text(
         text = "Created: ${userWord.createdAt}",

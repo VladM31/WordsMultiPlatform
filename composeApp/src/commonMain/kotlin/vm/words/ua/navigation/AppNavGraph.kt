@@ -6,13 +6,9 @@ import androidx.compose.runtime.Composable
 import org.kodein.di.instance
 import vm.words.ua.core.ui.screen.UpdateScreen
 import vm.words.ua.di.DiContainer
-import vm.words.ua.navigation.providers.AuthScreenProvider
-import vm.words.ua.navigation.providers.CoreScreenProvider
-import vm.words.ua.navigation.providers.ExerciseScreenProvider
-import vm.words.ua.navigation.providers.MainScreenProvider
-import vm.words.ua.navigation.providers.PlayListScreenProvider
-import vm.words.ua.navigation.providers.SettingScreenProvider
-import vm.words.ua.navigation.providers.WordsScreenProvider
+import vm.words.ua.navigation.providers.*
+import vm.words.ua.utils.net.hasInternet
+import vm.words.ua.utils.net.ui.components.NoInternetBanner
 
 @Composable
 fun AppNavGraph() {
@@ -30,6 +26,13 @@ fun AppNavGraph() {
     )
 
     val route = navController.currentRoute
+    val isOnline = hasInternet()
+
+    if (isOnline.not()) {
+        NoInternetBanner()
+        return
+    }
+
 
 
     BackHandler(navController = navController)

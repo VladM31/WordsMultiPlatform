@@ -8,22 +8,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 
-fun getIconSize(scaleFactor: Float) : Dp{
+fun rememberIconSize(scaleFactor: Float): Dp {
     return (45 * scaleFactor).dp
 }
 
 fun getIconButtonSize(scaleFactor: Float) : Dp{
-    val iconSize = getIconSize(scaleFactor)
+    val iconSize = rememberIconSize(scaleFactor)
     return iconSize * 1.2f
 }
 
-fun getFontSize(scaleFactor: Float) : TextUnit{
+fun rememberFontSize(scaleFactor: Float): TextUnit {
     return (24 * scaleFactor).sp
 }
 
 
 @Composable
-fun getIconSize() : Dp{
+fun rememberIconSize(): Dp {
     val scaleFactor = getScaleFactor()
     return remember(scaleFactor) {
         (45 * scaleFactor).dp
@@ -32,12 +32,12 @@ fun getIconSize() : Dp{
 
 @Composable
 fun getIconButtonSize() : Dp{
-    val iconSize = getIconSize(getScaleFactor())
+    val iconSize = rememberIconSize(getScaleFactor())
     return iconSize * 1.2f
 }
 
 @Composable
-fun getFontSize() : TextUnit{
+fun rememberFontSize(): TextUnit {
     val scale = getScaleFactor()
     return remember(scale) {
         (24 * scale).sp
@@ -46,7 +46,7 @@ fun getFontSize() : TextUnit{
 
 @Composable
 fun getLabelFontSize(): TextUnit {
-    val fontSize = getFontSize()
+    val fontSize = rememberFontSize()
     return remember(fontSize) {
         fontSize * 0.7f
     }

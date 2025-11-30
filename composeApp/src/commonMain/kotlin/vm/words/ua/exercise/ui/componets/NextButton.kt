@@ -13,14 +13,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.utils.getFontSize
+import vm.words.ua.core.utils.rememberFontSize
 
 private val BUTTON_PADDING = 16.dp
 private const val LINE_HEIGHT_FACTOR: Float = 1.2f
 
 @Composable
 fun calcNextButtonHeight(): Dp {
-    val fontSize = getFontSize()
+    val fontSize = rememberFontSize()
     return fontSize.value.dp * LINE_HEIGHT_FACTOR + BUTTON_PADDING * 2
 }
 
@@ -33,7 +33,7 @@ fun NextButton(
     if (hide) {
         return
     }
-    val fontSize = getFontSize()
+    val fontSize = rememberFontSize()
 
     Box(
         Modifier

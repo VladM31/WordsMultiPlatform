@@ -18,9 +18,9 @@ import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.ErrorMessageBox
 import vm.words.ua.core.ui.components.SingleSelectInput
 import vm.words.ua.core.ui.components.TextInput
-import vm.words.ua.core.utils.getFontSize
 import vm.words.ua.core.utils.getScaleFactor
 import vm.words.ua.core.utils.isNotPhoneFormat
+import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
@@ -201,7 +201,7 @@ fun DefaultAddWordScreen(
                     contentColor = AppTheme.PrimaryBack
                 )
             ) {
-                Text("Add", fontSize = getFontSize())
+                Text("Add", fontSize = rememberFontSize())
             }
         }
     }
@@ -243,8 +243,8 @@ private fun SoundSwitch(
             Text(
                 text = "Generate sound",
                 color = AppTheme.PrimaryGreen,
-                fontSize = getFontSize(),
-                lineHeight = getFontSize() * 1.1f
+                fontSize = rememberFontSize(),
+                lineHeight = rememberFontSize() * 1.1f
             )
         }
     }

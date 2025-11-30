@@ -18,8 +18,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.utils.getFontSize
 import vm.words.ua.core.utils.getLabelFontSize
+import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.playlist.domain.models.PlayListCount
 import vm.words.ua.playlist.ui.actions.PlayListAction
@@ -94,7 +94,7 @@ fun SelectPlayListDialog(
                             Text(
                                 "No playlists found",
                                 color = AppTheme.PrimaryColor,
-                                fontSize = getFontSize()
+                                fontSize = rememberFontSize()
                             )
                         }
                         return@Box

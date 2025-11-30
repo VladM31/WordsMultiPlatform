@@ -13,15 +13,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import vm.words.ua.core.ui.components.CenteredLoader
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
-import vm.words.ua.core.utils.getFontSize
+import vm.words.ua.core.ui.components.CenteredLoader
+import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.exercise.domain.mappers.toScreen
 import vm.words.ua.exercise.ui.actions.ExerciseSelectAction
-import vm.words.ua.exercise.ui.bundles.ExerciseSelectionBundle
 import vm.words.ua.exercise.ui.bundles.ExerciseBundle
+import vm.words.ua.exercise.ui.bundles.ExerciseSelectionBundle
 import vm.words.ua.exercise.ui.componets.ExerciseItemSelected
 import vm.words.ua.exercise.ui.componets.ExerciseItemUnselected
 import vm.words.ua.exercise.ui.vm.ExerciseSelectionViewModel
@@ -34,7 +34,7 @@ fun ExerciseSelectionScreen(
 ) {
     val viewModel: ExerciseSelectionViewModel = rememberInstance<ExerciseSelectionViewModel>()
     val state by viewModel.state.collectAsState()
-    val fontSize = getFontSize()
+    val fontSize = rememberFontSize()
     val bundle = navController.getParamOrThrow<ExerciseSelectionBundle>() // Adjust the type as needed
 
 

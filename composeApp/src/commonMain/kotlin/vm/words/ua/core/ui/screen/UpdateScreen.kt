@@ -12,14 +12,14 @@ import androidx.compose.ui.unit.dp
 import vm.words.ua.core.config.AppRemoteConfig
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
-import vm.words.ua.core.utils.getFontSize
+import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.navigation.SimpleNavController
 
 @Composable
 fun UpdateScreen(
     navController: SimpleNavController
 ) {
-    val fontSize = getFontSize()
+    val fontSize = rememberFontSize()
     val uriHandler = LocalUriHandler.current
 
     var currentVersion by remember { mutableStateOf(AppRemoteConfig.currentVersion) }

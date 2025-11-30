@@ -1,13 +1,6 @@
 package vm.words.ua.auth.ui.screen
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,7 +18,7 @@ import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppTextField
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.PrimaryButton
-import vm.words.ua.core.utils.getFontSize
+import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
@@ -58,8 +51,8 @@ fun TelegramLoginScreen(
                 Text(
                     text = "Please open Telegram and confirm login",
                     color = AppTheme.PrimaryGreen,
-                    fontSize = getFontSize() * 1.3f,
-                    lineHeight = getFontSize() * 1.4f,
+                    fontSize = rememberFontSize() * 1.3f,
+                    lineHeight = rememberFontSize() * 1.4f,
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.titleMedium
                 )

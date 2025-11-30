@@ -1,37 +1,23 @@
 package vm.words.ua.words.ui.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.domain.models.enums.CEFR
 import vm.words.ua.core.domain.models.enums.Language
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.ui.components.AppToolBar
-import vm.words.ua.core.ui.components.MultiSelect
-import vm.words.ua.core.ui.components.SingleSelectInput
-import vm.words.ua.core.ui.components.StringListInput
-import vm.words.ua.core.ui.components.TextInput
-import vm.words.ua.core.utils.getFontSize
+import vm.words.ua.core.ui.components.*
 import vm.words.ua.core.utils.isNotPhoneFormat
+import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.words.domain.models.enums.UserWordSortBy
@@ -203,7 +189,7 @@ fun UserWordFilterScreen(
                     contentColor = AppTheme.PrimaryBack
                 )
             ) {
-                Text("Apply Filter", fontSize = getFontSize())
+                Text("Apply Filter", fontSize = rememberFontSize())
             }
         }
     }

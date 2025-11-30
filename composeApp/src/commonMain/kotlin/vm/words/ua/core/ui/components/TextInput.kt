@@ -8,8 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.utils.getFontSize
 import vm.words.ua.core.utils.getLabelFontSize
+import vm.words.ua.core.utils.rememberFontSize
 
 @Composable
 fun TextInput(
@@ -18,7 +18,7 @@ fun TextInput(
     maxLength: Int = 255,
     onValueChange: (String?) -> Unit,
 ) {
-    val fontSize = getFontSize()
+    val fontSize = rememberFontSize()
     val labelFontSize = getLabelFontSize()
 
     OutlinedTextField(

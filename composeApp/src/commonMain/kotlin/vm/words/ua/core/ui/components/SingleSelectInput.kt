@@ -6,8 +6,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.utils.getFontSize
 import vm.words.ua.core.utils.getLabelFontSize
+import vm.words.ua.core.utils.rememberFontSize
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -21,7 +21,7 @@ fun <T> SingleSelectInput(
     onSelect: (T?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val fontSize = getFontSize()
+    val fontSize = rememberFontSize()
     val labelFontSize = getLabelFontSize()
     var expanded by remember { mutableStateOf(false) }
 

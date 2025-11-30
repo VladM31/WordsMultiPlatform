@@ -7,7 +7,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -27,16 +26,16 @@ fun OptionCard(
 ) {
     val containerColor =
         when {
-            isRight -> AppTheme.ColorSchema.primary
-            isWrong -> AppTheme.ColorSchema.errorContainer
-            else -> AppTheme.ColorSchema.surface
+            isRight -> AppTheme.ColorScheme.primary
+            isWrong -> AppTheme.ColorScheme.errorContainer
+            else -> AppTheme.ColorScheme.surface
         }
 
     val contentColor =
         when {
-            isRight -> AppTheme.ColorSchema.onPrimary
-            isWrong -> AppTheme.ColorSchema.error
-            else -> AppTheme.ColorSchema.primary
+            isRight -> AppTheme.ColorScheme.onPrimary
+            isWrong -> AppTheme.ColorScheme.error
+            else -> AppTheme.ColorScheme.primary
         }
 
     Card(

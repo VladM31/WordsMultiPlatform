@@ -35,7 +35,7 @@ object AppTheme {
     // spotlight background uses ARGB (#DF000000)
     val SpotlightBackground = Color(0xDF000000)
 
-    val ColorSchema: ColorScheme = darkColorScheme(
+    val ColorScheme: ColorScheme = darkColorScheme(
         primary = PrimaryGreen,
         onPrimary = Black,
         primaryContainer = PrimaryGreenDark,
