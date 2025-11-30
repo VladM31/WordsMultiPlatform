@@ -7,30 +7,46 @@ import vm.words.ua.words.domain.managers.SoundManager
 actual class SoundManagerImpl actual constructor() : SoundManager {
 
     private var audioElement: dynamic = null
-    private var currentUrl: dynamic = null
+    private var currentUrl: String? = null
 
     override suspend fun playSound(byteContent: ByteContent) {
         stopSound()
         try {
             // Create Uint8Array from ByteArray
             val bytes = byteContent.bytes
-            val uint8 = Uint8Array(bytes.size)
-            for (i in bytes.indices) {
-                // Use dynamic assignment to avoid calling the wrong `set` overload
-                uint8.asDynamic()[i] = bytes[i].toInt() and 0xFF
-            }
-            // Create object URL from the uint8 array and construct Audio via the JS Audio constructor
-            val url = js("URL.createObjectURL(new Blob([uint8], {type: 'audio/mpeg'}))")
+            val uint8 = Uint8Array(byteContent.bytes.toTypedArray())
+
+            // Создаём Blob url
+            @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
+            val url: String = js(
+                "URL.createObjectURL(new Blob([uint8], {type: 'audio/mpeg'}))"
+            ) as String
             currentUrl = url
-            val AudioConstructor: dynamic = js("Audio")
-            audioElement = AudioConstructor(url)
-            // Revoke the object URL when playback ends to avoid leaking Blob URLs
+
+            // ВАЖНО: используем new Audio()
+            val audio: dynamic = js("new Audio()")
+            audio.src = url
+            audioElement = audio
+
+            // По окончании воспроизведения освобождаем URL
             try {
-                audioElement.onended = { _: dynamic -> js("URL.revokeObjectURL(url)") }
+                audio.onended = { _: dynamic ->
+                    try {
+                        val urlToRevoke = currentUrl
+                        if (urlToRevoke != null) {
+                            js("URL.revokeObjectURL")(urlToRevoke)
+                        }
+                    } catch (_: dynamic) {
+                        // ignore
+                    } finally {
+                        currentUrl = null
+                    }
+                }
             } catch (_: dynamic) {
-                // ignore if setting handler fails on some platforms
+                // ignore if setting handler fails
             }
-            audioElement?.play()
+
+            audio.play()
         } catch (e: dynamic) {
             console.error("Failed to play sound: ", e)
         }
@@ -46,10 +62,12 @@ actual class SoundManagerImpl actual constructor() : SoundManager {
                 console.error("Failed to stop sound: ", e)
             }
         }
+
         // Revoke URL if we created one
-        if (currentUrl != null) {
+        val urlToRevoke = currentUrl
+        if (urlToRevoke != null) {
             try {
-                js("URL.revokeObjectURL(currentUrl)")
+                js("URL.revokeObjectURL")(urlToRevoke)
             } catch (e: dynamic) {
                 console.error("Failed to revoke object URL: ", e)
             } finally {
