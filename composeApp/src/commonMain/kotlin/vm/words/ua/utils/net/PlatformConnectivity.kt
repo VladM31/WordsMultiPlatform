@@ -25,5 +25,6 @@ fun rememberAppConnectivityState(): ConnectivityState {
 
 @Composable
 fun hasInternet(): Boolean {
-    return rememberAppConnectivityState().isConnected
+    val state = rememberAppConnectivityState()
+    return state.status != Connectivity.Status.Disconnected
 }

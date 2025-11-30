@@ -3,10 +3,7 @@ package vm.words.ua.utils.net.ui.components
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.WifiOff
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,10 +13,13 @@ import vm.words.ua.core.platform.currentPlatform
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberIconSize
+import vm.words.ua.navigation.Screen
+import vm.words.ua.navigation.SimpleNavController
 
 @Composable
 fun NoInternetBanner(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navController: SimpleNavController
 ) {
     val platform = currentPlatform()
     val fontSize = rememberFontSize()
@@ -47,35 +47,56 @@ fun NoInternetBanner(
                 .fillMaxWidth()
                 .padding(horizontal = 12.dp, vertical = 8.dp)
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.WifiOff,
-                    contentDescription = "No internet",
-                    tint = AppTheme.ColorScheme.onErrorContainer,
-                    modifier = Modifier.size(iconSize)
-                )
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                Column(
-                    verticalArrangement = Arrangement.Center
+            Column {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "No internet connection",
-                        color = AppTheme.ColorScheme.onErrorContainer,
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontSize = fontSize
+                    Icon(
+                        imageVector = Icons.Filled.WifiOff,
+                        contentDescription = "No internet",
+                        tint = AppTheme.ColorScheme.onErrorContainer,
+                        modifier = Modifier.size(iconSize)
                     )
 
-                    Text(
-                        text = instruction,
-                        color = AppTheme.ColorScheme.onErrorContainer.copy(alpha = 0.8f),
-                        style = MaterialTheme.typography.bodySmall,
-                        fontSize = fontSize
-                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Column(
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "No internet connection",
+                            color = AppTheme.ColorScheme.onErrorContainer,
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontSize = fontSize
+                        )
+
+                        Text(
+                            text = instruction,
+                            color = AppTheme.ColorScheme.onErrorContainer.copy(alpha = 0.8f),
+                            style = MaterialTheme.typography.bodySmall,
+                            fontSize = fontSize
+                        )
+                    }
+
+
                 }
+
+                if (platform == AppPlatform.JS) {
+                    return@Column
+                }
+
+                Button(
+                    onClick = { navController.navigateAndClear(Screen.Home) },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = AppTheme.ColorScheme.onErrorContainer.copy(alpha = 0.7f)
+                    ),
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(top = 12.dp)
+                ) {
+                    Text(text = "Home", fontSize = fontSize * 0.9f)
+                }
+
             }
         }
     }
