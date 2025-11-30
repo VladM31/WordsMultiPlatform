@@ -1,4 +1,4 @@
-package vm.words.ua.validation.actions
+package vm.words.ua.utils.validation.actions
 
 import java.net.IDN
 
@@ -11,4 +11,3 @@ actual fun domainToAscii(domain: String): String? {
         null
     }
 }
-
