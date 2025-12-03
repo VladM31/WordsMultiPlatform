@@ -10,13 +10,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import vm.words.ua.auth.ui.actions.TelegramLoginAction
 import vm.words.ua.auth.ui.vms.TelegramLoginVm
+import vm.words.ua.core.config.AppRemoteConfig
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppTextField
 import vm.words.ua.core.ui.components.AppToolBar
+import vm.words.ua.core.ui.components.ErrorMessageBox
 import vm.words.ua.core.ui.components.PrimaryButton
 import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.di.rememberInstance
@@ -30,6 +33,13 @@ fun TelegramLoginScreen(
     viewModel: TelegramLoginVm = rememberInstance()
 ) {
     val state by viewModel.state.collectAsState()
+    val uriHandler = LocalUriHandler.current
+
+    LaunchedEffect(state.isEnd) {
+        if (state.isEnd) {
+            navController.navigate(Screen.Home)
+        }
+    }
 
     Column(
         modifier = modifier
@@ -89,8 +99,7 @@ fun TelegramLoginScreen(
                 PrimaryButton(
                     text = "Open Telegram",
                     onClick = {
-                        // open telegram bot handled externally; just navigate to Home as fallback
-                        navController.navigateAndClear(Screen.Home)
+                        uriHandler.openUri(AppRemoteConfig.telegramBotLink)
                     },
                     modifier = Modifier.fillMaxWidth(0.8f)
                 )
@@ -98,16 +107,7 @@ fun TelegramLoginScreen(
         }
     }
 
-    // Side effects: show error and navigate when finished
-    LaunchedEffect(state.errorMessage) {
-        state.errorMessage?.let {
-            // TODO: show a toast/snackbar - using simple snackbar host would be better
-        }
-    }
-
-    LaunchedEffect(state.isEnd) {
-        if (state.isEnd) {
-            navController.navigate(Screen.Home)
-        }
+    state.errorMessage?.let {
+        ErrorMessageBox(it)
     }
 }
