@@ -121,6 +121,7 @@ private fun Content(
         return
     }
 
+
     LazyColumn(
         modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -131,6 +132,7 @@ private fun Content(
                 color = AppTheme.PrimaryColor,
                 fontSize = fontSize,
                 textAlign = TextAlign.Center,
+                lineHeight = fontSize * 1.1f,
                 modifier = Modifier
                     .padding(bottom = 8.dp)
                     .fillMaxWidth()
@@ -145,6 +147,7 @@ private fun Content(
             LettersGrid(
                 fontSize = fontSize,
                 letters = state.value.letters,
+                errorLetter = state.value.errorLetter,
                 onClick = { letter, id ->
                     viewModel.sent(LettersMatchAction.ClickOnLetter(letter, id))
                 }
@@ -155,7 +158,7 @@ private fun Content(
 
 
 @Composable
-private fun LetterItem(letter: String, fontSize: TextUnit, scale: Float, onClick: () -> Unit) {
+private fun LetterItem(letter: String, fontSize: TextUnit, scale: Float, isError: Boolean, onClick: () -> Unit) {
     val shape = RoundedCornerShape(12.dp)
     val widthDeviceFormat = getWidthDeviceFormat()
     val deviceScale = remember(widthDeviceFormat) {
@@ -172,6 +175,7 @@ private fun LetterItem(letter: String, fontSize: TextUnit, scale: Float, onClick
         56.dp * scale
     }
 
+    val color = if (isError) AppTheme.Error else AppTheme.PrimaryColor
 
     Surface(
         modifier = Modifier
@@ -182,14 +186,14 @@ private fun LetterItem(letter: String, fontSize: TextUnit, scale: Float, onClick
             .clickable(onClick = onClick),
         shape = shape,
         color = AppTheme.PrimaryBack,
-        border = BorderStroke(1.dp, AppTheme.PrimaryColor),
+        border = BorderStroke(1.dp, color),
         shadowElevation = 2.dp,
     ) {
         Box(contentAlignment = Alignment.Center) {
             Text(
                 text = letter,
                 fontSize = fontSize * 1.3f,
-                color = AppTheme.PrimaryColor,
+                color = color,
                 fontFamily = FontFamily.Monospace
             )
         }
@@ -199,6 +203,7 @@ private fun LetterItem(letter: String, fontSize: TextUnit, scale: Float, onClick
 @Composable
 private fun LettersGrid(
     fontSize: TextUnit,
+    errorLetter: LettersMatchState.ErrorLetter?,
     letters: List<LettersMatchState.Letter>,
     onClick: (Char, String) -> Unit,
 ) {
@@ -206,7 +211,12 @@ private fun LettersGrid(
     LazyVerticalGrid(columns = GridCells.Adaptive(56.dp), modifier = Modifier.fillMaxSize().heightIn(max = 400.dp)) {
         items(letters.size) { idx ->
             val l = letters[idx]
-            LetterItem(letter = l.letter.toString(), fontSize = fontSize, scale = scale) {
+            LetterItem(
+                letter = l.letter.toString(),
+                fontSize = fontSize,
+                isError = errorLetter?.letter?.id == l.id,
+                scale = scale
+            ) {
                 onClick(l.letter, l.id)
             }
         }
