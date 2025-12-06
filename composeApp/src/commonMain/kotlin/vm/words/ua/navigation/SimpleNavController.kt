@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
+import kotlinx.coroutines.*
 
 class SimpleNavController {
     var currentRoute by mutableStateOf<String>("loader")
@@ -17,6 +18,9 @@ class SimpleNavController {
 
     // Keep a ViewModelStore per route
     private val viewModelOwners = mutableMapOf<String, RouteViewModelStoreOwner>()
+
+    // Scope for delayed cleanup operations
+    private val cleanupScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     val isLastScreen: Boolean
         get() = backStack.size <= 1
@@ -33,7 +37,16 @@ class SimpleNavController {
         viewModelOwners.getOrPut(route) { RouteViewModelStoreOwner() }
 
     private fun clearViewModelStoreOwner(route: String) {
-        viewModelOwners.remove(route)?.clear()
+        val owner = viewModelOwners.remove(route) ?: return
+        // Clear asynchronously to avoid CancellationException during active coroutines
+        cleanupScope.launch {
+            delay(5000) // Small delay to let UI update first
+            try {
+                owner.clear()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     fun navigate(screen: Screen) {

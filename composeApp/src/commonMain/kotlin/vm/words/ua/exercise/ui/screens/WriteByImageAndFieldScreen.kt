@@ -160,7 +160,8 @@ private fun WriteByImageAndFieldContent(
                     text = state.value.wordText ?: "",
                     onTextChange = { viewModel.sent(WriteByImageAndFieldAction.UpdateText(it)) },
                     enabled = state.value.isEditEnable,
-                    onAddLetter = { viewModel.sent(WriteByImageAndFieldAction.AddLetter) }
+                    onAddLetter = { viewModel.sent(WriteByImageAndFieldAction.AddLetter) },
+                    isError = state.value.isConfirm == false
                 )
             }
         }

@@ -25,7 +25,7 @@ fun WordInputPanel(
     enabled: Boolean,
     onAddLetter: () -> Unit,
     modifier: Modifier = Modifier,
-
+    isError: Boolean = false,
     ) {
     val scale = getScaleFactor()
     val width: Dp = remember(scale) {
@@ -36,23 +36,25 @@ fun WordInputPanel(
     }
     val fontSize: TextUnit = rememberFontSize()
 
-
+    val color = if (isError) AppTheme.Error else AppTheme.PrimaryColor
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Surface(
             modifier = Modifier.width(width),
             color = AppTheme.PrimaryBack,
-            border = BorderStroke(1.dp, AppTheme.PrimaryColor),
+            border = BorderStroke(1.dp, color),
             shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp),
             shadowElevation = 2.dp
         ) {
+
             Box(Modifier.padding(horizontal = 10.dp, vertical = 4.dp)) {
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = text,
                     onValueChange = onTextChange,
                     enabled = enabled,
+                    isError = isError,
                     singleLine = true,
-                    textStyle = TextStyle(color = AppTheme.PrimaryColor, fontSize = fontSize),
+                    textStyle = TextStyle(color = color, fontSize = fontSize),
                     colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
@@ -60,8 +62,8 @@ fun WordInputPanel(
                         focusedContainerColor = Color.Transparent,
                         unfocusedContainerColor = Color.Transparent,
                         disabledContainerColor = Color.Transparent,
-                        cursorColor = AppTheme.PrimaryColor,
-                        disabledTextColor = AppTheme.PrimaryColor.copy(alpha = 0.6f)
+                        cursorColor = color,
+                        disabledTextColor = color.copy(alpha = 0.6f)
                     )
                 )
             }
