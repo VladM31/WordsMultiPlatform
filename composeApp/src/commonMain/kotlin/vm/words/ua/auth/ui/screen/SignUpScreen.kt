@@ -47,14 +47,15 @@ fun SignUpScreen(
     val hintController = createSignUpScreenHintController()
 
     LaunchedEffect(state.success) {
-        if (state.success) {
-            navController.navigateAndClearCurrent(
-                Screen.ConfirmSignUp, ConfirmSignBundle(
-                    phoneNumber = state.phoneNumber,
-                    password = state.password
-                )
-            )
+        if (state.success.not()) {
+            return@LaunchedEffect
         }
+        navController.navigateAndClearCurrent(
+            Screen.ConfirmSignUp, ConfirmSignBundle(
+                phoneNumber = state.phoneNumber,
+                password = state.password
+            )
+        )
     }
 
 
