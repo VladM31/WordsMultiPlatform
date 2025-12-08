@@ -51,7 +51,8 @@ fun LoginForm(
             label = "Phone",
             boxMaxWidth = maxWidth,
             modifier = Modifier.fillMaxWidth()
-                .viewHint(LoginScreenHintStep.PHONE_NUMBER, currentHintStep)
+                .viewHint(LoginScreenHintStep.PHONE_NUMBER, currentHintStep),
+            helperText = "Include country code, e.g., 11234567890, 3801234567890"
         )
 
         Spacer(modifier = Modifier.size((12 * scaleFactor).dp))
@@ -73,7 +74,7 @@ fun LoginForm(
             horizontalArrangement = Arrangement.End
         ) {
             Text(
-                text = "Join now",
+                text = "Sign up",
                 color = AppTheme.PrimaryColor,
                 fontSize = rememberFontSize(scaleFactor * textWeight),
                 modifier = Modifier

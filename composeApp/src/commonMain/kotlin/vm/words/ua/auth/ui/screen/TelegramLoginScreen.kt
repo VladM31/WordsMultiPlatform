@@ -71,7 +71,8 @@ fun TelegramLoginScreen(
                     value = state.phoneNumber,
                     onValueChange = { viewModel.sent(TelegramLoginAction.SetPhoneNumber(it)) },
                     label = "Phone number",
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    helperText = "Include country code, e.g., 11234567890, 3801234567890. If you didn't sign up, please do it first."
                 )
             }
         }

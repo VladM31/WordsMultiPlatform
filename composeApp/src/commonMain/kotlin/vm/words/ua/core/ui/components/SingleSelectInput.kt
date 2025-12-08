@@ -20,6 +20,8 @@ fun <T> SingleSelectInput(
     noneLabel: String = "",
     onSelect: (T?) -> Unit,
     modifier: Modifier = Modifier,
+    // Optional helper text shown below the input
+    helperText: String? = null,
 ) {
     val fontSize = rememberFontSize()
     val labelFontSize = getLabelFontSize()
@@ -45,7 +47,17 @@ fun <T> SingleSelectInput(
                 focusedTextColor = AppTheme.PrimaryGreen,
                 unfocusedTextColor = AppTheme.PrimaryGreen,
                 cursorColor = AppTheme.PrimaryGreen
-            )
+            ),
+            // Render helper text below the field when provided
+            supportingText = if (helperText != null) {
+                {
+                    Text(
+                        helperText,
+                        color = AppTheme.PrimaryGreen.copy(alpha = 0.7f),
+                        fontSize = getLabelFontSize() * 0.65
+                    )
+                }
+            } else null
         )
         ExposedDropdownMenu(
             expanded = expanded,
@@ -72,4 +84,3 @@ fun <T> SingleSelectInput(
         }
     }
 }
-

@@ -30,9 +30,11 @@ fun AppTextField(
     modifier: Modifier = Modifier.padding(PaddingValues(top = 5.dp)),
     label: String? = null,
     singleLine: Boolean = true,
-    isPassword: Boolean = false
+    isPassword: Boolean = false,
+    // Optional helper text shown below the input
+    helperText: String? = null
 ) {
-    BoxWithConstraints {
+    BoxWithConstraints(modifier.padding(top = 3.dp)) {
         val primaryColor70 = AppTheme.PrimaryColor.copy(alpha = 0.7f)
 
         OutlinedTextField(
@@ -56,7 +58,10 @@ fun AppTextField(
                 cursorColor = AppTheme.PrimaryColor,
                 focusedPlaceholderColor = AppTheme.PrimaryColor,
                 unfocusedPlaceholderColor = primaryColor70
-            )
+            ),
+            supportingText = if (helperText != null) {
+                { Text(helperText, color = primaryColor70, fontSize = getLabelFontSize() * 0.65) }
+            } else null
         )
     }
 }

@@ -25,15 +25,15 @@ enum class SignUpScreenHintStep(
         position = HintPosition.BOTTOM,
     ),
     FIRST_NAME(
-        text = "Enter your first name as it appears on your official documents.",
+        text = "Enter your first name.",
         position = HintPosition.BOTTOM,
     ),
     LAST_NAME(
-        text = "Enter your last name as it appears on your official documents.",
+        text = "Enter your last name.",
         position = HintPosition.BOTTOM,
     ),
     EMAIL(
-        text = "Provide a valid email address for account verification and communication(Optional).",
+        text = "Provide a valid email address for communication(Optional).",
         position = HintPosition.TOP,
     ),
     CURRENCY_SELECTION(

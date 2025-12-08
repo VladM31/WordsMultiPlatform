@@ -97,7 +97,8 @@ fun SignUpScreen(
                             onValueChange = { viewModel.sent(SignUpAction.SetPhoneNumber(it)) },
                             label = "Phone number",
                             modifier = Modifier.fillMaxWidth()
-                                .viewHint(SignUpScreenHintStep.PHONE_NUMBER, hintController.currentStep)
+                                .viewHint(SignUpScreenHintStep.PHONE_NUMBER, hintController.currentStep),
+                            helperText = "Include country code, e.g., 11234567890, 3801234567890"
                         )
                     }
 
@@ -108,7 +109,8 @@ fun SignUpScreen(
                             label = "Password",
                             modifier = Modifier.fillMaxWidth()
                                 .viewHint(SignUpScreenHintStep.PASSWORD, hintController.currentStep),
-                            isPassword = true
+                            isPassword = true,
+                            helperText = "Password must be between 8 and 60 characters long"
                         )
                     }
 
@@ -138,7 +140,8 @@ fun SignUpScreen(
                             onValueChange = { viewModel.sent(SignUpAction.SetEmail(it)) },
                             label = "Email",
                             modifier = Modifier.fillMaxWidth()
-                                .viewHint(SignUpScreenHintStep.EMAIL, hintController.currentStep)
+                                .viewHint(SignUpScreenHintStep.EMAIL, hintController.currentStep),
+                            helperText = "Provide a valid email address for communication(Optional)."
                         )
                     }
 
@@ -154,7 +157,8 @@ fun SignUpScreen(
                             modifier = Modifier.viewHint(
                                 SignUpScreenHintStep.CURRENCY_SELECTION,
                                 hintController.currentStep
-                            )
+                            ),
+                            helperText = "Select your preferred currency for transactions and pricing."
                         )
 
                     }
