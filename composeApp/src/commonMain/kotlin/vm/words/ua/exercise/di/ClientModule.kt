@@ -4,13 +4,20 @@ import org.kodein.di.DI
 import org.kodein.di.bind
 import org.kodein.di.instance
 import org.kodein.di.singleton
+import vm.words.ua.exercise.net.clients.ExerciseRecommendationClient
 import vm.words.ua.exercise.net.clients.ExerciseStatisticalClient
+import vm.words.ua.exercise.net.clients.impls.KrotExerciseRecommendationClient
 import vm.words.ua.exercise.net.clients.impls.KrotExerciseStatisticalClient
 
 
 internal val clientExerciseModule = DI.Module("clientExerciseModule") {
     bind<ExerciseStatisticalClient>() with singleton {
         KrotExerciseStatisticalClient(
+            client = instance()
+        )
+    }
+    bind<ExerciseRecommendationClient>() with singleton {
+        KrotExerciseRecommendationClient(
             client = instance()
         )
     }
