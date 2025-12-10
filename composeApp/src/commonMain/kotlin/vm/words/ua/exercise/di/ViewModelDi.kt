@@ -15,6 +15,7 @@ internal val exerciseViewModelModule = DI.Module("exerciseViewModel") {
             subscribeCacheManager = instance(),
             byteContentManager = instance(),
             exerciseStatisticalManager = instance(),
+            exerciseRecommendationManager = instance()
         )
     }
     bind<SelectingAnOptionVm>() with factory {

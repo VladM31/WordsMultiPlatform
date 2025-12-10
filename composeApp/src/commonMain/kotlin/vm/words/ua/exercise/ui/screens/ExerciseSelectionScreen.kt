@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.CenteredLoader
@@ -26,6 +27,8 @@ import vm.words.ua.exercise.ui.componets.ExerciseItemSelected
 import vm.words.ua.exercise.ui.componets.ExerciseItemUnselected
 import vm.words.ua.exercise.ui.vm.ExerciseSelectionViewModel
 import vm.words.ua.navigation.SimpleNavController
+import wordsmultiplatform.composeapp.generated.resources.Res
+import wordsmultiplatform.composeapp.generated.resources.question
 
 
 @Composable
@@ -72,7 +75,9 @@ fun ExerciseSelectionScreen(
     ) {
         AppToolBar(
             title = "Select Exercises",
-            onBackClick = { navController.popBackStack() }
+            onBackClick = { navController.popBackStack() },
+            additionalButtonImage = painterResource(Res.drawable.question),
+            showAdditionalButton = state.canRecommendExercises,
         )
 
         if (state.isLoading) {

@@ -32,7 +32,7 @@ class ExerciseRecommendationManagerImpl(
                 request = request.toNetworkRequest(),
                 userManager.toPair()
             )
-            response.canRecommend
+            response.available
         } catch (e: Exception) {
             println("ExerciseRecommendationManager - Failed to check if can recommend exercises: ${e.message}")
             false

@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CanRecommendExercisesRespond(
-    val canRecommend: Boolean
+    val available: Boolean
 ) {
 }
