@@ -60,8 +60,10 @@ class WriteByImageAndFieldVm(
                 break
             }
         }
+        val mistakeCount =
+            if (textNow == textBuilder.toString().trim()) state.value.mistakeCount else state.value.mistakeCount + 1
 
-        mutableState.value = state.value.copy(wordText = textBuilder.toString())
+        mutableState.value = state.value.copy(wordText = textBuilder.toString(), mistakeCount = mistakeCount)
     }
 
     private fun handleInit(action: WriteByImageAndFieldAction.Init) {
