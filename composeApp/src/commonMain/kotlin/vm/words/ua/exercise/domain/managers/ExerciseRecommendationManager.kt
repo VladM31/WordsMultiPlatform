@@ -1,11 +1,11 @@
 package vm.words.ua.exercise.domain.managers
 
 import vm.words.ua.exercise.domain.models.data.ExerciseRecommendation
-import vm.words.ua.exercise.domain.models.data.RecommendationRequest
+import vm.words.ua.exercise.domain.models.data.RecommendationOptions
 
 interface ExerciseRecommendationManager {
 
-    suspend fun recommendExercises(request: RecommendationRequest): ExerciseRecommendation?
+    suspend fun recommendExercises(request: RecommendationOptions): ExerciseRecommendation?
 
-    suspend fun canRecommendExercises(request: RecommendationRequest): Boolean
+    suspend fun canRecommendExercises(request: RecommendationOptions): Boolean
 }

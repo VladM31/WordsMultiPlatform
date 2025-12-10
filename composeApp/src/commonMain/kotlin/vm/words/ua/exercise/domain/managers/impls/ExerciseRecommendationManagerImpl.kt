@@ -4,7 +4,7 @@ import vm.words.ua.core.domain.managers.UserCacheManager
 import vm.words.ua.core.utils.toPair
 import vm.words.ua.exercise.domain.managers.ExerciseRecommendationManager
 import vm.words.ua.exercise.domain.models.data.ExerciseRecommendation
-import vm.words.ua.exercise.domain.models.data.RecommendationRequest
+import vm.words.ua.exercise.domain.models.data.RecommendationOptions
 import vm.words.ua.exercise.net.clients.ExerciseRecommendationClient
 import vm.words.ua.exercise.net.responds.ExerciseRecommendationRespond
 
@@ -13,7 +13,7 @@ class ExerciseRecommendationManagerImpl(
     private val userManager: UserCacheManager
 ) : ExerciseRecommendationManager {
 
-    override suspend fun recommendExercises(request: RecommendationRequest): ExerciseRecommendation? {
+    override suspend fun recommendExercises(request: RecommendationOptions): ExerciseRecommendation? {
         return try {
             val response = client.recommendExercises(
                 request = request.toNetworkRequest(),
@@ -26,7 +26,7 @@ class ExerciseRecommendationManagerImpl(
         }
     }
 
-    override suspend fun canRecommendExercises(request: RecommendationRequest): Boolean {
+    override suspend fun canRecommendExercises(request: RecommendationOptions): Boolean {
         return try {
             val response = client.canRecommendExercises(
                 request = request.toNetworkRequest(),
@@ -39,7 +39,7 @@ class ExerciseRecommendationManagerImpl(
         }
     }
 
-    private fun RecommendationRequest.toNetworkRequest(): vm.words.ua.exercise.net.requests.RecommendationRequest {
+    private fun RecommendationOptions.toNetworkRequest(): vm.words.ua.exercise.net.requests.RecommendationRequest {
         return vm.words.ua.exercise.net.requests.RecommendationRequest(
             wordIds = this.wordIds
         )

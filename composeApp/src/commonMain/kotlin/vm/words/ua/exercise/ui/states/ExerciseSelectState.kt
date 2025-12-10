@@ -14,7 +14,7 @@ data class ExerciseSelectState(
     val isConfirmed: Boolean = false,
     val isActiveSubscribe: Boolean = false,
     val isLoading: Boolean = false,
-
+    val canRecommendExercises: Boolean = false,
     val isInited: Boolean = false,
     val words: List<ExerciseWordDetails> = emptyList()
 )

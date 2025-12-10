@@ -13,5 +13,6 @@ sealed interface ExerciseSelectAction {
     data class AddExercise(val exercise: Exercise) : ExerciseSelectAction
     data class RemoveExercise(val exercise: Exercise) : ExerciseSelectAction
     object ConfirmSelection : ExerciseSelectAction
+    object RecommendExercises : ExerciseSelectAction
 }
 

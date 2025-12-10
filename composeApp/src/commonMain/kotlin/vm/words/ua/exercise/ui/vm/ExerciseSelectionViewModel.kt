@@ -9,11 +9,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import vm.words.ua.core.domain.managers.ByteContentManager
+import vm.words.ua.exercise.domain.managers.ExerciseRecommendationManager
 import vm.words.ua.exercise.domain.managers.ExerciseStatisticalManager
 import vm.words.ua.exercise.domain.mappers.toExerciseWordDetails
 import vm.words.ua.exercise.domain.mappers.toStartExerciseTransaction
 import vm.words.ua.exercise.domain.models.data.ExerciseSelection
 import vm.words.ua.exercise.domain.models.data.ExerciseWordDetails
+import vm.words.ua.exercise.domain.models.data.RecommendationOptions
 import vm.words.ua.exercise.domain.models.enums.Exercise
 import vm.words.ua.exercise.ui.actions.ExerciseSelectAction
 import vm.words.ua.exercise.ui.states.ExerciseSelectState
@@ -22,7 +24,8 @@ import vm.words.ua.subscribes.domain.managers.SubscribeCacheManager
 class ExerciseSelectionViewModel(
     private val exerciseStatisticalManager: ExerciseStatisticalManager,
     private val subscribeCacheManager: SubscribeCacheManager,
-    private val byteContentManager: ByteContentManager
+    private val byteContentManager: ByteContentManager,
+    private val exerciseRecommendationManager: ExerciseRecommendationManager
 ) : ViewModel() {
 
     private val mutableState = MutableStateFlow(ExerciseSelectState())
@@ -42,11 +45,33 @@ class ExerciseSelectionViewModel(
             return
         }
 
+
+
         mutableState.value = ExerciseSelectState(
             isInited = true,
+            isLoading = true,
             transactionId = action.transactionId,
             words = action.words.map { it.toExerciseWordDetails(action.transactionId) }
         )
+        viewModelScope.launch(Dispatchers.Default) {
+            val options = RecommendationOptions(
+                wordIds = action.words.map { it.word.id }
+            )
+            try {
+                val canRecommend = exerciseRecommendationManager.canRecommendExercises(options)
+                mutableState.value = state.value.copy(
+                    isLoading = false,
+                    canRecommendExercises = canRecommend
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+                mutableState.value = state.value.copy(
+                    isLoading = false,
+                    canRecommendExercises = false
+                )
+            }
+
+        }
     }
 
     private fun addExercise(exercise: Exercise) {
