@@ -19,7 +19,7 @@ import vm.words.ua.navigation.AppNavGraph
 
 @Composable
 @Preview
-fun App() = AppWindowProvider {
+fun App(modifier: Modifier = Modifier) = AppWindowProvider {
 
 
 
@@ -27,7 +27,7 @@ fun App() = AppWindowProvider {
         colorScheme = AppTheme.ColorScheme
     ) {
         Surface(
-            modifier = Modifier.fillMaxSize(),
+            modifier = modifier.fillMaxSize(),
             color = AppTheme.PrimaryBack
         ) {
             var isInitialized by rememberSaveable { mutableStateOf(false) }
