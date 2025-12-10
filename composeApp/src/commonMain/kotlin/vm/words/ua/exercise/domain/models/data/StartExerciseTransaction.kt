@@ -4,6 +4,7 @@ data class StartExerciseTransaction(
     val transactionId : String,
     val exercises : List<Int>,
     val words : List<Word>,
+    val recommendationId: String?,
     val createdAt : Long
 ){
 

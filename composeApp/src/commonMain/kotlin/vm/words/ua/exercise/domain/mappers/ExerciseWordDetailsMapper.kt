@@ -9,12 +9,13 @@ import vm.words.ua.exercise.ui.states.ExerciseSelectState
 import vm.words.ua.words.domain.models.UserWord
 
 
-fun ExerciseSelectState.toStartExerciseTransaction(): StartExerciseTransaction {
+fun ExerciseSelectState.toStartExerciseTransaction(recommendationId: String?): StartExerciseTransaction {
     return StartExerciseTransaction(
         transactionId = this.transactionId,
         exercises = this.selectedExercises.keys.map { it.id },
         createdAt = Clock.System.now().toEpochMilliseconds(),
-        words = this.words.map { it.toWord() }
+        words = this.words.map { it.toWord() },
+        recommendationId = recommendationId
     )
 }
 

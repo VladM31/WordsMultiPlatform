@@ -8,6 +8,7 @@ data class StartExerciseTransactionRequest(
     val exercises: List<Int>,
     val words: List<WordRequest>,
     val createdAt: Long,
+    val recommendationId: String?,
     val wordCount: WordCountRequest,
     val learningPlan: LearningPlan?
 ) {

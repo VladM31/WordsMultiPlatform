@@ -78,6 +78,9 @@ fun ExerciseSelectionScreen(
             onBackClick = { navController.popBackStack() },
             additionalButtonImage = painterResource(Res.drawable.question),
             showAdditionalButton = state.canRecommendExercises,
+            onAdditionalClick = {
+                viewModel.sent(ExerciseSelectAction.RecommendExercises)
+            }
         )
 
         if (state.isLoading) {

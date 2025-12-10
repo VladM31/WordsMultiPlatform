@@ -62,6 +62,7 @@ class ExerciseStatisticalManagerImpl(
             transactionId = this.transactionId,
             exercises = this.exercises,
             createdAt = this.createdAt,
+            recommendationId = this.recommendationId,
             words = this.words.map { it.toRequest() },
             wordCount = StartExerciseTransactionRequest.WordCountRequest(
                 addedToLearning = countMap[LearningHistoryType.CREATE] ?: 0,

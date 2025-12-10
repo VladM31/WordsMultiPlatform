@@ -37,17 +37,38 @@ class ExerciseSelectionViewModel(
             is ExerciseSelectAction.RemoveExercise -> removeExercise(action.exercise)
             is ExerciseSelectAction.ConfirmSelection -> handleConfirmSelection()
             is ExerciseSelectAction.Init -> init(action)
-            else -> {}
+            is ExerciseSelectAction.RecommendExercises -> handleRecommendExercises()
         }
     }
 
-    private fun init(action: ExerciseSelectAction.Init){
+    private fun handleRecommendExercises() {
+        if (state.value.recommendationId != null) {
+            return
+        }
+        viewModelScope.launch(Dispatchers.Default) {
+            val options = RecommendationOptions(
+                wordIds = state.value.words.map { it.wordId }.toSet(),
+            )
+            val recommendation = exerciseRecommendationManager.recommendExercises(options) ?: return@launch
+            mutableState.value = state.value.copy(
+                recommendationId = recommendation.recommendationId,
+                exercises = Exercise.entries.map {
+                    ExerciseSelection(it)
+                },
+                selectedExercises = mapOf(),
+                number = 0,
+            )
+            recommendation.exercises.forEach {
+                addExercise(it)
+            }
+
+        }
+    }
+
+    private fun init(action: ExerciseSelectAction.Init) {
         if (state.value.isInited && state.value.transactionId == action.transactionId) {
             return
         }
-
-
-
         mutableState.value = ExerciseSelectState(
             isInited = true,
             isLoading = true,
@@ -151,7 +172,11 @@ class ExerciseSelectionViewModel(
                     getByteContent(it)
                 }
             }.awaitAll()
-            exerciseStatisticalManager.startExercise(state.value.toStartExerciseTransaction())
+            exerciseStatisticalManager.startExercise(
+                state.value.toStartExerciseTransaction(
+                    state.value.recommendationId
+                )
+            )
 
             mutableState.value = state.value.copy(
                 isConfirmed = true,
@@ -162,9 +187,11 @@ class ExerciseSelectionViewModel(
         }
     }
 
-    private suspend fun getByteContent(word: ExerciseWordDetails) : ExerciseWordDetails{
-        val imageContent = if (word.imageLink.isNullOrBlank()) null else byteContentManager.downloadByteContent(word.imageLink)
-        val soundContent = if (word.soundLink.isNullOrBlank()) null else byteContentManager.downloadByteContent(word.soundLink)
+    private suspend fun getByteContent(word: ExerciseWordDetails): ExerciseWordDetails {
+        val imageContent =
+            if (word.imageLink.isNullOrBlank()) null else byteContentManager.downloadByteContent(word.imageLink)
+        val soundContent =
+            if (word.soundLink.isNullOrBlank()) null else byteContentManager.downloadByteContent(word.soundLink)
         return word.copy(
             imageContent = imageContent,
             soundContent = soundContent

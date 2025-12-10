@@ -9,8 +9,9 @@ data class ExerciseSelectState(
         ExerciseSelection(it)
     },
     val selectedExercises: Map<Exercise, Int> = mapOf(),
-    var number: Int = 0,
+    val number: Int = 0,
     val transactionId: String = "",
+    val recommendationId: String? = null,
     val isConfirmed: Boolean = false,
     val isActiveSubscribe: Boolean = false,
     val isLoading: Boolean = false,
