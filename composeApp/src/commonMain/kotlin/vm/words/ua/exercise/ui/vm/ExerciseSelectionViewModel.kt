@@ -37,6 +37,7 @@ class ExerciseSelectionViewModel(
             is ExerciseSelectAction.RemoveExercise -> removeExercise(action.exercise)
             is ExerciseSelectAction.ConfirmSelection -> handleConfirmSelection()
             is ExerciseSelectAction.Init -> init(action)
+            else -> {}
         }
     }
 
