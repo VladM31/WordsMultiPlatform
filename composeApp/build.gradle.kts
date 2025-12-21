@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.composeHotReload)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.androidApplication)
+    alias(libs.plugins.googleServices)
 }
 
 kotlin {
@@ -162,6 +163,10 @@ kotlin {
             dependencies {
                 implementation(libs.connectivity.device)
                 implementation(libs.connectivity.compose.device)
+
+                // Firebase Analytics - only for Android and iOS
+                implementation(libs.firebase.analytics)
+                implementation(libs.firebase.common)
             }
         }
 

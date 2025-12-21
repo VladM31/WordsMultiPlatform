@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1005445939198",
+    "project_id": "words-53d45",
+    "storage_bucket": "words-53d45.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1005445939198:android:16786a91e519e4381c8aaf",
+        "android_client_info": {
+          "package_name": "com.generagames.happy.town.farm.wordandroid"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkrHYdrE_LZRNYupOShlxcUj8SKOhGLX8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1005445939198:android:813feacb0d9734dd1c8aaf",
+        "android_client_info": {
+          "package_name": "vm.words.ua"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkrHYdrE_LZRNYupOShlxcUj8SKOhGLX8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

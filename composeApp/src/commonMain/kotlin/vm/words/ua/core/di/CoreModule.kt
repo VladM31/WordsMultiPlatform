@@ -6,4 +6,5 @@ import org.kodein.di.DI
 val coreModule = DI.Module("core") {
     import(networkCoreModule)
     import(managerCoreModule)
+    import(analyticsCoreModule)
 }

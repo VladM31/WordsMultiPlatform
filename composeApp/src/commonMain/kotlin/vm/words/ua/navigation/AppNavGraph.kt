@@ -3,8 +3,10 @@ package vm.words.ua.navigation
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import org.kodein.di.instance
+import vm.words.ua.core.analytics.Analytics
 import vm.words.ua.core.platform.AppPlatform
 import vm.words.ua.core.platform.currentPlatform
 import vm.words.ua.core.ui.screen.UpdateScreen
@@ -33,6 +35,7 @@ private val noHomeBtmSupportRoutes = setOf(
 @Composable
 fun AppNavGraph() {
     val navController: SimpleNavController by DiContainer.di.instance()
+    val analytics by DiContainer.di.instance<Analytics>()
 
     // List of providers - modules can add their own provider to this list
     val providers: List<ScreenProvider> = listOf(
@@ -50,6 +53,10 @@ fun AppNavGraph() {
     val platform = currentPlatform()
     val showHomeBtn = remember(isOnline, route) {
         platform != AppPlatform.JS && noHomeBtmSupportRoutes.contains(route).not()
+    }
+
+    LaunchedEffect(route) {
+        analytics.setCurrentScreen(route)
     }
 
     if (isOnline.not() && (noInternetSupportRoutes.contains(route).not() || platform == AppPlatform.JS)) {
