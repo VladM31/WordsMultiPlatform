@@ -11,11 +11,14 @@ import vm.words.ua.auth.domain.models.data.SignUpModel
 import vm.words.ua.auth.ui.actions.SignUpAction
 import vm.words.ua.auth.ui.states.SignUpState
 import vm.words.ua.auth.ui.validation.signUpValidator
+import vm.words.ua.core.analytics.Analytics
+import vm.words.ua.core.analytics.AnalyticsEvents
 import vm.words.ua.core.ui.models.ErrorMessage
 import vm.words.ua.core.utils.toNumbersOnly
 
 class SignUpViewModel(
-    private val authManager: AuthManager
+    private val authManager: AuthManager,
+    private val analytics: Analytics
 ) : ViewModel() {
 
     private val mutableState = MutableStateFlow(SignUpState())
@@ -73,7 +76,28 @@ class SignUpViewModel(
             try {
                 authManager.signUp(state.value.toModel()).let {
                     val erMes = it.message?.run { ErrorMessage(message = this) }
+
+
+
                     mutableState.value = state.value.copy(success = it.success, error = erMes)
+                    if (it.success) {
+                        analytics.logEvent(
+                            AnalyticsEvents.SIGNUP_SUCCESS, mapOf(
+                                "phone_number" to state.value.phoneNumber,
+                                "email" to (state.value.email ?: "not_provided"),
+                                "currency" to state.value.currency.name
+                            )
+                        )
+                        return@let
+                    }
+                    analytics.logEvent(
+                        AnalyticsEvents.SIGNUP_FAILED, mapOf(
+                            "phone_number" to state.value.phoneNumber,
+                            "email" to (state.value.email ?: "not_provided"),
+                            "currency" to state.value.currency.name,
+                            "error_message" to (it.message ?: "unknown_error")
+                        )
+                    )
                 }
             } catch (e: Exception) {
                 mutableState.value =

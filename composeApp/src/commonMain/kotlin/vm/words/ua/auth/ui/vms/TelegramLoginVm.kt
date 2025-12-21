@@ -11,13 +11,18 @@ import vm.words.ua.auth.domain.managers.AuthHistoryManager
 import vm.words.ua.auth.domain.managers.TelegramAuthManager
 import vm.words.ua.auth.ui.actions.TelegramLoginAction
 import vm.words.ua.auth.ui.states.TelegramLoginState
+import vm.words.ua.core.analytics.Analytics
+import vm.words.ua.core.analytics.AnalyticsEvents
 import vm.words.ua.core.ui.models.ErrorMessage
 import vm.words.ua.core.utils.toNumbersOnly
+import vm.words.ua.utils.validation.Validator
+import vm.words.ua.utils.validation.schemes.ValidationScheme
 import vm.words.ua.utils.validation.schemes.isPhoneNumber
 
 class TelegramLoginVm(
     private val telegramAuthManager: TelegramAuthManager,
-    private val authHistoryManager: AuthHistoryManager
+    private val authHistoryManager: AuthHistoryManager,
+    private val analytics: Analytics
 ) : ViewModel() {
 
     private val mutableState = MutableStateFlow(
@@ -26,12 +31,12 @@ class TelegramLoginVm(
         )
     )
     val state: StateFlow<TelegramLoginState> = mutableState
-    private val validator = _root_ide_package_.vm.words.ua.utils.validation.Validator(state)
+    private val validator = Validator(state)
 
     init {
         validator.add(
             { it.phoneNumber },
-            _root_ide_package_.vm.words.ua.utils.validation.schemes.ValidationScheme.stringSchema("Phone number")
+            ValidationScheme.stringSchema("Phone number")
                 .isPhoneNumber()
         )
     }
@@ -75,6 +80,12 @@ class TelegramLoginVm(
             }
 
             if (result.isFailure) {
+                analytics.logEvent(
+                    AnalyticsEvents.TELEGRAM_LOGIN_FAILED, mapOf(
+                        "phone_number" to mutableState.value.phoneNumber,
+                        "error" to (result.exceptionOrNull()?.message ?: "Unknown error")
+                    )
+                )
                 mutableState.value = mutableState.value.copy(
                     errorMessage = ErrorMessage(
                         result.exceptionOrNull()?.message ?: "Unknown error"
@@ -97,6 +108,11 @@ class TelegramLoginVm(
                 if (success) {
                     authHistoryManager.updateLastPhoneNumber(mutableState.value.phoneNumber)
                     mutableState.value = mutableState.value.copy(isEnd = true)
+                    analytics.logEvent(
+                        AnalyticsEvents.TELEGRAM_LOGIN_SUCCESS, mapOf(
+                            "phone_number" to mutableState.value.phoneNumber
+                        )
+                    )
                     break
                 }
                 delay(3000)
