@@ -14,12 +14,14 @@ internal val viewModelDi = DI.Module("viewModel") {
         LoginViewModel(
             authManager = instance(),
             authHistoryManager = instance(),
+            analytics = instance()
         )
     }
 
     bind<SignUpViewModel>() with factory {
         SignUpViewModel(
-            authManager = instance()
+            authManager = instance(),
+            analytics = instance()
         )
     }
 
@@ -32,7 +34,8 @@ internal val viewModelDi = DI.Module("viewModel") {
     bind<TelegramLoginVm>() with factory {
         TelegramLoginVm(
             telegramAuthManager = instance(),
-            authHistoryManager = instance()
+            authHistoryManager = instance(),
+            analytics = instance()
         )
     }
 }

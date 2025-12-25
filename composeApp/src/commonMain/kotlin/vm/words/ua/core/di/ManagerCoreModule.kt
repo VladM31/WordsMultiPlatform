@@ -15,7 +15,8 @@ internal val managerCoreModule = DI.Module("managerCoreModule") {
     bind<UserCacheManager>() with singleton {
         SharedUserCacheManager(
             settings = SettingsFactory.create(),
-            tokenCipher = TokenCipherFactory.create()
+            tokenCipher = TokenCipherFactory.create(),
+            analytics = instance()
         )
     }
 

@@ -2,6 +2,7 @@ package vm.words.ua.core.ui.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -39,10 +40,8 @@ fun ButtonsGrid(
             .fillMaxWidth()
             .verticalScroll(scrollState)
     ) {
-        // Получаем коэффициент масштабирования на основе ширины экрана
         val scaleFactor = getScaleFactor(maxWidth)
 
-        // Масштабируем все размеры
         val maxButtonWidth = baseButtonWidth * scaleFactor
         val gap = (10 * scaleFactor).dp
         val horizontalPadding = (12 * scaleFactor).dp
@@ -51,10 +50,8 @@ fun ButtonsGrid(
         val verticalSpacing = (6 * scaleFactor).dp
         val bottomSpacing = (24 * scaleFactor).dp
 
-        // Размер текста на основе масштаба
         val textSize = (baseTextSize * scaleFactor).sp
 
-        // decide columns: up to 2
         val columns = if (maxWidth >= (maxButtonWidth * 2 + gap)) 2 else 1
 
         val availableForItems = maxWidth - gap * (columns - 1) - horizontalPadding * 2
@@ -89,6 +86,7 @@ fun ButtonsGrid(
                             onClick = item.onClick,
                             colors = buttonColors,
                             enabled = item.isAvailable,
+                            shape = RoundedCornerShape(8.dp),
                             modifier = item.modifier
                                 .width(itemWidth)
                                 .heightIn(min = minButtonHeight)
