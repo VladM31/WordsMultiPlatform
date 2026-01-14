@@ -58,7 +58,7 @@ fun SelectionBottomMenu(
                 ),
                 contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp)
             ) {
-                Text(text = "Unselect", fontSize = getLabelFontSize())
+                Text(text = "Clear", fontSize = getLabelFontSize())
             }
 
             if (showDelete) {

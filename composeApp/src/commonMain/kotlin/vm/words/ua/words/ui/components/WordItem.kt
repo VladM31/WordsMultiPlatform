@@ -23,9 +23,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.Image
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material.icons.outlined.VolumeUp
-import androidx.compose.material.icons.rounded.ArrowForward
+import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -34,6 +35,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -58,7 +62,7 @@ import wordsmultiplatform.composeapp.generated.resources.check_mark
 import wordsmultiplatform.composeapp.generated.resources.image_icon
 import wordsmultiplatform.composeapp.generated.resources.sound
 
-// Кольорова палітра на основі AppTheme
+// Color palette based on AppTheme
 private object WordItemColors {
     val CardBackground = AppTheme.PrimaryBackLight
     val CardBackgroundGradientEnd = AppTheme.PrimaryBackLight
@@ -77,8 +81,8 @@ private object WordItemColors {
 fun WordItem(
     word: Word,
     userWord: UserWord? = null,
-    isSelected: Boolean, // Це стан корзини (isInCart)
-    onSelect: () -> Unit, // Це toggle корзини
+    isSelected: Boolean, // Cart state (isInCart)
+    onSelect: () -> Unit, // Cart toggle
     onOpen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -94,7 +98,11 @@ fun WordItem(
         val horizontalPadding = (8 * scaleFactor).dp
         val verticalPadding = (6 * scaleFactor).dp
 
-        // Анімація для корзини
+        // State for meta info visibility
+        val hasMetaInfo = userWord?.createdAt != null || userWord?.lastReadDate != null
+        var showMetaInfo by remember { mutableStateOf(false) }
+
+        // Cart animation
         val cartBorderColor by animateColorAsState(
             targetValue = if (isSelected) WordItemColors.CartActive else Color.Transparent,
             animationSpec = tween(400)
@@ -117,7 +125,7 @@ fun WordItem(
                 )
                 .pointerInput(Unit) {
                     detectTapGestures(
-                        onLongPress = { onSelect() } // Long press для корзини
+                        onLongPress = { onSelect() } // Long press for cart
                     )
                 },
             shape = RoundedCornerShape(20.dp),
@@ -138,129 +146,156 @@ fun WordItem(
                         )
                     )
             ) {
-
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(cardPadding),
-                    verticalAlignment = Alignment.CenterVertically
+                Column(
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    // Кольоровий індикатор зліва
-                    Box(
+                    Row(
                         modifier = Modifier
-                            .width(4.dp)
-                            .height(60.dp)
-                            .clip(RoundedCornerShape(2.dp))
-                            .background(
-                                brush = Brush.verticalGradient(
-                                    colors = listOf(
-                                        WordItemColors.AccentCyan,
-                                        WordItemColors.AccentPurple
+                            .fillMaxWidth()
+                            .padding(cardPadding),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // Color indicator on the left
+                        Box(
+                            modifier = Modifier
+                                .width(4.dp)
+                                .height(60.dp)
+                                .clip(RoundedCornerShape(2.dp))
+                                .background(
+                                    brush = Brush.verticalGradient(
+                                        colors = listOf(
+                                            WordItemColors.AccentCyan,
+                                            WordItemColors.AccentPurple
+                                        )
                                     )
                                 )
-                            )
-                    )
+                        )
 
-                    Spacer(modifier = Modifier.width(12.dp))
+                        Spacer(modifier = Modifier.width(12.dp))
 
-                    // Основний контент
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(end = 12.dp)
-                    ) {
-                        // Оригінальне слово
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
+                        // Main content
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(end = 12.dp)
                         ) {
-                            LanguageBadge(
-                                langCode = word.lang.upperShortName,
-                                color = WordItemColors.AccentCyan
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = word.original,
-                                color = WordItemColors.TextPrimary,
-                                fontSize = titleSize,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(6.dp))
-
-                        // Переклад
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            LanguageBadge(
-                                langCode = word.translateLang.upperShortName,
-                                color = WordItemColors.AccentPurple
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = word.translate,
-                                color = WordItemColors.TextSecondary,
-                                fontSize = translateSize,
-                                fontWeight = FontWeight.Normal
-                            )
-                        }
-
-                        // Категорія
-                        word.category?.let { category ->
-                            Spacer(modifier = Modifier.height(8.dp))
-                            CategoryChip(category = category)
-                        }
-
-                        // Мета-інформація
-                        val hasMetaInfo = userWord?.createdAt != null || userWord?.lastReadDate != null
-                        if (hasMetaInfo) {
-                            Spacer(modifier = Modifier.height(8.dp))
+                            // Original word
                             Row(
-                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                userWord?.createdAt?.let {
-                                    MetaInfoText(
-                                        label = "Додано",
-                                        value = it.toFormatDateTime(),
-                                        fontSize = dateSize
+                                LanguageBadge(
+                                    langCode = word.lang.upperShortName,
+                                    color = WordItemColors.AccentCyan
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = word.original,
+                                    color = WordItemColors.TextPrimary,
+                                    fontSize = titleSize,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(6.dp))
+
+                            // Translation
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                LanguageBadge(
+                                    langCode = word.translateLang.upperShortName,
+                                    color = WordItemColors.AccentPurple
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = word.translate,
+                                    color = WordItemColors.TextSecondary,
+                                    fontSize = translateSize,
+                                    fontWeight = FontWeight.Normal
+                                )
+                            }
+
+                            // Category
+                            word.category?.let { category ->
+                                Spacer(modifier = Modifier.height(8.dp))
+                                CategoryChip(category = category)
+                            }
+                        }
+
+                        // Right panel with buttons
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            // Buttons in one row
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                // Cart button
+                                CartButton(
+                                    isInCart = isSelected,
+                                    onClick = onSelect,
+                                    size = iconSize * 1.8f
+                                )
+
+                                // Open button
+                                OpenButton(
+                                    onClick = onOpen,
+                                    size = iconSize * 1.8f
+                                )
+                            }
+
+                            // Media indicators and Info button row
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                // Info button for meta information
+                                if (hasMetaInfo) {
+                                    InfoButton(
+                                        isExpanded = showMetaInfo,
+                                        onClick = { showMetaInfo = !showMetaInfo },
+                                        size = iconSize * 1.2f
                                     )
                                 }
-                                userWord?.lastReadDate?.let {
-                                    MetaInfoText(
-                                        label = "Читав",
-                                        value = it.toFormatDateTime(),
-                                        fontSize = dateSize
-                                    )
-                                }
+
+                                // Media indicators
+                                MediaIndicators(
+                                    hasImage = word.imageLink != null,
+                                    hasSound = word.soundLink != null,
+                                    iconSize = iconSize * 0.9f
+                                )
                             }
                         }
                     }
 
-                    // Права панель з кнопками
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        // Кнопка корзини
-                        CartButton(
-                            isInCart = isSelected,
-                            onClick = onSelect,
-                            size = iconSize * 1.8f
-                        )
-
-                        // Кнопка відкрити
-                        OpenButton(
-                            onClick = onOpen,
-                            size = iconSize * 1.8f
-                        )
-
-                        // Індикатори медіа
-                        MediaIndicators(
-                            hasImage = word.imageLink != null,
-                            hasSound = word.soundLink != null,
-                            iconSize = iconSize * 0.9f
-                        )
+                    // Meta info section at the bottom (expandable)
+                    if (hasMetaInfo && showMetaInfo) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(
+                                    color = WordItemColors.ButtonBackground.copy(alpha = 0.5f)
+                                )
+                                .padding(horizontal = cardPadding, vertical = 8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(24.dp)
+                        ) {
+                            userWord?.createdAt?.let {
+                                MetaInfoText(
+                                    label = "Added",
+                                    value = it.toFormatDateTime(),
+                                    fontSize = dateSize
+                                )
+                            }
+                            userWord?.lastReadDate?.let {
+                                MetaInfoText(
+                                    label = "Last read",
+                                    value = it.toFormatDateTime(),
+                                    fontSize = dateSize
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -389,6 +424,47 @@ private fun CartButton(
 }
 
 @Composable
+private fun InfoButton(
+    isExpanded: Boolean,
+    onClick: () -> Unit,
+    size: androidx.compose.ui.unit.Dp
+) {
+    val backgroundColor by animateColorAsState(
+        targetValue = if (isExpanded)
+            WordItemColors.AccentPurple.copy(alpha = 0.2f)
+        else
+            WordItemColors.ButtonBackground.copy(alpha = 0.6f),
+        animationSpec = tween(200)
+    )
+
+    val iconColor by animateColorAsState(
+        targetValue = if (isExpanded)
+            WordItemColors.AccentPurple
+        else
+            WordItemColors.TextSecondary,
+        animationSpec = tween(200)
+    )
+
+    Surface(
+        onClick = onClick,
+        modifier = Modifier.size(size),
+        shape = RoundedCornerShape(8.dp),
+        color = backgroundColor,
+        contentColor = iconColor
+    ) {
+        Box(
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Info,
+                contentDescription = "Show info",
+                modifier = Modifier.size(size * 0.6f)
+            )
+        }
+    }
+}
+
+@Composable
 private fun OpenButton(
     onClick: () -> Unit,
     size: androidx.compose.ui.unit.Dp
@@ -404,8 +480,8 @@ private fun OpenButton(
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = Icons.Rounded.ArrowForward,
-                contentDescription = "Відкрити слово",
+                imageVector = Icons.Outlined.Visibility,
+                contentDescription = "Open word",
                 modifier = Modifier.size(size * 0.5f)
             )
         }
@@ -432,7 +508,7 @@ private fun MediaIndicators(
         if (hasImage) {
             Icon(
                 imageVector = Icons.Outlined.Image,
-                contentDescription = "Є зображення",
+                contentDescription = "Has image",
                 tint = WordItemColors.AccentGreen.copy(alpha = 0.8f),
                 modifier = Modifier.size(iconSize)
             )
@@ -441,7 +517,7 @@ private fun MediaIndicators(
         if (hasSound) {
             Icon(
                 imageVector = Icons.Outlined.VolumeUp,
-                contentDescription = "Є звук",
+                contentDescription = "Has sound",
                 tint = WordItemColors.AccentPurple.copy(alpha = 0.8f),
                 modifier = Modifier.size(iconSize)
             )
