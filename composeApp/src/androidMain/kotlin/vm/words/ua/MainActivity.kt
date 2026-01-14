@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
         try {
             // Initialize Firebase
             Firebase.initialize(this)
-
+            
             // Initialize Android-specific factories
             SettingsFactory.init(this)
             AuthHistorySettingsFactory.init(this)
