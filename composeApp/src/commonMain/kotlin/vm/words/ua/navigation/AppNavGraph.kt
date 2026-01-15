@@ -1,7 +1,5 @@
 package vm.words.ua.navigation
 
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -9,6 +7,7 @@ import org.kodein.di.instance
 import vm.words.ua.core.analytics.Analytics
 import vm.words.ua.core.platform.AppPlatform
 import vm.words.ua.core.platform.currentPlatform
+import vm.words.ua.core.ui.screen.LoaderScreen
 import vm.words.ua.core.ui.screen.UpdateScreen
 import vm.words.ua.di.DiContainer
 import vm.words.ua.navigation.providers.*
@@ -82,8 +81,8 @@ fun AppNavGraph() {
     }
 
     if (!handled) {
-        Button(onClick = { navController.popBackStack() }) {
-            Text("Unknown Screen, " + navController.currentRoute)
+        LoaderScreen {
+
         }
     }
 }
