@@ -80,8 +80,6 @@ fun WordDetailsScreen(
             .background(AppTheme.PrimaryBack)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-
-
             AppToolBar(
                 title = state.word?.original ?: "Word Details",
                 showBackButton = true,
@@ -252,34 +250,51 @@ private fun DesktopLayout(
                     modifier = Modifier.fillMaxWidth()
                 )
             }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                SoundButton(
+                    isPlaying = state.isPlayingSound,
+                    hasSound = wordState.sound != null,
+                    onPlaySound = { viewModel.sent(WordDetailsAction.PlaySound) }
+                )
+            }
+
+
+        }
+
+        if (image == null) {
+            return@Row
         }
 
         Spacer(modifier = Modifier.width(32.dp))
 
-        Column(
+        // Right column - Image and Sound (centered when no image)
+        Box(
             modifier = Modifier
-                .widthIn(min = 300.dp, max = contentWidth)
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .fillMaxHeight(),
+            contentAlignment = Alignment.TopCenter
         ) {
-            if (image != null) {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
                 ImageCard(
                     image = image,
                     maxWidth = maxWidth,
                     modifier = Modifier.fillMaxWidth()
                 )
+
+
             }
-
-
-            SoundButton(
-                isPlaying = state.isPlayingSound,
-                hasSound = wordState.sound != null,
-                onPlaySound = { viewModel.sent(WordDetailsAction.PlaySound) }
-            )
         }
     }
 }
+
 
 @Composable
 private fun WordCard(
