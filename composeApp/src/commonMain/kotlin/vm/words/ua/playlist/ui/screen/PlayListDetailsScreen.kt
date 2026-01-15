@@ -5,6 +5,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckBox
+import androidx.compose.material.icons.filled.CheckBoxOutlineBlank
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,13 +22,13 @@ import vm.words.ua.core.ui.components.PopupMenuButton
 import vm.words.ua.core.ui.components.PopupMenuItem
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.exercise.ui.bundles.ExerciseSelectionBundle
-import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.navigation.Screen
+import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.playlist.domain.models.bundles.PlayListDetailsBundle
 import vm.words.ua.playlist.ui.actions.PlayListDetailsAction
-import vm.words.ua.words.ui.components.WordItem
 import vm.words.ua.playlist.ui.vms.PlayListDetailsViewModel
 import vm.words.ua.words.ui.bundles.WordDetailsBundle
+import vm.words.ua.words.ui.components.WordItem
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.delete_red
 import wordsmultiplatform.composeapp.generated.resources.play
@@ -118,6 +121,8 @@ fun PlayListDetailsScreen(
                 WordItem(
                     word = pinnedWord.userWord.word,
                     isSelected = state.selectedWords.containsKey(pinnedWord.userWord.id),
+                    notSelectedIcon = Icons.Filled.CheckBoxOutlineBlank,
+                    selectedIcon = Icons.Filled.CheckBox,
                     onSelect = {
                         viewModel.sent(
                             PlayListDetailsAction.SelectWord(

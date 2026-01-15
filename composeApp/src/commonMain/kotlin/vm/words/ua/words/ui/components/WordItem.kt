@@ -8,79 +8,49 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.outlined.Image
-import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.ShoppingCart
-import androidx.compose.material.icons.outlined.VolumeUp
-import androidx.compose.material.icons.outlined.Visibility
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.outlined.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.utils.getScaleFactor
 import vm.words.ua.core.utils.toFormatDateTime
 import vm.words.ua.words.domain.models.UserWord
 import vm.words.ua.words.domain.models.Word
-import wordsmultiplatform.composeapp.generated.resources.Res
-import wordsmultiplatform.composeapp.generated.resources.arrow
-import wordsmultiplatform.composeapp.generated.resources.check_mark
-import wordsmultiplatform.composeapp.generated.resources.image_icon
-import wordsmultiplatform.composeapp.generated.resources.sound
 
 // Color palette based on AppTheme
 private object WordItemColors {
     val CardBackground = AppTheme.PrimaryBackLight
     val CardBackgroundGradientEnd = AppTheme.PrimaryBackLight
-    val AccentCyan = AppTheme.PrimaryGreen
-    val AccentPurple = AppTheme.PrimaryViolet
-    val AccentGreen = AppTheme.PrimaryGreen
-    val AccentPink = AppTheme.PrimaryRed
+    val AccentCyan = AppTheme.PrimaryColor
+    val AccentGreen = AppTheme.PrimaryColor
     val TextPrimary = AppTheme.PrimaryText
     val TextSecondary = AppTheme.SecondaryText
     val TextMuted = AppTheme.PrimaryDisable
     val ButtonBackground = AppTheme.SecondaryBack
-    val CartActive = AppTheme.PrimaryGreen
+    val CartActive = AppTheme.PrimaryColor
 }
 
 @Composable
 fun WordItem(
     word: Word,
     userWord: UserWord? = null,
+    notSelectedIcon: ImageVector = Icons.Outlined.ShoppingCart,
+    selectedIcon: ImageVector = Icons.Filled.Check,
     isSelected: Boolean, // Cart state (isInCart)
     onSelect: () -> Unit, // Cart toggle
     onOpen: () -> Unit,
@@ -128,7 +98,7 @@ fun WordItem(
                         onLongPress = { onSelect() } // Long press for cart
                     )
                 },
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape(14.dp),
             colors = CardDefaults.cardColors(
                 containerColor = AppTheme.SecondaryBack
             ),
@@ -155,23 +125,7 @@ fun WordItem(
                             .padding(cardPadding),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Color indicator on the left
-                        Box(
-                            modifier = Modifier
-                                .width(4.dp)
-                                .height(60.dp)
-                                .clip(RoundedCornerShape(2.dp))
-                                .background(
-                                    brush = Brush.verticalGradient(
-                                        colors = listOf(
-                                            WordItemColors.AccentCyan,
-                                            WordItemColors.AccentPurple
-                                        )
-                                    )
-                                )
-                        )
 
-                        Spacer(modifier = Modifier.width(12.dp))
 
                         // Main content
                         Column(
@@ -204,7 +158,7 @@ fun WordItem(
                             ) {
                                 LanguageBadge(
                                     langCode = word.translateLang.upperShortName,
-                                    color = WordItemColors.AccentPurple
+                                    color = AppTheme.SecondaryColor
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
@@ -233,10 +187,12 @@ fun WordItem(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 // Cart button
-                                CartButton(
-                                    isInCart = isSelected,
+                                SelectButton(
+                                    isSelected = isSelected,
                                     onClick = onSelect,
-                                    size = iconSize * 1.8f
+                                    size = iconSize * 1.8f,
+                                    notSelectedImage = notSelectedIcon,
+                                    selectedIcon = selectedIcon
                                 )
 
                                 // Open button
@@ -271,30 +227,31 @@ fun WordItem(
                     }
 
                     // Meta info section at the bottom (expandable)
-                    if (hasMetaInfo && showMetaInfo) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(
-                                    color = WordItemColors.ButtonBackground.copy(alpha = 0.5f)
-                                )
-                                .padding(horizontal = cardPadding, vertical = 8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(24.dp)
-                        ) {
-                            userWord?.createdAt?.let {
-                                MetaInfoText(
-                                    label = "Added",
-                                    value = it.toFormatDateTime(),
-                                    fontSize = dateSize
-                                )
-                            }
-                            userWord?.lastReadDate?.let {
-                                MetaInfoText(
-                                    label = "Last read",
-                                    value = it.toFormatDateTime(),
-                                    fontSize = dateSize
-                                )
-                            }
+                    if (!(hasMetaInfo && showMetaInfo)) {
+                        return@Box
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(
+                                color = WordItemColors.ButtonBackground.copy(alpha = 0.5f)
+                            )
+                            .padding(horizontal = cardPadding, vertical = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(24.dp)
+                    ) {
+                        userWord?.createdAt?.let {
+                            MetaInfoText(
+                                label = "Added",
+                                value = it.toFormatDateTime(),
+                                fontSize = dateSize
+                            )
+                        }
+                        userWord?.lastReadDate?.let {
+                            MetaInfoText(
+                                label = "Last read",
+                                value = it.toFormatDateTime(),
+                                fontSize = dateSize
+                            )
                         }
                     }
                 }
@@ -365,13 +322,15 @@ private fun MetaInfoText(
 }
 
 @Composable
-private fun CartButton(
-    isInCart: Boolean,
+private fun SelectButton(
+    notSelectedImage: ImageVector,
+    selectedIcon: ImageVector,
+    isSelected: Boolean,
     onClick: () -> Unit,
     size: androidx.compose.ui.unit.Dp
 ) {
     val backgroundColor by animateColorAsState(
-        targetValue = if (isInCart)
+        targetValue = if (isSelected)
             WordItemColors.CartActive.copy(alpha = 0.2f)
         else
             WordItemColors.ButtonBackground,
@@ -379,7 +338,7 @@ private fun CartButton(
     )
 
     val iconColor by animateColorAsState(
-        targetValue = if (isInCart)
+        targetValue = if (isSelected)
             WordItemColors.CartActive
         else
             WordItemColors.TextSecondary,
@@ -387,7 +346,7 @@ private fun CartButton(
     )
 
     val buttonScale by animateFloatAsState(
-        targetValue = if (isInCart) 1.05f else 1f,
+        targetValue = if (isSelected) 1.05f else 1f,
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessMedium
@@ -406,19 +365,20 @@ private fun CartButton(
         Box(
             contentAlignment = Alignment.Center
         ) {
-            if (isInCart) {
+            if (isSelected) {
                 Icon(
-                    imageVector = Icons.Filled.Check,
+                    imageVector = selectedIcon,
                     contentDescription = "",
                     modifier = Modifier.size(size * 0.5f)
                 )
-            } else {
-                Icon(
-                    imageVector = Icons.Outlined.ShoppingCart,
-                    contentDescription = "",
-                    modifier = Modifier.size(size * 0.5f)
-                )
+                return@Box
             }
+
+            Icon(
+                imageVector = notSelectedImage,
+                contentDescription = "",
+                modifier = Modifier.size(size * 0.5f)
+            )
         }
     }
 }
@@ -431,7 +391,7 @@ private fun InfoButton(
 ) {
     val backgroundColor by animateColorAsState(
         targetValue = if (isExpanded)
-            WordItemColors.AccentPurple.copy(alpha = 0.2f)
+            AppTheme.SecondaryColor.copy(alpha = 0.2f)
         else
             WordItemColors.ButtonBackground.copy(alpha = 0.6f),
         animationSpec = tween(200)
@@ -439,7 +399,7 @@ private fun InfoButton(
 
     val iconColor by animateColorAsState(
         targetValue = if (isExpanded)
-            WordItemColors.AccentPurple
+            AppTheme.SecondaryColor
         else
             WordItemColors.TextSecondary,
         animationSpec = tween(200)
@@ -518,7 +478,7 @@ private fun MediaIndicators(
             Icon(
                 imageVector = Icons.Outlined.VolumeUp,
                 contentDescription = "Has sound",
-                tint = WordItemColors.AccentPurple.copy(alpha = 0.8f),
+                tint = AppTheme.SecondaryColor.copy(alpha = 0.8f),
                 modifier = Modifier.size(iconSize)
             )
         }

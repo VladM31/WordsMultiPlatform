@@ -14,6 +14,7 @@ object AppTheme {
     val PrimaryGreenDark = Color(0xFF299375)
 
     val PrimaryColor = PrimaryGreen
+    val SecondaryColor = Color(0xFFA144F2)
 
     val PrimaryBack = Color(0xFF1E2127)
     val PrimaryBackLight = Color(0xFF2C3039)
