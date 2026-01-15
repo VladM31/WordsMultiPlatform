@@ -34,7 +34,7 @@ fun App(modifier: Modifier = Modifier) = AppWindowProvider {
             // Show LoaderScreen until initialization is complete
             if (isInitialized.not()) {
                 LoaderScreen {
-
+                    isInitialized = true
                 }
                 return@Surface
             }
