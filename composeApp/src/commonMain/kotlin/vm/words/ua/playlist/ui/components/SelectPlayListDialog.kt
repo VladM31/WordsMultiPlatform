@@ -21,8 +21,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.utils.getLabelFontSize
 import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberLabelFontSize
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.playlist.domain.models.PlayListCount
 import vm.words.ua.playlist.ui.actions.PlayListAction
@@ -68,14 +68,10 @@ fun SelectPlayListDialog(
                     .padding(20.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text(
-                    text = "Select Playlist",
-                    color = AppTheme.PrimaryColor,
-                    fontWeight = FontWeight.SemiBold
-                )
+
 
                 // Create new playlist section
-                CreatePlayList(viewModel)
+                TopBar(viewModel)
 
                 if (state.error != null) {
                     Text(
@@ -159,40 +155,60 @@ fun SelectPlayListDialog(
 }
 
 @Composable
-private fun CreatePlayList(
+private fun TopBar(
     viewModel: PlayListViewModel
 ) {
     var showCreateField by remember { mutableStateOf(false) }
     var newPlaylistName by remember { mutableStateOf("") }
     var createError by remember { mutableStateOf<String?>(null) }
 
+    val labelFontSize = rememberLabelFontSize() * 0.65
+    val labelFontHeight = labelFontSize * 1.1
+
+    val headerFontSize = rememberLabelFontSize() * 0.8
+    val headerFontHeight = labelFontSize * 1.1
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = 8.dp, vertical = 6.dp)
     ) {
-        AnimatedVisibility(
-            visible = !showCreateField,
-            enter = fadeIn() + expandVertically(),
-            exit = fadeOut() + shrinkVertically()
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            TextButton(
-                onClick = { showCreateField = true },
-                colors = ButtonDefaults.textButtonColors(
-                    contentColor = AppTheme.PrimaryGreen
-                )
+            Text(
+                text = "Select Playlist",
+                color = AppTheme.PrimaryColor,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = headerFontSize,
+                lineHeight = headerFontHeight,
+            )
+
+            AnimatedVisibility(
+                visible = !showCreateField,
+                enter = fadeIn() + expandVertically(),
+                exit = fadeOut() + shrinkVertically()
             ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Create New",
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium
-                )
+                TextButton(
+                    onClick = { showCreateField = true },
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = AppTheme.PrimaryGreen
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Create New",
+                        fontSize = labelFontSize,
+                        lineHeight = labelFontHeight
+                    )
+                }
             }
         }
 
@@ -218,7 +234,7 @@ private fun CreatePlayList(
                     },
                     placeholder = {
                         Text(
-                            text = "Playlist name",
+                            text = "Enter playlist name",
                             color = AppTheme.SecondaryText
                         )
                     },
@@ -330,12 +346,12 @@ private fun PlayListItem(
                 color = AppTheme.PrimaryColor,
                 fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
                 maxLines = 1,
-                fontSize = getLabelFontSize()
+                fontSize = rememberLabelFontSize()
             )
             Text(
                 text = "${item.count} words",
                 color = AppTheme.PrimaryColor,
-                fontSize = getLabelFontSize() * 0.85f
+                fontSize = rememberLabelFontSize() * 0.85f
             )
         }
     }

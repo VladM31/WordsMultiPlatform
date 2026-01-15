@@ -12,8 +12,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.TextInput
-import vm.words.ua.core.utils.getLabelFontSize
 import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberLabelFontSize
 
 /**
  * Dialog for creating a new playlist.
@@ -63,7 +63,7 @@ fun CreatePlayListDialog(
                     horizontalArrangement = Arrangement.End
                 ) {
                     Button(onClick = onDismiss) {
-                        Text("Cancel", fontSize = getLabelFontSize())
+                        Text("Cancel", fontSize = rememberLabelFontSize())
                     }
                     Spacer(Modifier.padding(horizontal = 6.dp))
                     Button(onClick = {
@@ -75,7 +75,7 @@ fun CreatePlayListDialog(
                         onCreate(trimmed)
                         onDismiss()
                     }) {
-                        Text("Create", fontSize = getLabelFontSize())
+                        Text("Create", fontSize = rememberLabelFontSize())
                     }
                 }
             }
