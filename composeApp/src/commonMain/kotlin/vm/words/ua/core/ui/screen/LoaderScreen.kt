@@ -26,14 +26,18 @@ import vm.words.ua.navigation.SimpleNavController
 
 @Composable
 fun LoaderScreen(
+    isInitiated: Boolean = false,
     modifier: Modifier = Modifier,
     message: String? = null,
     onInitialized: (() -> Unit)
 ) {
 
     LaunchedEffect(Unit) {
-        initDi()
-        AppRemoteConfig.initialize()
+        if (isInitiated.not()) {
+            initDi()
+            AppRemoteConfig.initialize()
+        }
+
         val userCacheManager : UserCacheManager by DiContainer.di.instance()
         val navController : SimpleNavController by DiContainer.di.instance()
 

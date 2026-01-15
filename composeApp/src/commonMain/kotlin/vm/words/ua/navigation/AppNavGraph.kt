@@ -81,7 +81,7 @@ fun AppNavGraph() {
     }
 
     if (!handled) {
-        LoaderScreen {
+        LoaderScreen(isInitiated = true) {
 
         }
     }
