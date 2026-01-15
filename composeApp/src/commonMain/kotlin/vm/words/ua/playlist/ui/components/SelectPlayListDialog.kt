@@ -1,5 +1,6 @@
 package vm.words.ua.playlist.ui.components
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -8,6 +9,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -46,6 +49,7 @@ fun SelectPlayListDialog(
     var selectedId by remember { mutableStateOf<String?>(null) }
     var validationError by remember { mutableStateOf<String?>(null) }
 
+
     // Trigger loading more when nearing end
     LaunchedEffect(listState.firstVisibleItemIndex, state.isLoading, state.hasMore) {
         val lastVisible = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
@@ -69,6 +73,9 @@ fun SelectPlayListDialog(
                     color = AppTheme.PrimaryColor,
                     fontWeight = FontWeight.SemiBold
                 )
+
+                // Create new playlist section
+                CreatePlayList(viewModel)
 
                 if (state.error != null) {
                     Text(
@@ -144,6 +151,144 @@ fun SelectPlayListDialog(
                         }
                     }, enabled = state.playlists.isNotEmpty()) {
                         Text("Add")
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CreatePlayList(
+    viewModel: PlayListViewModel
+) {
+    var showCreateField by remember { mutableStateOf(false) }
+    var newPlaylistName by remember { mutableStateOf("") }
+    var createError by remember { mutableStateOf<String?>(null) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+    ) {
+        AnimatedVisibility(
+            visible = !showCreateField,
+            enter = fadeIn() + expandVertically(),
+            exit = fadeOut() + shrinkVertically()
+        ) {
+            TextButton(
+                onClick = { showCreateField = true },
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = AppTheme.PrimaryGreen
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Create New",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+        }
+
+        AnimatedVisibility(
+            visible = showCreateField,
+            enter = fadeIn() + expandVertically(),
+            exit = fadeOut() + shrinkVertically()
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        color = AppTheme.PrimaryBackLight,
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .padding(16.dp)
+            ) {
+                OutlinedTextField(
+                    value = newPlaylistName,
+                    onValueChange = {
+                        newPlaylistName = it
+                        createError = null
+                    },
+                    placeholder = {
+                        Text(
+                            text = "Playlist name",
+                            color = AppTheme.SecondaryText
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    isError = createError != null,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = AppTheme.PrimaryText,
+                        unfocusedTextColor = AppTheme.PrimaryText,
+                        cursorColor = AppTheme.PrimaryGreen,
+                        focusedBorderColor = AppTheme.PrimaryGreen,
+                        unfocusedBorderColor = AppTheme.PrimaryDisable,
+                        errorBorderColor = AppTheme.Error,
+                        focusedContainerColor = AppTheme.PrimaryBack,
+                        unfocusedContainerColor = AppTheme.PrimaryBack
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                )
+
+                AnimatedVisibility(visible = createError != null) {
+                    Text(
+                        text = createError ?: "",
+                        color = AppTheme.Error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(top = 4.dp, start = 4.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    TextButton(
+                        onClick = {
+                            showCreateField = false
+                            newPlaylistName = ""
+                            createError = null
+                        },
+                        colors = ButtonDefaults.textButtonColors(
+                            contentColor = AppTheme.SecondaryText
+                        )
+                    ) {
+                        Text("Cancel")
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Button(
+                        onClick = {
+                            if (newPlaylistName.isBlank()) {
+                                createError = "Name cannot be empty"
+                            } else {
+                                viewModel.sent(PlayListAction.Create(newPlaylistName.trim()))
+                                newPlaylistName = ""
+                                showCreateField = false
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = AppTheme.PrimaryGreen,
+                            contentColor = AppTheme.Black
+                        ),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text(
+                            text = "Save",
+                            fontWeight = FontWeight.SemiBold
+                        )
                     }
                 }
             }
