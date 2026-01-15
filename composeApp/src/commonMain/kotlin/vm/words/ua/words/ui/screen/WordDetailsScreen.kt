@@ -10,6 +10,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -48,7 +51,6 @@ import vm.words.ua.words.ui.vms.WordDetailsViewModel
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.delete_red
 import wordsmultiplatform.composeapp.generated.resources.image_icon
-import wordsmultiplatform.composeapp.generated.resources.sound
 
 @Composable
 fun WordDetailsScreen(
@@ -508,8 +510,8 @@ private fun SoundButton(
     ) {
         Box(contentAlignment = Alignment.Center) {
             Icon(
-                painter = painterResource(Res.drawable.sound),
-                contentDescription = "Play sound",
+                imageVector = if (isPlaying) Icons.AutoMirrored.Filled.VolumeUp else Icons.Filled.PlayArrow,
+                contentDescription = if (isPlaying) "Playing sound" else "Play sound",
                 tint = AppTheme.PrimaryBack,
                 modifier = Modifier.size(36.dp)
             )
@@ -562,16 +564,6 @@ private fun StatsCard(
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun getGradeColor(grade: Long): Color {
-    return when {
-        grade >= 80 -> AppTheme.PrimaryGreen
-        grade >= 60 -> AppTheme.PrimaryBlue
-        grade >= 40 -> AppTheme.PrimaryYellow
-        else -> AppTheme.PrimaryRed
     }
 }
 
