@@ -6,8 +6,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.utils.getLabelFontSize
 import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberLabelFontSize
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,7 +24,7 @@ fun <T> SingleSelectInput(
     helperText: String? = null,
 ) {
     val fontSize = rememberFontSize()
-    val labelFontSize = getLabelFontSize()
+    val labelFontSize = rememberLabelFontSize()
     var expanded by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(
@@ -54,7 +54,7 @@ fun <T> SingleSelectInput(
                     Text(
                         helperText,
                         color = AppTheme.PrimaryGreen.copy(alpha = 0.7f),
-                        fontSize = getLabelFontSize() * 0.65
+                        fontSize = rememberLabelFontSize() * 0.65
                     )
                 }
             } else null

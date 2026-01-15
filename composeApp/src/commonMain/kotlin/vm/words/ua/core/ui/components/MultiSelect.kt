@@ -11,8 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.utils.getLabelFontSize
 import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberLabelFontSize
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,7 +41,7 @@ fun <T> MultiSelect(
             value = selectedText,
             onValueChange = {},
             readOnly = true,
-            label = { Text(label, color = AppTheme.PrimaryGreen, fontSize = getLabelFontSize()) },
+            label = { Text(label, color = AppTheme.PrimaryGreen, fontSize = rememberLabelFontSize()) },
             modifier = Modifier.fillMaxWidth().menuAnchor(MenuAnchorType.PrimaryNotEditable),
             textStyle = TextStyle(fontSize = fontSize),
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },

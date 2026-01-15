@@ -16,9 +16,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.utils.getLabelFontSize
 import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberIconSize
+import vm.words.ua.core.utils.rememberLabelFontSize
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.arrow
 
@@ -68,7 +68,7 @@ fun <T> SortSelector(
                                 Text(
                                     label,
                                     color = AppTheme.PrimaryGreen,
-                                    fontSize = getLabelFontSize()
+                                    fontSize = rememberLabelFontSize()
                                 )
                             },
                             modifier = Modifier
@@ -100,7 +100,7 @@ fun <T> SortSelector(
                                         Text(
                                             "Default",
                                             color = AppTheme.PrimaryGreen,
-                                            fontSize = getLabelFontSize()
+                                            fontSize = rememberLabelFontSize()
                                         )
                                     },
                                     onClick = {
@@ -116,7 +116,7 @@ fun <T> SortSelector(
                                         Text(
                                             toLabel(item),
                                             color = AppTheme.PrimaryGreen,
-                                            fontSize = getLabelFontSize()
+                                            fontSize = rememberLabelFontSize()
                                         )
                                     },
                                     onClick = {
@@ -139,7 +139,7 @@ fun <T> SortSelector(
                             Text(
                                 label,
                                 color = AppTheme.PrimaryGreen,
-                                fontSize = getLabelFontSize()
+                                fontSize = rememberLabelFontSize()
                             )
                         },
                         modifier = Modifier
@@ -166,7 +166,7 @@ fun <T> SortSelector(
                                 Text(
                                     label,
                                     color = AppTheme.PrimaryGreen,
-                                    fontSize = getLabelFontSize()
+                                    fontSize = rememberLabelFontSize()
                                 )
                             },
                             text = {

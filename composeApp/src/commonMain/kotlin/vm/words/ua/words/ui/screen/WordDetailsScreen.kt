@@ -37,10 +37,10 @@ import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.ErrorMessageBox
 import vm.words.ua.core.ui.components.ImageFromBytes
-import vm.words.ua.core.utils.getLabelFontSize
 import vm.words.ua.core.utils.getScaleFactor
 import vm.words.ua.core.utils.getWidthDeviceFormat
 import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberLabelFontSize
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.words.domain.models.UserWord
@@ -380,15 +380,15 @@ private fun WordCard(
                         Text(
                             text = "Definition",
                             color = AppTheme.SecondaryText,
-                            fontSize = getLabelFontSize() * 0.9,
+                            fontSize = rememberLabelFontSize() * 0.9,
                             fontWeight = FontWeight.Medium
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = description,
                             color = AppTheme.PrimaryText,
-                            fontSize = getLabelFontSize(),
-                            lineHeight = getLabelFontSize() * 1.1
+                            fontSize = rememberLabelFontSize(),
+                            lineHeight = rememberLabelFontSize() * 1.1
                         )
                     }
                 }

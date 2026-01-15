@@ -18,8 +18,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.utils.getLabelFontSize
 import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberLabelFontSize
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,7 +42,7 @@ fun AppTextField(
             onValueChange = onValueChange,
             modifier = modifier,
             label = if (label != null) {
-                { Text(label, color = primaryColor70, fontSize = getLabelFontSize()) }
+                { Text(label, color = primaryColor70, fontSize = rememberLabelFontSize()) }
             } else null,
             singleLine = singleLine,
             textStyle = androidx.compose.material3.LocalTextStyle.current.copy(fontSize = rememberFontSize()),
@@ -60,7 +60,7 @@ fun AppTextField(
                 unfocusedPlaceholderColor = primaryColor70
             ),
             supportingText = if (helperText != null) {
-                { Text(helperText, color = primaryColor70, fontSize = getLabelFontSize() * 0.65) }
+                { Text(helperText, color = primaryColor70, fontSize = rememberLabelFontSize() * 0.65) }
             } else null
         )
     }

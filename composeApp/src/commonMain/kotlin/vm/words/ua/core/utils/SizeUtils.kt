@@ -45,7 +45,7 @@ fun rememberFontSize(): TextUnit {
 }
 
 @Composable
-fun getLabelFontSize(): TextUnit {
+fun rememberLabelFontSize(): TextUnit {
     val fontSize = rememberFontSize()
     return remember(fontSize) {
         fontSize * 0.7f

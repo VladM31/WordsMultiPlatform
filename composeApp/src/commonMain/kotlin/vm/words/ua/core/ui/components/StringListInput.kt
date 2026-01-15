@@ -11,9 +11,9 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.utils.getLabelFontSize
 import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberIconSize
+import vm.words.ua.core.utils.rememberLabelFontSize
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.add
 
@@ -57,7 +57,7 @@ fun StringListInput(
                         selection = TextRange(newSelectionStart, newSelectionEnd)
                     )
                 },
-                label = { Text(label, color = AppTheme.PrimaryGreen, fontSize = getLabelFontSize()) },
+                label = { Text(label, color = AppTheme.PrimaryGreen, fontSize = rememberLabelFontSize()) },
                 modifier = Modifier.weight(1f),
                 textStyle = TextStyle(fontSize = rememberFontSize()),
                 colors = OutlinedTextFieldDefaults.colors(
