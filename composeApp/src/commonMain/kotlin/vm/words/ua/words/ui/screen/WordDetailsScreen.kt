@@ -1,26 +1,42 @@
 package vm.words.ua.words.ui.screen
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.domain.models.ByteContent
+import vm.words.ua.core.domain.models.enums.CEFR
 import vm.words.ua.core.platform.AppPlatform
 import vm.words.ua.core.platform.currentOrientation
 import vm.words.ua.core.platform.currentPlatform
 import vm.words.ua.core.platform.isLandscape
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.ui.components.*
+import vm.words.ua.core.ui.components.AppToolBar
+import vm.words.ua.core.ui.components.ErrorMessageBox
+import vm.words.ua.core.ui.components.ImageFromBytes
 import vm.words.ua.core.utils.getScaleFactor
 import vm.words.ua.core.utils.getWidthDeviceFormat
-import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.words.domain.models.UserWord
@@ -46,106 +62,105 @@ fun WordDetailsScreen(
     val viewModel = rememberInstance<WordDetailsViewModel>()
     val state by viewModel.state.collectAsState()
 
-
-    // Fetch word on first composition
     LaunchedEffect(Unit) {
         viewModel.sent(WordDetailsAction.Init(userWord, word))
     }
 
-    // Handle navigation back when word is deleted
     LaunchedEffect(state.isDeleted) {
         if (state.isDeleted) {
             navController.popBackStack()
         }
     }
 
-    Column(
+    Box(
         modifier = modifier
             .fillMaxSize()
             .background(AppTheme.PrimaryBack)
     ) {
-        Box {
+        Column(modifier = Modifier.fillMaxSize()) {
+
+
             AppToolBar(
                 title = state.word?.original ?: "Word Details",
                 showBackButton = true,
-                onBackClick = { navController.popBackStack() },
-                showAdditionalButton = false
+                showAdditionalButton = true,
+                onAdditionalClick = { viewModel.sent(WordDetailsAction.Delete) },
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                additionalButtonImage = painterResource(Res.drawable.delete_red)
             )
 
-            // Popup menu positioned at top right
-            userWord?.let {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                        .padding(end = 10.dp),
-                    contentAlignment = Alignment.CenterEnd
-                ) {
-                    PopupMenuButton(
-                        items = listOf(
-                            PopupMenuItem(
-                                text = "Delete",
-                                icon = painterResource(Res.drawable.delete_red),
-                                onClick = { viewModel.sent(WordDetailsAction.Delete) }
-                            )
-                        )
-                    )
+            if (state.isLoading) {
+                LoadingContent()
+                return@Column
+            }
+            // Content
+            BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+                val maxWidth = maxWidth
+                val isPhone = getWidthDeviceFormat(maxWidth).isPhone
+                val isNotMobile = remember {
+                    setOf(AppPlatform.IOS, AppPlatform.ANDROID).contains(currentPlatform()).not()
                 }
-            }
+                val isNotLandscape = remember { currentOrientation().isLandscape.not() }
 
-        }
+                if (isPhone && (isNotLandscape || isNotMobile)) {
+                    MobileLayout(
+                        word = word,
+                        userWord = userWord,
+                        wordState = state,
+                        image = state.image,
+                        maxWidth = maxWidth,
+                        state = state,
+                        viewModel = viewModel
+                    )
+                    return@BoxWithConstraints
+                }
 
-        // Content
-        if (state.isLoading) {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(color = AppTheme.PrimaryColor)
-            }
-            return
-        }
-
-        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-            val maxWidth = maxWidth
-            val isPhone = getWidthDeviceFormat(maxWidth).isPhone
-
-            val isNotMobile = remember { setOf(AppPlatform.IOS, AppPlatform.ANDROID).contains(currentPlatform()).not() }
-            val isNotLandscape = remember { currentOrientation().isLandscape.not() }
-
-            if (isPhone && (isNotLandscape || isNotMobile)) {
-                MobileLayout(
+                DesktopLayout(
                     word = word,
                     userWord = userWord,
-                    wordState =  state,
+                    wordState = state,
                     image = state.image,
                     maxWidth = maxWidth,
                     state = state,
                     viewModel = viewModel
                 )
-                return@BoxWithConstraints
             }
-
-            DesktopLayout(
-                word = word,
-                userWord = userWord,
-                wordState = state,
-                image = state.image,
-                maxWidth = maxWidth,
-                state = state,
-                viewModel = viewModel
-            )
         }
 
-
-
-        state.errorMessage?.let {
-            ErrorMessageBox(it)
+        // Error Snackbar
+        state.errorMessage?.let { error ->
+            ErrorMessageBox(error)
         }
     }
 }
+
+
+@Composable
+private fun LoadingContent() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            CircularProgressIndicator(
+                color = AppTheme.PrimaryColor,
+                strokeWidth = 3.dp,
+                modifier = Modifier.size(48.dp)
+            )
+            Text(
+                text = "Loading...",
+                color = AppTheme.SecondaryText,
+                fontSize = 14.sp
+            )
+        }
+    }
+}
+
 
 @Composable
 private fun MobileLayout(
@@ -161,58 +176,40 @@ private fun MobileLayout(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-
-            .padding(bottom = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         val scale = getScaleFactor(maxWidth)
-        val width = (300 * scale).dp
+        val cardWidth = (320 * scale).dp
 
-        // Image and Sound
-        FileView(
-            hasSound = false,
-            hideSound = true,
-            hideImage = image == null,
-            image = image,
-            maxWidth = maxWidth,
-            isPlayingSound = state.isPlayingSound,
-            onPlaySound = { viewModel.sent(WordDetailsAction.PlaySound) },
-            modifier = Modifier
-                .widthIn(width)
-                .padding(horizontal = 16.dp, vertical = 4.dp)
+        WordCard(
+            word = word,
+            modifier = Modifier.widthIn(max = cardWidth)
         )
 
-        // Text Content
-        Column(
-            modifier = Modifier
-                .widthIn(width)
-                .padding(horizontal = 16.dp, vertical = 4.dp),
-            verticalArrangement = Arrangement.Top
-        ) {
-            WordDetailsContent(
-                word = word,
-                modifier = Modifier
+        if (image != null) {
+            ImageCard(
+                image = image,
+                maxWidth = maxWidth,
+                modifier = Modifier.widthIn(max = cardWidth)
             )
-            Spacer(modifier = Modifier.height(24.dp))
-            userWord?.let {
-                UserWordDetails(userWord = it, maxWidth = maxWidth)
-            }
         }
 
-        // Image and Sound
-        FileView(
-            hasSound = wordState?.sound != null,
-            hideImage = true,
-            image = null,
-            maxWidth = maxWidth,
-            isPlayingSound = state.isPlayingSound,
-            onPlaySound = { viewModel.sent(WordDetailsAction.PlaySound) },
-            modifier = Modifier
-                .widthIn(width)
+        if (wordState?.sound != null) {
+            SoundButton(
+                isPlaying = state.isPlayingSound,
+                hasSound = true,
+                onPlaySound = { viewModel.sent(WordDetailsAction.PlaySound) }
+            )
+        }
 
-                .padding(horizontal = 16.dp, vertical = 4.dp)
-        )
-
+        userWord?.let {
+            StatsCard(
+                userWord = it,
+                modifier = Modifier.widthIn(max = cardWidth)
+            )
+        }
     }
 }
 
@@ -229,100 +226,254 @@ private fun DesktopLayout(
     Row(
         modifier = Modifier
             .fillMaxSize()
-            .padding(bottom = 16.dp),
-        horizontalArrangement = Arrangement.Center
+            .padding(24.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.Top
     ) {
-        // Left Column - Text Content
-        val leftScrollState = rememberScrollState()
-        val fileViewScrollState = rememberScrollState()
-
         val scale = getScaleFactor(maxWidth)
         val contentWidth = (400 * scale).dp
-        val contentHeight = (500 * scale).dp * 1.2f
 
         Column(
             modifier = Modifier
                 .widthIn(min = 300.dp, max = contentWidth)
-                .heightIn(max = contentHeight)
-                .verticalScroll(leftScrollState)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Top
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            WordDetailsContent(
+            WordCard(
                 word = word,
-                modifier = Modifier
+                modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(24.dp))
+
             userWord?.let {
-                UserWordDetails(userWord = it, maxWidth = maxWidth)
+                StatsCard(
+                    userWord = it,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         }
 
         Spacer(modifier = Modifier.width(32.dp))
 
-        // Right Column - Image and Sound
-        FileView(
-            hasSound = wordState.sound != null,
-            hideImage = wordState.image == null,
-            image = image,
-            maxWidth = maxWidth,
-            isPlayingSound = state.isPlayingSound,
-            onPlaySound = { viewModel.sent(WordDetailsAction.PlaySound) },
+        Column(
             modifier = Modifier
                 .widthIn(min = 300.dp, max = contentWidth)
-                .heightIn(min = contentHeight / 2, max = contentHeight)
-                .padding(start = 4.dp, end = 4.dp, top = 16.dp, bottom = 16.dp)
-                .verticalScroll(fileViewScrollState)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            if (image != null) {
+                ImageCard(
+                    image = image,
+                    maxWidth = maxWidth,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+
+            SoundButton(
+                isPlaying = state.isPlayingSound,
+                hasSound = wordState.sound != null,
+                onPlaySound = { viewModel.sent(WordDetailsAction.PlaySound) }
+            )
+        }
+    }
+}
+
+@Composable
+private fun WordCard(
+    word: Word,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(16.dp),
+        color = AppTheme.SecondaryBack,
+        shadowElevation = 8.dp
+    ) {
+        Column(
+            modifier = Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            // Original Word
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                LanguageBadge(langCode = word.lang.upperShortName)
+                Text(
+                    text = word.original,
+                    color = AppTheme.PrimaryColor,
+                    fontSize = 28.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            HorizontalDivider(
+                color = AppTheme.PrimaryColor.copy(alpha = 0.3f),
+                thickness = 1.dp
+            )
+
+            // Translation
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                LanguageBadge(
+                    langCode = word.translateLang.upperShortName,
+                    backgroundColor = AppTheme.SecondaryColor
+                )
+                Text(
+                    text = word.translate,
+                    color = AppTheme.PrimaryText,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Info Chips Row
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                InfoChip(
+                    label = "CEFR",
+                    value = word.cefr.name,
+                    color = getCefrColor(word.cefr)
+                )
+
+                word.category?.let { category ->
+                    InfoChip(
+                        label = "Category",
+                        value = category,
+                        color = AppTheme.PrimaryColor
+                    )
+                }
+            }
+
+            // Description
+            word.description?.let { description ->
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    color = AppTheme.PrimaryBack
+                ) {
+                    Column(
+                        modifier = Modifier.padding(12.dp)
+                    ) {
+                        Text(
+                            text = "Definition",
+                            color = AppTheme.SecondaryText,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = description,
+                            color = AppTheme.PrimaryText,
+                            fontSize = 14.sp,
+                            lineHeight = 20.sp
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun LanguageBadge(
+    langCode: String,
+    backgroundColor: Color = AppTheme.PrimaryColor
+) {
+    Surface(
+        shape = RoundedCornerShape(6.dp),
+        color = backgroundColor.copy(alpha = 0.2f)
+    ) {
+        Text(
+            text = langCode,
+            color = backgroundColor,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
         )
     }
 }
 
 @Composable
-private fun FileView(
-    hasSound: Boolean,
-    maxWidth: Dp = Dp.Unspecified,
-    image: ByteContent? = null,
-    modifier: Modifier = Modifier,
-    isPlayingSound: Boolean,
-    onPlaySound: () -> Unit,
-    hideImage: Boolean = false,
-    hideSound: Boolean = false
+private fun InfoChip(
+    label: String,
+    value: String,
+    color: Color
 ) {
-    val scale = getScaleFactor(maxWidth)
-    val imageSize = (300 * scale).dp
-
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+    Surface(
+        shape = RoundedCornerShape(20.dp),
+        color = color.copy(alpha = 0.15f),
+        border = BorderStroke(1.dp, color.copy(alpha = 0.3f))
     ) {
-        if (hideImage.not()){
-            ImageFromBytes(
-                imageBytes = image?.bytes,
-                defaultPaint = painterResource(Res.drawable.image_icon),
-                width = imageSize,
-                height = imageSize,
-                contentDescription = "Word Image"
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            Text(
+                text = label,
+                color = AppTheme.SecondaryText,
+                fontSize = 11.sp
+            )
+            Text(
+                text = value,
+                color = color,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.SemiBold
             )
         }
+    }
+}
 
-        Spacer(modifier = Modifier.height(16.dp))
+@Composable
+private fun getCefrColor(cefr: CEFR): Color {
+    return when (cefr) {
+        CEFR.A1 -> AppTheme.PrimaryGreen
+        CEFR.A2 -> AppTheme.PrimaryGreenStatus
+        CEFR.B1 -> AppTheme.PrimaryBlue
+        CEFR.B2 -> AppTheme.PrimaryViolet
+        CEFR.C1 -> AppTheme.PrimaryYellow
+        CEFR.C2 -> AppTheme.PrimaryRed
+    }
+}
 
-        if (hideSound.not()){
-            Button(
-                onClick = onPlaySound,
-                enabled = !isPlayingSound && hasSound,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = if (hasSound) AppTheme.PrimaryColor else AppTheme.PrimaryGray
-                ),
-                modifier = Modifier
-                    .size(80.dp)
+@Composable
+private fun ImageCard(
+    image: ByteContent,
+    maxWidth: Dp,
+    modifier: Modifier = Modifier
+) {
+    val scale = getScaleFactor(maxWidth)
+    val imageSize = (280 * scale).dp
+
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(16.dp),
+        color = AppTheme.SecondaryBack,
+        shadowElevation = 8.dp
+    ) {
+        Box(
+            modifier = Modifier.padding(16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Surface(
+                shape = RoundedCornerShape(12.dp),
+                color = AppTheme.PrimaryBack
             ) {
-                Icon(
-                    painter = painterResource(Res.drawable.sound),
-                    contentDescription = "Play sound",
-                    tint = AppTheme.PrimaryBack,
-                    modifier = Modifier.size(40.dp)
+                ImageFromBytes(
+                    imageBytes = image.bytes,
+                    defaultPaint = painterResource(Res.drawable.image_icon),
+                    width = imageSize,
+                    height = imageSize,
+                    contentDescription = "Word Image",
+                    modifier = Modifier.clip(RoundedCornerShape(12.dp))
                 )
             }
         }
@@ -330,83 +481,131 @@ private fun FileView(
 }
 
 @Composable
-private fun WordDetailsContent(
-    word: Word,
-    modifier: Modifier = Modifier
+private fun SoundButton(
+    isPlaying: Boolean,
+    hasSound: Boolean,
+    onPlaySound: () -> Unit
 ) {
-    val fontSize = rememberFontSize()
-    val lineHeight = remember(fontSize) {
-        fontSize * 1.3f
-    }
+    val scale by animateFloatAsState(
+        targetValue = if (isPlaying) 0.95f else 1f,
+        animationSpec = tween(100)
+    )
 
-    Column(
-        modifier = modifier
+    val buttonColor by animateColorAsState(
+        targetValue = if (isPlaying) AppTheme.PrimaryGreenDark else AppTheme.PrimaryColor,
+        animationSpec = tween(200)
+    )
+
+    Surface(
+        onClick = { if (!isPlaying && hasSound) onPlaySound() },
+        modifier = Modifier
+            .size(80.dp)
+            .scale(scale),
+        shape = CircleShape,
+        color = if (hasSound) buttonColor else AppTheme.PrimaryGray,
+        shadowElevation = if (hasSound) 8.dp else 2.dp,
+        enabled = hasSound && !isPlaying
     ) {
-        // Category
-
-
-        // Original word
-        Text(
-            text = "${word.lang.upperShortName}: ${word.original}",
-            color = AppTheme.PrimaryColor,
-            fontSize = fontSize,
-            lineHeight = lineHeight
-        )
-
-        // Translation
-        Text(
-            text = "${word.translateLang.upperShortName}: ${word.translate}",
-            color = AppTheme.PrimaryColor,
-            fontSize = fontSize,
-            lineHeight = lineHeight
-        )
-
-        if (word.category != null) {
-            Text(
-                text = "Category: ${word.category}",
-                color = AppTheme.PrimaryColor,
-                fontSize = fontSize,
-                lineHeight = lineHeight
-            )
-        }
-
-        // CEFR Level
-        Text(
-            text = "CEFR: ${word.cefr}",
-            color = AppTheme.PrimaryColor,
-            fontSize = fontSize,
-            lineHeight = lineHeight
-        )
-
-        // Description
-        if (word.description != null) {
-            Text(
-                text = "Definition: ${word.description}",
-                color = AppTheme.PrimaryColor,
-                fontSize = fontSize * 0.7f,
-                lineHeight = lineHeight * 0.7f
+        Box(contentAlignment = Alignment.Center) {
+            Icon(
+                painter = painterResource(Res.drawable.sound),
+                contentDescription = "Play sound",
+                tint = AppTheme.PrimaryBack,
+                modifier = Modifier.size(36.dp)
             )
         }
     }
 }
 
 @Composable
-private fun UserWordDetails(
-    maxWidth: Dp = Dp.Unspecified,
-    userWord: UserWord
+private fun StatsCard(
+    userWord: UserWord,
+    modifier: Modifier = Modifier
 ) {
-    val scale = getScaleFactor(maxWidth)
-    val fontSize = rememberFontSize(scale) * 0.7f
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(16.dp),
+        color = AppTheme.SecondaryBack,
+        shadowElevation = 4.dp
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text(
+                text = "Learning Progress",
+                color = AppTheme.PrimaryText,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.SemiBold
+            )
 
-    Text(
-        text = "Created: ${userWord.createdAt}",
-        color = AppTheme.SecondaryText,
-        fontSize = fontSize
-    )
+            HorizontalDivider(
+                color = AppTheme.PrimaryGray.copy(alpha = 0.3f),
+                thickness = 1.dp
+            )
 
-    Text(
-        text = "Last read: ${userWord.lastReadDate}",
-        color = AppTheme.SecondaryText,
-        fontSize = fontSize
-    )
+
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+                StatItem(
+                    label = "Created",
+                    value = formatInstant(userWord.createdAt),
+                    icon = "📅"
+                )
+                StatItem(
+                    label = "Last Read",
+                    value = formatInstant(userWord.lastReadDate),
+                    icon = "📖"
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun getGradeColor(grade: Long): Color {
+    return when {
+        grade >= 80 -> AppTheme.PrimaryGreen
+        grade >= 60 -> AppTheme.PrimaryBlue
+        grade >= 40 -> AppTheme.PrimaryYellow
+        else -> AppTheme.PrimaryRed
+    }
+}
+
+private fun formatInstant(instant: Instant): String {
+    val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+    return "${localDateTime.dayOfMonth.toString().padStart(2, '0')}." +
+            "${localDateTime.monthNumber.toString().padStart(2, '0')}." +
+            "${localDateTime.year}"
+}
+
+@Composable
+private fun StatItem(
+    label: String,
+    value: String,
+    icon: String
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = icon,
+            fontSize = 24.sp
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = label,
+            color = AppTheme.SecondaryText,
+            fontSize = 12.sp
+        )
+        Text(
+            text = value,
+            color = AppTheme.PrimaryText,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium
+        )
+    }
 }
