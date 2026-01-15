@@ -17,7 +17,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -38,8 +37,10 @@ import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.ErrorMessageBox
 import vm.words.ua.core.ui.components.ImageFromBytes
+import vm.words.ua.core.utils.getLabelFontSize
 import vm.words.ua.core.utils.getScaleFactor
 import vm.words.ua.core.utils.getWidthDeviceFormat
+import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.words.domain.models.UserWord
@@ -191,7 +192,6 @@ private fun MobileLayout(
         if (image != null) {
             ImageCard(
                 image = image,
-                maxWidth = maxWidth,
                 modifier = Modifier.widthIn(max = cardWidth)
             )
         }
@@ -284,12 +284,8 @@ private fun DesktopLayout(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 ImageCard(
-                    image = image,
-                    maxWidth = maxWidth,
-                    modifier = Modifier.fillMaxWidth()
+                    image = image
                 )
-
-
             }
         }
     }
@@ -320,7 +316,8 @@ private fun WordCard(
                 Text(
                     text = word.original,
                     color = AppTheme.PrimaryColor,
-                    fontSize = 28.sp,
+                    fontSize = rememberFontSize() * 1.1,
+                    lineHeight = rememberFontSize() * 1.2,
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -342,7 +339,8 @@ private fun WordCard(
                 Text(
                     text = word.translate,
                     color = AppTheme.PrimaryText,
-                    fontSize = 22.sp,
+                    fontSize = rememberFontSize() * 0.8,
+                    lineHeight = rememberFontSize() * 0.9,
                     fontWeight = FontWeight.Medium
                 )
             }
@@ -382,15 +380,15 @@ private fun WordCard(
                         Text(
                             text = "Definition",
                             color = AppTheme.SecondaryText,
-                            fontSize = 12.sp,
+                            fontSize = getLabelFontSize() * 0.9,
                             fontWeight = FontWeight.Medium
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = description,
                             color = AppTheme.PrimaryText,
-                            fontSize = 14.sp,
-                            lineHeight = 20.sp
+                            fontSize = getLabelFontSize(),
+                            lineHeight = getLabelFontSize() * 1.1
                         )
                     }
                 }
@@ -464,37 +462,28 @@ private fun getCefrColor(cefr: CEFR): Color {
 @Composable
 private fun ImageCard(
     image: ByteContent,
-    maxWidth: Dp,
     modifier: Modifier = Modifier
 ) {
-    val scale = getScaleFactor(maxWidth)
-    val imageSize = (280 * scale).dp
 
-    Surface(
+
+    val scale = getScaleFactor()
+    val imageSize = (300 * scale).dp
+
+    Column(
         modifier = modifier,
-        shape = RoundedCornerShape(16.dp),
-        color = AppTheme.SecondaryBack,
-        shadowElevation = 8.dp
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
     ) {
-        Box(
-            modifier = Modifier.padding(16.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Surface(
-                shape = RoundedCornerShape(12.dp),
-                color = AppTheme.PrimaryBack
-            ) {
-                ImageFromBytes(
-                    imageBytes = image.bytes,
-                    defaultPaint = painterResource(Res.drawable.image_icon),
-                    width = imageSize,
-                    height = imageSize,
-                    contentDescription = "Word Image",
-                    modifier = Modifier.clip(RoundedCornerShape(12.dp))
-                )
-            }
-        }
+        ImageFromBytes(
+            imageBytes = image.bytes,
+            defaultPaint = painterResource(Res.drawable.image_icon),
+            width = imageSize,
+            height = imageSize,
+            contentDescription = "Word Image"
+        )
     }
+
+
 }
 
 @Composable
