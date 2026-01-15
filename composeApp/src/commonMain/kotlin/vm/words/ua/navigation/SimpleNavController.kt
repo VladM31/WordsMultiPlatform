@@ -22,8 +22,12 @@ class SimpleNavController {
     // Scope for delayed cleanup operations
     private val cleanupScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
-    val isLastScreen: Boolean
-        get() = backStack.size <= 1
+    var isLastScreen by mutableStateOf(true)
+        private set
+
+    private fun updateIsLastScreen() {
+        isLastScreen = backStack.size <= 1
+    }
 
     // Simple multiplatform ViewModelStoreOwner
     private class RouteViewModelStoreOwner : ViewModelStoreOwner {
@@ -69,6 +73,7 @@ class SimpleNavController {
         // Clear return params when navigating to new screen
         returnParams.remove(currentRoute)
         navigateListeners.forEach { it(route) }
+        updateIsLastScreen()
     }
 
     fun navigateAndClearCurrent(screen: Screen, param: Any? = null) {
@@ -95,6 +100,7 @@ class SimpleNavController {
         // Clear all ViewModel stores since history is wiped
         val owners = viewModelOwners.keys.toList()
         owners.forEach { clearViewModelStoreOwner(it) }
+        updateIsLastScreen()
     }
 
     fun navigateAndClear(screen: Screen) {
@@ -110,6 +116,7 @@ class SimpleNavController {
             currentRoute = backStack.removeAt(backStack.lastIndex)
             // Clear ViewModel store for the popped screen
             clearViewModelStoreOwner(poppedRoute)
+            updateIsLastScreen()
             true
         } else {
             false
@@ -138,6 +145,7 @@ class SimpleNavController {
             // Clear VMs for removed history routes and the popped current route
             removedRoutes.forEach { clearViewModelStoreOwner(it) }
             clearViewModelStoreOwner(poppedRoute)
+            updateIsLastScreen()
             true
         } else {
             val poppedRoute = currentRoute
@@ -148,6 +156,7 @@ class SimpleNavController {
             val owners = viewModelOwners.keys.toList()
             owners.forEach { clearViewModelStoreOwner(it) }
             clearViewModelStoreOwner(poppedRoute)
+            updateIsLastScreen()
             true
         }
     }
@@ -244,5 +253,6 @@ class SimpleNavController {
         navigateParams[screen.route] = null
         returnParams.remove(currentRoute)
         navigateListeners.forEach { it(screen.route) }
+        updateIsLastScreen()
     }
 }
