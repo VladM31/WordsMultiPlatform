@@ -93,6 +93,7 @@ kotlin {
                 // Connectivity: общая часть для всех платформ
                 implementation(libs.connectivity.core)
                 implementation(libs.connectivity.compose)
+                implementation("io.github.koalaplot:koalaplot-core:0.5.3")
             }
         }
 

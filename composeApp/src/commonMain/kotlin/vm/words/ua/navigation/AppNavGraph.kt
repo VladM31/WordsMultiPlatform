@@ -44,7 +44,8 @@ fun AppNavGraph() {
         WordsScreenProvider(),
         PlayListScreenProvider(),
         ExerciseScreenProvider(),
-        SettingScreenProvider()
+        SettingScreenProvider(),
+        LearningScreenProvider()
     )
 
     val route = navController.currentRoute

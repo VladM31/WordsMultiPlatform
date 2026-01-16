@@ -29,7 +29,9 @@ fun SettingScreen(
         listOf(
             GridButtonItem("Subscription"),
             GridButtonItem("History"),
-            GridButtonItem("Plan"),
+            GridButtonItem("Plan") {
+                navController.navigate(Screen.LeaningPlan)
+            },
             GridButtonItem("Profile"),
             GridButtonItem("Policy") {
                 navController.navigate(Screen.Policy)
