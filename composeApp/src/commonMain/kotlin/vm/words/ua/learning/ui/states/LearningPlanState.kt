@@ -11,5 +11,6 @@ data class LearningPlanState(
     val learnedWordsToDay: Int = 1,
     val addedWords: Int = 0,
     val learnedWords: Int = 0,
+    val isLoading: Boolean = true,
     override val errorMessage: ErrorMessage? = null
 ) : ErrorableState

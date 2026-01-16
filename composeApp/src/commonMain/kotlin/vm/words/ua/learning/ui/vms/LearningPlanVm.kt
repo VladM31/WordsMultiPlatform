@@ -59,7 +59,8 @@ class LearningPlanVm(
                     learningPlan = plane,
                     learnedWordsToDay = learnedWordsToDay,
                     addedWords = countMap[LearningHistoryType.CREATE] ?: 0,
-                    learnedWords = countMap[LearningHistoryType.UPDATE] ?: 0
+                    learnedWords = countMap[LearningHistoryType.UPDATE] ?: 0,
+                    isLoading = false
                 )
             } catch (e: Exception) {
                 mutableState.value =
