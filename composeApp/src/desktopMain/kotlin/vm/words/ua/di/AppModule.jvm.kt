@@ -16,27 +16,27 @@ import kotlin.reflect.KClass
  */
 @Composable
 actual inline fun <reified T : Any> rememberInstance(): T {
-    return if (isViewModel(T::class)) {
-        val navController: SimpleNavController = DiContainer.di.direct.instance()
-        @Suppress("UNCHECKED_CAST")
-        viewModel<ViewModel>(
-            viewModelStoreOwner = navController.viewModelStoreOwner(),
-            modelClass = T::class as KClass<ViewModel>,
-            factory = object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <VM : ViewModel> create(
-                    modelClass: KClass<VM>,
-                    extras: androidx.lifecycle.viewmodel.CreationExtras
-                ): VM {
-                    return DiContainer.di.direct.instance<T>() as VM
-                }
-            }
-        ) as T
-    } else {
-        remember {
+    if (!isViewModel(T::class)) {
+        return remember {
             DiContainer.di.direct.instance<T>()
         }
     }
+
+    val navController: SimpleNavController = DiContainer.di.direct.instance()
+    @Suppress("UNCHECKED_CAST")
+    return viewModel<ViewModel>(
+        viewModelStoreOwner = navController.viewModelStoreOwner(),
+        modelClass = T::class as KClass<ViewModel>,
+        factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <VM : ViewModel> create(
+                modelClass: KClass<VM>,
+                extras: androidx.lifecycle.viewmodel.CreationExtras
+            ): VM {
+                return DiContainer.di.direct.instance<T>() as VM
+            }
+        }
+    ) as T
 }
 
 @PublishedApi

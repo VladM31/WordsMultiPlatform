@@ -36,6 +36,7 @@ class KrotLearningPlanClient(
     override suspend fun createPlan(token: String, learningPlan: LearningPlanRequest): LearningPlanResponse {
         val response = client.post(baseUrl) {
             headers { header("Authorization", "Bearer $token") }
+            contentType(ContentType.Application.Json)
             setBody(learningPlan)
         }
         return response.body()
@@ -47,6 +48,7 @@ class KrotLearningPlanClient(
     ) {
         client.put(baseUrl) {
             headers { header("Authorization", "Bearer $token") }
+            contentType(ContentType.Application.Json)
             setBody(learningPlan)
         }
 

@@ -1,5 +1,5 @@
 package vm.words.ua.learning.domain.models.enums
 
-enum class PlanFragmentType {
+enum class PlanStatus {
     CREATE, EDIT, UNDEFINED
 }

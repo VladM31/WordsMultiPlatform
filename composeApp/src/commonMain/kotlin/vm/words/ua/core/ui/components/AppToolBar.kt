@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -33,6 +34,7 @@ fun AppToolBar(
     onAdditionalClick: (() -> Unit)? = null,
     showBackButton: Boolean = true,
     showAdditionalButton: Boolean = false,
+    additionalButtonVector: ImageVector? = null,
     additionalButtonImage: Painter = painterResource(Res.drawable.setting),
     currentStepHint: ViewHintStep? = null,
     additionalButtonStepHint: ViewHintStep? = null,
@@ -93,6 +95,7 @@ fun AppToolBar(
                     onAdditionalClick = onAdditionalClick,
                     showAdditionalButton = showAdditionalButton,
                     additionalButtonImage = additionalButtonImage,
+                    additionalButtonVector = additionalButtonVector,
                     buttonSize = buttonSize,
                     modifier = additionalButtonStepHint?.let {
                         additionalButtonModifier.viewHint(
@@ -137,6 +140,7 @@ private fun AdditionalButton(
     onAdditionalClick: (() -> Unit)? = null,
     showAdditionalButton: Boolean = false,
     additionalButtonImage: Painter = painterResource(Res.drawable.setting),
+    additionalButtonVector: ImageVector?,
     buttonSize: Dp,
     modifier: Modifier
 ) {
@@ -149,6 +153,16 @@ private fun AdditionalButton(
         onClick = onAdditionalClick ?: {},
         modifier = Modifier.size(buttonSize)
     ) {
+        if (additionalButtonVector != null) {
+            Icon(
+                imageVector = additionalButtonVector,
+                contentDescription = "More",
+                tint = AppTheme.PrimaryColor,
+                modifier = modifier
+            )
+            return@IconButton
+        }
+
         Icon(
             painter = additionalButtonImage,
             contentDescription = "More",
