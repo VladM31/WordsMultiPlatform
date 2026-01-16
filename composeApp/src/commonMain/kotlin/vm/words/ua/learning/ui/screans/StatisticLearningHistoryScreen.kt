@@ -89,8 +89,8 @@ fun StatisticsBarChart(
     statistics: List<DayStatistics>,
     modifier: Modifier = Modifier
 ) {
-    val learnedColor = Color(0xFF4CAF50)  // Green
-    val reviewedColor = Color(0xFF2196F3) // Blue
+    val learnedColor = AppTheme.SecondaryColor
+    val reviewedColor = AppTheme.PrimaryColor
 
     // Date formatting
     val dateFormatter = LocalDate.Format {
