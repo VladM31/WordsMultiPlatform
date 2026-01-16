@@ -47,15 +47,14 @@ class StatisticLearningHistoryVm(
             val statistic = manager.getLearningHistoryStatistic(
                 filter = StatisticsLearningHistoryFilter(
                     date = Range(
-                        from = fromDate.toString(),
-                        to = date.toString()
+                        from = fromDate,
+                        to = date
                     )
                 )
             ).content
             mutableState.value = mutableState.value.copy(statistic = statistic, toDate = date)
         }
     }
-
 
     companion object {
         private const val STEP = 4
