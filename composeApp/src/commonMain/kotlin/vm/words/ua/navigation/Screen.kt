@@ -42,6 +42,7 @@ sealed class Screen(val route: String) {
     data object PinUserWords : Screen("pin_user_words")
 
     data object LeaningPlan : Screen("learning_plan")
+    data object StatisticLearningHistory : Screen("statistic_learning_history")
 
     data object DefaultAddWord : Screen("default_add_word")
 }

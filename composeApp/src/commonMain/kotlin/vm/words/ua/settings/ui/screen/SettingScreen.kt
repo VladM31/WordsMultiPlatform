@@ -28,7 +28,9 @@ fun SettingScreen(
     val buttons = remember {
         listOf(
             GridButtonItem("Subscription"),
-            GridButtonItem("History"),
+            GridButtonItem("History") {
+                navController.navigate(Screen.StatisticLearningHistory)
+            },
             GridButtonItem("Plan") {
                 navController.navigate(Screen.LeaningPlan)
             },

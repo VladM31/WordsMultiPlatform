@@ -24,6 +24,7 @@ class StatisticLearningHistoryVm(
     private val mutableState = MutableStateFlow(
         StatisticLearningHistoryState(
             toDate = Clock.System.now(),
+            step = STEP
         )
     )
     val state: StateFlow<StatisticLearningHistoryState> = mutableState
@@ -42,11 +43,12 @@ class StatisticLearningHistoryVm(
 
     private fun fetch(date: Instant) {
         viewModelScope.launch(Dispatchers.Default) {
+            val fromDate = date.minus(STEP, kotlinx.datetime.DateTimeUnit.DAY, TimeZone.UTC)
             val statistic = manager.getLearningHistoryStatistic(
                 filter = StatisticsLearningHistoryFilter(
                     date = Range(
-                        from = date.minus(STEP, kotlinx.datetime.DateTimeUnit.DAY, TimeZone.UTC),
-                        to = date
+                        from = fromDate.toString(),
+                        to = date.toString()
                     )
                 )
             ).content
@@ -54,7 +56,8 @@ class StatisticLearningHistoryVm(
         }
     }
 
+
     companion object {
-        internal const val STEP = 4L
+        private const val STEP = 4
     }
 }
