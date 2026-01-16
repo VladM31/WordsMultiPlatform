@@ -7,22 +7,22 @@ package vm.words.ua.core.analytics
 class EmptyAnalytics : Analytics {
     override fun logEvent(eventName: String, parameters: Map<String, Any>?) {
         // Empty implementation - you can add console.log if needed
-        console.log("Analytics Event: $eventName, params: $parameters")
+//        console.log("Analytics Event: $eventName, params: $parameters")
     }
 
     override fun setUserProperty(name: String, value: String) {
         // Empty implementation
-        console.log("Analytics UserProperty: $name = $value")
+//        console.log("Analytics UserProperty: $name = $value")
     }
 
     override fun setUserId(userId: String?) {
         // Empty implementation
-        console.log("Analytics UserId: $userId")
+//        console.log("Analytics UserId: $userId")
     }
 
     override fun setCurrentScreen(screenName: String, screenClass: String?) {
         // Empty implementation
-        console.log("Analytics Screen: $screenName (class: $screenClass)")
+//        console.log("Analytics Screen: $screenName (class: $screenClass)")
     }
 }
 
