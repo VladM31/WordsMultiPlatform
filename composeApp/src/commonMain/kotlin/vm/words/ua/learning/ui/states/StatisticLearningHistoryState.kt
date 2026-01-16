@@ -6,5 +6,6 @@ import vm.words.ua.learning.domain.models.StatisticsLearningHistory
 data class StatisticLearningHistoryState(
     val toDate: Instant,
     val statistic: List<StatisticsLearningHistory> = emptyList(),
-    val step: Int
+    val step: Int,
+    val isLoading: Boolean = false
 )

@@ -42,6 +42,7 @@ class StatisticLearningHistoryVm(
     }
 
     private fun fetch(date: Instant) {
+        mutableState.value = mutableState.value.copy(isLoading = true)
         viewModelScope.launch(Dispatchers.Default) {
             val fromDate = date.minus(STEP, kotlinx.datetime.DateTimeUnit.DAY, TimeZone.UTC)
             val statistic = manager.getLearningHistoryStatistic(
@@ -52,7 +53,11 @@ class StatisticLearningHistoryVm(
                     )
                 )
             ).content
-            mutableState.value = mutableState.value.copy(statistic = statistic, toDate = date)
+            mutableState.value = mutableState.value.copy(
+                statistic = statistic,
+                toDate = date,
+                isLoading = false
+            )
         }
     }
 
