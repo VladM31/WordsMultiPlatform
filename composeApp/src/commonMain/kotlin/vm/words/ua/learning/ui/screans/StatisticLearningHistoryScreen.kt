@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.koalaplot.core.bar.DefaultVerticalBar
@@ -98,10 +99,57 @@ fun StatisticsBarChart(
         monthNumber()
     }
 
-    // Prepare data
-    val categories = statistics.map { dateFormatter.format(it.date) }
-    val maxValue = statistics.maxOfOrNull { maxOf(it.learnedWords, it.reviewedWords) }?.toFloat() ?: 10f
+    // Fill missing dates between min and max date
+    val filledStatistics = remember(statistics) {
+        if (statistics.isEmpty()) return@remember emptyList()
 
+        val sorted = statistics.sortedBy { it.date }
+        val minDate = sorted.first().date
+        val maxDate = sorted.last().date
+
+        val statsMap = sorted.associateBy { it.date }
+        val result = mutableListOf<DayStatistics>()
+
+        var currentDate = minDate
+        while (currentDate <= maxDate) {
+            result.add(
+                statsMap[currentDate] ?: DayStatistics(
+                    date = currentDate,
+                    learnedWords = 0,
+                    reviewedWords = 0
+                )
+            )
+            currentDate = LocalDate(
+                currentDate.year,
+                currentDate.monthNumber,
+                currentDate.dayOfMonth
+            ).let {
+                // Add one day
+                val epochDays = it.toEpochDays() + 1
+                LocalDate.fromEpochDays(epochDays)
+            }
+        }
+        result
+    }
+
+    // Create categories: each date has two sub-bars but one label
+    // Use index-based categories for proper bar placement
+    val dateLabels = filledStatistics.map { dateFormatter.format(it.date) }
+
+    // Create interleaved categories for bars (2 per date)
+    val barCategories = filledStatistics.flatMapIndexed { index, _ ->
+        listOf("${index}_added", "${index}_reviewed")
+    }
+
+    val values = filledStatistics.flatMap { stat ->
+        listOf(stat.learnedWords.toFloat(), stat.reviewedWords.toFloat())
+    }
+
+    val colors = filledStatistics.flatMap {
+        listOf(learnedColor, reviewedColor)
+    }
+
+    val maxValue = (values.maxOrNull() ?: 10f).coerceAtLeast(1f)
 
     Column(
         modifier = modifier
@@ -110,12 +158,20 @@ fun StatisticsBarChart(
             .padding(16.dp)
     ) {
         XYGraph(
-            xAxisModel = CategoryAxisModel(categories),
+            xAxisModel = CategoryAxisModel(barCategories),
             yAxisModel = LinearAxisModel(
                 range = 0f..maxValue * 1.2f,
                 minimumMajorTickIncrement = 1f
             ),
-            xAxisLabels = { it },
+            xAxisLabels = { category ->
+                // Show date label only for "added" bars (first of each pair)
+                if (category.endsWith("_added")) {
+                    val index = category.substringBefore("_").toIntOrNull() ?: 0
+                    dateLabels.getOrElse(index) { "" }
+                } else {
+                    "" // Empty for "reviewed" bars
+                }
+            },
             yAxisLabels = { it.toInt().toString() },
             xAxisTitle = null,
             yAxisTitle = null,
@@ -123,28 +179,15 @@ fun StatisticsBarChart(
                 .fillMaxWidth()
                 .weight(1f)
         ) {
-            // Learned words bars
             VerticalBarPlot(
-                xData = categories,
-                yData = statistics.map { it.learnedWords.toFloat() },
-                bar = { _ ->
+                xData = barCategories,
+                yData = values,
+                bar = { index ->
                     DefaultVerticalBar(
-                        color = learnedColor
+                        brush = SolidColor(colors[index])
                     )
                 },
-                barWidth = 0.35f
-            )
-
-            // Reviewed words bars
-            VerticalBarPlot(
-                xData = categories,
-                yData = statistics.map { it.reviewedWords.toFloat() },
-                bar = { _ ->
-                    DefaultVerticalBar(
-                        color = reviewedColor
-                    )
-                },
-                barWidth = 0.35f
+                barWidth = 0.9f
             )
         }
 
@@ -156,7 +199,7 @@ fun StatisticsBarChart(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            LegendItem(color = learnedColor, label = "Learned")
+            LegendItem(color = learnedColor, label = "Added")
             Spacer(modifier = Modifier.width(32.dp))
             LegendItem(color = reviewedColor, label = "Reviewed")
         }
