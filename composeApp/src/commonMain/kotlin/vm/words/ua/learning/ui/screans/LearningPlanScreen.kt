@@ -294,7 +294,7 @@ private fun PlanViewer(state: LearningPlanState) {
 
         ProgressPieChart(
             learned = state.learnedWordsToDay,
-            need = state.learnedWords
+            need = state.learningPlan?.wordsPerDay ?: 0
         )
         Spacer(modifier = Modifier.height(10.dp))
 

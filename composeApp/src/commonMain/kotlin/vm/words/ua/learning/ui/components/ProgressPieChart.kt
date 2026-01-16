@@ -30,7 +30,7 @@ fun ProgressPieChart(
     modifier: Modifier = Modifier
 ) {
     val learnedPercent = if (need > 0) {
-        (learned.toFloat() / need * 100f).coerceIn(0f, 100f)
+        (learned.toFloat() / need) * 100f
     } else 0f
 
     // Анимация
