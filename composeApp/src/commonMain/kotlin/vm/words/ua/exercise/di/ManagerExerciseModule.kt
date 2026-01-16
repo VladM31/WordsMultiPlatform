@@ -15,7 +15,8 @@ internal val managerExerciseModule = DI.Module("managerExerciseModule") {
             learningHistoryClient = instance(),
             learningPlanClient = instance(),
             userManager = instance(),
-            client = instance()
+            client = instance(),
+            playListManager = instance()
         )
     }
 

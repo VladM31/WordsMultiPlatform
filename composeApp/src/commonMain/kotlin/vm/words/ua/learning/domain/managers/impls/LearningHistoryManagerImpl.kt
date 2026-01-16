@@ -18,7 +18,7 @@ class LearningHistoryManagerImpl(
         get() = userCacheManager.token.value
 
     override suspend fun getLearningHistory(filter: LearningHistoryFilter): PagedModels<LearningHistory> {
-        val query = filter.toQueryMap() - "wordIds"
+        val query = filter.toQueryMap()
         val respond = client.getLearningHistory(token, query);
         return PagedModels.of(respond) { it.toModel() }
     }

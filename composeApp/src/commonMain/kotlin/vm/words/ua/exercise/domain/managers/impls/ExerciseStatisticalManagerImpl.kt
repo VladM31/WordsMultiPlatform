@@ -8,6 +8,7 @@ import vm.words.ua.exercise.domain.managers.ExerciseStatisticalManager
 import vm.words.ua.exercise.domain.models.data.EndExerciseTransaction
 import vm.words.ua.exercise.domain.models.data.StartExerciseTransaction
 import vm.words.ua.exercise.domain.models.data.WordCompleted
+import vm.words.ua.exercise.domain.models.enums.Exercise
 import vm.words.ua.exercise.net.clients.ExerciseStatisticalClient
 import vm.words.ua.exercise.net.responds.EndExerciseTransactionRequest
 import vm.words.ua.exercise.net.responds.StartExerciseTransactionRequest
@@ -16,13 +17,30 @@ import vm.words.ua.learning.domain.models.enums.LearningHistoryType
 import vm.words.ua.learning.net.clients.LearningHistoryClient
 import vm.words.ua.learning.net.clients.LearningPlanClient
 import vm.words.ua.learning.net.responds.LearningPlanResponse
+import vm.words.ua.playlist.domain.managers.PlayListManager
+import vm.words.ua.playlist.domain.models.PlayListGrade
 
 class ExerciseStatisticalManagerImpl(
     private val client: ExerciseStatisticalClient,
     private val userManager: UserCacheManager,
     private val learningPlanClient: LearningPlanClient,
-    private val learningHistoryClient: LearningHistoryClient
+    private val learningHistoryClient: LearningHistoryClient,
+    private val playListManager: PlayListManager
 ) : ExerciseStatisticalManager {
+    private val gradeMapper = mapOf(
+        Exercise.WORD_BY_TRANSLATES.id to 1L,
+        Exercise.WORD_BY_ORIGINALS.id to 1L,
+        Exercise.WORD_BY_DESCRIPTIONS.id to 1L,
+        Exercise.DESCRIPTION_BY_WORDS.id to 1L,
+
+        Exercise.MATCH_WORDS.id to 3L,
+        Exercise.LETTERS_MATCH_BY_TRANSLATION.id to 3L,
+        Exercise.LETTERS_MATCH_BY_DESCRIPTION.id to 3L,
+        Exercise.WORD_BY_WRITE_TRANSLATE.id to 3L,
+        Exercise.WORD_BY_WRITE_DESCRIPTION.id to 3L
+    )
+
+
     override suspend fun startExercise(data: StartExerciseTransaction) {
         data.toRequest(
             plan = runCatching { learningPlanClient.getPlan(userManager.token.value) }.getOrNull(),
@@ -43,6 +61,9 @@ class ExerciseStatisticalManagerImpl(
             client.completeWord(this, userManager.toPair())
         }.onFailure {
             println("ExerciseStatisticalManager - Failed to complete word: ${it.message}")
+        }
+        playListManager.runCatching {
+            updateGrades(listOf(data.toPlayListGradeWord()))
         }
     }
 
@@ -119,6 +140,20 @@ class ExerciseStatisticalManagerImpl(
             attempts = this.attempts,
             isCorrect = this.isCorrect,
             completedAt = this.completedAt
+        )
+    }
+
+
+    private fun WordCompleted.toPlayListGradeWord(): PlayListGrade {
+        val grade = gradeMapper.getOrElse(exerciseId) { 0 }
+
+        return PlayListGrade(
+            wordId = this.wordId,
+            wordGrade = if (isCorrect) {
+                (grade - attempts).coerceAtLeast(0)
+            } else {
+                0L
+            }
         )
     }
 }

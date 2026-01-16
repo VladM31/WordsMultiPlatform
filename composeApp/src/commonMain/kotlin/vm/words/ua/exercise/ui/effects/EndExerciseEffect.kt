@@ -31,6 +31,7 @@ fun EndExerciseEffect(
                 exerciseStatisticalManager.endExercise(
                     EndExerciseTransaction(transactionId = state.transactionId)
                 )
+
             }
             navController.popBackStack()
             return@LaunchedEffect
@@ -40,4 +41,5 @@ fun EndExerciseEffect(
             navController.navigateAndClearCurrent(nextExercise, newBundle)
         }
     }
+
 }
