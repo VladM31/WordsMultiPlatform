@@ -58,6 +58,8 @@ kotlin {
             xcf.add(this)
             // Линкуем PDFKit для корректного рендера PDFView
             linkerOpts("-framework", "PDFKit")
+            // Ensure proper linking of Compose Material3 for iOS and resolve KoalaoPlot symbols
+            linkerOpts("-undefined", "dynamic_lookup")
         }
     }
 
@@ -164,10 +166,6 @@ kotlin {
             dependencies {
                 implementation(libs.connectivity.device)
                 implementation(libs.connectivity.compose.device)
-
-                // Firebase Analytics - only for Android and iOS
-                implementation(libs.firebase.analytics)
-                implementation(libs.firebase.common)
             }
         }
 
