@@ -1,7 +1,8 @@
 package vm.words.ua.core.analytics
 
 /**
- * JS implementation - returns Empty Analytics
+ * JS implementation - returns Firebase Analytics
  */
-actual fun createAnalytics(): Analytics = EmptyAnalytics()
+actual fun createAnalytics(): Analytics = FirebaseAnalytics()
+
 
