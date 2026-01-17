@@ -19,13 +19,11 @@ import io.github.koalaplot.core.util.ExperimentalKoalaPlotApi
 import io.github.koalaplot.core.xygraph.CategoryAxisModel
 import io.github.koalaplot.core.xygraph.LinearAxisModel
 import io.github.koalaplot.core.xygraph.XYGraph
-import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
+import kotlinx.datetime.*
 import kotlinx.datetime.format.char
-import kotlinx.datetime.toLocalDateTime
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
+import vm.words.ua.core.utils.getIconButtonSize
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.learning.domain.models.enums.LearningHistoryType
 import vm.words.ua.learning.ui.actions.StatisticLearningHistoryAction
@@ -120,40 +118,6 @@ fun StatisticLearningHistoryScreen(
             onBackClick = { navController.popBackStack() }
         )
 
-        // Action buttons row
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Date picker button
-            IconButton(
-                onClick = { showDatePicker = true }
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.CalendarMonth,
-                    contentDescription = "Select date",
-                    tint = AppTheme.PrimaryColor
-                )
-            }
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            // History list button (for future use)
-            IconButton(
-                onClick = {
-                    // TODO: Navigate to full history list
-                }
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.List,
-                    contentDescription = "View history",
-                    tint = AppTheme.PrimaryColor
-                )
-            }
-        }
 
         // Current date range display
         val currentDateFormatted = remember(state.toDate) {
@@ -174,14 +138,53 @@ fun StatisticLearningHistoryScreen(
             ) {
                 CircularProgressIndicator(color = AppTheme.PrimaryColor)
             }
-        } else {
-            StatisticsBarChart(
-                statistics = dayStatistics,
-                toDate = state.toDate,
-                step = state.step,
-                modifier = Modifier.fillMaxWidth()
-            )
+            return@Column
         }
+
+        StatisticsBarChart(
+            statistics = dayStatistics,
+            toDate = state.toDate,
+            step = state.step,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        // Action buttons row
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Date picker button
+            IconButton(
+                onClick = { showDatePicker = true }
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.CalendarMonth,
+                    contentDescription = "Select date",
+                    tint = AppTheme.PrimaryColor,
+                    modifier = Modifier.size(getIconButtonSize())
+                )
+            }
+
+            Spacer(modifier = Modifier.width(32.dp))
+
+            // History list button (for future use)
+            IconButton(
+                onClick = {
+                    // TODO: Navigate to full history list
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Outlined.List,
+                    contentDescription = "View history",
+                    tint = AppTheme.PrimaryColor,
+                    modifier = Modifier.size(getIconButtonSize())
+                )
+            }
+        }
+
     }
 }
 
@@ -203,10 +206,10 @@ fun StatisticsBarChart(
         monthNumber()
     }
 
-    // Generate all dates in range (from toDate - step to toDate)
+    // Generate all dates in range (from toDate - (step-1) to toDate) = exactly 'step' days
     val filledStatistics = remember(statistics, toDate, step) {
         val endDate = toDate.toLocalDateTime(TimeZone.currentSystemDefault()).date
-        val startDate = LocalDate.fromEpochDays(endDate.toEpochDays() - step)
+        val startDate = endDate.minus(DatePeriod(days = step - 1))
 
         val statsMap = statistics.associateBy { it.date }
         val result = mutableListOf<DayStatistics>()
@@ -220,7 +223,7 @@ fun StatisticsBarChart(
                     reviewedWords = 0
                 )
             )
-            currentDate = LocalDate.fromEpochDays(currentDate.toEpochDays() + 1)
+            currentDate = currentDate.plus(DatePeriod(days = 1))
         }
         result
     }
