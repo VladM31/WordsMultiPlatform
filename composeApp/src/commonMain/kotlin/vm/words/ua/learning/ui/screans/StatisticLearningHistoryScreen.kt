@@ -99,9 +99,10 @@ fun StatisticLearningHistoryScreen(
         }
 
         // Action buttons row
-        Menu {
-            showDatePicker = true
-        }
+        Menu(
+            onSelectDate = { showDatePicker = true },
+            navController = navController
+        )
 
         Text(
             text = "To: $currentDateFormatted",
@@ -123,7 +124,7 @@ fun StatisticLearningHistoryScreen(
 }
 
 @Composable
-private fun Menu(onSelect: () -> Unit) {
+private fun Menu(onSelectDate: () -> Unit, navController: SimpleNavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -133,7 +134,7 @@ private fun Menu(onSelect: () -> Unit) {
     ) {
         // Date picker button
         IconButton(
-            onClick = onSelect
+            onClick = onSelectDate
         ) {
             Icon(
                 imageVector = Icons.Outlined.CalendarMonth,
@@ -145,10 +146,10 @@ private fun Menu(onSelect: () -> Unit) {
 
         Spacer(modifier = Modifier.width(32.dp))
 
-        // History list button (for future use)
+        // History list button
         IconButton(
             onClick = {
-                // TODO: Navigate to full history list
+                navController.navigate(vm.words.ua.navigation.Screen.LearningHistoryList)
             }
         ) {
             Icon(

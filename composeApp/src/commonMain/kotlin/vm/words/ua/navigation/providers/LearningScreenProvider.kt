@@ -1,6 +1,7 @@
 package vm.words.ua.navigation.providers
 
 import androidx.compose.runtime.Composable
+import vm.words.ua.learning.ui.screans.LearningHistoryListScreen
 import vm.words.ua.learning.ui.screans.LearningPlanScreen
 import vm.words.ua.learning.ui.screans.StatisticLearningHistoryScreen
 import vm.words.ua.navigation.Screen
@@ -19,6 +20,9 @@ class LearningScreenProvider : ScreenProvider {
             }
             Screen.StatisticLearningHistory.route -> {
                 StatisticLearningHistoryScreen(navController = navController)
+            }
+            Screen.LearningHistoryList.route -> {
+                LearningHistoryListScreen(navController = navController)
             }
 
             else -> {

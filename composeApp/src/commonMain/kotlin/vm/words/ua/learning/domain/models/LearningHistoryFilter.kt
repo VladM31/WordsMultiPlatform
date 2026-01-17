@@ -10,5 +10,5 @@ data class LearningHistoryFilter(
     val wordIds: Collection<String>? = null,
     val date: Range<LocalDate>? = null,
     val page: Int = 0,
-    val size: Int = 20,
+    val size: Int = 50,
 ) : Queryable
