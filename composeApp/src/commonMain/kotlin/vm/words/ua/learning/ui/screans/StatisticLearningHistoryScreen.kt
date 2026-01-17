@@ -24,6 +24,7 @@ import kotlinx.datetime.format.char
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.utils.getIconButtonSize
+import vm.words.ua.core.utils.rememberLabelFontSize
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.learning.domain.models.enums.LearningHistoryType
 import vm.words.ua.learning.ui.actions.StatisticLearningHistoryAction
@@ -60,53 +61,12 @@ fun StatisticLearningHistoryScreen(
             .sortedBy { it.date }
     }
 
-    // DatePicker state
-    val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = state.toDate.toEpochMilliseconds()
-    )
 
-    // DatePicker Dialog
-    if (showDatePicker) {
-        DatePickerDialog(
-            onDismissRequest = { showDatePicker = false },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        datePickerState.selectedDateMillis?.let { millis ->
-                            val selectedInstant = Instant.fromEpochMilliseconds(millis)
-                            viewModel.sent(StatisticLearningHistoryAction.SetDate(selectedInstant))
-                        }
-                        showDatePicker = false
-                    }
-                ) {
-                    Text("OK", color = AppTheme.PrimaryColor)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDatePicker = false }) {
-                    Text("Cancel", color = AppTheme.SecondaryText)
-                }
-            },
-            colors = DatePickerDefaults.colors(
-                containerColor = AppTheme.PrimaryBack
-            )
-        ) {
-            DatePicker(
-                state = datePickerState,
-                colors = DatePickerDefaults.colors(
-                    containerColor = AppTheme.PrimaryBack,
-                    titleContentColor = AppTheme.PrimaryText,
-                    headlineContentColor = AppTheme.PrimaryText,
-                    weekdayContentColor = AppTheme.SecondaryText,
-                    dayContentColor = AppTheme.PrimaryText,
-                    selectedDayContainerColor = AppTheme.PrimaryColor,
-                    selectedDayContentColor = AppTheme.PrimaryBack,
-                    todayContentColor = AppTheme.PrimaryColor,
-                    todayDateBorderColor = AppTheme.PrimaryColor
-                )
-            )
-        }
-    }
+    DatePickerComponent(
+        showDatePicker = showDatePicker,
+        onHide = { showDatePicker = false },
+        viewModel = viewModel
+    )
 
     Column(
         modifier = Modifier
@@ -124,12 +84,9 @@ fun StatisticLearningHistoryScreen(
             val localDate = state.toDate.toLocalDateTime(TimeZone.currentSystemDefault()).date
             "${localDate.dayOfMonth}.${localDate.monthNumber}.${localDate.year}"
         }
-        Text(
-            text = "To: $currentDateFormatted",
-            color = AppTheme.SecondaryText,
-            fontSize = 12.sp,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
+
+
+
 
         if (state.isLoading) {
             Box(
@@ -141,6 +98,18 @@ fun StatisticLearningHistoryScreen(
             return@Column
         }
 
+        // Action buttons row
+        Menu {
+            showDatePicker = true
+        }
+
+        Text(
+            text = "To: $currentDateFormatted",
+            color = AppTheme.SecondaryText,
+            fontSize = rememberLabelFontSize(),
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
         StatisticsBarChart(
             statistics = dayStatistics,
             toDate = state.toDate,
@@ -148,44 +117,105 @@ fun StatisticLearningHistoryScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        // Action buttons row
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Date picker button
-            IconButton(
-                onClick = { showDatePicker = true }
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.CalendarMonth,
-                    contentDescription = "Select date",
-                    tint = AppTheme.PrimaryColor,
-                    modifier = Modifier.size(getIconButtonSize())
-                )
-            }
 
-            Spacer(modifier = Modifier.width(32.dp))
-
-            // History list button (for future use)
-            IconButton(
-                onClick = {
-                    // TODO: Navigate to full history list
-                }
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.List,
-                    contentDescription = "View history",
-                    tint = AppTheme.PrimaryColor,
-                    modifier = Modifier.size(getIconButtonSize())
-                )
-            }
-        }
 
     }
+}
+
+@Composable
+private fun Menu(onSelect: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Date picker button
+        IconButton(
+            onClick = onSelect
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.CalendarMonth,
+                contentDescription = "Select date",
+                tint = AppTheme.PrimaryColor,
+                modifier = Modifier.size(getIconButtonSize())
+            )
+        }
+
+        Spacer(modifier = Modifier.width(32.dp))
+
+        // History list button (for future use)
+        IconButton(
+            onClick = {
+                // TODO: Navigate to full history list
+            }
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Outlined.List,
+                contentDescription = "View history",
+                tint = AppTheme.PrimaryColor,
+                modifier = Modifier.size(getIconButtonSize())
+            )
+        }
+    }
+}
+
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+fun DatePickerComponent(showDatePicker: Boolean, onHide: () -> Unit, viewModel: StatisticLearningHistoryVm) {
+    val state by viewModel.state.collectAsState()
+
+    // DatePicker state
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = state.toDate.toEpochMilliseconds()
+    )
+
+    if (!showDatePicker) {
+        return
+    }
+    // DatePicker Dialog
+    DatePickerDialog(
+        onDismissRequest = onHide,
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    datePickerState.selectedDateMillis?.let { millis ->
+                        val selectedInstant = Instant.fromEpochMilliseconds(millis)
+                        viewModel.sent(StatisticLearningHistoryAction.SetDate(selectedInstant))
+                    }
+                    onHide()
+                }
+            ) {
+                Text("OK", color = AppTheme.PrimaryColor)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onHide) {
+                Text("Cancel", color = AppTheme.SecondaryText)
+            }
+        },
+        colors = DatePickerDefaults.colors(
+            containerColor = AppTheme.PrimaryBack
+        )
+    ) {
+        DatePicker(
+            state = datePickerState,
+            colors = DatePickerDefaults.colors(
+                containerColor = AppTheme.PrimaryBack,
+                titleContentColor = AppTheme.PrimaryText,
+                headlineContentColor = AppTheme.PrimaryText,
+                weekdayContentColor = AppTheme.SecondaryText,
+                dayContentColor = AppTheme.PrimaryText,
+                selectedDayContainerColor = AppTheme.PrimaryColor,
+                selectedDayContentColor = AppTheme.PrimaryBack,
+                todayContentColor = AppTheme.PrimaryColor,
+                todayDateBorderColor = AppTheme.PrimaryColor
+            )
+        )
+    }
+
 }
 
 @OptIn(ExperimentalKoalaPlotApi::class)
