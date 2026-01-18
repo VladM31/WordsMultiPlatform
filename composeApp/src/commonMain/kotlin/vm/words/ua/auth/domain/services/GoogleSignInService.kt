@@ -1,5 +1,7 @@
 package vm.words.ua.auth.domain.services
 
+import vm.words.ua.auth.domain.models.GoogleSignInResult
+
 /**
  * Service for Google Sign-In across all platforms
  */

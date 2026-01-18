@@ -13,6 +13,7 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.GoogleAuthProvider
 import dev.gitlive.firebase.auth.auth
+import vm.words.ua.auth.domain.models.GoogleSignInResult
 
 /**
  * Android implementation of GoogleSignInService using Credential Manager + Firebase Auth

@@ -3,8 +3,8 @@ package vm.words.ua.auth.domain.managers.impls
 import vm.words.ua.auth.domain.managers.AuthManager
 import vm.words.ua.auth.domain.mappers.toRequest
 import vm.words.ua.auth.domain.mappers.toUser
-import vm.words.ua.auth.domain.models.data.AuthResult
-import vm.words.ua.auth.domain.models.data.SignUpModel
+import vm.words.ua.auth.domain.models.AuthResult
+import vm.words.ua.auth.domain.models.SignUpModel
 import vm.words.ua.auth.net.clients.AuthClient
 import vm.words.ua.auth.net.requests.LoginRequest
 import vm.words.ua.core.domain.managers.UserCacheManager

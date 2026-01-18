@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import vm.words.ua.auth.domain.managers.AuthManager
-import vm.words.ua.auth.domain.models.data.AuthResult
+import vm.words.ua.auth.domain.models.AuthResult
 import vm.words.ua.auth.ui.actions.ConfirmSignUpAction
 import vm.words.ua.auth.ui.states.ConfirmSignUpState
 import vm.words.ua.core.ui.models.ErrorMessage

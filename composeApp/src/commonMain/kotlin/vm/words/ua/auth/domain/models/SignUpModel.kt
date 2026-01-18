@@ -1,4 +1,4 @@
-package vm.words.ua.auth.domain.models.data
+package vm.words.ua.auth.domain.models
 
 data class SignUpModel(
     val phoneNumber: String,

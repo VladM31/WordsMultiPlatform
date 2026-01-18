@@ -1,5 +1,7 @@
 package vm.words.ua.auth.domain.services
 
+import vm.words.ua.auth.domain.models.GoogleSignInResult
+
 /**
  * Desktop (JVM) implementation of GoogleSignInService
  *

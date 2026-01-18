@@ -1,4 +1,4 @@
-package vm.words.ua.auth.domain.services
+package vm.words.ua.auth.domain.models
 
 /**
  * Result of Google Sign-In operation
@@ -36,4 +36,3 @@ data class GoogleSignInResult(
         )
     }
 }
-

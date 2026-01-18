@@ -1,7 +1,7 @@
 package vm.words.ua.auth.domain.mappers
 
 import kotlinx.datetime.Clock
-import vm.words.ua.auth.domain.models.data.SignUpModel
+import vm.words.ua.auth.domain.models.SignUpModel
 import vm.words.ua.auth.net.requests.SignUpRequest
 import vm.words.ua.auth.net.responses.AuthResponse
 import vm.words.ua.auth.net.responses.TelegramLoginRespond

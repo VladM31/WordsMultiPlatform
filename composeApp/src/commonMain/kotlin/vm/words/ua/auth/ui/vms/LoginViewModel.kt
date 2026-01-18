@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import vm.words.ua.auth.domain.managers.AuthHistoryManager
 import vm.words.ua.auth.domain.managers.AuthManager
-import vm.words.ua.auth.domain.models.data.AuthResult
+import vm.words.ua.auth.domain.models.AuthResult
 import vm.words.ua.auth.ui.actions.LoginAction
 import vm.words.ua.auth.ui.states.LoginState
 import vm.words.ua.auth.ui.validation.loginValidator
