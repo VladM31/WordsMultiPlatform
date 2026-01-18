@@ -1,10 +1,10 @@
 package vm.words.ua.auth.ui.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +28,7 @@ import vm.words.ua.core.utils.rememberIconSize
 import vm.words.ua.utils.hints.ui.utils.ViewHintStep
 import vm.words.ua.utils.hints.ui.utils.viewHint
 import wordsmultiplatform.composeapp.generated.resources.Res
+import wordsmultiplatform.composeapp.generated.resources.google_icon
 import wordsmultiplatform.composeapp.generated.resources.telegram_image
 
 @Composable
@@ -118,15 +119,15 @@ fun LoginForm(
                     .viewHint(LoginScreenHintStep.TELEGRAM_LOGIN_BUTTON, currentHintStep)
             )
 
-            // Google Sign-In button - only shown if available
-            if (showGoogleSignIn) {
-                Spacer(modifier = Modifier.size(16.dp))
-
-                GoogleSignInButton(
-                    onClick = onGoogleClick,
-                    iconSize = rememberIconSize() * 1.5f
-                )
+            if (!showGoogleSignIn) {
+                return@Row
             }
+            Spacer(modifier = Modifier.size(16.dp))
+
+            GoogleSignInButton(
+                onClick = onGoogleClick,
+                iconSize = rememberIconSize() * 1.5f
+            )
         }
     }
 }
@@ -140,14 +141,15 @@ private fun GoogleSignInButton(
     Box(
         modifier = modifier
             .size(iconSize)
+            .background(AppTheme.PrimaryColor, shape = CircleShape)
             .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
         // Using Material Icon for Google logo
         Icon(
-            imageVector = Icons.Default.Person,
+            painter = painterResource(Res.drawable.google_icon),
             contentDescription = "Google Sign-In",
-            tint = AppTheme.PrimaryColor,
+            tint = AppTheme.PrimaryBack,
             modifier = Modifier.size(iconSize * 0.7f)
         )
     }
