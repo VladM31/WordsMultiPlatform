@@ -1,5 +1,6 @@
-package vm.words.ua.auth.domain.services
+package vm.words.ua.auth.domain.factories
 
+import vm.words.ua.auth.domain.managers.GoogleSignInManager
 import vm.words.ua.auth.domain.models.GoogleSignInResult
 
 /**
@@ -8,7 +9,7 @@ import vm.words.ua.auth.domain.models.GoogleSignInResult
  * Google Sign-In could be implemented via Firebase JS SDK or Google Identity Services.
  * Currently returns stub implementation.
  */
-class GoogleSignInServiceJs : GoogleSignInService {
+class GoogleSignInManagerJs : GoogleSignInManager {
 
     override fun isAvailable(): Boolean = false
 
@@ -27,5 +28,5 @@ class GoogleSignInServiceJs : GoogleSignInService {
 /**
  * Factory function for JS platform
  */
-actual fun createGoogleSignInService(): GoogleSignInService = GoogleSignInServiceJs()
+actual fun createGoogleSignInManager(): GoogleSignInManager = GoogleSignInManagerJs()
 

@@ -1,5 +1,6 @@
-package vm.words.ua.auth.domain.services
+package vm.words.ua.auth.domain.factories
 
+import vm.words.ua.auth.domain.managers.GoogleSignInManager
 import vm.words.ua.auth.domain.models.GoogleSignInResult
 
 /**
@@ -13,7 +14,7 @@ import vm.words.ua.auth.domain.models.GoogleSignInResult
  * Currently returns stub implementation.
  * To enable: integrate Google Sign-In SDK via CocoaPods
  */
-class GoogleSignInServiceIos : GoogleSignInService {
+class GoogleSignInManagerIos : GoogleSignInManager {
 
     override fun isAvailable(): Boolean {
         // Google Sign-In is not yet implemented for iOS
@@ -36,5 +37,5 @@ class GoogleSignInServiceIos : GoogleSignInService {
 /**
  * Factory function for iOS platform
  */
-actual fun createGoogleSignInService(): GoogleSignInService = GoogleSignInServiceIos()
+actual fun createGoogleSignInManager(): GoogleSignInManager = GoogleSignInManagerIos()
 

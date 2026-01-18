@@ -13,8 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.core.graphics.toColorInt
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.initialize
+import vm.words.ua.auth.domain.factories.ActivityHolder
 import vm.words.ua.auth.domain.managers.AuthHistorySettingsFactory
-import vm.words.ua.auth.domain.services.ActivityHolder
 import vm.words.ua.core.domain.managers.SettingsFactory
 import vm.words.ua.utils.storage.AndroidStorageConfig
 

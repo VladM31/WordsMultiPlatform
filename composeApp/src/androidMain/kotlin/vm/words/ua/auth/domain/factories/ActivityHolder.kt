@@ -1,4 +1,4 @@
-package vm.words.ua.auth.domain.services
+package vm.words.ua.auth.domain.factories
 
 import android.app.Activity
 import java.lang.ref.WeakReference

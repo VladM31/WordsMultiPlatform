@@ -1,5 +1,6 @@
-package vm.words.ua.auth.domain.services
+package vm.words.ua.auth.domain.factories
 
+import vm.words.ua.auth.domain.managers.GoogleSignInManager
 import vm.words.ua.auth.domain.models.GoogleSignInResult
 
 /**
@@ -8,7 +9,7 @@ import vm.words.ua.auth.domain.models.GoogleSignInResult
  * Google Sign-In is not available on desktop platforms.
  * Desktop users should use phone number or Telegram login.
  */
-class GoogleSignInServiceDesktop : GoogleSignInService {
+class GoogleSignInManagerDesktop : GoogleSignInManager {
 
     override fun isAvailable(): Boolean = false
 
@@ -27,5 +28,5 @@ class GoogleSignInServiceDesktop : GoogleSignInService {
 /**
  * Factory function for Desktop (JVM) platform
  */
-actual fun createGoogleSignInService(): GoogleSignInService = GoogleSignInServiceDesktop()
+actual fun createGoogleSignInManager(): GoogleSignInManager = GoogleSignInManagerDesktop()
 

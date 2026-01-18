@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import vm.words.ua.auth.domain.services.GoogleSignInService
+import vm.words.ua.auth.domain.managers.GoogleSignInManager
 import vm.words.ua.auth.ui.components.LoginForm
 import vm.words.ua.auth.ui.hints.createLoginScreenHintController
 import vm.words.ua.auth.ui.vms.LoginViewModel
@@ -32,7 +32,7 @@ fun LoginScreen(
 ) {
     val hintController = createLoginScreenHintController()
     val viewModel = rememberInstance<LoginViewModel>()
-    val googleSignInService = rememberInstance<GoogleSignInService>()
+    val googleSignInManager = rememberInstance<GoogleSignInManager>()
     val scope = rememberCoroutineScope()
 
     val state by viewModel.state.collectAsState()
@@ -45,7 +45,7 @@ fun LoginScreen(
     var googleSignInError by remember { mutableStateOf<String?>(null) }
 
     // Check if Google Sign-In is available
-    val isGoogleSignInAvailable = remember { googleSignInService.isAvailable() }
+    val isGoogleSignInAvailable = remember { googleSignInManager.isAvailable() }
 
     // Navigate when login is successful
     LaunchedEffect(state.isEnd) {
@@ -82,7 +82,7 @@ fun LoginScreen(
                                 onTelegramClick = { navController.navigate(Screen.TelegramLogin) },
                                 onGoogleClick = {
                                     scope.launch {
-                                        val result = googleSignInService.signIn()
+                                        val result = googleSignInManager.signIn()
                                         if (result.success) {
                                             googleSignInResult = Pair(
                                                 result.email ?: "Unknown",

@@ -1,4 +1,4 @@
-package vm.words.ua.auth.domain.services
+package vm.words.ua.auth.domain.factories
 
 import android.util.Log
 import androidx.credentials.CredentialManager
@@ -13,12 +13,13 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.GoogleAuthProvider
 import dev.gitlive.firebase.auth.auth
+import vm.words.ua.auth.domain.managers.GoogleSignInManager
 import vm.words.ua.auth.domain.models.GoogleSignInResult
 
 /**
  * Android implementation of GoogleSignInService using Credential Manager + Firebase Auth
  */
-class GoogleSignInServiceAndroid : GoogleSignInService {
+class GoogleSignInManagerAndroid : GoogleSignInManager {
 
     companion object {
         private const val TAG = "GoogleSignIn"
@@ -49,7 +50,7 @@ class GoogleSignInServiceAndroid : GoogleSignInService {
 
             // First try with authorized accounts only (faster)
             val googleIdOptionAuthorized = GetGoogleIdOption.Builder()
-                .setFilterByAuthorizedAccounts(true)
+                .setFilterByAuthorizedAccounts(false)
                 .setServerClientId(WEB_CLIENT_ID)
                 .setAutoSelectEnabled(true)
                 .build()
@@ -154,5 +155,5 @@ class GoogleSignInServiceAndroid : GoogleSignInService {
 /**
  * Factory function for Android platform
  */
-actual fun createGoogleSignInService(): GoogleSignInService = GoogleSignInServiceAndroid()
+actual fun createGoogleSignInManager(): GoogleSignInManager = GoogleSignInManagerAndroid()
 

@@ -1,11 +1,11 @@
-package vm.words.ua.auth.domain.services
+package vm.words.ua.auth.domain.managers
 
 import vm.words.ua.auth.domain.models.GoogleSignInResult
 
 /**
  * Service for Google Sign-In across all platforms
  */
-interface GoogleSignInService {
+interface GoogleSignInManager {
     /**
      * Check if Google Sign-In is available on this platform
      */
@@ -22,5 +22,3 @@ interface GoogleSignInService {
      */
     suspend fun signOut()
 }
-
-
