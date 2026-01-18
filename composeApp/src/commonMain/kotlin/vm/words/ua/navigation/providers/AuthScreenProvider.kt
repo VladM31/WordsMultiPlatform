@@ -1,10 +1,7 @@
 package vm.words.ua.navigation.providers
 
 import androidx.compose.runtime.Composable
-import vm.words.ua.auth.ui.screen.ConfirmSignUpScreen
-import vm.words.ua.auth.ui.screen.LoginScreen
-import vm.words.ua.auth.ui.screen.SignUpScreen
-import vm.words.ua.auth.ui.screen.TelegramLoginScreen
+import vm.words.ua.auth.ui.screen.*
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.ScreenProvider
 
@@ -19,8 +16,12 @@ class AuthScreenProvider : ScreenProvider {
                 LoginScreen(navController = navController)
             }
 
-            Screen.SignUp.route -> {
-                SignUpScreen(navController = navController)
+            Screen.SignUpProvider.route -> {
+                SignUpProviderScreen(navController = navController)
+            }
+
+            Screen.TelegramSignUp.route -> {
+                TelegramSignUpScreen(navController = navController)
             }
 
             Screen.TelegramLogin.route -> {

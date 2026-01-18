@@ -37,7 +37,7 @@ import wordsmultiplatform.composeapp.generated.resources.info_in_circle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignUpScreen(
+fun TelegramSignUpScreen(
     navController: SimpleNavController,
     modifier: Modifier = Modifier,
     viewModel: SignUpViewModel = rememberInstance()

@@ -26,7 +26,7 @@ private val noInternetSupportRoutes = setOf(
 private val noHomeBtmSupportRoutes = setOf(
     Screen.UpdateApp,
     Screen.Login,
-    Screen.SignUp,
+    Screen.TelegramSignUp,
     Screen.TelegramLogin,
     Screen.ConfirmSignUp
 ).map { it.route }

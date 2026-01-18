@@ -66,7 +66,7 @@ fun LoginScreen(
                         LoginForm(
                             viewModel = viewModel,
                             currentHintStep = hintController.currentStep,
-                            onJoinNowClick = { navController.navigate(Screen.SignUp) },
+                            onJoinNowClick = { navController.navigate(Screen.SignUpProvider) },
                             onTelegramClick = { navController.navigate(Screen.TelegramLogin) },
                             onGoogleClick = {
                                 viewModel.sent(LoginAction.GoogleSignIn)
