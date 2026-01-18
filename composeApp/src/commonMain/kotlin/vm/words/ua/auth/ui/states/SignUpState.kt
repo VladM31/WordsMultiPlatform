@@ -12,6 +12,5 @@ data class SignUpState(
     val firstName: String = "",
     val lastName: String = "",
     val currency: Currency = Currency.USD,
-    val email: String? = null,
     val agreed: Boolean = false
 )

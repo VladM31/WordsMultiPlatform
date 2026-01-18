@@ -17,7 +17,7 @@ internal fun AuthResponse.User.toUser(): User {
 fun SignUpModel.toRequest(): SignUpRequest {
     return SignUpRequest(
         firstName = firstName, lastName = lastName, phoneNumber = phoneNumber,
-        email = email, currency = currency, password = password
+        currency = currency, password = password
     )
 }
 

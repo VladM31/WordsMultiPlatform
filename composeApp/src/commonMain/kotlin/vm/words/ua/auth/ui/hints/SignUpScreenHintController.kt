@@ -32,10 +32,6 @@ enum class SignUpScreenHintStep(
         text = "Enter your last name.",
         position = HintPosition.BOTTOM,
     ),
-    EMAIL(
-        text = "Provide a valid email address for communication(Optional).",
-        position = HintPosition.TOP,
-    ),
     CURRENCY_SELECTION(
         text = "Select your preferred currency for transactions and pricing.",
         position = HintPosition.TOP,

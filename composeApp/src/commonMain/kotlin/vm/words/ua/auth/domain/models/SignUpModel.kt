@@ -5,6 +5,5 @@ data class SignUpModel(
     val password: String,
     val firstName: String,
     val lastName: String,
-    val currency: String,
-    val email: String?
+    val currency: String
 )

@@ -47,9 +47,6 @@ class SignUpViewModel(
                 mutableState.value = state.value.copy(currency = action.value)
             }
 
-            is SignUpAction.SetEmail -> {
-                mutableState.value = state.value.copy(email = action.value)
-            }
 
             SignUpAction.Submit -> handleSubmit()
             is SignUpAction.SetAgreed -> {
@@ -84,7 +81,6 @@ class SignUpViewModel(
                         analytics.logEvent(
                             AnalyticsEvents.SIGNUP_SUCCESS, mapOf(
                                 "phone_number" to state.value.phoneNumber,
-                                "email" to (state.value.email ?: "not_provided"),
                                 "currency" to state.value.currency.name
                             )
                         )
@@ -93,7 +89,6 @@ class SignUpViewModel(
                     analytics.logEvent(
                         AnalyticsEvents.SIGNUP_FAILED, mapOf(
                             "phone_number" to state.value.phoneNumber,
-                            "email" to (state.value.email ?: "not_provided"),
                             "currency" to state.value.currency.name,
                             "error_message" to (it.message ?: "unknown_error")
                         )
@@ -111,7 +106,6 @@ class SignUpViewModel(
         password = password,
         firstName = firstName,
         lastName = lastName,
-        currency = currency.name,
-        email = email?.ifBlank { null }
+        currency = currency.name
     )
 }

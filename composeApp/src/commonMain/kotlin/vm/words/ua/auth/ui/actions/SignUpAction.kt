@@ -12,5 +12,4 @@ sealed interface SignUpAction {
     data class SetFirstName(val value: String) : SignUpAction
     data class SetLastName(val value: String) : SignUpAction
     data class SetCurrency(val value: Currency) : SignUpAction
-    data class SetEmail(val value: String) : SignUpAction
 }

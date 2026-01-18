@@ -134,16 +134,6 @@ fun SignUpScreen(
                         )
                     }
 
-                    item {
-                        AppTextField(
-                            value = state.email.orEmpty(),
-                            onValueChange = { viewModel.sent(SignUpAction.SetEmail(it)) },
-                            label = "Email",
-                            modifier = Modifier.fillMaxWidth()
-                                .viewHint(SignUpScreenHintStep.EMAIL, hintController.currentStep),
-                            helperText = "Provide a valid email address for communication(Optional)."
-                        )
-                    }
 
                     item {
                         SingleSelectInput(

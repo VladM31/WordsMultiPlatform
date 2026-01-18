@@ -2,7 +2,6 @@ package vm.words.ua.auth.ui.validation
 
 import kotlinx.coroutines.flow.StateFlow
 import vm.words.ua.auth.ui.states.SignUpState
-import vm.words.ua.utils.validation.schemes.email
 import vm.words.ua.utils.validation.schemes.isPhoneNumber
 import vm.words.ua.utils.validation.schemes.length
 import vm.words.ua.utils.validation.schemes.notBlank
@@ -34,14 +33,6 @@ val signUpValidator: (StateFlow<SignUpState>) -> vm.words.ua.utils.validation.Va
                 .length(2, 60)
                 .notBlank()
         )
-
-        add(
-            { it.email.orEmpty() },
-            vm.words.ua.utils.validation.schemes.ValidationScheme.stringSchema("Email")
-                .email(isRequired = false)
-                .notBlank(canBeEmpty = true)
-        )
-
 
     }
 }
