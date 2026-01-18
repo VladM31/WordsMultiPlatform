@@ -10,11 +10,11 @@ internal class AuthHistoryManagerImpl(
     private val settings: Settings
 ) : AuthHistoryManager {
 
-    override val lastPhoneNumber: String?
+    override val lastUsername: String?
         get() = settings.getStringOrNull(LAST_PHONE_NUMBER)
 
-    override fun updateLastPhoneNumber(phoneNumber: String) {
-        settings.putString(LAST_PHONE_NUMBER, phoneNumber)
+    override fun updateLastUsername(username: String) {
+        settings.putString(LAST_PHONE_NUMBER, username)
     }
 
     companion object {

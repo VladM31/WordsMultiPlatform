@@ -9,9 +9,12 @@ import kotlinx.coroutines.launch
 import vm.words.ua.auth.domain.managers.AuthHistoryManager
 import vm.words.ua.auth.domain.managers.AuthManager
 import vm.words.ua.auth.domain.managers.GoogleApiManager
+import vm.words.ua.auth.domain.managers.GoogleAuthManager
 import vm.words.ua.auth.domain.models.AuthResult
+import vm.words.ua.auth.domain.models.google.GmailLoginDto
 import vm.words.ua.auth.ui.actions.LoginAction
 import vm.words.ua.auth.ui.states.LoginState
+import vm.words.ua.auth.ui.validation.gmailLoginValidator
 import vm.words.ua.auth.ui.validation.loginValidator
 import vm.words.ua.core.analytics.Analytics
 import vm.words.ua.core.analytics.AnalyticsEvents
@@ -21,22 +24,24 @@ class LoginViewModel(
     private val authManager: AuthManager,
     private val authHistoryManager: AuthHistoryManager,
     private val analytics: Analytics,
-    private val googleApiManager: GoogleApiManager
+    private val googleAuthManager: GoogleAuthManager,
+    googleApiManager: GoogleApiManager,
 ) : ViewModel() {
 
     private val mutableState = MutableStateFlow(
         LoginState(
-            phoneNumber = authHistoryManager.lastPhoneNumber.orEmpty(),
+            username = authHistoryManager.lastUsername.orEmpty(),
             isGoogleSignInAvailable = googleApiManager.isAvailable()
         )
     )
     val state: StateFlow<LoginState> = mutableState
-    private val validator = loginValidator(mutableState)
+    private val phoneNumberValidator = loginValidator(mutableState)
+    private val emailValidator = gmailLoginValidator(mutableState)
 
     fun sent(action: LoginAction) {
         when (action) {
             is LoginAction.Submit -> submit()
-            is LoginAction.SetPhoneNumber -> setPhoneNumber(action)
+            is LoginAction.SetUsername -> setUsername(action)
             is LoginAction.SetPassword -> setPassword(action)
             is LoginAction.GoogleSignIn -> handleGoogleSignIn()
         }
@@ -45,14 +50,16 @@ class LoginViewModel(
     private fun handleGoogleSignIn() {
         viewModelScope.launch(Dispatchers.Default) {
             try {
-                val result = googleApiManager.signIn()
+                val result = googleAuthManager.login()
+                val error = result.message?.let {
+                    ErrorMessage(message = it)
+                }
 
-                result.email
+                emitEvent(result)
 
                 mutableState.value = state.value.copy(
-                    errorMessage = result.errorMessage?.let {
-                        ErrorMessage(message = it)
-                    } ?: ErrorMessage("${result.email} - Google Sign-In successful")
+                    isEnd = result.success,
+                    errorMessage = error
                 )
             } catch (e: Exception) {
                 mutableState.value =
@@ -65,13 +72,18 @@ class LoginViewModel(
         mutableState.value = mutableState.value.copy(password = action.value)
     }
 
-    private fun setPhoneNumber(action: LoginAction.SetPhoneNumber) {
-        mutableState.value = mutableState.value.copy(phoneNumber = action.value, isAvailableBiometric = false)
+    private fun setUsername(action: LoginAction.SetUsername) {
+
+        mutableState.value = mutableState.value.copy(username = action.value, isAvailableBiometric = false)
 
     }
 
     private fun submit() {
-        val errors = validator.validate(" - ")
+        val errors = if (state.value.isPhone) {
+            phoneNumberValidator.validate(" - ")
+        } else {
+            emailValidator.validate(" - ")
+        }
 
         if (errors.isNotEmpty()) {
             mutableState.value = state.value.copy(errorMessage = ErrorMessage(message = errors))
@@ -79,31 +91,48 @@ class LoginViewModel(
         }
 
         viewModelScope.launch(Dispatchers.Default) {
-            logIn()
+            if (state.value.isPhone) {
+                phoneNumberLogIn()
+            } else {
+                gmailLogIn()
+            }
         }
     }
 
-    private suspend fun logIn() {
+    private suspend fun gmailLogIn() {
+        val dto = GmailLoginDto(
+            email = state.value.username,
+            password = state.value.password
+        )
+        handleResult(googleAuthManager.login(dto))
+
+
+    }
+
+    private fun handleResult(result: AuthResult) {
+        val error = result.message?.let {
+            ErrorMessage(message = it)
+        }
+
+        if (result.success) {
+            authHistoryManager.updateLastUsername(state.value.username)
+        }
+
+        emitEvent(result)
+
+        mutableState.value = state.value.copy(
+            isEnd = result.success,
+            errorMessage = error
+        )
+    }
+
+    private suspend fun phoneNumberLogIn() {
         try {
             val result = authManager.logIn(
-                phoneNumber = state.value.phoneNumber,
+                phoneNumber = state.value.username,
                 password = state.value.password
             )
-
-            val error = result.message?.let {
-                ErrorMessage(message = it)
-            }
-
-            if (result.success) {
-                authHistoryManager.updateLastPhoneNumber(state.value.phoneNumber)
-            }
-
-            emitEvent(result)
-
-            mutableState.value = state.value.copy(
-                isEnd = result.success,
-                errorMessage = error
-            )
+            handleResult(result)
         } catch (e: Exception) {
             mutableState.value =
                 state.value.copy(errorMessage = ErrorMessage(message = e.message ?: "Error"))
@@ -116,6 +145,6 @@ class LoginViewModel(
         } else {
             AnalyticsEvents.LOGIN_FAILED
         }
-        analytics.logEvent(eventName, mapOf("phone_number" to state.value.phoneNumber))
+        analytics.logEvent(eventName, mapOf("phone_number" to state.value.username))
     }
 }

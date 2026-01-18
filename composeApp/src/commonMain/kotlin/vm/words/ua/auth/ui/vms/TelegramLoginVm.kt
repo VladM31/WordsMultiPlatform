@@ -27,7 +27,7 @@ class TelegramLoginVm(
 
     private val mutableState = MutableStateFlow(
         TelegramLoginState(
-            phoneNumber = authHistoryManager.lastPhoneNumber.orEmpty()
+            phoneNumber = authHistoryManager.lastUsername.orEmpty()
         )
     )
     val state: StateFlow<TelegramLoginState> = mutableState
@@ -54,7 +54,7 @@ class TelegramLoginVm(
             val success =
                 telegramAuthManager.login(mutableState.value.phoneNumber, mutableState.value.code)
             if (success) {
-                authHistoryManager.updateLastPhoneNumber(mutableState.value.phoneNumber)
+                authHistoryManager.updateLastUsername(mutableState.value.phoneNumber)
                 mutableState.value = mutableState.value.copy(isEnd = true)
             }
         }
@@ -106,7 +106,7 @@ class TelegramLoginVm(
                     mutableState.value.code
                 )
                 if (success) {
-                    authHistoryManager.updateLastPhoneNumber(mutableState.value.phoneNumber)
+                    authHistoryManager.updateLastUsername(mutableState.value.phoneNumber)
                     mutableState.value = mutableState.value.copy(isEnd = true)
                     analytics.logEvent(
                         AnalyticsEvents.TELEGRAM_LOGIN_SUCCESS, mapOf(

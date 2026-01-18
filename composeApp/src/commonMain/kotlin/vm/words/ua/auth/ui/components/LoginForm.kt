@@ -43,7 +43,7 @@ fun LoginForm(
     val scaleFactor = getScaleFactor()
     val textWeight = 0.75f
 
-    val phoneState = viewModel.state.map { it.phoneNumber }.distinctUntilChanged().collectAsState(initial = "")
+    val phoneState = viewModel.state.map { it.username }.distinctUntilChanged().collectAsState(initial = "")
     val passState = viewModel.state.map { it.password }.distinctUntilChanged().collectAsState(initial = "")
 
     Column(
@@ -52,7 +52,7 @@ fun LoginForm(
     ) {
         AppTextField(
             value = phoneState.value,
-            onValueChange = { viewModel.sent(LoginAction.SetPhoneNumber(it ))},
+            onValueChange = { viewModel.sent(LoginAction.SetUsername(it)) },
             label = "Phone or Email",
 
             modifier = Modifier.fillMaxWidth()

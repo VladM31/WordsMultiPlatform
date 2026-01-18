@@ -1,8 +1,8 @@
 package vm.words.ua.auth.domain.managers
 
 interface AuthHistoryManager {
-    val lastPhoneNumber: String?
+    val lastUsername: String?
 
-    fun updateLastPhoneNumber(phoneNumber: String)
+    fun updateLastUsername(username: String)
 
 }
