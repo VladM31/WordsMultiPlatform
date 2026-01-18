@@ -11,7 +11,6 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import vm.words.ua.auth.domain.managers.GoogleSignInManager
 import vm.words.ua.auth.ui.components.LoginForm
 import vm.words.ua.auth.ui.hints.createLoginScreenHintController
 import vm.words.ua.auth.ui.vms.LoginViewModel
@@ -32,7 +31,6 @@ fun LoginScreen(
 ) {
     val hintController = createLoginScreenHintController()
     val viewModel = rememberInstance<LoginViewModel>()
-    val googleSignInManager = rememberInstance<GoogleSignInManager>()
     val scope = rememberCoroutineScope()
 
     val state by viewModel.state.collectAsState()
@@ -45,7 +43,6 @@ fun LoginScreen(
     var googleSignInError by remember { mutableStateOf<String?>(null) }
 
     // Check if Google Sign-In is available
-    val isGoogleSignInAvailable = remember { googleSignInManager.isAvailable() }
 
     // Navigate when login is successful
     LaunchedEffect(state.isEnd) {
@@ -57,51 +54,47 @@ fun LoginScreen(
     SimpleHintHost(
         onNext = hintController.doNext
     ) {
-        BoxWithConstraints {
-            val boxMaxWith = maxWidth
-            Column(
-                modifier = modifier
-                    .fillMaxSize()
-                    .background(AppTheme.PrimaryBack)
-            ) {
-                AppToolBar(
-                    title = "Login",
-                    showBackButton = false
-                )
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .background(AppTheme.PrimaryBack)
+        ) {
+            AppToolBar(
+                title = "Login",
+                showBackButton = false
+            )
 
-                CenteredContainer(maxWidth = 500.dp) {
-                    VerticalCenteredContainer(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        BoxWithConstraints {
-                            LoginForm(
-                                viewModel = viewModel,
-                                maxWidth = boxMaxWith,
-                                currentHintStep = hintController.currentStep,
-                                onJoinNowClick = { navController.navigate(Screen.SignUp) },
-                                onTelegramClick = { navController.navigate(Screen.TelegramLogin) },
-                                onGoogleClick = {
-                                    scope.launch {
-                                        val result = googleSignInManager.signIn()
-                                        if (result.success) {
-                                            googleSignInResult = Pair(
-                                                result.email ?: "Unknown",
-                                                result.userId ?: "Unknown"
-                                            )
-                                        } else {
-                                            googleSignInError = result.errorMessage
-                                        }
+            CenteredContainer(maxWidth = 500.dp) {
+                VerticalCenteredContainer(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    BoxWithConstraints {
+                        LoginForm(
+                            viewModel = viewModel,
+                            currentHintStep = hintController.currentStep,
+                            onJoinNowClick = { navController.navigate(Screen.SignUp) },
+                            onTelegramClick = { navController.navigate(Screen.TelegramLogin) },
+                            onGoogleClick = {
+                                scope.launch {
+                                    val result = googleSignInManager.signIn()
+                                    if (result.success) {
+                                        googleSignInResult = Pair(
+                                            result.email ?: "Unknown",
+                                            result.userId ?: "Unknown"
+                                        )
+                                    } else {
+                                        googleSignInError = result.errorMessage
                                     }
-                                },
-                                showGoogleSignIn = isGoogleSignInAvailable
-                            )
-                        }
+                                }
+                            },
+                            showGoogleSignIn = state.isGoogleSignInAvailable
+                        )
+                    }
 
-                        // Display error message if present
-                        error.value?.let { errorMessage ->
-                            Spacer(modifier = Modifier.height(12.dp))
-                            ErrorMessageBox(message = errorMessage)
-                        }
+                    // Display error message if present
+                    error.value?.let { errorMessage ->
+                        Spacer(modifier = Modifier.height(12.dp))
+                        ErrorMessageBox(message = errorMessage)
                     }
                 }
             }

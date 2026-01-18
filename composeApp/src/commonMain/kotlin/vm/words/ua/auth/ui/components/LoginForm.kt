@@ -33,14 +33,13 @@ import wordsmultiplatform.composeapp.generated.resources.telegram_image
 @Composable
 fun LoginForm(
     viewModel: LoginViewModel,
-    maxWidth: Dp,
     currentHintStep: ViewHintStep? = null,
     onJoinNowClick: () -> Unit = {},
     onTelegramClick: () -> Unit = {},
     onGoogleClick: () -> Unit = {},
     showGoogleSignIn: Boolean = false
 ) {
-    val scaleFactor = getScaleFactor(maxWidth)
+    val scaleFactor = getScaleFactor()
     val textWeight = 0.75f
 
     val phoneState = viewModel.state.map { it.phoneNumber }.distinctUntilChanged().collectAsState(initial = "")
@@ -54,7 +53,7 @@ fun LoginForm(
             value = phoneState.value,
             onValueChange = { viewModel.sent(LoginAction.SetPhoneNumber(it ))},
             label = "Phone",
-            boxMaxWidth = maxWidth,
+
             modifier = Modifier.fillMaxWidth()
                 .viewHint(LoginScreenHintStep.PHONE_NUMBER, currentHintStep),
             helperText = "Include country code, e.g., 11234567890, 3801234567890"
@@ -68,7 +67,6 @@ fun LoginForm(
             label = "Password",
             modifier = Modifier.fillMaxWidth()
                 .viewHint(LoginScreenHintStep.PASSWORD, currentHintStep),
-            boxMaxWidth = maxWidth,
             isPassword = true
         )
 

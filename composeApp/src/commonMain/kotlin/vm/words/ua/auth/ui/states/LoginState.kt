@@ -9,6 +9,7 @@ data class LoginState(
     val isAvailableBiometric: Boolean = false,
     val phoneNumber: String = "",
     val password: String = "",
+    val isGoogleSignInAvailable: Boolean = false,
     override val errorMessage: ErrorMessage? = null,
     override val isEnd: Boolean = false
 ) : ErrorableState, EndetableState
