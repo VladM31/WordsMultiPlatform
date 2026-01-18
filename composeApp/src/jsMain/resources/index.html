@@ -95,11 +95,21 @@
             try {
                 const result = await signInWithPopup(auth, googleProvider);
                 const user = result.user;
-                const idToken = await user.getIdToken();
+
+                // Get the Google OAuth credential (contains the real Google ID Token)
+                const credential = GoogleAuthProvider.credentialFromResult(result);
+                // This is the Google ID Token that can be verified with GoogleIdTokenVerifier
+                const googleIdToken = credential?.idToken || null;
+
+                // Fallback to Firebase ID Token if Google credential not available
+                const firebaseIdToken = await user.getIdToken();
 
                 return {
                     success: true,
-                    idToken: idToken,
+                    // Prefer Google ID Token for backend verification
+                    idToken: googleIdToken || firebaseIdToken,
+                    googleIdToken: googleIdToken,
+                    firebaseIdToken: firebaseIdToken,
                     email: user.email || '',
                     userId: user.uid,
                     displayName: user.displayName || ''
