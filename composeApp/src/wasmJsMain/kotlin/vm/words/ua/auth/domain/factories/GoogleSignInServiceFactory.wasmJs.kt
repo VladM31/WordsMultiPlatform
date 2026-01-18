@@ -31,7 +31,6 @@ class GoogleApiManagerWasm : GoogleApiManager {
 
                 GoogleSignInResult.success(
                     email = email,
-                    userId = userId,
                     displayName = displayName.takeIf { it.isNotEmpty() },
                     idToken = idToken.takeIf { it.isNotEmpty() }
                 )
