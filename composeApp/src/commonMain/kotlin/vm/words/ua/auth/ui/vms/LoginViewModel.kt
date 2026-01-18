@@ -38,6 +38,26 @@ class LoginViewModel(
             is LoginAction.Submit -> submit()
             is LoginAction.SetPhoneNumber -> setPhoneNumber(action)
             is LoginAction.SetPassword -> setPassword(action)
+            is LoginAction.GoogleSignIn -> handleGoogleSignIn()
+        }
+    }
+
+    private fun handleGoogleSignIn() {
+        viewModelScope.launch(Dispatchers.Default) {
+            try {
+                val result = googleSignInManager.signIn()
+
+                result.email
+
+                mutableState.value = state.value.copy(
+                    errorMessage = result.errorMessage?.let {
+                        ErrorMessage(message = it)
+                    } ?: ErrorMessage("${result.email} - Google Sign-In successful")
+                )
+            } catch (e: Exception) {
+                mutableState.value =
+                    state.value.copy(errorMessage = ErrorMessage(message = e.message ?: "Error"))
+            }
         }
     }
 

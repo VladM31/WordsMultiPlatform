@@ -14,7 +14,8 @@ internal val viewModelDi = DI.Module("viewModel") {
         LoginViewModel(
             authManager = instance(),
             authHistoryManager = instance(),
-            analytics = instance()
+            analytics = instance(),
+            googleSignInManager = instance()
         )
     }
 
