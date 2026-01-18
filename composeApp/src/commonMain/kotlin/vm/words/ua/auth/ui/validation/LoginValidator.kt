@@ -31,7 +31,6 @@ internal val gmailLoginValidator: (StateFlow<LoginState>) -> vm.words.ua.utils.v
             add(
                 LoginState::username,
                 vm.words.ua.utils.validation.schemes.ValidationScheme
-
                     .stringSchema("Email")
                     .email()
             )
