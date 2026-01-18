@@ -37,5 +37,5 @@ class GoogleApiManagerIos : GoogleApiManager {
 /**
  * Factory function for iOS platform
  */
-actual fun createGoogleSignInManager(): GoogleApiManager = GoogleApiManagerIos()
+actual fun createGoogleApiManager(): GoogleApiManager = GoogleApiManagerIos()
 

@@ -269,4 +269,4 @@ private data class GoogleExchangeResponse(
 
 // ==================== Factory ====================
 
-actual fun createGoogleSignInManager(): GoogleApiManager = GoogleApiManagerDesktop()
+actual fun createGoogleApiManager(): GoogleApiManager = GoogleApiManagerDesktop()

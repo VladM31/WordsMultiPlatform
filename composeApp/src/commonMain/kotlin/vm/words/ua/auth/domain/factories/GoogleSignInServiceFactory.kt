@@ -5,5 +5,5 @@ import vm.words.ua.auth.domain.managers.GoogleApiManager
 /**
  * Expect function to create platform-specific GoogleSignInService implementation
  */
-expect fun createGoogleSignInManager(): GoogleApiManager
+expect fun createGoogleApiManager(): GoogleApiManager
 

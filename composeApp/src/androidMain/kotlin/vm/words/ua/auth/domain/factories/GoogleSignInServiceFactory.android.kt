@@ -154,5 +154,5 @@ class GoogleApiManagerAndroid : GoogleApiManager {
 /**
  * Factory function for Android platform
  */
-actual fun createGoogleSignInManager(): GoogleApiManager = GoogleApiManagerAndroid()
+actual fun createGoogleApiManager(): GoogleApiManager = GoogleApiManagerAndroid()
 

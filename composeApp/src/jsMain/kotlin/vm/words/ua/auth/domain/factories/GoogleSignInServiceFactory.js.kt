@@ -56,5 +56,5 @@ private fun signOutFromGoogleJs(): Promise<dynamic> = js("window.signOutFromGoog
 /**
  * Factory function for JS platform
  */
-actual fun createGoogleSignInManager(): GoogleApiManager = GoogleApiManagerJs()
+actual fun createGoogleApiManager(): GoogleApiManager = GoogleApiManagerJs()
 

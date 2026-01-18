@@ -83,6 +83,6 @@ private external fun getError(result: JsAny): String
 /**
  * Factory function for WasmJS platform
  */
-actual fun createGoogleSignInManager(): GoogleApiManager = GoogleApiManagerWasm()
+actual fun createGoogleApiManager(): GoogleApiManager = GoogleApiManagerWasm()
 
 
