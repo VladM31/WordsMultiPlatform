@@ -58,6 +58,12 @@
             setUserId,
             setUserProperties
         } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-analytics.js";
+        import {
+            getAuth,
+            signInWithPopup,
+            signOut,
+            GoogleAuthProvider
+        } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
@@ -73,7 +79,71 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+        const googleProvider = new GoogleAuthProvider();
+        googleProvider.addScope('email');
+        googleProvider.addScope('profile');
         console.log('Firebase Analytics initialized');
+        console.log('Firebase Auth initialized');
+
+        // Google Sign-In functions
+        window.isGoogleSignInAvailable = () => {
+            return true; // Firebase Auth is available on web
+        };
+
+        window.signInWithGoogle = async () => {
+            try {
+                const result = await signInWithPopup(auth, googleProvider);
+                const user = result.user;
+                const idToken = await user.getIdToken();
+
+                return {
+                    success: true,
+                    idToken: idToken,
+                    email: user.email || '',
+                    userId: user.uid,
+                    displayName: user.displayName || ''
+                };
+            } catch (error) {
+                console.error('Google Sign-In error:', error);
+                let errorMessage = error.message || 'Unknown error';
+
+                if (error.code === 'auth/popup-closed-by-user') {
+                    errorMessage = 'Sign-in cancelled';
+                } else if (error.code === 'auth/network-request-failed') {
+                    errorMessage = 'Network error. Please check your connection.';
+                } else if (error.code === 'auth/popup-blocked') {
+                    errorMessage = 'Popup was blocked. Please allow popups for this site.';
+                }
+
+                return {
+                    success: false,
+                    error: errorMessage
+                };
+            }
+        };
+
+        window.signOutFromGoogle = async () => {
+            try {
+                await signOut(auth);
+                return {success: true};
+            } catch (error) {
+                console.error('Sign-out error:', error);
+                return {success: false, error: error.message};
+            }
+        };
+
+        window.getCurrentGoogleUser = () => {
+            const user = auth.currentUser;
+            if (user) {
+                return {
+                    email: user.email || '',
+                    userId: user.uid,
+                    displayName: user.displayName || ''
+                };
+            }
+            return null;
+        };
 
         // Replace placeholder with real Firebase Analytics
         window.firebaseAnalytics = {

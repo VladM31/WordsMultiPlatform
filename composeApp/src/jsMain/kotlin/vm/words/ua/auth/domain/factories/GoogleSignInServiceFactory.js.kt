@@ -1,29 +1,58 @@
 package vm.words.ua.auth.domain.factories
 
+import kotlinx.coroutines.await
 import vm.words.ua.auth.domain.managers.GoogleSignInManager
 import vm.words.ua.auth.domain.models.GoogleSignInResult
+import kotlin.js.Promise
 
 /**
- * JS (Browser) implementation of GoogleSignInService
- *
- * Google Sign-In could be implemented via Firebase JS SDK or Google Identity Services.
- * Currently returns stub implementation.
+ * JS (Browser) implementation of GoogleSignInManager using Firebase Auth
  */
 class GoogleSignInManagerJs : GoogleSignInManager {
 
-    override fun isAvailable(): Boolean = false
+    override fun isAvailable(): Boolean {
+        return js("typeof window.isGoogleSignInAvailable === 'function' && window.isGoogleSignInAvailable()") as Boolean
+    }
 
     override suspend fun signIn(): GoogleSignInResult {
-        return GoogleSignInResult.failure(
-            "Google Sign-In is not yet available on web. " +
-                    "Please use phone number or Telegram login."
-        )
+        return try {
+            val resultJs: dynamic = signInWithGoogleJs().await()
+
+            val success = resultJs.success == true
+
+            if (success) {
+                val email = (resultJs.email as? String) ?: ""
+                val userId = (resultJs.userId as? String) ?: ""
+                val displayName = resultJs.displayName as? String
+                val idToken = resultJs.idToken as? String
+
+                GoogleSignInResult.success(
+                    email = email,
+                    userId = userId,
+                    displayName = displayName?.takeIf { it.isNotEmpty() },
+                    idToken = idToken?.takeIf { it.isNotEmpty() }
+                )
+            } else {
+                val error = (resultJs.error as? String) ?: "Unknown error"
+                GoogleSignInResult.failure(error)
+            }
+        } catch (e: Exception) {
+            GoogleSignInResult.failure("Google Sign-In failed: ${e.message}")
+        }
     }
 
     override suspend fun signOut() {
-        // No-op for JS stub
+        try {
+            signOutFromGoogleJs().await()
+        } catch (e: Exception) {
+            println("Sign out error: ${e.message}")
+        }
     }
 }
+
+private fun signInWithGoogleJs(): Promise<dynamic> = js("window.signInWithGoogle()")
+
+private fun signOutFromGoogleJs(): Promise<dynamic> = js("window.signOutFromGoogle()")
 
 /**
  * Factory function for JS platform
