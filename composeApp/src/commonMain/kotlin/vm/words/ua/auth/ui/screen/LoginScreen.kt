@@ -2,14 +2,16 @@ package vm.words.ua.auth.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import vm.words.ua.auth.domain.services.GoogleSignInService
 import vm.words.ua.auth.ui.components.LoginForm
 import vm.words.ua.auth.ui.hints.createLoginScreenHintController
 import vm.words.ua.auth.ui.vms.LoginViewModel
@@ -30,11 +32,20 @@ fun LoginScreen(
 ) {
     val hintController = createLoginScreenHintController()
     val viewModel = rememberInstance<LoginViewModel>()
+    val googleSignInService = rememberInstance<GoogleSignInService>()
+    val scope = rememberCoroutineScope()
 
     val state by viewModel.state.collectAsState()
     val error = viewModel.state.map { it.errorMessage }
         .distinctUntilChanged()
         .collectAsState(initial = null)
+
+    // State for Google Sign-In result dialog
+    var googleSignInResult by remember { mutableStateOf<Pair<String, String>?>(null) }
+    var googleSignInError by remember { mutableStateOf<String?>(null) }
+
+    // Check if Google Sign-In is available
+    val isGoogleSignInAvailable = remember { googleSignInService.isAvailable() }
 
     // Navigate when login is successful
     LaunchedEffect(state.isEnd) {
@@ -68,7 +79,21 @@ fun LoginScreen(
                                 maxWidth = boxMaxWith,
                                 currentHintStep = hintController.currentStep,
                                 onJoinNowClick = { navController.navigate(Screen.SignUp) },
-                                onTelegramClick = { navController.navigate(Screen.TelegramLogin) }
+                                onTelegramClick = { navController.navigate(Screen.TelegramLogin) },
+                                onGoogleClick = {
+                                    scope.launch {
+                                        val result = googleSignInService.signIn()
+                                        if (result.success) {
+                                            googleSignInResult = Pair(
+                                                result.email ?: "Unknown",
+                                                result.userId ?: "Unknown"
+                                            )
+                                        } else {
+                                            googleSignInError = result.errorMessage
+                                        }
+                                    }
+                                },
+                                showGoogleSignIn = isGoogleSignInAvailable
                             )
                         }
 
@@ -83,4 +108,37 @@ fun LoginScreen(
         }
     }
 
+    // Google Sign-In Success Dialog
+    googleSignInResult?.let { (email, userId) ->
+        AlertDialog(
+            onDismissRequest = { googleSignInResult = null },
+            title = { Text("Google Sign-In Success") },
+            text = {
+                Column {
+                    Text("Email: $email")
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text("User ID: $userId")
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { googleSignInResult = null }) {
+                    Text("OK")
+                }
+            }
+        )
+    }
+
+    // Google Sign-In Error Dialog
+    googleSignInError?.let { errorMsg ->
+        AlertDialog(
+            onDismissRequest = { googleSignInError = null },
+            title = { Text("Google Sign-In Error") },
+            text = { Text(errorMsg) },
+            confirmButton = {
+                TextButton(onClick = { googleSignInError = null }) {
+                    Text("OK")
+                }
+            }
+        )
+    }
 }

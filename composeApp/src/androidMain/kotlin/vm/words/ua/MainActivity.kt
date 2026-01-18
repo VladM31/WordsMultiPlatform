@@ -14,6 +14,7 @@ import androidx.core.graphics.toColorInt
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.initialize
 import vm.words.ua.auth.domain.managers.AuthHistorySettingsFactory
+import vm.words.ua.auth.domain.services.ActivityHolder
 import vm.words.ua.core.domain.managers.SettingsFactory
 import vm.words.ua.utils.storage.AndroidStorageConfig
 
@@ -39,6 +40,7 @@ class MainActivity : ComponentActivity() {
             SettingsFactory.init(this)
             AuthHistorySettingsFactory.init(this)
             AndroidStorageConfig.init(this)
+            ActivityHolder.setActivity(this)
 
             setContent {
                 App(
@@ -51,5 +53,10 @@ class MainActivity : ComponentActivity() {
             Log.e("MainActivity", "Error in onCreate", e)
             e.printStackTrace()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        ActivityHolder.clear()
     }
 }

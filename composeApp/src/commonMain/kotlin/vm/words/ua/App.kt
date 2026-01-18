@@ -21,7 +21,8 @@ import vm.words.ua.navigation.AppNavGraph
 @Preview
 fun App(modifier: Modifier = Modifier) = AppWindowProvider {
 
-    MaterialTheme(
+
+MaterialTheme(
         colorScheme = AppTheme.ColorScheme
     ) {
         Surface(

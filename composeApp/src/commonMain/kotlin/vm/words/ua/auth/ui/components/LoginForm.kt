@@ -3,6 +3,9 @@ package vm.words.ua.auth.ui.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -33,7 +36,9 @@ fun LoginForm(
     maxWidth: Dp,
     currentHintStep: ViewHintStep? = null,
     onJoinNowClick: () -> Unit = {},
-    onTelegramClick: () -> Unit = {}
+    onTelegramClick: () -> Unit = {},
+    onGoogleClick: () -> Unit = {},
+    showGoogleSignIn: Boolean = false
 ) {
     val scaleFactor = getScaleFactor(maxWidth)
     val textWeight = 0.75f
@@ -105,7 +110,8 @@ fun LoginForm(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
                 painterResource(Res.drawable.telegram_image),
@@ -113,6 +119,39 @@ fun LoginForm(
                 modifier = Modifier.size(rememberIconSize() * 1.5f).clickable { onTelegramClick() }
                     .viewHint(LoginScreenHintStep.TELEGRAM_LOGIN_BUTTON, currentHintStep)
             )
+
+            // Google Sign-In button - only shown if available
+            if (showGoogleSignIn) {
+                Spacer(modifier = Modifier.size(16.dp))
+
+                GoogleSignInButton(
+                    onClick = onGoogleClick,
+                    iconSize = rememberIconSize() * 1.5f
+                )
+            }
         }
     }
 }
+
+@Composable
+private fun GoogleSignInButton(
+    onClick: () -> Unit,
+    iconSize: Dp,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .size(iconSize)
+            .clickable { onClick() },
+        contentAlignment = Alignment.Center
+    ) {
+        // Using Material Icon for Google logo
+        Icon(
+            imageVector = Icons.Default.Person,
+            contentDescription = "Google Sign-In",
+            tint = AppTheme.PrimaryColor,
+            modifier = Modifier.size(iconSize * 0.7f)
+        )
+    }
+}
+

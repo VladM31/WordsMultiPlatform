@@ -1,0 +1,24 @@
+package vm.words.ua.auth.domain.services
+
+/**
+ * Service for Google Sign-In across all platforms
+ */
+interface GoogleSignInService {
+    /**
+     * Check if Google Sign-In is available on this platform
+     */
+    fun isAvailable(): Boolean
+
+    /**
+     * Perform Google Sign-In
+     * @return GoogleSignInResult with user data on success or error message on failure
+     */
+    suspend fun signIn(): GoogleSignInResult
+
+    /**
+     * Sign out from Google account
+     */
+    suspend fun signOut()
+}
+
+
