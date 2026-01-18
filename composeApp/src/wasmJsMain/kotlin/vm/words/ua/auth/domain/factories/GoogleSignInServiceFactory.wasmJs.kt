@@ -1,32 +1,89 @@
+@file:OptIn(ExperimentalWasmJsInterop::class)
+@file:Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
+
 package vm.words.ua.auth.domain.factories
 
+import kotlinx.coroutines.await
 import vm.words.ua.auth.domain.managers.GoogleSignInManager
 import vm.words.ua.auth.domain.models.GoogleSignInResult
+import kotlin.js.Promise
 
 /**
- * WasmJS (Browser) implementation of GoogleSignInService
- *
- * Google Sign-In could be implemented via Firebase JS SDK or Google Identity Services.
- * Currently returns stub implementation.
+ * WasmJS (Browser) implementation of GoogleSignInManager using Firebase Auth
  */
 class GoogleSignInManagerWasm : GoogleSignInManager {
 
-    override fun isAvailable(): Boolean = false
+    override fun isAvailable(): Boolean {
+        return isGoogleSignInAvailableJs()
+    }
 
     override suspend fun signIn(): GoogleSignInResult {
-        return GoogleSignInResult.failure(
-            "Google Sign-In is not yet available on web. " +
-                    "Please use phone number or Telegram login."
-        )
+        return try {
+            val resultJs = signInWithGoogleJs().await<JsAny>()
+
+            val success = getSuccess(resultJs)
+
+            if (success) {
+                val email = getEmail(resultJs)
+                val userId = getUserId(resultJs)
+                val displayName = getDisplayName(resultJs)
+                val idToken = getIdToken(resultJs)
+
+                GoogleSignInResult.success(
+                    email = email,
+                    userId = userId,
+                    displayName = displayName.takeIf { it.isNotEmpty() },
+                    idToken = idToken.takeIf { it.isNotEmpty() }
+                )
+            } else {
+                val error = getError(resultJs)
+                GoogleSignInResult.failure(error)
+            }
+        } catch (e: Exception) {
+            GoogleSignInResult.failure("Google Sign-In failed: ${e.message}")
+        }
     }
 
     override suspend fun signOut() {
-        // No-op for WasmJS stub
+        try {
+            signOutFromGoogleJs().await<JsAny>()
+        } catch (e: Exception) {
+            println("Sign out error: ${e.message}")
+        }
     }
 }
+
+// External JS interop functions using @JsFun
+@JsFun("() => typeof window.isGoogleSignInAvailable === 'function' && window.isGoogleSignInAvailable()")
+private external fun isGoogleSignInAvailableJs(): Boolean
+
+@JsFun("() => window.signInWithGoogle()")
+private external fun signInWithGoogleJs(): Promise<JsAny>
+
+@JsFun("() => window.signOutFromGoogle()")
+private external fun signOutFromGoogleJs(): Promise<JsAny>
+
+@JsFun("(result) => result.success === true")
+private external fun getSuccess(result: JsAny): Boolean
+
+@JsFun("(result) => result.email || ''")
+private external fun getEmail(result: JsAny): String
+
+@JsFun("(result) => result.userId || ''")
+private external fun getUserId(result: JsAny): String
+
+@JsFun("(result) => result.displayName || ''")
+private external fun getDisplayName(result: JsAny): String
+
+@JsFun("(result) => result.idToken || ''")
+private external fun getIdToken(result: JsAny): String
+
+@JsFun("(result) => result.error || 'Unknown error'")
+private external fun getError(result: JsAny): String
 
 /**
  * Factory function for WasmJS platform
  */
 actual fun createGoogleSignInManager(): GoogleSignInManager = GoogleSignInManagerWasm()
+
 
