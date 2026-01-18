@@ -5,15 +5,15 @@ import vm.words.ua.core.ui.hints.createDefaultHintController
 import vm.words.ua.utils.hints.domain.models.HintPosition
 import vm.words.ua.utils.hints.ui.utils.ViewHintStep
 
-private const val LAST_INDEX = 5
+private const val LAST_INDEX = 6
 private const val VALUE_KEY = "login_screen_v1"
 
 enum class LoginScreenHintStep(
     override val text: String,
     override val position: HintPosition,
 ) : ViewHintStep {
-    PHONE_NUMBER(
-        text = "Input your phone number with country code. E.g., 11234567890, 3801234567890",
+    PHONE_NUMBER_OR_EMAIL(
+        text = "Input your phone number with country code. E.g., 11234567890, 3801234567890 or your email address.",
         position = HintPosition.BOTTOM,
     ),
     PASSWORD(
@@ -32,7 +32,10 @@ enum class LoginScreenHintStep(
         text = "You can also log in using your Telegram account for quick access.",
         position = HintPosition.TOP,
     ),
-
+    GMAIL_LOGIN_BUTTON(
+        text = "Alternatively, log in with your Gmail account for convenience.",
+        position = HintPosition.TOP,
+    ),
 
     UNDEFINED(
         text = "",

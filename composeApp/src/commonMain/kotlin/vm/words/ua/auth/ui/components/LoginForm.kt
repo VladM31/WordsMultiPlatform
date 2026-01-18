@@ -53,11 +53,11 @@ fun LoginForm(
         AppTextField(
             value = phoneState.value,
             onValueChange = { viewModel.sent(LoginAction.SetPhoneNumber(it ))},
-            label = "Phone",
+            label = "Phone or Email",
 
             modifier = Modifier.fillMaxWidth()
-                .viewHint(LoginScreenHintStep.PHONE_NUMBER, currentHintStep),
-            helperText = "Include country code, e.g., 11234567890, 3801234567890"
+                .viewHint(LoginScreenHintStep.PHONE_NUMBER_OR_EMAIL, currentHintStep),
+            helperText = "Phone number must include country code, e.g., 11234567890, 3801234567890"
         )
 
         Spacer(modifier = Modifier.size((12 * scaleFactor).dp))
@@ -126,7 +126,8 @@ fun LoginForm(
 
             GoogleSignInButton(
                 onClick = onGoogleClick,
-                iconSize = rememberIconSize() * 1.5f
+                iconSize = rememberIconSize() * 1.5f,
+                currentHintStep = currentHintStep
             )
         }
     }
@@ -136,7 +137,8 @@ fun LoginForm(
 private fun GoogleSignInButton(
     onClick: () -> Unit,
     iconSize: Dp,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    currentHintStep: ViewHintStep? = null
 ) {
     Box(
         modifier = modifier
@@ -151,6 +153,7 @@ private fun GoogleSignInButton(
             contentDescription = "Google Sign-In",
             tint = AppTheme.PrimaryBack,
             modifier = Modifier.size(iconSize * 0.7f)
+                .viewHint(LoginScreenHintStep.GMAIL_LOGIN_BUTTON, currentHintStep)
         )
     }
 }
