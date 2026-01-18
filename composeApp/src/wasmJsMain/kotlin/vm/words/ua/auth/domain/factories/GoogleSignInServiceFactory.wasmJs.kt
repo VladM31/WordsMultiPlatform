@@ -4,14 +4,14 @@
 package vm.words.ua.auth.domain.factories
 
 import kotlinx.coroutines.await
-import vm.words.ua.auth.domain.managers.GoogleSignInManager
-import vm.words.ua.auth.domain.models.GoogleSignInResult
+import vm.words.ua.auth.domain.managers.GoogleApiManager
+import vm.words.ua.auth.domain.models.google.GoogleSignInResult
 import kotlin.js.Promise
 
 /**
  * WasmJS (Browser) implementation of GoogleSignInManager using Firebase Auth
  */
-class GoogleSignInManagerWasm : GoogleSignInManager {
+class GoogleApiManagerWasm : GoogleApiManager {
 
     override fun isAvailable(): Boolean {
         return isGoogleSignInAvailableJs()
@@ -84,6 +84,6 @@ private external fun getError(result: JsAny): String
 /**
  * Factory function for WasmJS platform
  */
-actual fun createGoogleSignInManager(): GoogleSignInManager = GoogleSignInManagerWasm()
+actual fun createGoogleSignInManager(): GoogleApiManager = GoogleApiManagerWasm()
 
 

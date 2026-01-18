@@ -13,13 +13,13 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.GoogleAuthProvider
 import dev.gitlive.firebase.auth.auth
-import vm.words.ua.auth.domain.managers.GoogleSignInManager
-import vm.words.ua.auth.domain.models.GoogleSignInResult
+import vm.words.ua.auth.domain.managers.GoogleApiManager
+import vm.words.ua.auth.domain.models.google.GoogleSignInResult
 
 /**
  * Android implementation of GoogleSignInService using Credential Manager + Firebase Auth
  */
-class GoogleSignInManagerAndroid : GoogleSignInManager {
+class GoogleApiManagerAndroid : GoogleApiManager {
 
     companion object {
         private const val TAG = "GoogleSignIn"
@@ -123,7 +123,6 @@ class GoogleSignInManagerAndroid : GoogleSignInManager {
                     if (user != null) {
                         GoogleSignInResult.success(
                             email = user.email ?: googleIdTokenCredential.id,
-                            userId = user.uid,
                             displayName = user.displayName ?: googleIdTokenCredential.displayName,
                             idToken = idToken
                         )
@@ -155,5 +154,5 @@ class GoogleSignInManagerAndroid : GoogleSignInManager {
 /**
  * Factory function for Android platform
  */
-actual fun createGoogleSignInManager(): GoogleSignInManager = GoogleSignInManagerAndroid()
+actual fun createGoogleSignInManager(): GoogleApiManager = GoogleApiManagerAndroid()
 

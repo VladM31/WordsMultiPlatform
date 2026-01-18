@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import vm.words.ua.auth.domain.managers.AuthHistoryManager
 import vm.words.ua.auth.domain.managers.AuthManager
-import vm.words.ua.auth.domain.managers.GoogleSignInManager
+import vm.words.ua.auth.domain.managers.GoogleApiManager
 import vm.words.ua.auth.domain.models.AuthResult
 import vm.words.ua.auth.ui.actions.LoginAction
 import vm.words.ua.auth.ui.states.LoginState
@@ -21,13 +21,13 @@ class LoginViewModel(
     private val authManager: AuthManager,
     private val authHistoryManager: AuthHistoryManager,
     private val analytics: Analytics,
-    private val googleSignInManager: GoogleSignInManager
+    private val googleApiManager: GoogleApiManager
 ) : ViewModel() {
 
     private val mutableState = MutableStateFlow(
         LoginState(
             phoneNumber = authHistoryManager.lastPhoneNumber.orEmpty(),
-            isGoogleSignInAvailable = googleSignInManager.isAvailable()
+            isGoogleSignInAvailable = googleApiManager.isAvailable()
         )
     )
     val state: StateFlow<LoginState> = mutableState
@@ -45,7 +45,7 @@ class LoginViewModel(
     private fun handleGoogleSignIn() {
         viewModelScope.launch(Dispatchers.Default) {
             try {
-                val result = googleSignInManager.signIn()
+                val result = googleApiManager.signIn()
 
                 result.email
 

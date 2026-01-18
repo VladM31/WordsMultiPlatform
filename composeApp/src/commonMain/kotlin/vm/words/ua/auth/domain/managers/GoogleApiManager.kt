@@ -1,11 +1,11 @@
 package vm.words.ua.auth.domain.managers
 
-import vm.words.ua.auth.domain.models.GoogleSignInResult
+import vm.words.ua.auth.domain.models.google.GoogleSignInResult
 
 /**
  * Service for Google Sign-In across all platforms
  */
-interface GoogleSignInManager {
+interface GoogleApiManager {
     /**
      * Check if Google Sign-In is available on this platform
      */

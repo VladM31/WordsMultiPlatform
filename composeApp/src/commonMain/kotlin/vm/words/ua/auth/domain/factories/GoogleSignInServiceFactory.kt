@@ -1,9 +1,9 @@
 package vm.words.ua.auth.domain.factories
 
-import vm.words.ua.auth.domain.managers.GoogleSignInManager
+import vm.words.ua.auth.domain.managers.GoogleApiManager
 
 /**
  * Expect function to create platform-specific GoogleSignInService implementation
  */
-expect fun createGoogleSignInManager(): GoogleSignInManager
+expect fun createGoogleSignInManager(): GoogleApiManager
 

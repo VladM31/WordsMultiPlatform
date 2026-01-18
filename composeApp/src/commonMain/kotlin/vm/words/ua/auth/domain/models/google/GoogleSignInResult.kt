@@ -1,4 +1,4 @@
-package vm.words.ua.auth.domain.models
+package vm.words.ua.auth.domain.models.google
 
 /**
  * Result of Google Sign-In operation

@@ -14,8 +14,8 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import vm.words.ua.auth.domain.managers.GoogleSignInManager
-import vm.words.ua.auth.domain.models.GoogleSignInResult
+import vm.words.ua.auth.domain.managers.GoogleApiManager
+import vm.words.ua.auth.domain.models.google.GoogleSignInResult
 import vm.words.ua.core.config.AppRemoteConfig
 import java.awt.Desktop
 import java.net.InetSocketAddress
@@ -25,7 +25,7 @@ import java.net.URLEncoder
 import kotlin.coroutines.resume
 
 /**
- * Desktop (JVM) implementation of [GoogleSignInManager] using OAuth 2.0 with browser.
+ * Desktop (JVM) implementation of [GoogleApiManager] using OAuth 2.0 with browser.
  *
  * Flow:
  * 1. Opens browser for Google authentication
@@ -34,7 +34,7 @@ import kotlin.coroutines.resume
  *
  * Backend endpoint: `POST /auth/google/exchange`
  */
-class GoogleSignInManagerDesktop : GoogleSignInManager {
+class GoogleApiManagerDesktop : GoogleApiManager {
 
     private val httpClient by lazy { createHttpClient() }
 
@@ -269,4 +269,4 @@ private data class GoogleExchangeResponse(
 
 // ==================== Factory ====================
 
-actual fun createGoogleSignInManager(): GoogleSignInManager = GoogleSignInManagerDesktop()
+actual fun createGoogleSignInManager(): GoogleApiManager = GoogleApiManagerDesktop()

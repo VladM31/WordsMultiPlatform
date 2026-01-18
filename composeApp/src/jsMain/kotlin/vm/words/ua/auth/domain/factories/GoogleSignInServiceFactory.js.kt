@@ -1,14 +1,14 @@
 package vm.words.ua.auth.domain.factories
 
 import kotlinx.coroutines.await
-import vm.words.ua.auth.domain.managers.GoogleSignInManager
-import vm.words.ua.auth.domain.models.GoogleSignInResult
+import vm.words.ua.auth.domain.managers.GoogleApiManager
+import vm.words.ua.auth.domain.models.google.GoogleSignInResult
 import kotlin.js.Promise
 
 /**
  * JS (Browser) implementation of GoogleSignInManager using Firebase Auth
  */
-class GoogleSignInManagerJs : GoogleSignInManager {
+class GoogleApiManagerJs : GoogleApiManager {
 
     override fun isAvailable(): Boolean {
         return js("typeof window.isGoogleSignInAvailable === 'function' && window.isGoogleSignInAvailable()") as Boolean
@@ -57,5 +57,5 @@ private fun signOutFromGoogleJs(): Promise<dynamic> = js("window.signOutFromGoog
 /**
  * Factory function for JS platform
  */
-actual fun createGoogleSignInManager(): GoogleSignInManager = GoogleSignInManagerJs()
+actual fun createGoogleSignInManager(): GoogleApiManager = GoogleApiManagerJs()
 

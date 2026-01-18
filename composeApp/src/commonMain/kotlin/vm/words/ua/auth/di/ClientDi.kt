@@ -5,7 +5,9 @@ import org.kodein.di.bind
 import org.kodein.di.instance
 import org.kodein.di.singleton
 import vm.words.ua.auth.net.clients.AuthClient
+import vm.words.ua.auth.net.clients.GoogleAuthClient
 import vm.words.ua.auth.net.clients.TelegramAuthClient
+import vm.words.ua.auth.net.clients.impls.KrotGoogleAuthClient
 import vm.words.ua.auth.net.clients.impls.KrotTelegramAuthClient
 import vm.words.ua.auth.net.clients.impls.KtorAuthClient
 
@@ -20,5 +22,9 @@ internal val client = DI.Module("client") {
 
     bind<TelegramAuthClient>() with singleton {
         KrotTelegramAuthClient(httpClient = instance())
+    }
+
+    bind<GoogleAuthClient>() with singleton {
+        KrotGoogleAuthClient(httpClient = instance())
     }
 }
