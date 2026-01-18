@@ -6,22 +6,14 @@ import vm.words.ua.utils.hints.domain.models.HintPosition
 import vm.words.ua.utils.hints.ui.utils.ViewHintStep
 
 
-private const val VALUE_KEY = "sign_up_screen_v1"
+private const val VALUE_KEY = "sign_up_screen_v2"
 
-enum class SignUpScreenHintStep(
+enum class GoogleSignUpScreenHintStep(
     override val text: String,
     override val position: HintPosition,
 ) : ViewHintStep {
     PRIVACY_POLICY(
         text = "Privacy Policy: Learn how we collect and protect your data.",
-        position = HintPosition.BOTTOM,
-    ),
-    PHONE_NUMBER(
-        text = "Input your phone number with country code. E.g., 11234567890, 3801234567890",
-        position = HintPosition.BOTTOM,
-    ),
-    PASSWORD(
-        text = "Password must be between 8 and 60 characters long and include a mix of letters and numbers.",
         position = HintPosition.BOTTOM,
     ),
     FIRST_NAME(
@@ -30,6 +22,10 @@ enum class SignUpScreenHintStep(
     ),
     LAST_NAME(
         text = "Enter your last name.",
+        position = HintPosition.BOTTOM,
+    ),
+    PASSWORD(
+        text = "Password must be between 8 and 60 characters long and include a mix of letters and numbers.",
         position = HintPosition.BOTTOM,
     ),
     CURRENCY_SELECTION(
@@ -51,21 +47,21 @@ enum class SignUpScreenHintStep(
     );
 }
 
-data class SignUpScreenHintController(
+data class GoogleSignUpScreenHintController(
     val currentStep: ViewHintStep,
     val doNext: () -> Unit
 )
 
 
 @Composable
-fun createSignUpScreenHintController(): SignUpScreenHintController {
+fun createGoogleSignUpScreenHintController(): GoogleSignUpScreenHintController {
     val defaultController = createDefaultHintController(
         key = VALUE_KEY,
-        lastIndex = SignUpScreenHintStep.entries.size - 1,
-        undefinedStep = SignUpScreenHintStep.UNDEFINED,
+        lastIndex = GoogleSignUpScreenHintStep.entries.size - 1,
+        undefinedStep = GoogleSignUpScreenHintStep.UNDEFINED,
     ) {
-        SignUpScreenHintStep.entries[it]
+        GoogleSignUpScreenHintStep.entries[it]
     }
 
-    return SignUpScreenHintController(defaultController.currentStep, defaultController.doNext)
+    return GoogleSignUpScreenHintController(defaultController.currentStep, defaultController.doNext)
 }

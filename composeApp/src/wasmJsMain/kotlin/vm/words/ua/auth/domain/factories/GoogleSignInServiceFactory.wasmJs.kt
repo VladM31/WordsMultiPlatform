@@ -25,7 +25,6 @@ class GoogleApiManagerWasm : GoogleApiManager {
 
             if (success) {
                 val email = getEmail(resultJs)
-                val userId = getUserId(resultJs)
                 val displayName = getDisplayName(resultJs)
                 val idToken = getIdToken(resultJs)
 

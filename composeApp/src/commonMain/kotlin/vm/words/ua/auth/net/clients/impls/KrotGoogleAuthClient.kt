@@ -10,6 +10,7 @@ import vm.words.ua.auth.net.requests.google.GoogleSingUpRequest
 import vm.words.ua.auth.net.requests.google.GoogleTokenLoginRequest
 import vm.words.ua.auth.net.responses.AuthResponse
 import vm.words.ua.core.config.AppRemoteConfig
+import vm.words.ua.core.net.utils.throwIfError
 
 class KrotGoogleAuthClient(
     private val httpClient: HttpClient
@@ -23,7 +24,7 @@ class KrotGoogleAuthClient(
         val respond = httpClient.post("${baseUrl}/login/token") {
             contentType(ContentType.Application.Json)
             setBody(request)
-        }
+        }.throwIfError()
         return respond.body()
     }
 
@@ -31,7 +32,7 @@ class KrotGoogleAuthClient(
         val respond = httpClient.post("${baseUrl}/login") {
             contentType(ContentType.Application.Json)
             setBody(request)
-        }
+        }.throwIfError()
         return respond.body()
     }
 
@@ -39,7 +40,7 @@ class KrotGoogleAuthClient(
         val respond = httpClient.post("${baseUrl}/sign-up") {
             contentType(ContentType.Application.Json)
             setBody(request)
-        }
+        }.throwIfError()
         return respond.body()
     }
 

@@ -18,11 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
-import vm.words.ua.auth.ui.actions.TelegramSignUpAction
-import vm.words.ua.auth.ui.bundles.ConfirmSignBundle
-import vm.words.ua.auth.ui.hints.TelegramSignUpScreenHintStep
-import vm.words.ua.auth.ui.hints.createTelegramSignUpScreenHintController
-import vm.words.ua.auth.ui.vms.TelegramSignUpViewModel
+import vm.words.ua.auth.ui.actions.GoogleSignUpAction
+import vm.words.ua.auth.ui.hints.GoogleSignUpScreenHintStep
+import vm.words.ua.auth.ui.hints.createGoogleSignUpScreenHintController
+import vm.words.ua.auth.ui.vms.GoogleSignUpViewModel
 import vm.words.ua.core.domain.models.enums.Currency
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.*
@@ -37,24 +36,21 @@ import wordsmultiplatform.composeapp.generated.resources.info_in_circle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TelegramSignUpScreen(
+fun GoogleSignUpScreen(
     navController: SimpleNavController,
     modifier: Modifier = Modifier,
-    viewModel: TelegramSignUpViewModel = rememberInstance()
+    viewModel: GoogleSignUpViewModel = rememberInstance()
 
 ) {
     val state by viewModel.state.collectAsState()
-    val hintController = createTelegramSignUpScreenHintController()
+    val hintController = createGoogleSignUpScreenHintController()
 
     LaunchedEffect(state.success) {
         if (state.success.not()) {
             return@LaunchedEffect
         }
         navController.navigateAndClearCurrent(
-            Screen.ConfirmSignUp, ConfirmSignBundle(
-                phoneNumber = state.phoneNumber,
-                password = state.password
-            )
+            Screen.Home
         )
     }
 
@@ -77,7 +73,7 @@ fun TelegramSignUpScreen(
                     navController.navigate(Screen.Policy)
                 },
                 currentStepHint = hintController.currentStep,
-                additionalButtonStepHint = TelegramSignUpScreenHintStep.PRIVACY_POLICY
+                additionalButtonStepHint = GoogleSignUpScreenHintStep.PRIVACY_POLICY
             )
 
             val columns = if (isNotPhoneFormat()) 2 else 1
@@ -91,46 +87,36 @@ fun TelegramSignUpScreen(
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                     horizontalArrangement = Arrangement.spacedBy(20.dp),
                 ) {
-                    item {
-                        AppTextField(
-                            value = state.phoneNumber,
-                            onValueChange = { viewModel.sent(TelegramSignUpAction.SetPhoneNumber(it)) },
-                            label = "Phone number",
-                            modifier = Modifier.fillMaxWidth()
-                                .viewHint(TelegramSignUpScreenHintStep.PHONE_NUMBER, hintController.currentStep),
-                            helperText = "Include country code, e.g., 11234567890, 3801234567890"
-                        )
-                    }
 
-                    item {
-                        AppTextField(
-                            value = state.password,
-                            onValueChange = { viewModel.sent(TelegramSignUpAction.SetPassword(it)) },
-                            label = "Password",
-                            modifier = Modifier.fillMaxWidth()
-                                .viewHint(TelegramSignUpScreenHintStep.PASSWORD, hintController.currentStep),
-                            isPassword = true,
-                            helperText = "Password must be between 8 and 60 characters long"
-                        )
-                    }
 
                     item {
                         AppTextField(
                             value = state.firstName,
-                            onValueChange = { viewModel.sent(TelegramSignUpAction.SetFirstName(it)) },
+                            onValueChange = { viewModel.sent(GoogleSignUpAction.SetFirstName(it)) },
                             label = "First name",
                             modifier = Modifier.fillMaxWidth()
-                                .viewHint(TelegramSignUpScreenHintStep.FIRST_NAME, hintController.currentStep)
+                                .viewHint(GoogleSignUpScreenHintStep.FIRST_NAME, hintController.currentStep)
                         )
                     }
 
                     item {
                         AppTextField(
                             value = state.lastName,
-                            onValueChange = { viewModel.sent(TelegramSignUpAction.SetLastName(it)) },
+                            onValueChange = { viewModel.sent(GoogleSignUpAction.SetLastName(it)) },
                             label = "Last name",
                             modifier = Modifier.fillMaxWidth()
-                                .viewHint(TelegramSignUpScreenHintStep.LAST_NAME, hintController.currentStep)
+                                .viewHint(GoogleSignUpScreenHintStep.LAST_NAME, hintController.currentStep)
+                        )
+                    }
+                    item {
+                        AppTextField(
+                            value = state.password,
+                            onValueChange = { viewModel.sent(GoogleSignUpAction.SetPassword(it)) },
+                            label = "Password",
+                            modifier = Modifier.fillMaxWidth()
+                                .viewHint(GoogleSignUpScreenHintStep.PASSWORD, hintController.currentStep),
+                            isPassword = true,
+                            helperText = "Password must be between 8 and 60 characters long"
                         )
                     }
 
@@ -141,11 +127,11 @@ fun TelegramSignUpScreen(
                             items = Currency.entries.toList(),
                             label = "Currency",
                             toLabel = { it.name },
-                            showNone = true,
+                            showNone = false,
                             noneLabel = "",
-                            onSelect = { viewModel.sent(TelegramSignUpAction.SetCurrency(it ?: Currency.USD)) },
+                            onSelect = { viewModel.sent(GoogleSignUpAction.SetCurrency(it ?: Currency.USD)) },
                             modifier = Modifier.viewHint(
-                                TelegramSignUpScreenHintStep.CURRENCY_SELECTION,
+                                GoogleSignUpScreenHintStep.CURRENCY_SELECTION,
                                 hintController.currentStep
                             ),
                             helperText = "Select your preferred currency for transactions and pricing."
@@ -156,13 +142,13 @@ fun TelegramSignUpScreen(
 
                 Row(
                     modifier = Modifier.fillMaxWidth()
-                        .viewHint(TelegramSignUpScreenHintStep.AGREEMENT_CHECKBOX, hintController.currentStep),
+                        .viewHint(GoogleSignUpScreenHintStep.AGREEMENT_CHECKBOX, hintController.currentStep),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
                 ) {
                     Checkbox(
                         checked = state.agreed,
-                        onCheckedChange = { viewModel.sent(TelegramSignUpAction.SetAgreed(it)) },
+                        onCheckedChange = { viewModel.sent(GoogleSignUpAction.SetAgreed(it)) },
                         colors = CheckboxDefaults.colors(
                             checkedColor = AppTheme.PrimaryColor,
                             uncheckedColor = AppTheme.PrimaryColor,
@@ -179,12 +165,12 @@ fun TelegramSignUpScreen(
                 PrimaryButton(
                     text = "Submit",
                     onClick = {
-                        viewModel.sent(TelegramSignUpAction.Submit)
+                        viewModel.sent(GoogleSignUpAction.Submit)
                     },
                     modifier = Modifier.width(300.dp)
                         .padding(bottom = 10.dp)
                         .align(CenterHorizontally)
-                        .viewHint(TelegramSignUpScreenHintStep.SIGN_UP_BUTTON, hintController.currentStep),
+                        .viewHint(GoogleSignUpScreenHintStep.SIGN_UP_BUTTON, hintController.currentStep),
                     enabled = state.agreed
                 )
             }

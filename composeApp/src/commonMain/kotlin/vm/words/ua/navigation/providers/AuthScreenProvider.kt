@@ -24,6 +24,10 @@ class AuthScreenProvider : ScreenProvider {
                 TelegramSignUpScreen(navController = navController)
             }
 
+            Screen.GoogleSignUp.route -> {
+                GoogleSignUpScreen(navController = navController)
+            }
+
             Screen.TelegramLogin.route -> {
                 TelegramLoginScreen(
                     navController = navController
