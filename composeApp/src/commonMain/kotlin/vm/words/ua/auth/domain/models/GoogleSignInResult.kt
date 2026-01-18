@@ -14,13 +14,11 @@ data class GoogleSignInResult(
     companion object {
         fun success(
             email: String,
-            userId: String,
             displayName: String? = null,
             idToken: String? = null
         ) = GoogleSignInResult(
             success = true,
             email = email,
-            userId = userId,
             displayName = displayName,
             idToken = idToken
         )
