@@ -41,7 +41,9 @@ fun SignUpProviderScreen(
             .fillMaxSize()
             .background(AppTheme.PrimaryBack)
     ) {
-        AppToolBar(title = "Providers", showBackButton = true)
+        AppToolBar(title = "Providers", showBackButton = true, onBackClick = {
+            navController.popBackStack()
+        })
 
         ButtonsGrid(
             items = buttons,
