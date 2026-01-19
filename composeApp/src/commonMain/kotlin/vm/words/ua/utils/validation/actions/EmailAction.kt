@@ -1,37 +1,26 @@
 package vm.words.ua.utils.validation.actions
 
+import vm.words.ua.utils.validation.models.ValidResult
+
 internal class EmailAction(
     private val isRequired: Boolean = false
-) : vm.words.ua.utils.validation.actions.ValidAction<String> {
+) : ValidAction<String> {
 
     // Local-part: unquoted or quoted string. Case-insensitive.
     private val LOCAL_PART_REGEX = Regex(
-        """
-        ^(?:
-          [a-z0-9!#\$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#\$%&'*+/=?^_`{|}~-]+)*
-          |
-          \"(?:\\[\x00-\x7F]|[^"\\])*\"
-        )$
-        """.trimIndent(),
+        "(?:[a-z0-9!#$%&'*+/=?^_`{|}~\u0080-\uffff-]+|\"(?:[a-z0-9!#$%&'*.(),<>\\[\\]:;  @+/=?^_`{|}~\u0080-\uffff-]|\\\\\\\\|\\\\\\\")+\")(?:\\.(?:[a-z0-9!#$%&'*+/=?^_`{|}~\u0080-\uffff-]+|\"(?:[a-z0-9!#$%&'*.(),<>\\[\\]:;  @+/=?^_`{|}~\u0080-\uffff-]|\\\\\\\\|\\\\\\\")+\"))*",
         RegexOption.IGNORE_CASE
     )
 
     // Domain: hostname (labels with optional hyphens), IPv4, or IPv6 literal (basic)
     private val EMAIL_DOMAIN_REGEX = Regex(
-        """
-        ^(?:
-          (?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}
-          |
-          (?:\d{1,3}\.){3}\d{1,3}
-          |
-          \[IPv6:[0-9a-f:]+\]
-        )$
-        """.trimIndent(),
+        "(?:[a-z\u0080-\uffff0-9!#$%&'*+/=?^_`{|}~]-*)*[a-z\u0080-\uffff0-9!#$%&'*+/=?^_`{|}~]++(?:\\.(?:[a-z\u0080-\uffff0-9!#$%&'*+/=?^_`{|}~]-*)*[a-z\u0080-\uffff0-9!#$%&'*+/=?^_`{|}~]++)*|\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\]|\\[IPv6:(?:(?:[0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|(?:[0-9a-fA-F]{1,4}:){1,7}:|(?:[0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|(?:[0-9a-fA-F]{1,4}:){1,5}(?::[0-9a-fA-F]{1,4}){1,2}|(?:[0-9a-fA-F]{1,4}:){1,4}(?::[0-9a-fA-F]{1,4}){1,3}|(?:[0-9a-fA-F]{1,4}:){1,3}(?::[0-9a-fA-F]{1,4}){1,4}|(?:[0-9a-fA-F]{1,4}:){1,2}(?::[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:(?:(?::[0-9a-fA-F]{1,4}){1,6})|:(?:(?::[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(?::[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(?:ffff(:0{1,4}){0,1}:){0,1}(?:(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])|(?:[0-9a-fA-F]{1,4}:){1,4}:(?:(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9]))\\]",
+
         RegexOption.IGNORE_CASE
     )
 
     private val ERROR_RESULT =
-        _root_ide_package_.vm.words.ua.utils.validation.models.ValidResult(false, "Email is not valid")
+        ValidResult(false, "Email is not valid")
 
     private fun isValidEmailLocalPart(localPart: String): Boolean {
         if (localPart.isEmpty() || localPart.length > _root_ide_package_.vm.words.ua.utils.validation.actions.EmailAction.Companion.MAX_LOCAL_PART_LENGTH) return false
@@ -45,11 +34,11 @@ internal class EmailAction(
 
         if (value.isBlank()) return ERROR_RESULT
 
-        val splitPosition = value.lastIndexOf('@')
-        if (splitPosition <= 0 || splitPosition >= value.length - 1) return ERROR_RESULT
+        val splitPosition = value.trim().lastIndexOf('@')
+        if (splitPosition <= 0 || splitPosition >= value.trim().length - 1) return ERROR_RESULT
 
-        val localPart = value.substring(0, splitPosition)
-        val domainPart = value.substring(splitPosition + 1)
+        val localPart = value.trim().substring(0, splitPosition)
+        val domainPart = value.trim().substring(splitPosition + 1)
 
         if (!isValidEmailLocalPart(localPart)) return ERROR_RESULT
 

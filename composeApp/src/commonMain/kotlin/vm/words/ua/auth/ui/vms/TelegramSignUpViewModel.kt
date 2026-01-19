@@ -7,52 +7,49 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import vm.words.ua.auth.domain.managers.AuthManager
-import vm.words.ua.auth.domain.models.data.SignUpModel
-import vm.words.ua.auth.ui.actions.SignUpAction
-import vm.words.ua.auth.ui.states.SignUpState
-import vm.words.ua.auth.ui.validation.signUpValidator
+import vm.words.ua.auth.domain.models.SignUpModel
+import vm.words.ua.auth.ui.actions.TelegramSignUpAction
+import vm.words.ua.auth.ui.states.TelegramSignUpState
+import vm.words.ua.auth.ui.validation.telegramSignUpValidator
 import vm.words.ua.core.analytics.Analytics
 import vm.words.ua.core.analytics.AnalyticsEvents
 import vm.words.ua.core.ui.models.ErrorMessage
 import vm.words.ua.core.utils.toNumbersOnly
 
-class SignUpViewModel(
+class TelegramSignUpViewModel(
     private val authManager: AuthManager,
     private val analytics: Analytics
 ) : ViewModel() {
 
-    private val mutableState = MutableStateFlow(SignUpState())
-    val state: StateFlow<SignUpState> = mutableState
-    private val validator = signUpValidator(state)
+    private val mutableState = MutableStateFlow(TelegramSignUpState())
+    val state: StateFlow<TelegramSignUpState> = mutableState
+    private val validator = telegramSignUpValidator(state)
 
-    fun sent(action: SignUpAction) {
+    fun sent(action: TelegramSignUpAction) {
         when (action) {
-            is SignUpAction.SetPhoneNumber -> {
+            is TelegramSignUpAction.SetPhoneNumber -> {
                 mutableState.value = state.value.copy(phoneNumber = action.value.toNumbersOnly())
             }
 
-            is SignUpAction.SetPassword -> {
+            is TelegramSignUpAction.SetPassword -> {
                 mutableState.value = state.value.copy(password = action.value)
             }
 
-            is SignUpAction.SetFirstName -> {
+            is TelegramSignUpAction.SetFirstName -> {
                 mutableState.value = state.value.copy(firstName = action.value)
             }
 
-            is SignUpAction.SetLastName -> {
+            is TelegramSignUpAction.SetLastName -> {
                 mutableState.value = state.value.copy(lastName = action.value)
             }
 
-            is SignUpAction.SetCurrency -> {
+            is TelegramSignUpAction.SetCurrency -> {
                 mutableState.value = state.value.copy(currency = action.value)
             }
 
-            is SignUpAction.SetEmail -> {
-                mutableState.value = state.value.copy(email = action.value)
-            }
 
-            SignUpAction.Submit -> handleSubmit()
-            is SignUpAction.SetAgreed -> {
+            TelegramSignUpAction.Submit -> handleSubmit()
+            is TelegramSignUpAction.SetAgreed -> {
                 mutableState.value = state.value.copy(agreed = action.value)
             }
         }
@@ -84,7 +81,6 @@ class SignUpViewModel(
                         analytics.logEvent(
                             AnalyticsEvents.SIGNUP_SUCCESS, mapOf(
                                 "phone_number" to state.value.phoneNumber,
-                                "email" to (state.value.email ?: "not_provided"),
                                 "currency" to state.value.currency.name
                             )
                         )
@@ -93,7 +89,6 @@ class SignUpViewModel(
                     analytics.logEvent(
                         AnalyticsEvents.SIGNUP_FAILED, mapOf(
                             "phone_number" to state.value.phoneNumber,
-                            "email" to (state.value.email ?: "not_provided"),
                             "currency" to state.value.currency.name,
                             "error_message" to (it.message ?: "unknown_error")
                         )
@@ -106,12 +101,11 @@ class SignUpViewModel(
         }
     }
 
-    private fun SignUpState.toModel() = SignUpModel(
+    private fun TelegramSignUpState.toModel() = SignUpModel(
         phoneNumber = phoneNumber,
         password = password,
         firstName = firstName,
         lastName = lastName,
-        currency = currency.name,
-        email = email?.ifBlank { null }
+        currency = currency.name
     )
 }

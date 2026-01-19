@@ -1,7 +1,7 @@
 package vm.words.ua.auth.domain.managers
 
-import vm.words.ua.auth.domain.models.data.AuthResult
-import vm.words.ua.auth.domain.models.data.SignUpModel
+import vm.words.ua.auth.domain.models.AuthResult
+import vm.words.ua.auth.domain.models.SignUpModel
 
 interface AuthManager {
     suspend fun logIn(phoneNumber: String, password: String) : AuthResult

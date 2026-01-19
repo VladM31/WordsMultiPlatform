@@ -9,5 +9,7 @@ import org.kodein.di.DI
 val authModules = DI.Module("auth") {
     import(client)
     import(managerDi)
+    import(googleSignInDi)
     import(viewModelDi)
+
 }

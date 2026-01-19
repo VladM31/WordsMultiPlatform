@@ -4,7 +4,7 @@ import vm.words.ua.core.domain.models.enums.Currency
 import vm.words.ua.core.ui.models.ErrorMessage
 
 
-data class SignUpState(
+data class TelegramSignUpState(
     val success: Boolean = false,
     val error: ErrorMessage? = null,
     val phoneNumber: String = "",
@@ -12,6 +12,16 @@ data class SignUpState(
     val firstName: String = "",
     val lastName: String = "",
     val currency: Currency = Currency.USD,
-    val email: String? = null,
     val agreed: Boolean = false
 )
+
+data class GoogleSignUpState(
+    val success: Boolean = false,
+    val error: ErrorMessage? = null,
+    val password: String = "",
+    val firstName: String = "",
+    val lastName: String = "",
+    val currency: Currency = Currency.USD,
+    val agreed: Boolean = false
+)
+

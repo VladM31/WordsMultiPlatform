@@ -30,6 +30,200 @@
             box-sizing: border-box;
         }
     </style>
+    <!-- Initialize Firebase BEFORE composeApp loads -->
+    <script>
+        // Placeholder functions until Firebase loads
+        window.logFirebaseEvent = function (eventName, params) {
+            console.log('Firebase pending logEvent:', eventName, params);
+            if (window._firebaseEventQueue) {
+                window._firebaseEventQueue.push({type: 'event', eventName, params});
+            }
+        };
+        window.setFirebaseUserId = function (userId) {
+            console.log('Firebase pending setUserId:', userId);
+            if (window._firebaseEventQueue) {
+                window._firebaseEventQueue.push({type: 'userId', userId});
+            }
+        };
+        window.setFirebaseUserProperty = function (name, value) {
+            console.log('Firebase pending setUserProperty:', name, value);
+            if (window._firebaseEventQueue) {
+                window._firebaseEventQueue.push({type: 'property', name, value});
+            }
+        };
+        window.logFirebaseScreenView = function (screenName, screenClass) {
+            console.log('Firebase pending screen_view:', screenName, screenClass);
+            if (window._firebaseEventQueue) {
+                window._firebaseEventQueue.push({type: 'screen', screenName, screenClass});
+            }
+        };
+        window._firebaseEventQueue = [];
+    </script>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import {initializeApp} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+        import {
+            getAnalytics,
+            logEvent,
+            setUserId,
+            setUserProperties
+        } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-analytics.js";
+        import {
+            getAuth,
+            signInWithPopup,
+            signOut,
+            GoogleAuthProvider,
+            onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAdiBvkaPLN_HHoRb4TxtE9jyp3lKnW4Ws",
+            authDomain: "words-53d45.firebaseapp.com",
+            projectId: "words-53d45",
+            storageBucket: "words-53d45.firebasestorage.app",
+            messagingSenderId: "1005445939198",
+            appId: "1:1005445939198:web:d4405546c35cbf741c8aaf",
+            measurementId: "G-53L6PK51VB"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+        const googleProvider = new GoogleAuthProvider();
+        googleProvider.addScope('email');
+        googleProvider.addScope('profile');
+        console.log('Firebase Analytics initialized');
+        console.log('Firebase Auth initialized');
+
+        // Google Sign-In functions
+        window.isGoogleSignInAvailable = () => {
+            return true; // Firebase Auth is available on web
+        };
+
+        window.signInWithGoogle = async () => {
+            try {
+                const result = await signInWithPopup(auth, googleProvider);
+                const user = result.user;
+
+                // Get the Google OAuth credential (contains the real Google ID Token)
+                const credential = GoogleAuthProvider.credentialFromResult(result);
+                // This is the Google ID Token that can be verified with GoogleIdTokenVerifier
+                const googleIdToken = credential?.idToken || null;
+
+                // Fallback to Firebase ID Token if Google credential not available
+                const firebaseIdToken = await user.getIdToken();
+
+                return {
+                    success: true,
+                    // Prefer Google ID Token for backend verification
+                    idToken: googleIdToken || firebaseIdToken,
+                    googleIdToken: googleIdToken,
+                    firebaseIdToken: firebaseIdToken,
+                    email: user.email || '',
+                    userId: user.uid,
+                    displayName: user.displayName || ''
+                };
+            } catch (error) {
+                console.error('Google Sign-In error:', error);
+                let errorMessage = error.message || 'Unknown error';
+
+                if (error.code === 'auth/popup-closed-by-user') {
+                    errorMessage = 'Sign-in cancelled';
+                } else if (error.code === 'auth/network-request-failed') {
+                    errorMessage = 'Network error. Please check your connection.';
+                } else if (error.code === 'auth/popup-blocked') {
+                    errorMessage = 'Popup was blocked. Please allow popups for this site.';
+                }
+
+                return {
+                    success: false,
+                    error: errorMessage
+                };
+            }
+        };
+
+        window.signOutFromGoogle = async () => {
+            try {
+                await signOut(auth);
+                return {success: true};
+            } catch (error) {
+                console.error('Sign-out error:', error);
+                return {success: false, error: error.message};
+            }
+        };
+
+        window.getCurrentGoogleUser = () => {
+            const user = auth.currentUser;
+            if (user) {
+                return {
+                    email: user.email || '',
+                    userId: user.uid,
+                    displayName: user.displayName || ''
+                };
+            }
+            return null;
+        };
+
+        // Replace placeholder functions with real implementations
+        window.logFirebaseEvent = (eventName, params) => {
+            try {
+                console.log('Firebase logEvent:', eventName, params);
+                logEvent(analytics, eventName, params || undefined);
+            } catch (e) {
+                console.warn('Firebase logEvent error:', e);
+            }
+        };
+        window.setFirebaseUserId = (userId) => {
+            try {
+                console.log('Firebase setUserId:', userId);
+                if (userId) setUserId(analytics, userId);
+            } catch (e) {
+                console.warn('Firebase setUserId error:', e);
+            }
+        };
+        window.setFirebaseUserProperty = (name, value) => {
+            try {
+                console.log('Firebase setUserProperty:', name, value);
+                setUserProperties(analytics, {[name]: value});
+            } catch (e) {
+                console.warn('Firebase setUserProperty error:', e);
+            }
+        };
+        window.logFirebaseScreenView = (screenName, screenClass) => {
+            try {
+                console.log('Firebase screen_view:', screenName, screenClass);
+                const params = {screen_name: screenName};
+                if (screenClass) params.screen_class = screenClass;
+                logEvent(analytics, 'screen_view', params);
+            } catch (e) {
+                console.warn('Firebase screen_view error:', e);
+            }
+        };
+
+        // Process queued events
+        if (window._firebaseEventQueue && window._firebaseEventQueue.length > 0) {
+            console.log('Processing', window._firebaseEventQueue.length, 'queued Firebase events');
+            window._firebaseEventQueue.forEach(item => {
+                switch (item.type) {
+                    case 'event':
+                        window.logFirebaseEvent(item.eventName, item.params);
+                        break;
+                    case 'userId':
+                        window.setFirebaseUserId(item.userId);
+                        break;
+                    case 'property':
+                        window.setFirebaseUserProperty(item.name, item.value);
+                        break;
+                    case 'screen':
+                        window.logFirebaseScreenView(item.screenName, item.screenClass);
+                        break;
+                }
+            });
+            window._firebaseEventQueue = null;
+        }
+    </script>
 </head>
 <body>
     <script src="composeApp.js"></script>

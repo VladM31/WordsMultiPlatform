@@ -5,6 +5,7 @@
 xcuserdata
 !src/**/build/
 local.properties
+google-oauth.properties
 .idea
 .DS_Store
 captures

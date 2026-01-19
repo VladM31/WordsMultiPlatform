@@ -1,7 +1,7 @@
 package vm.words.ua.auth.domain.mappers
 
 import kotlinx.datetime.Clock
-import vm.words.ua.auth.domain.models.data.SignUpModel
+import vm.words.ua.auth.domain.models.SignUpModel
 import vm.words.ua.auth.net.requests.SignUpRequest
 import vm.words.ua.auth.net.responses.AuthResponse
 import vm.words.ua.auth.net.responses.TelegramLoginRespond
@@ -17,7 +17,7 @@ internal fun AuthResponse.User.toUser(): User {
 fun SignUpModel.toRequest(): SignUpRequest {
     return SignUpRequest(
         firstName = firstName, lastName = lastName, phoneNumber = phoneNumber,
-        email = email, currency = currency, password = password
+        currency = currency, password = password
     )
 }
 

@@ -18,11 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
-import vm.words.ua.auth.ui.actions.SignUpAction
+import vm.words.ua.auth.ui.actions.TelegramSignUpAction
 import vm.words.ua.auth.ui.bundles.ConfirmSignBundle
-import vm.words.ua.auth.ui.hints.SignUpScreenHintStep
-import vm.words.ua.auth.ui.hints.createSignUpScreenHintController
-import vm.words.ua.auth.ui.vms.SignUpViewModel
+import vm.words.ua.auth.ui.hints.TelegramSignUpScreenHintStep
+import vm.words.ua.auth.ui.hints.createTelegramSignUpScreenHintController
+import vm.words.ua.auth.ui.vms.TelegramSignUpViewModel
 import vm.words.ua.core.domain.models.enums.Currency
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.*
@@ -37,14 +37,14 @@ import wordsmultiplatform.composeapp.generated.resources.info_in_circle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignUpScreen(
+fun TelegramSignUpScreen(
     navController: SimpleNavController,
     modifier: Modifier = Modifier,
-    viewModel: SignUpViewModel = rememberInstance()
+    viewModel: TelegramSignUpViewModel = rememberInstance()
 
 ) {
     val state by viewModel.state.collectAsState()
-    val hintController = createSignUpScreenHintController()
+    val hintController = createTelegramSignUpScreenHintController()
 
     LaunchedEffect(state.success) {
         if (state.success.not()) {
@@ -77,7 +77,7 @@ fun SignUpScreen(
                     navController.navigate(Screen.Policy)
                 },
                 currentStepHint = hintController.currentStep,
-                additionalButtonStepHint = SignUpScreenHintStep.PRIVACY_POLICY
+                additionalButtonStepHint = TelegramSignUpScreenHintStep.PRIVACY_POLICY
             )
 
             val columns = if (isNotPhoneFormat()) 2 else 1
@@ -94,10 +94,10 @@ fun SignUpScreen(
                     item {
                         AppTextField(
                             value = state.phoneNumber,
-                            onValueChange = { viewModel.sent(SignUpAction.SetPhoneNumber(it)) },
+                            onValueChange = { viewModel.sent(TelegramSignUpAction.SetPhoneNumber(it)) },
                             label = "Phone number",
                             modifier = Modifier.fillMaxWidth()
-                                .viewHint(SignUpScreenHintStep.PHONE_NUMBER, hintController.currentStep),
+                                .viewHint(TelegramSignUpScreenHintStep.PHONE_NUMBER, hintController.currentStep),
                             helperText = "Include country code, e.g., 11234567890, 3801234567890"
                         )
                     }
@@ -105,10 +105,10 @@ fun SignUpScreen(
                     item {
                         AppTextField(
                             value = state.password,
-                            onValueChange = { viewModel.sent(SignUpAction.SetPassword(it)) },
+                            onValueChange = { viewModel.sent(TelegramSignUpAction.SetPassword(it)) },
                             label = "Password",
                             modifier = Modifier.fillMaxWidth()
-                                .viewHint(SignUpScreenHintStep.PASSWORD, hintController.currentStep),
+                                .viewHint(TelegramSignUpScreenHintStep.PASSWORD, hintController.currentStep),
                             isPassword = true,
                             helperText = "Password must be between 8 and 60 characters long"
                         )
@@ -117,33 +117,23 @@ fun SignUpScreen(
                     item {
                         AppTextField(
                             value = state.firstName,
-                            onValueChange = { viewModel.sent(SignUpAction.SetFirstName(it)) },
+                            onValueChange = { viewModel.sent(TelegramSignUpAction.SetFirstName(it)) },
                             label = "First name",
                             modifier = Modifier.fillMaxWidth()
-                                .viewHint(SignUpScreenHintStep.FIRST_NAME, hintController.currentStep)
+                                .viewHint(TelegramSignUpScreenHintStep.FIRST_NAME, hintController.currentStep)
                         )
                     }
 
                     item {
                         AppTextField(
                             value = state.lastName,
-                            onValueChange = { viewModel.sent(SignUpAction.SetLastName(it)) },
+                            onValueChange = { viewModel.sent(TelegramSignUpAction.SetLastName(it)) },
                             label = "Last name",
                             modifier = Modifier.fillMaxWidth()
-                                .viewHint(SignUpScreenHintStep.LAST_NAME, hintController.currentStep)
+                                .viewHint(TelegramSignUpScreenHintStep.LAST_NAME, hintController.currentStep)
                         )
                     }
 
-                    item {
-                        AppTextField(
-                            value = state.email.orEmpty(),
-                            onValueChange = { viewModel.sent(SignUpAction.SetEmail(it)) },
-                            label = "Email",
-                            modifier = Modifier.fillMaxWidth()
-                                .viewHint(SignUpScreenHintStep.EMAIL, hintController.currentStep),
-                            helperText = "Provide a valid email address for communication(Optional)."
-                        )
-                    }
 
                     item {
                         SingleSelectInput(
@@ -153,9 +143,9 @@ fun SignUpScreen(
                             toLabel = { it.name },
                             showNone = true,
                             noneLabel = "",
-                            onSelect = { viewModel.sent(SignUpAction.SetCurrency(it ?: Currency.USD)) },
+                            onSelect = { viewModel.sent(TelegramSignUpAction.SetCurrency(it ?: Currency.USD)) },
                             modifier = Modifier.viewHint(
-                                SignUpScreenHintStep.CURRENCY_SELECTION,
+                                TelegramSignUpScreenHintStep.CURRENCY_SELECTION,
                                 hintController.currentStep
                             ),
                             helperText = "Select your preferred currency for transactions and pricing."
@@ -166,13 +156,13 @@ fun SignUpScreen(
 
                 Row(
                     modifier = Modifier.fillMaxWidth()
-                        .viewHint(SignUpScreenHintStep.AGREEMENT_CHECKBOX, hintController.currentStep),
+                        .viewHint(TelegramSignUpScreenHintStep.AGREEMENT_CHECKBOX, hintController.currentStep),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
                 ) {
                     Checkbox(
                         checked = state.agreed,
-                        onCheckedChange = { viewModel.sent(SignUpAction.SetAgreed(it)) },
+                        onCheckedChange = { viewModel.sent(TelegramSignUpAction.SetAgreed(it)) },
                         colors = CheckboxDefaults.colors(
                             checkedColor = AppTheme.PrimaryColor,
                             uncheckedColor = AppTheme.PrimaryColor,
@@ -189,12 +179,12 @@ fun SignUpScreen(
                 PrimaryButton(
                     text = "Submit",
                     onClick = {
-                        viewModel.sent(SignUpAction.Submit)
+                        viewModel.sent(TelegramSignUpAction.Submit)
                     },
                     modifier = Modifier.width(300.dp)
                         .padding(bottom = 10.dp)
                         .align(CenterHorizontally)
-                        .viewHint(SignUpScreenHintStep.SIGN_UP_BUTTON, hintController.currentStep),
+                        .viewHint(TelegramSignUpScreenHintStep.SIGN_UP_BUTTON, hintController.currentStep),
                     enabled = state.agreed
                 )
             }

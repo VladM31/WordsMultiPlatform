@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import vm.words.ua.auth.ui.actions.LoginAction
 import vm.words.ua.auth.ui.components.LoginForm
 import vm.words.ua.auth.ui.hints.createLoginScreenHintController
 import vm.words.ua.auth.ui.vms.LoginViewModel
@@ -36,6 +37,7 @@ fun LoginScreen(
         .distinctUntilChanged()
         .collectAsState(initial = null)
 
+
     // Navigate when login is successful
     LaunchedEffect(state.isEnd) {
         if (state.isEnd) {
@@ -46,41 +48,42 @@ fun LoginScreen(
     SimpleHintHost(
         onNext = hintController.doNext
     ) {
-        BoxWithConstraints {
-            val boxMaxWith = maxWidth
-            Column(
-                modifier = modifier
-                    .fillMaxSize()
-                    .background(AppTheme.PrimaryBack)
-            ) {
-                AppToolBar(
-                    title = "Login",
-                    showBackButton = false
-                )
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .background(AppTheme.PrimaryBack)
+        ) {
+            AppToolBar(
+                title = "Login",
+                showBackButton = false
+            )
 
-                CenteredContainer(maxWidth = 500.dp) {
-                    VerticalCenteredContainer(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        BoxWithConstraints {
-                            LoginForm(
-                                viewModel = viewModel,
-                                maxWidth = boxMaxWith,
-                                currentHintStep = hintController.currentStep,
-                                onJoinNowClick = { navController.navigate(Screen.SignUp) },
-                                onTelegramClick = { navController.navigate(Screen.TelegramLogin) }
-                            )
-                        }
+            CenteredContainer(maxWidth = 500.dp) {
+                VerticalCenteredContainer(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    BoxWithConstraints {
+                        LoginForm(
+                            viewModel = viewModel,
+                            currentHintStep = hintController.currentStep,
+                            onJoinNowClick = { navController.navigate(Screen.SignUpProvider) },
+                            onTelegramClick = { navController.navigate(Screen.TelegramLogin) },
+                            onGoogleClick = {
+                                viewModel.sent(LoginAction.GoogleSignIn)
+                            },
+                            showGoogleSignIn = state.isGoogleSignInAvailable
+                        )
+                    }
 
-                        // Display error message if present
-                        error.value?.let { errorMessage ->
-                            Spacer(modifier = Modifier.height(12.dp))
-                            ErrorMessageBox(message = errorMessage)
-                        }
+                    // Display error message if present
+                    error.value?.let { errorMessage ->
+                        Spacer(modifier = Modifier.height(12.dp))
+                        ErrorMessageBox(message = errorMessage)
                     }
                 }
             }
         }
     }
+
 
 }

@@ -1,8 +1,11 @@
 package vm.words.ua.auth.ui.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -25,20 +28,22 @@ import vm.words.ua.core.utils.rememberIconSize
 import vm.words.ua.utils.hints.ui.utils.ViewHintStep
 import vm.words.ua.utils.hints.ui.utils.viewHint
 import wordsmultiplatform.composeapp.generated.resources.Res
+import wordsmultiplatform.composeapp.generated.resources.google_icon
 import wordsmultiplatform.composeapp.generated.resources.telegram_image
 
 @Composable
 fun LoginForm(
     viewModel: LoginViewModel,
-    maxWidth: Dp,
     currentHintStep: ViewHintStep? = null,
     onJoinNowClick: () -> Unit = {},
-    onTelegramClick: () -> Unit = {}
+    onTelegramClick: () -> Unit = {},
+    onGoogleClick: () -> Unit = {},
+    showGoogleSignIn: Boolean = false
 ) {
-    val scaleFactor = getScaleFactor(maxWidth)
+    val scaleFactor = getScaleFactor()
     val textWeight = 0.75f
 
-    val phoneState = viewModel.state.map { it.phoneNumber }.distinctUntilChanged().collectAsState(initial = "")
+    val phoneState = viewModel.state.map { it.username }.distinctUntilChanged().collectAsState(initial = "")
     val passState = viewModel.state.map { it.password }.distinctUntilChanged().collectAsState(initial = "")
 
     Column(
@@ -47,12 +52,12 @@ fun LoginForm(
     ) {
         AppTextField(
             value = phoneState.value,
-            onValueChange = { viewModel.sent(LoginAction.SetPhoneNumber(it ))},
-            label = "Phone",
-            boxMaxWidth = maxWidth,
+            onValueChange = { viewModel.sent(LoginAction.SetUsername(it)) },
+            label = "Phone or Email",
+
             modifier = Modifier.fillMaxWidth()
-                .viewHint(LoginScreenHintStep.PHONE_NUMBER, currentHintStep),
-            helperText = "Include country code, e.g., 11234567890, 3801234567890"
+                .viewHint(LoginScreenHintStep.PHONE_NUMBER_OR_EMAIL, currentHintStep),
+            helperText = "Phone number must include country code, e.g., 11234567890, 3801234567890"
         )
 
         Spacer(modifier = Modifier.size((12 * scaleFactor).dp))
@@ -63,7 +68,6 @@ fun LoginForm(
             label = "Password",
             modifier = Modifier.fillMaxWidth()
                 .viewHint(LoginScreenHintStep.PASSWORD, currentHintStep),
-            boxMaxWidth = maxWidth,
             isPassword = true
         )
 
@@ -105,7 +109,8 @@ fun LoginForm(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
                 painterResource(Res.drawable.telegram_image),
@@ -113,6 +118,43 @@ fun LoginForm(
                 modifier = Modifier.size(rememberIconSize() * 1.5f).clickable { onTelegramClick() }
                     .viewHint(LoginScreenHintStep.TELEGRAM_LOGIN_BUTTON, currentHintStep)
             )
+
+            if (!showGoogleSignIn) {
+                return@Row
+            }
+            Spacer(modifier = Modifier.size(16.dp))
+
+            GoogleSignInButton(
+                onClick = onGoogleClick,
+                iconSize = rememberIconSize() * 1.5f,
+                currentHintStep = currentHintStep
+            )
         }
     }
 }
+
+@Composable
+private fun GoogleSignInButton(
+    onClick: () -> Unit,
+    iconSize: Dp,
+    modifier: Modifier = Modifier,
+    currentHintStep: ViewHintStep? = null
+) {
+    Box(
+        modifier = modifier
+            .size(iconSize)
+            .background(AppTheme.PrimaryColor, shape = CircleShape)
+            .clickable { onClick() },
+        contentAlignment = Alignment.Center
+    ) {
+        // Using Material Icon for Google logo
+        Icon(
+            painter = painterResource(Res.drawable.google_icon),
+            contentDescription = "Google Sign-In",
+            tint = AppTheme.PrimaryBack,
+            modifier = Modifier.size(iconSize * 0.7f)
+                .viewHint(LoginScreenHintStep.GMAIL_LOGIN_BUTTON, currentHintStep)
+        )
+    }
+}
+

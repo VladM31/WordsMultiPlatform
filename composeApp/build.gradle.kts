@@ -58,8 +58,6 @@ kotlin {
             xcf.add(this)
             // Линкуем PDFKit для корректного рендера PDFView
             linkerOpts("-framework", "PDFKit")
-            // Ensure proper linking of Compose Material3 for iOS and resolve KoalaoPlot symbols
-            linkerOpts("-undefined", "dynamic_lookup")
         }
     }
 
@@ -108,6 +106,11 @@ kotlin {
                 // Use maintained fork on Maven Central
                 implementation("com.github.mhiew:android-pdf-viewer:3.2.0-beta.1")
                 implementation("androidx.security:security-crypto:1.1.0")
+
+                // Google Sign-In via Credential Manager
+                implementation(libs.androidx.credentials)
+                implementation(libs.androidx.credentials.play.services)
+                implementation(libs.googleid)
             }
         }
 
@@ -166,6 +169,11 @@ kotlin {
             dependencies {
                 implementation(libs.connectivity.device)
                 implementation(libs.connectivity.compose.device)
+
+                // Firebase Analytics - only for Android and iOS
+                implementation(libs.firebase.analytics)
+                implementation(libs.firebase.common)
+                implementation(libs.firebase.auth)
             }
         }
 

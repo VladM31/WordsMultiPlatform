@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.utils.rememberFontSize
@@ -25,7 +24,6 @@ import vm.words.ua.core.utils.rememberLabelFontSize
 @Composable
 fun AppTextField(
     value: String,
-    boxMaxWidth: Dp = Dp.Unspecified,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier.padding(PaddingValues(top = 5.dp)),
     label: String? = null,

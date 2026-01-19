@@ -1,47 +1,65 @@
 package vm.words.ua.auth.ui.validation
 
 import kotlinx.coroutines.flow.StateFlow
-import vm.words.ua.auth.ui.states.SignUpState
-import vm.words.ua.utils.validation.schemes.email
+import vm.words.ua.auth.ui.states.GoogleSignUpState
+import vm.words.ua.auth.ui.states.TelegramSignUpState
 import vm.words.ua.utils.validation.schemes.isPhoneNumber
 import vm.words.ua.utils.validation.schemes.length
 import vm.words.ua.utils.validation.schemes.notBlank
 
-val signUpValidator: (StateFlow<SignUpState>) -> vm.words.ua.utils.validation.Validator<SignUpState> = { state ->
+val telegramSignUpValidator: (StateFlow<TelegramSignUpState>) -> vm.words.ua.utils.validation.Validator<TelegramSignUpState> =
+    { state ->
     vm.words.ua.utils.validation.Validator(state).apply {
         add(
-            SignUpState::phoneNumber,
+            TelegramSignUpState::phoneNumber,
             vm.words.ua.utils.validation.schemes.ValidationScheme.stringSchema("Phone number")
                 .isPhoneNumber()
         )
         add(
-            SignUpState::password,
+            TelegramSignUpState::password,
             vm.words.ua.utils.validation.schemes.ValidationScheme.stringSchema("Password")
                 .length(8, 60)
                 .notBlank()
         )
 
         add(
-            SignUpState::firstName,
+            TelegramSignUpState::firstName,
             vm.words.ua.utils.validation.schemes.ValidationScheme.stringSchema("First name")
                 .length(2, 60)
                 .notBlank()
         )
 
         add(
-            SignUpState::lastName,
+            TelegramSignUpState::lastName,
             vm.words.ua.utils.validation.schemes.ValidationScheme.stringSchema("Last name")
                 .length(2, 60)
                 .notBlank()
         )
 
-        add(
-            { it.email.orEmpty() },
-            vm.words.ua.utils.validation.schemes.ValidationScheme.stringSchema("Email")
-                .email(isRequired = false)
-                .notBlank(canBeEmpty = true)
-        )
-
-
     }
 }
+
+val googleSignUpValidator: (StateFlow<GoogleSignUpState>) -> vm.words.ua.utils.validation.Validator<GoogleSignUpState> =
+    { state ->
+        vm.words.ua.utils.validation.Validator(state).apply {
+            add(
+                GoogleSignUpState::password,
+                vm.words.ua.utils.validation.schemes.ValidationScheme.stringSchema("Password")
+                    .length(8, 60)
+                    .notBlank()
+            )
+            add(
+                GoogleSignUpState::firstName,
+                vm.words.ua.utils.validation.schemes.ValidationScheme.stringSchema("First name")
+                    .length(2, 60)
+                    .notBlank()
+            )
+            add(
+                GoogleSignUpState::lastName,
+                vm.words.ua.utils.validation.schemes.ValidationScheme.stringSchema("Last name")
+                    .length(2, 60)
+                    .notBlank()
+            )
+
+        }
+    }

@@ -50,6 +50,12 @@ connectivity-compose-http = { module = "dev.jordond.connectivity:connectivity-co
 # Firebase (GitLive multiplatform)
 firebase-analytics = { module = "dev.gitlive:firebase-analytics", version.ref = "firebase-gitlive" }
 firebase-common = { module = "dev.gitlive:firebase-common", version.ref = "firebase-gitlive" }
+firebase-auth = { module = "dev.gitlive:firebase-auth", version.ref = "firebase-gitlive" }
+
+# Android Credential Manager
+androidx-credentials = { module = "androidx.credentials:credentials", version = "1.3.0" }
+androidx-credentials-play-services = { module = "androidx.credentials:credentials-play-services-auth", version = "1.3.0" }
+googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version = "1.1.1" }
 
 [plugins]
 composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "composeHotReload" }
