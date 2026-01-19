@@ -46,6 +46,11 @@ fun LoginForm(
     val phoneState = viewModel.state.map { it.username }.distinctUntilChanged().collectAsState(initial = "")
     val passState = viewModel.state.map { it.password }.distinctUntilChanged().collectAsState(initial = "")
 
+    if (viewModel.state.value.telegramLoginSession != null) {
+        onTelegramClick()
+        return
+    }
+
     Column(
         modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
         horizontalAlignment = Alignment.CenterHorizontally

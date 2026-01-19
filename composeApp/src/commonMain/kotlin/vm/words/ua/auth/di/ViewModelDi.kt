@@ -14,6 +14,7 @@ internal val viewModelDi = DI.Module("viewModel") {
             analytics = instance(),
             googleApiManager = instance(),
             googleAuthManager = instance(),
+            telegramAuthManager = instance()
         )
     }
 

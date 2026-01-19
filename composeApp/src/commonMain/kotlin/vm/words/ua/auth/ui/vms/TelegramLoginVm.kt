@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import vm.words.ua.auth.domain.managers.AuthHistoryManager
 import vm.words.ua.auth.domain.managers.TelegramAuthManager
+import vm.words.ua.auth.domain.models.TelegramAuthSession
 import vm.words.ua.auth.ui.actions.TelegramLoginAction
 import vm.words.ua.auth.ui.states.TelegramLoginState
 import vm.words.ua.core.analytics.Analytics
@@ -39,6 +40,16 @@ class TelegramLoginVm(
             ValidationScheme.stringSchema("Phone number")
                 .isPhoneNumber()
         )
+        telegramAuthManager.session?.let {
+            mutableState.value = mutableState.value.copy(
+                phoneNumber = it.phoneNumber,
+                code = it.code,
+                isLoading = false
+            )
+            viewModelScope.launch(Dispatchers.Default) {
+                runWaiter(it)
+            }
+        }
     }
 
     fun sent(action: TelegramLoginAction) {
@@ -76,7 +87,6 @@ class TelegramLoginVm(
 
             val result = telegramAuthManager.runCatching {
                 startLogin(mutableState.value.phoneNumber)
-
             }
 
             if (result.isFailure) {
@@ -100,23 +110,32 @@ class TelegramLoginVm(
                 isLoading = false
             )
 
-            while (true) {
-                val success = telegramAuthManager.login(
-                    mutableState.value.phoneNumber,
-                    mutableState.value.code
+            runWaiter(
+                TelegramAuthSession(
+                    phoneNumber = mutableState.value.phoneNumber,
+                    code = mutableState.value.code
                 )
-                if (success) {
-                    authHistoryManager.updateLastUsername(mutableState.value.phoneNumber)
-                    mutableState.value = mutableState.value.copy(isEnd = true)
-                    analytics.logEvent(
-                        AnalyticsEvents.TELEGRAM_LOGIN_SUCCESS, mapOf(
-                            "phone_number" to mutableState.value.phoneNumber
-                        )
+            )
+        }
+    }
+
+    private suspend fun runWaiter(session: TelegramAuthSession) {
+        while (true) {
+            val success = telegramAuthManager.login(
+                session.phoneNumber,
+                session.code
+            )
+            if (success) {
+                authHistoryManager.updateLastUsername(session.phoneNumber)
+                mutableState.value = mutableState.value.copy(isEnd = true)
+                analytics.logEvent(
+                    AnalyticsEvents.TELEGRAM_LOGIN_SUCCESS, mapOf(
+                        "phone_number" to session.phoneNumber
                     )
-                    break
-                }
-                delay(3000)
+                )
+                break
             }
+            delay(3000)
         }
     }
 }

@@ -6,10 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import vm.words.ua.auth.domain.managers.AuthHistoryManager
-import vm.words.ua.auth.domain.managers.AuthManager
-import vm.words.ua.auth.domain.managers.GoogleApiManager
-import vm.words.ua.auth.domain.managers.GoogleAuthManager
+import vm.words.ua.auth.domain.managers.*
 import vm.words.ua.auth.domain.models.AuthResult
 import vm.words.ua.auth.domain.models.google.GmailLoginDto
 import vm.words.ua.auth.ui.actions.LoginAction
@@ -25,13 +22,15 @@ class LoginViewModel(
     private val authHistoryManager: AuthHistoryManager,
     private val analytics: Analytics,
     private val googleAuthManager: GoogleAuthManager,
+    telegramAuthManager: TelegramAuthManager,
     googleApiManager: GoogleApiManager,
 ) : ViewModel() {
 
     private val mutableState = MutableStateFlow(
         LoginState(
             username = authHistoryManager.lastUsername.orEmpty(),
-            isGoogleSignInAvailable = googleApiManager.isAvailable()
+            isGoogleSignInAvailable = googleApiManager.isAvailable(),
+            telegramLoginSession = telegramAuthManager.session
         )
     )
     val state: StateFlow<LoginState> = mutableState
