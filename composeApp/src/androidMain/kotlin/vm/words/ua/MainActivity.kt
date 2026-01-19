@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.ui.Modifier
 import androidx.core.graphics.toColorInt
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.initialize
 import vm.words.ua.auth.domain.factories.ActivityHolder
@@ -35,7 +36,16 @@ class MainActivity : ComponentActivity() {
         try {
             // Initialize Firebase
             Firebase.initialize(this)
-            
+
+            // Initialize Crashlytics (Android SDK) and enable collection
+            try {
+                val crashlytics = FirebaseCrashlytics.getInstance()
+                crashlytics.setCrashlyticsCollectionEnabled(true)
+                crashlytics.log("MainActivity_onCreate")
+            } catch (e: Exception) {
+                Log.w("MainActivity", "Crashlytics not initialized: ${e.message}")
+            }
+
             // Initialize Android-specific factories
             SettingsFactory.init(this)
             AuthHistorySettingsFactory.init(this)

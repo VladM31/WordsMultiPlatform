@@ -10,6 +10,8 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.googleServices)
+    // Apply Crashlytics plugin for Android only
+    alias(libs.plugins.firebaseCrashlytics)
 }
 
 kotlin {
@@ -111,6 +113,9 @@ kotlin {
                 implementation(libs.androidx.credentials)
                 implementation(libs.androidx.credentials.play.services)
                 implementation(libs.googleid)
+
+                // Crashlytics
+                implementation(libs.firebase.crashlytics.ktx)
             }
         }
 
@@ -222,6 +227,14 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    // Enable resource shrinking and mapping for Crashlytics (optional)
+    buildTypes {
+        getByName("release") {
+            // keepCrashlytics and mapping files
+            isMinifyEnabled = false
+        }
     }
 }
 
