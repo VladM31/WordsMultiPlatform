@@ -1,12 +1,6 @@
 package vm.words.ua.core.ui.components
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.CircularProgressIndicator
@@ -32,7 +26,7 @@ fun <T> ColumnScope.Items(
             .weight(1f)
             .fillMaxWidth()
     ) {
-        if (isLoading) {
+        if (isLoading && content.isEmpty()) {
             CircularProgressIndicator(
                 modifier = Modifier.align(Alignment.Center),
                 color = AppTheme.PrimaryGreen
@@ -42,7 +36,7 @@ fun <T> ColumnScope.Items(
 
         if (content.isEmpty() && isLoading.not()) {
             Text(
-                text = "No playlists found",
+                text = "No found",
                 modifier = Modifier.align(Alignment.Center),
                 fontSize = 18.sp,
                 color = AppTheme.SecondaryText
@@ -78,6 +72,16 @@ fun <T> ColumnScope.Items(
                         modifier = Modifier.size(32.dp)
                     )
                 }
+            }
+
+            item {
+                if (!isLoading) {
+                    return@item
+                }
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center),
+                    color = AppTheme.PrimaryGreen
+                )
             }
         }
     }
