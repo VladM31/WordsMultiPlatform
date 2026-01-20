@@ -25,6 +25,7 @@ import vm.words.ua.exercise.ui.bundles.ExerciseSelectionBundle
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.playlist.domain.models.bundles.PlayListDetailsBundle
+import vm.words.ua.playlist.ui.actions.PlayListAction
 import vm.words.ua.playlist.ui.actions.PlayListDetailsAction
 import vm.words.ua.playlist.ui.vms.PlayListDetailsViewModel
 import vm.words.ua.words.ui.bundles.WordDetailsBundle
@@ -61,7 +62,7 @@ fun PlayListDetailsScreen(
 
     LaunchedEffect(state.isEnd) {
         if (state.isEnd) {
-            navController.popBackStack()
+            navController.popBackStack(PlayListAction.ReFetch)
         }
     }
 

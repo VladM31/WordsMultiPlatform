@@ -184,12 +184,12 @@ class SimpleNavController {
     /**
      * Get parameter returned from child screen via popBackStack()
      */
-    fun <T> getReturnParam(route: String = currentRoute): T? {
-        @Suppress("UNCHECKED_CAST")
-        val param = returnParams[route] as? T
-        // Clear after reading to prevent stale data
-        returnParams.remove(route)
-        return param
+    inline fun <reified T> getReturnParam(route: String = currentRoute): T? {
+        return getRawReturnParam(route) as? T
+    }
+
+    fun getRawReturnParam(route: String): Any? {
+        return returnParams.remove(route)
     }
 
     /**

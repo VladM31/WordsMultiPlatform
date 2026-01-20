@@ -5,5 +5,5 @@ import vm.words.ua.core.domain.models.filters.Queryable
 
 @Serializable
 data class DeletePlayListFilter(
-    val id: String
+    val ids: List<String>
 ) : Queryable

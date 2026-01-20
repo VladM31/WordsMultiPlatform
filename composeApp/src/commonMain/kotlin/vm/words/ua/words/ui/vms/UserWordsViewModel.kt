@@ -87,10 +87,7 @@ class UserWordsViewModel(
                 }
 
             pinPlayListManager.pin(pins)
-            playListManager.runCatching {
-                findBy(PlayListFilter())
-            }
-            delay(1000)
+            prepare()
 
             mutableState.value = state.value.copy(
                 selectedWords = emptySet(),
@@ -101,6 +98,30 @@ class UserWordsViewModel(
                 openPlayList = null
             )
         }
+    }
+
+    private suspend fun prepare() {
+        repeat(3) {
+            val result = playListManager.runCatching {
+                findBy(PlayListFilter())
+            }
+            if (result.isFailure) {
+                delay(1000)
+                return@repeat
+            }
+            val playLists = result.getOrThrow().content
+            if (playLists.isNotEmpty()) {
+                delay(1000)
+                return@repeat
+            }
+            val firstPlayList = playLists[0]
+            if (firstPlayList.words.isEmpty()) {
+                delay(1500)
+                return@repeat
+            }
+            return@repeat
+        }
+
     }
 
 

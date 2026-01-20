@@ -4,13 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
@@ -41,9 +35,12 @@ fun PlayListScreen(
 
     // Check for returned filter from PlayListFilterScreen
     LaunchedEffect(navController.currentRoute) {
-        val returnedFilter = navController.getReturnParam<PlayListCountFilter>()
-        if (returnedFilter != null) {
-            viewModel.sent(PlayListAction.UpdateFilter(returnedFilter))
+        val returnValue = navController.getReturnParam<Any>() ?: return@LaunchedEffect
+        (returnValue as? PlayListCountFilter)?.let {
+            viewModel.sent(PlayListAction.UpdateFilter(it))
+        }
+        (returnValue as? PlayListAction)?.let {
+            viewModel.sent(action = it)
         }
     }
 

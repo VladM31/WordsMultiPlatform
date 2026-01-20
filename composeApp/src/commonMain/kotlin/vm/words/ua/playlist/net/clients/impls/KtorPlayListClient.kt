@@ -5,16 +5,15 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.datetime.Instant
-import vm.words.ua.core.domain.models.*
 import vm.words.ua.core.config.AppRemoteConfig
+import vm.words.ua.core.domain.models.PagedModels
 import vm.words.ua.core.net.responds.PagedRespond
+import vm.words.ua.playlist.domain.models.PlayList
+import vm.words.ua.playlist.domain.models.PlayList.PinnedWord
+import vm.words.ua.playlist.domain.models.PlayListCount
 import vm.words.ua.playlist.domain.models.filters.DeletePlayListFilter
 import vm.words.ua.playlist.domain.models.filters.PlayListCountFilter
 import vm.words.ua.playlist.domain.models.filters.PlayListFilter
-import vm.words.ua.playlist.domain.models.PlayList.PinnedWord
-import vm.words.ua.playlist.domain.models.PlayList
-import vm.words.ua.playlist.domain.models.PlayListCount
-
 import vm.words.ua.playlist.net.clients.PlayListClient
 import vm.words.ua.playlist.net.models.requests.PlayListGradeRequest
 import vm.words.ua.playlist.net.models.requests.SavePlayListRequest
@@ -107,7 +106,9 @@ class KtorPlayListClient(
         try {
             client.delete("$baseUrl/words-api/play-list/delete") {
                 header("Authorization", token)
-                parameter("id", filter.id)
+                filter.toQueryMap().forEach {
+                    parameter(it.key, it.value)
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()

@@ -38,7 +38,7 @@ class PlayListDetailsViewModel(
     private fun handleDelete() {
         viewModelScope.launch {
             try {
-                playListManager.delete(DeletePlayListFilter(state.value.id))
+                playListManager.delete(DeletePlayListFilter(listOf(state.value.id)))
             } catch (e: Exception) {
                 e.printStackTrace()
             }
