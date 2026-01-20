@@ -30,7 +30,8 @@ internal val viewModelWordsModule = DI.Module("viewModelWordsModule") {
     bind<UserWordsViewModel>() with factory {
         UserWordsViewModel(
             userWordManager = instance(),
-            pinPlayListManager = instance()
+            pinPlayListManager = instance(),
+            playListManager = instance()
         )
     }
 

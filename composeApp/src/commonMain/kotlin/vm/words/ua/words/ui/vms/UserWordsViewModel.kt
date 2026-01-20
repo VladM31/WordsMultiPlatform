@@ -3,19 +3,23 @@ package vm.words.ua.words.ui.vms
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import vm.words.ua.core.ui.models.ErrorMessage
 import vm.words.ua.playlist.domain.managers.PinPlayListManager
+import vm.words.ua.playlist.domain.managers.PlayListManager
 import vm.words.ua.playlist.domain.models.PinPlayList
+import vm.words.ua.playlist.domain.models.filters.PlayListFilter
 import vm.words.ua.words.domain.managers.UserWordManager
 import vm.words.ua.words.ui.actions.UserWordsAction
 import vm.words.ua.words.ui.states.UserWordsState
 
 class UserWordsViewModel(
     private val userWordManager: UserWordManager,
-    private val pinPlayListManager: PinPlayListManager
+    private val pinPlayListManager: PinPlayListManager,
+    private val playListManager: PlayListManager
 ) : ViewModel() {
 
     private val mutableState: MutableStateFlow<UserWordsState> = MutableStateFlow(UserWordsState())
@@ -83,6 +87,10 @@ class UserWordsViewModel(
                 }
 
             pinPlayListManager.pin(pins)
+            playListManager.runCatching {
+                findBy(PlayListFilter())
+            }
+            delay(1000)
 
             mutableState.value = state.value.copy(
                 selectedWords = emptySet(),
