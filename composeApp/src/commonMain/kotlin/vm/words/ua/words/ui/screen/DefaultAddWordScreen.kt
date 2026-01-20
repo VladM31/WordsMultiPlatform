@@ -105,7 +105,7 @@ fun DefaultAddWordScreen(
                         items = Language.entries.filter { it != Language.UNDEFINED },
                         label = "Original language",
                         toLabel = { it.titleCase },
-                        showNone = true,
+                        showNone = false,
                         noneLabel = "",
                         onSelect = { viewModel.sent(DefaultAddWordAction.SetOriginalLang(it ?: Language.ENGLISH)) }
                     )
@@ -123,7 +123,7 @@ fun DefaultAddWordScreen(
                         items = Language.entries.filter { it != Language.UNDEFINED },
                         label = "Translate language",
                         toLabel = { it.titleCase },
-                        showNone = true,
+                        showNone = false,
                         noneLabel = "",
                         onSelect = {
                             viewModel.sent(
@@ -147,7 +147,7 @@ fun DefaultAddWordScreen(
                         items = CEFR.entries,
                         label = "CEFR Level",
                         toLabel = { it.name },
-                        showNone = true,
+                        showNone = false,
                         noneLabel = "",
                         onSelect = { viewModel.sent(DefaultAddWordAction.SetCefr(it ?: CEFR.A1)) }
                     )

@@ -141,7 +141,7 @@ fun TelegramSignUpScreen(
                             items = Currency.entries.toList(),
                             label = "Currency",
                             toLabel = { it.name },
-                            showNone = true,
+                            showNone = false,
                             noneLabel = "",
                             onSelect = { viewModel.sent(TelegramSignUpAction.SetCurrency(it ?: Currency.USD)) },
                             modifier = Modifier.viewHint(
