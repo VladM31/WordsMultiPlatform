@@ -15,8 +15,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
+import vm.words.ua.core.ui.components.AdditionalButtonTooltip
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.CenteredLoader
+import vm.words.ua.core.ui.components.TooltipPosition
 import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.exercise.domain.mappers.toScreen
@@ -29,6 +31,7 @@ import vm.words.ua.exercise.ui.vm.ExerciseSelectionViewModel
 import vm.words.ua.navigation.SimpleNavController
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.question
+import kotlin.time.Duration.Companion.seconds
 
 
 @Composable
@@ -80,6 +83,15 @@ fun ExerciseSelectionScreen(
             showAdditionalButton = state.canRecommendExercises,
             onAdditionalClick = {
                 viewModel.sent(ExerciseSelectAction.RecommendExercises)
+            },
+            additionalButtonTooltip = if (state.canRecommendExercises) {
+                AdditionalButtonTooltip(
+                    text = "Recommend best exercises",
+                    duration = 5.seconds,
+                    position = TooltipPosition.LEFT
+                )
+            } else {
+                null
             }
         )
 
