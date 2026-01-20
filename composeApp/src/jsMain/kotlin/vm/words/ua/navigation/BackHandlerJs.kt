@@ -53,7 +53,7 @@ actual fun registerBackHandler(navController: SimpleNavController) {
     val onKeyDown: (Event) -> Unit = { ev ->
         val ke = ev as KeyboardEvent
         val key = ke.key
-        if (key == "Backspace" || (ke.altKey && key == "ArrowLeft") || key == "Escape") {
+        if ((ke.altKey && key == "ArrowLeft") || key == "Escape") {
             try {
                 if (navController.isLastScreen.not()){
                     val handled = navController.popBackStack()

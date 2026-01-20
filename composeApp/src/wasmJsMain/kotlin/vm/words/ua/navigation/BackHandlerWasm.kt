@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import kotlinx.browser.window
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.KeyboardEvent
-import kotlin.js.ExperimentalWasmJsInterop
 
 private var wasmCleanup: (() -> Unit)? = null
 
@@ -66,7 +65,7 @@ actual fun registerBackHandler(navController: SimpleNavController) {
     val onKeyDown: (Event) -> Unit = { ev ->
         val ke = ev as KeyboardEvent
         val key = ke.key
-        if (key == "Backspace" || (ke.altKey && key == "ArrowLeft") || key == "Escape") {
+        if ((ke.altKey && key == "ArrowLeft") || key == "Escape") {
             try {
                 if (navController.isLastScreen.not()){
                     val handled = navController.popBackStack()
