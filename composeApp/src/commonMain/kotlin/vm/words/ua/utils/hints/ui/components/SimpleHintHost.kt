@@ -93,7 +93,7 @@ fun SimpleHintHost(
                         HintPosition.CENTER -> Alignment.Center
                         HintPosition.BOTTOM -> Alignment.BottomCenter
                     }
-                )
+                ).clickable { onNext() }
             )
         }
     }
