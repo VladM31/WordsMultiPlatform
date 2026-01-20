@@ -4,8 +4,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
+import androidx.compose.ui.unit.toSize
 import vm.words.ua.utils.hints.domain.models.HintPosition
 
 interface ViewHintStep {
@@ -42,6 +43,7 @@ fun Modifier.viewHint(
     visible: Boolean,
 ): Modifier = composed {
     val controller = LocalSimpleHintController.current
+    val hostOffset = LocalSimpleHintHostOffset.current
     var lastRect by remember { mutableStateOf<Rect?>(null) }
 
     LaunchedEffect(text, position, visible) {
@@ -56,7 +58,15 @@ fun Modifier.viewHint(
 
     this.then(
         Modifier.onGloballyPositioned { coordinates ->
-            val rect = coordinates.boundsInRoot()
+            // Get position in window and subtract host offset to get relative position
+            val absolutePosition = coordinates.positionInWindow()
+            val size = coordinates.size.toSize()
+            val rect = Rect(
+                left = absolutePosition.x - hostOffset.x,
+                top = absolutePosition.y - hostOffset.y,
+                right = absolutePosition.x - hostOffset.x + size.width,
+                bottom = absolutePosition.y - hostOffset.y + size.height
+            )
             lastRect = rect
             if (visible && controller != null) {
                 controller.updateAnchor(rect)
