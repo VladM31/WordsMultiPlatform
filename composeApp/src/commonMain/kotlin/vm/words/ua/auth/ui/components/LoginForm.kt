@@ -149,7 +149,8 @@ private fun GoogleSignInButton(
         modifier = modifier
             .size(iconSize)
             .background(AppTheme.PrimaryColor, shape = CircleShape)
-            .clickable { onClick() },
+            .clickable { onClick() }
+            .viewHint(LoginScreenHintStep.GMAIL_LOGIN_BUTTON, currentHintStep),
         contentAlignment = Alignment.Center
     ) {
         // Using Material Icon for Google logo
@@ -158,7 +159,6 @@ private fun GoogleSignInButton(
             contentDescription = "Google Sign-In",
             tint = AppTheme.PrimaryBack,
             modifier = Modifier.size(iconSize * 0.7f)
-                .viewHint(LoginScreenHintStep.GMAIL_LOGIN_BUTTON, currentHintStep)
         )
     }
 }
