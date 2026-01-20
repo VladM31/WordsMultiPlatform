@@ -29,7 +29,7 @@ fun HomeScreen(
     val hintController = createHomeScreenHintController()
     val isOnline = hasInternet()
 
-    val buttons = remember(isOnline) {
+    val buttons = remember(isOnline, hintController.currentStep) {
         listOf(
             GridButtonItem(
                 text = "Words",
