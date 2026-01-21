@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import kotlinx.coroutines.*
 
 class SimpleNavController {
-    var currentRoute by mutableStateOf<String>("loader")
+    var currentRoute by mutableStateOf("loader")
         private set
 
     private val backStack = mutableListOf<String>()
