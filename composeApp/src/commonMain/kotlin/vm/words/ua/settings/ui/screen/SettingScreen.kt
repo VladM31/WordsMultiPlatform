@@ -34,7 +34,9 @@ fun SettingScreen(
             GridButtonItem("Plan") {
                 navController.navigate(Screen.LeaningPlan)
             },
-            GridButtonItem("Profile", isAvailable = false),
+            GridButtonItem("Profile") {
+                navController.navigate(Screen.Profile)
+            },
             GridButtonItem("Policy") {
                 navController.navigate(Screen.Policy)
             },

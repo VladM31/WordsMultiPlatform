@@ -5,6 +5,7 @@ import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.ScreenProvider
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.settings.ui.screen.PolicyScreen
+import vm.words.ua.settings.ui.screen.ProfileScreen
 import vm.words.ua.settings.ui.screen.SettingScreen
 
 class SettingScreenProvider : ScreenProvider {
@@ -20,6 +21,10 @@ class SettingScreenProvider : ScreenProvider {
 
             Screen.Policy.route -> {
                 PolicyScreen(navController = navController)
+            }
+
+            Screen.Profile.route -> {
+                ProfileScreen(navController = navController)
             }
 
             else -> {

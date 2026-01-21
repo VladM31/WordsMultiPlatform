@@ -26,6 +26,7 @@ class KrotUserClient(
 
             response.status.isSuccess()
         } catch (e: Exception) {
+            e.printStackTrace()
             false
         }
     }
