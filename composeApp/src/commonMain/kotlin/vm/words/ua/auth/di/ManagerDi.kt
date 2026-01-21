@@ -5,10 +5,7 @@ import org.kodein.di.bind
 import org.kodein.di.instance
 import org.kodein.di.singleton
 import vm.words.ua.auth.domain.managers.*
-import vm.words.ua.auth.domain.managers.impls.AuthHistoryManagerImpl
-import vm.words.ua.auth.domain.managers.impls.AuthManagerImpl
-import vm.words.ua.auth.domain.managers.impls.GoogleAuthManagerImpl
-import vm.words.ua.auth.domain.managers.impls.TelegramAuthManagerImpl
+import vm.words.ua.auth.domain.managers.impls.*
 
 internal val managerDi = DI.Module("manager") {
     // HTTP клиент (singleton)
@@ -37,6 +34,13 @@ internal val managerDi = DI.Module("manager") {
             googleApiManager = instance(),
             googleAuthClient = instance(),
             userCacheManager = instance()
+        )
+    }
+
+    bind<UserManager>() with singleton {
+        UserManagerImpl(
+            userCacheManager = instance(),
+            userClient = instance()
         )
     }
 }
