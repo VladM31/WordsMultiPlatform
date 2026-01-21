@@ -80,8 +80,7 @@ class SharedUserCacheManager(
         settings.remove(TOKEN_KEY)
         analytics.logEvent(
             AnalyticsEvents.LOGOUT, mapOf(
-                "reason" to "user_initiated",
-                "phone_number" to (mutableUserFlow.value?.phoneNumber ?: "unknown")
+                "reason" to "user_initiated"
             )
         )
         mutableUserFlow.value = null

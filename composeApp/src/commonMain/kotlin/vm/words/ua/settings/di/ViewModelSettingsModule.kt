@@ -6,6 +6,7 @@ import org.kodein.di.factory
 import org.kodein.di.instance
 import vm.words.ua.settings.ui.vm.InstructionViewModel
 import vm.words.ua.settings.ui.vm.PolicyViewModel
+import vm.words.ua.settings.ui.vm.ProfileViewModel
 
 internal val viewModelSettingsModule = DI.Module("viewModelSettingsModule") {
     bind<PolicyViewModel>() with factory {
@@ -17,6 +18,13 @@ internal val viewModelSettingsModule = DI.Module("viewModelSettingsModule") {
     bind<InstructionViewModel>() with factory {
         InstructionViewModel(
             byteContentManager = instance()
+        )
+    }
+
+    bind<ProfileViewModel>() with factory {
+        ProfileViewModel(
+            userCacheManager = instance(),
+            userManager = instance()
         )
     }
 }
