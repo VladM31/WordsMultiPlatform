@@ -66,14 +66,14 @@ fun WordDetailsScreen(
     val viewModel = rememberInstance<WordDetailsViewModel>()
     val state by viewModel.state.collectAsState()
 
-    LaunchedEffect(Unit) {
-        viewModel.sent(WordDetailsAction.Init(userWord, word))
-    }
-
     LaunchedEffect(state.isDeleted) {
         if (state.isDeleted) {
             navController.popBackStack(UserWordsAction.ReFetch)
         }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.sent(WordDetailsAction.Init(userWord, word))
     }
 
     Box(

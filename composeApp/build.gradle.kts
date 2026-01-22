@@ -214,8 +214,8 @@ android {
         applicationId = "vm.words.ua"
         minSdk = 24
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.0.1"
     }
 
     packaging {
@@ -245,7 +245,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "vm.words.ua"
-            packageVersion = "1.0.0"
+            packageVersion = "1.0.1"
 
             macOS {
                 // путь до .icns относительно этого build.gradle.kts

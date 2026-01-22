@@ -88,4 +88,5 @@ This project is distributed under a proprietary license. See the `LICENSE` file 
 
 - `LICENSE` — Proprietary License Agreement (© 2025 VladM31). Use is permitted for personal, educational, or research
   purposes; commercial use requires written permission. For commercial licensing inquiries contact
-  javacamp2021@gmail.com
+  study.words.go@gmail.com
+
