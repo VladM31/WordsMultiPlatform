@@ -45,6 +45,7 @@ import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.words.domain.models.UserWord
 import vm.words.ua.words.domain.models.Word
+import vm.words.ua.words.ui.actions.UserWordsAction
 import vm.words.ua.words.ui.actions.WordDetailsAction
 import vm.words.ua.words.ui.bundles.WordDetailsBundle
 import vm.words.ua.words.ui.states.WordDetailsState
@@ -71,7 +72,7 @@ fun WordDetailsScreen(
 
     LaunchedEffect(state.isDeleted) {
         if (state.isDeleted) {
-            navController.popBackStack()
+            navController.popBackStack(UserWordsAction.ReFetch)
         }
     }
 
