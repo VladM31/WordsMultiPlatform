@@ -84,7 +84,7 @@ fun WordDetailsScreen(
             AppToolBar(
                 title = state.word?.original ?: "Word Details",
                 showBackButton = true,
-                showAdditionalButton = true,
+                showAdditionalButton = userWord != null,
                 onAdditionalClick = { viewModel.sent(WordDetailsAction.Delete) },
                 onBackClick = {
                     navController.popBackStack()
