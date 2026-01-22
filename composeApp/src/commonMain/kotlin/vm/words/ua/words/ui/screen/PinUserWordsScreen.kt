@@ -83,7 +83,7 @@ fun PinUserWordsScreen(
             onBackClick = { navController.popBackStack() }
         )
 
-        if (state.isLoading) {
+        if (state.isLoading || state.isInited.not()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -91,15 +91,6 @@ fun PinUserWordsScreen(
                 CircularProgressIndicator(color = AppTheme.PrimaryGreen)
             }
             return@Column
-        }
-
-        if (state.isInited.not()) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(color = AppTheme.PrimaryGreen)
-            }
         }
 
         if (state.words.isEmpty()) {
@@ -178,6 +169,7 @@ private fun TopMenu(
                     text = word.original,
                     color = AppTheme.PrimaryColor,
                     fontSize = rememberFontSize() * 1.4f,
+                    lineHeight = rememberFontSize() * 1.5f,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
