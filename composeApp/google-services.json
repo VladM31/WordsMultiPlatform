@@ -7,42 +7,6 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1005445939198:android:16786a91e519e4381c8aaf",
-        "android_client_info": {
-          "package_name": "com.generagames.happy.town.farm.wordandroid"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "1005445939198-rlkom295h4c9rmuf4jd43cv87nm9qpsk.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCkrHYdrE_LZRNYupOShlxcUj8SKOhGLX8"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "1005445939198-rlkom295h4c9rmuf4jd43cv87nm9qpsk.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "1005445939198-ksp13b87meip2vriimojmh87k11qakvu.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "vm.words.ua"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:1005445939198:android:813feacb0d9734dd1c8aaf",
         "android_client_info": {
           "package_name": "vm.words.ua"
@@ -50,11 +14,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "1005445939198-cg85dh8q7h92qig6ji1u6ltunnscmv4p.apps.googleusercontent.com",
+          "client_id": "1005445939198-o2320eisiq53i6sd2psvl7fv1scnsn3a.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "vm.words.ua",
             "certificate_hash": "3ed1308c0a7c6a16fff566288d896886bd745ebc"
+          }
+        },
+        {
+          "client_id": "1005445939198-vmrp5ch50rsan7s9pn5teugqlo6s26fa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "vm.words.ua",
+            "certificate_hash": "462a3cf496e2ca5e2b5942d533b23803489ac2f8"
           }
         },
         {
