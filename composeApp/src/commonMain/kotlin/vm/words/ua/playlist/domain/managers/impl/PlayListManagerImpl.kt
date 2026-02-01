@@ -91,7 +91,7 @@ class PlayListManagerImpl(
     private fun PublicPlayListCountRespond.toPublicPlayListCountDto(): PublicPlayListCountDto = PublicPlayListCountDto(
         id = id,
         name = name,
-        createdAt = createdAt,
+        createdAt = Instant.parse(createdAt),
         count = count,
         tags = tags,
         cefrs = cefrs,

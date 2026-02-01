@@ -5,12 +5,12 @@ import vm.words.ua.core.domain.models.enums.CEFR
 import vm.words.ua.core.domain.models.enums.Language
 
 data class PlayListCount(
-    val id: String,
-    val name: String,
-    val createdAt: Instant,
-    val count: Long,
-    val tags: Set<String>?,
-    val cefrs: Set<CEFR>?,
-    val language: Language?,
-    val translateLanguage: Language?
-)
+    override val id: String,
+    override val name: String,
+    override val createdAt: Instant,
+    override val count: Long,
+    override val tags: Set<String>?,
+    override val cefrs: Set<CEFR>?,
+    override val language: Language?,
+    override val translateLanguage: Language?
+) : PlayListCountable
