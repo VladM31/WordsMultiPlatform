@@ -1,20 +1,22 @@
 package vm.words.ua.playlist.domain.managers.impl
 
+import kotlinx.datetime.Instant
 import vm.words.ua.core.domain.managers.UserCacheManager
 import vm.words.ua.core.domain.models.PagedModels
-import vm.words.ua.playlist.domain.models.PlayList
-import vm.words.ua.playlist.domain.models.PlayListCount
-import vm.words.ua.playlist.domain.models.PlayListGrade
-import vm.words.ua.playlist.domain.models.SavePlayList
-import vm.words.ua.playlist.domain.models.UpdatePlayList
+import vm.words.ua.playlist.domain.managers.PlayListManager
+import vm.words.ua.playlist.domain.models.*
+import vm.words.ua.playlist.domain.models.PlayList.PinnedWord
 import vm.words.ua.playlist.domain.models.filters.DeletePlayListFilter
 import vm.words.ua.playlist.domain.models.filters.PlayListCountFilter
 import vm.words.ua.playlist.domain.models.filters.PlayListFilter
-import vm.words.ua.playlist.domain.managers.PlayListManager
+import vm.words.ua.playlist.domain.models.filters.PublicPlayListCountFilter
 import vm.words.ua.playlist.net.clients.PlayListClient
-import vm.words.ua.playlist.net.models.requests.PlayListGradeRequest
-import vm.words.ua.playlist.net.models.requests.SavePlayListRequest
-import vm.words.ua.playlist.net.models.requests.UpdatePlayListRequest
+import vm.words.ua.playlist.net.models.requests.*
+import vm.words.ua.playlist.net.models.responses.PlayListCountRespond
+import vm.words.ua.playlist.net.models.responses.PlayListRespond
+import vm.words.ua.playlist.net.models.responses.PublicPlayListCountRespond
+import vm.words.ua.words.domain.models.UserWord
+import vm.words.ua.words.domain.models.Word
 
 class PlayListManagerImpl(
     private val playListClient: PlayListClient,
@@ -28,7 +30,9 @@ class PlayListManagerImpl(
     override suspend fun countBy(filter: PlayListCountFilter): PagedModels<PlayListCount> {
         return try {
             val result = playListClient.countBy(getToken(), filter)
-            result
+            PagedModels.of(result) {
+                it.toPlayListCount()
+            }
         } catch (e: Exception) {
             e.printStackTrace()
             PagedModels.empty()
@@ -37,12 +41,74 @@ class PlayListManagerImpl(
 
     override suspend fun findBy(filter: PlayListFilter): PagedModels<PlayList> {
         return try {
-            playListClient.findBy(getToken(), filter)
+            val result = playListClient.findBy(getToken(), filter)
+            PagedModels.of(result) {
+                it.toPlayList()
+            }
         } catch (e: Exception) {
             e.printStackTrace()
             PagedModels.empty()
         }
     }
+
+    override suspend fun findPublicBy(
+        filter: PublicPlayListCountFilter
+    ): PagedModels<PublicPlayListCountDto> {
+        return try {
+            val respond = playListClient.findPublicBy(
+                getToken(),
+                filter.toPublicPlayListCountRequest()
+            )
+            PagedModels.of(respond) {
+                it.toPublicPlayListCountDto()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            PagedModels.empty()
+        }
+
+    }
+
+    override suspend fun getAssignedPlaylists(): Set<AssignedPlaylistDto> {
+        return try {
+            val respond = playListClient.getAssignedPlaylists(
+                getToken()
+            )
+            respond.map { AssignedPlaylistDto(it.id) }.toSet()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptySet()
+        }
+    }
+
+    override suspend fun assignPlayLists(dto: AssignPlayListsDto) {
+        playListClient.assignPlayLists(
+            getToken(),
+            AssignPlayListsRequest(dto.playListIds)
+        )
+    }
+
+    private fun PublicPlayListCountRespond.toPublicPlayListCountDto(): PublicPlayListCountDto = PublicPlayListCountDto(
+        id = id,
+        name = name,
+        createdAt = createdAt,
+        count = count,
+        tags = tags,
+        cefrs = cefrs,
+        language = language,
+        translateLanguage = translateLanguage
+    )
+
+    private fun PublicPlayListCountFilter.toPublicPlayListCountRequest(): PublicPlayListCountRequest =
+        PublicPlayListCountRequest(
+            name = name,
+            tags = tags,
+            cefrs = cefrs,
+            language = language,
+            translateLanguage = translateLanguage,
+            page = page,
+            size = size
+        )
 
     override suspend fun save(playLists: List<SavePlayList>): Result<Unit> {
         return runCatching {
@@ -81,5 +147,64 @@ class PlayListManagerImpl(
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    private fun PlayListCountRespond.toPlayListCount(): PlayListCount {
+        return PlayListCount(
+            id = id,
+            name = name,
+            createdAt = Instant.parse(createdAt),
+            count = count,
+            tags = tags,
+            cefrs = cefrs,
+            language = language,
+            translateLanguage = translateLanguage
+        )
+    }
+
+    private fun PlayListRespond.toPlayList(): PlayList {
+        return PlayList(
+            id = id,
+            name = name,
+            createdAt = Instant.parse(createdAt),
+            words = words.map { it.toPinnedWord() },
+            tags = tags,
+            cefrs = cefrs,
+            language = language,
+            translateLanguage = translateLanguage
+        )
+    }
+
+    private fun PlayListRespond.PinnedWordResponse.toPinnedWord(): PinnedWord {
+        return PinnedWord(
+            learningGrade = learningGrade,
+            lastReadDate = Instant.parse(lastReadDate),
+            userWord = word.toUserWord()
+        )
+    }
+
+    private fun PlayListRespond.UserWordResponse.toUserWord(): UserWord {
+        return UserWord(
+            id = id,
+            learningGrade = learningGrade,
+            createdAt = Instant.parse(createdAt),
+            lastReadDate = Instant.parse(lastReadDate),
+            word = word.toWord()
+        )
+    }
+
+    private fun PlayListRespond.WordResponse.toWord(): Word {
+        return Word(
+            id = id,
+            original = original,
+            lang = lang,
+            translate = translate,
+            translateLang = translateLang,
+            cefr = cefr,
+            description = description,
+            category = category,
+            soundLink = soundLink,
+            imageLink = imageLink
+        )
     }
 }

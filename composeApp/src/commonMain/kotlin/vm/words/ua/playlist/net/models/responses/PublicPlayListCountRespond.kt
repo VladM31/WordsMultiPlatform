@@ -1,13 +1,14 @@
-package vm.words.ua.playlist.domain.models
+package vm.words.ua.playlist.net.models.responses
 
-import kotlinx.datetime.Instant
+import kotlinx.serialization.Serializable
 import vm.words.ua.core.domain.models.enums.CEFR
 import vm.words.ua.core.domain.models.enums.Language
 
-data class PlayListCount(
+@Serializable
+data class PublicPlayListCountRespond(
     val id: String,
     val name: String,
-    val createdAt: Instant,
+    val createdAt: String,
     val count: Long,
     val tags: Set<String>?,
     val cefrs: Set<CEFR>?,

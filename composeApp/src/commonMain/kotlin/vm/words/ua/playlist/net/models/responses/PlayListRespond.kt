@@ -11,7 +11,11 @@ data class PlayListRespond(
     val userId: String,
     val name: String,
     val createdAt: String,
-    val words: List<PinnedWordResponse>
+    val words: List<PinnedWordResponse>,
+    val tags: Set<String>?,
+    val cefrs: Set<CEFR>?,
+    val language: Language?,
+    val translateLanguage: Language?
 ) {
     @Serializable
     data class PinnedWordResponse(
