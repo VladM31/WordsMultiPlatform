@@ -38,14 +38,16 @@ fun PlayListItem(
     val enabled = playList.count > 0L
     val dateText = playList.createdAt.toFormatDateTime()
 
-    BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
-        val scaleFactor = getScaleFactor(maxWidth)
+    val scaleFactor = getScaleFactor()
 
-        val titleSize = rememberFontSize()
-        val iconSize = rememberIconSize() * 0.8f
-        val cardPadding = (16 * scaleFactor).dp
-        val horizontalPadding = (8 * scaleFactor).dp
-        val verticalPadding = (6 * scaleFactor).dp
+    val titleSize = rememberFontSize()
+    val iconSize = rememberIconSize() * 0.8f
+    val cardPadding = (16 * scaleFactor).dp
+    val horizontalPadding = (8 * scaleFactor).dp
+    val verticalPadding = (6 * scaleFactor).dp
+
+    BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
+
 
         // Check if we have tags or CEFRs to display
         val hasCefrs = playList.cefrs?.isNotEmpty() == true
@@ -179,13 +181,12 @@ fun PlayListItem(
                         return@Column
                     }
 
-                    // Tags section
 
                     FlowRow(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = cardPadding)
-                            .padding(top = 4.dp),
+                            .padding(top = 4.dp, bottom = 12.dp),
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
                         verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
@@ -212,7 +213,6 @@ fun PlayListItem(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(6.dp))
 
                 }
             }
