@@ -12,12 +12,11 @@ import vm.words.ua.playlist.net.models.responses.PublicPlayListCountRespond
 
 interface PlayListClient {
     suspend fun countBy(token: String, filter: PlayListCountFilter): PagedRespond<PlayListCountRespond>
-    suspend fun findBy(token: String, filter: PlayListFilter): PagedRespond<PlayListRespond>
+    suspend fun countBy(token: String, filter: PublicPlayListCountRequest): PagedRespond<PublicPlayListCountRespond>
 
-    suspend fun findPublicBy(
-        token: String,
-        filter: PublicPlayListCountRequest
-    ): PagedRespond<PublicPlayListCountRespond>
+    suspend fun findBy(token: String, filter: PlayListFilter): PagedRespond<PlayListRespond>
+    suspend fun findBy(token: String, filter: PublicPlayListGetRequest): PagedRespond<PlayListRespond>
+
 
     suspend fun getAssignedPlaylists(token: String): Set<AssignedPlaylistRespond>
     suspend fun assignPlayLists(token: String, req: AssignPlayListsRequest)

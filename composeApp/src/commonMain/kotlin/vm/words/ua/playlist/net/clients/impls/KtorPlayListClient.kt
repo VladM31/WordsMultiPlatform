@@ -51,7 +51,24 @@ class KtorPlayListClient(
         }
     }
 
-    override suspend fun findPublicBy(
+    override suspend fun findBy(
+        token: String,
+        filter: PublicPlayListGetRequest
+    ): PagedRespond<PlayListRespond> {
+        return try {
+            val response = client.get("$baseUrl/words-api/play-list/public") {
+                header("Authorization", token)
+                filter.toQueryMap().forEach { parameter(it.key, it.value) }
+            }
+
+            response.body<PagedRespond<PlayListRespond>>()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            PagedRespond.empty()
+        }
+    }
+
+    override suspend fun countBy(
         token: String,
         filter: PublicPlayListCountRequest
     ): PagedRespond<PublicPlayListCountRespond> {

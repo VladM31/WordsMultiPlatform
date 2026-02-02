@@ -55,7 +55,7 @@ class PlayListManagerImpl(
         filter: PublicPlayListCountFilter
     ): PagedModels<PublicPlayListCountDto> {
         return try {
-            val respond = playListClient.findPublicBy(
+            val respond = playListClient.countBy(
                 getToken(),
                 filter.toPublicPlayListCountRequest()
             )
