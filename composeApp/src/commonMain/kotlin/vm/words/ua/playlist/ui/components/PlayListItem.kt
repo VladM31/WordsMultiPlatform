@@ -178,13 +178,16 @@ fun PlayListItem(
                     if (hasCefrs.not() && hasTags.not()) {
                         return@Column
                     }
-                    Row(
+
+                    // Tags section
+
+                    FlowRow(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = cardPadding)
-                            .padding(bottom = 8.dp),
+                            .padding(top = 4.dp),
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         if (hasCefrs) {
                             Text(
@@ -209,11 +212,7 @@ fun PlayListItem(
                         }
                     }
 
-
-                    // Tags (always visible if present)
-
-
-                    // CEFR levels (always visible if present)
+                    Spacer(modifier = Modifier.height(6.dp))
 
                 }
             }
@@ -276,7 +275,8 @@ private fun CefrChip(cefr: String) {
             text = cefr,
             color = AppTheme.SecondaryColor,
             fontSize = rememberLabelFontSize() * 0.9,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 2.dp)
         )
     }
 }
@@ -295,7 +295,8 @@ private fun TagChip(tag: String) {
             text = tag,
             color = PlayListItemColors.AccentPrimary,
             fontSize = rememberLabelFontSize() * 0.9,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.padding(bottom = 2.dp)
         )
     }
 }
