@@ -6,10 +6,7 @@ import vm.words.ua.core.domain.models.PagedModels
 import vm.words.ua.playlist.domain.managers.PlayListManager
 import vm.words.ua.playlist.domain.models.*
 import vm.words.ua.playlist.domain.models.PlayList.PinnedWord
-import vm.words.ua.playlist.domain.models.filters.DeletePlayListFilter
-import vm.words.ua.playlist.domain.models.filters.PlayListCountFilter
-import vm.words.ua.playlist.domain.models.filters.PlayListFilter
-import vm.words.ua.playlist.domain.models.filters.PublicPlayListCountFilter
+import vm.words.ua.playlist.domain.models.filters.*
 import vm.words.ua.playlist.net.clients.PlayListClient
 import vm.words.ua.playlist.net.models.requests.*
 import vm.words.ua.playlist.net.models.responses.PlayListCountRespond
@@ -51,7 +48,27 @@ class PlayListManagerImpl(
         }
     }
 
-    override suspend fun findPublicBy(
+    override suspend fun findBy(filter: PublicPlayListFilter): PagedModels<PlayList> {
+        val req = PublicPlayListGetRequest(
+            ids = filter.ids,
+            name = filter.name,
+            sortField = filter.sortField,
+            asc = filter.asc,
+            page = filter.page,
+            size = filter.size
+        )
+        return try {
+            val result = playListClient.findBy(getToken(), req)
+            PagedModels.of(result) {
+                it.toPlayList()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            PagedModels.empty()
+        }
+    }
+
+    override suspend fun countBy(
         filter: PublicPlayListCountFilter
     ): PagedModels<PublicPlayListCountDto> {
         return try {

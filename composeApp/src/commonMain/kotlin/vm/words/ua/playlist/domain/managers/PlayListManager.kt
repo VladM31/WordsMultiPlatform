@@ -2,16 +2,16 @@ package vm.words.ua.playlist.domain.managers
 
 import vm.words.ua.core.domain.models.PagedModels
 import vm.words.ua.playlist.domain.models.*
-import vm.words.ua.playlist.domain.models.filters.DeletePlayListFilter
-import vm.words.ua.playlist.domain.models.filters.PlayListCountFilter
-import vm.words.ua.playlist.domain.models.filters.PlayListFilter
-import vm.words.ua.playlist.domain.models.filters.PublicPlayListCountFilter
+import vm.words.ua.playlist.domain.models.filters.*
 
 interface PlayListManager {
     suspend fun countBy(filter: PlayListCountFilter): PagedModels<PlayListCount>
-    suspend fun findBy(filter: PlayListFilter): PagedModels<PlayList>
+    suspend fun countBy(filter: PublicPlayListCountFilter): PagedModels<PublicPlayListCountDto>
 
-    suspend fun findPublicBy(filter: PublicPlayListCountFilter): PagedModels<PublicPlayListCountDto>
+
+    suspend fun findBy(filter: PlayListFilter): PagedModels<PlayList>
+    suspend fun findBy(filter: PublicPlayListFilter): PagedModels<PlayList>
+
     suspend fun getAssignedPlaylists(): Set<AssignedPlaylistDto>
     suspend fun assignPlayLists(dto: AssignPlayListsDto)
 
