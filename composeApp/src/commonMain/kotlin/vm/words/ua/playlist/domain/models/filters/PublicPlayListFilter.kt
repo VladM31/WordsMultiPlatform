@@ -6,8 +6,8 @@ import vm.words.ua.playlist.domain.models.enums.PlaylistSortField
 
 @Serializable
 data class PublicPlayListFilter(
-    val ids: Set<String>,
-    val name: String,
+    val ids: Set<String>?,
+    val name: String?,
     val sortField: PlaylistSortField,
     val asc: Boolean,
     val page: Int,

@@ -49,7 +49,7 @@ private object WordItemColors {
 fun WordItem(
     word: Word,
     userWord: UserWord? = null,
-    notSelectedIcon: ImageVector = Icons.Outlined.ShoppingCart,
+    notSelectedIcon: ImageVector? = Icons.Outlined.ShoppingCart,
     selectedIcon: ImageVector = Icons.Filled.Check,
     isSelected: Boolean, // Cart state (isInCart)
     onSelect: () -> Unit, // Cart toggle
@@ -187,13 +187,16 @@ fun WordItem(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 // Cart button
-                                SelectButton(
-                                    isSelected = isSelected,
-                                    onClick = onSelect,
-                                    size = iconSize * 1.8f,
-                                    notSelectedImage = notSelectedIcon,
-                                    selectedIcon = selectedIcon
-                                )
+                                notSelectedIcon?.let {
+                                    SelectButton(
+                                        isSelected = isSelected,
+                                        onClick = onSelect,
+                                        size = iconSize * 1.8f,
+                                        notSelectedImage = it,
+                                        selectedIcon = selectedIcon
+                                    )
+                                }
+
 
                                 // Open button
                                 OpenButton(
