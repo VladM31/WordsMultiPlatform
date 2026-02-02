@@ -92,6 +92,7 @@ class KtorPlayListClient(
     ) {
         val response = client.post("$baseUrl/words-api/play-list/assign") {
             header("Authorization", token)
+            contentType(ContentType.Application.Json)
             setBody(req)
         }
         if (response.status.isSuccess()) {

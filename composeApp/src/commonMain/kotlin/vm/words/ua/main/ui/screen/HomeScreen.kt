@@ -54,6 +54,7 @@ fun HomeScreen(
                     current = hintController.currentStep
                 )
             ) { navController.navigate(Screen.DefaultAddWord) },
+
             GridButtonItem(
                 text = "Instruction",
                 isAvailable = isOnline,
@@ -63,7 +64,11 @@ fun HomeScreen(
                 )
             ) {
                 navController.navigate(Screen.Instruction)
-            }
+            },
+            GridButtonItem(
+                text = "Explore Playlists",
+                isAvailable = isOnline
+            ) { navController.navigate(Screen.ExplorePlayLists) },
 
         )
     }

@@ -89,9 +89,17 @@ fun ButtonsGrid(
                             shape = RoundedCornerShape(8.dp),
                             modifier = item.modifier
                                 .width(itemWidth)
-                                .heightIn(min = minButtonHeight)
+                                .heightIn(min = minButtonHeight),
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 12.dp)
                         ) {
-                            Text(text = item.text, fontSize = textSize)
+                            Text(
+                                text = item.text,
+                                fontSize = textSize,
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                                maxLines = 2,
+                                softWrap = true,
+                                lineHeight = textSize * 1.2f
+                            )
                         }
                     }
 

@@ -28,6 +28,10 @@ sealed class Screen(val route: String) {
     data object PlayListFilter : Screen("playlist_filter")
     data object PlayListDetails : Screen("playlist_details")
 
+    data object ExplorePlayLists : Screen("explore_playlists")
+    data object ExplorePlayListsFilter : Screen("explore_playlists_filter")
+    data object PublicPlayListDetails : Screen("public_playlist_details")
+
     data object ExerciseSelection : Screen("exercise_selection")
 
     data object OptionDescriptionByWords : Screen("option_description_by_words")
