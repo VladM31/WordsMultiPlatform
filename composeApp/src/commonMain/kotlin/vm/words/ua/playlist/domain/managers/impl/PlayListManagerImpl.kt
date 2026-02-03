@@ -124,7 +124,9 @@ class PlayListManagerImpl(
             language = language,
             translateLanguage = translateLanguage,
             page = page,
-            size = size
+            size = size,
+            sortField = sortField,
+            asc = asc
         )
 
     override suspend fun save(playLists: List<SavePlayList>): Result<Unit> {

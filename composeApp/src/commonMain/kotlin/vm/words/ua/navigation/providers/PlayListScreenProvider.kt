@@ -4,9 +4,7 @@ import androidx.compose.runtime.Composable
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.ScreenProvider
 import vm.words.ua.navigation.SimpleNavController
-import vm.words.ua.playlist.ui.screen.PlayListDetailsScreen
-import vm.words.ua.playlist.ui.screen.PlayListFilterScreen
-import vm.words.ua.playlist.ui.screen.PlayListScreen
+import vm.words.ua.playlist.ui.screen.*
 
 class PlayListScreenProvider : ScreenProvider {
     @Composable
@@ -25,6 +23,18 @@ class PlayListScreenProvider : ScreenProvider {
 
             Screen.PlayListDetails.route -> {
                 PlayListDetailsScreen(navController = navController)
+            }
+
+            Screen.ExplorePlayLists.route -> {
+                ExplorePlayListsScreen(navController = navController)
+            }
+
+            Screen.ExplorePlayListsFilter.route -> {
+                ExplorePlayListsFilterScreen(navController = navController)
+            }
+
+            Screen.PublicPlayListDetails.route -> {
+                PublicPlayListDetailsScreen(navController = navController)
             }
 
             else -> {
