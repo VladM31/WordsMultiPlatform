@@ -31,7 +31,7 @@ fun ButtonsGrid(
     items: List<GridButtonItem>,
     modifier: Modifier = Modifier,
     baseButtonWidth: Dp = 300.dp,
-    baseTextSize: Float = 40f
+    baseTextSize: Float = 35f
 ) {
     val scrollState = rememberScrollState()
 
