@@ -7,14 +7,13 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.PickerResultLauncher
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
@@ -28,6 +27,8 @@ import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
+import vm.words.ua.playlist.domain.models.bundles.PlayListDetailsBundle
+import vm.words.ua.playlist.ui.components.SelectPlayListDialog
 import vm.words.ua.words.ui.actions.PinUserWordsAction
 import vm.words.ua.words.ui.bundles.PinUserWordsBundle
 import vm.words.ua.words.ui.components.SelectImageMenu
@@ -45,7 +46,7 @@ fun PinUserWordsScreen(
 
     val bundle = navController.getParamOrThrow<PinUserWordsBundle>()
 
-
+    var showPlayListSelector by remember { mutableStateOf(false) }
 
     // File pickers for current word
     val imagePicker = rememberFilePickerLauncher(
@@ -65,10 +66,21 @@ fun PinUserWordsScreen(
         viewModel.sent(PinUserWordsAction.Load(bundle.words))
     }
 
-    // Navigate back when pinning is complete
+    // Navigate to UserWords when pinning is complete
     LaunchedEffect(state.isEnd) {
         if (state.isEnd) {
             navController.navigateAndClear(Screen.UserWords, Screen.Home)
+        }
+    }
+
+    // Navigate to PlayList details when words added to playlist
+    LaunchedEffect(state.navigateToPlayListId) {
+        state.navigateToPlayListId?.let { playListId ->
+            navController.navigateAndClear(Screen.Home)
+            navController.navigate(
+                Screen.PlayListDetails,
+                PlayListDetailsBundle(playListId)
+            )
         }
     }
 
@@ -82,6 +94,29 @@ fun PinUserWordsScreen(
             showBackButton = true,
             onBackClick = { navController.popBackStack() }
         )
+
+        // Show completion menu dialog when pinning is done
+        if (state.showCompletionMenu) {
+            CompletionMenuDialog(
+                onGoToUserWords = {
+                    viewModel.sent(PinUserWordsAction.GoToUserWords)
+                },
+                onAddToPlaylist = {
+                    showPlayListSelector = true
+                }
+            )
+        }
+
+        // Show playlist selector dialog
+        if (showPlayListSelector) {
+            SelectPlayListDialog(
+                onDismiss = { showPlayListSelector = false },
+                onPin = { playlistId ->
+                    viewModel.sent(PinUserWordsAction.AddToPlayList(playlistId))
+                    showPlayListSelector = false
+                }
+            )
+        }
 
         if (state.isLoading || state.isInited.not()) {
             Box(
@@ -300,6 +335,78 @@ private fun WordNavigator(
             )
         ) {
             Text(rightArrow, fontSize = rememberFontSize())
+        }
+    }
+}
+
+@Composable
+private fun CompletionMenuDialog(
+    onGoToUserWords: () -> Unit,
+    onAddToPlaylist: () -> Unit
+) {
+    Dialog(onDismissRequest = { }) {
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            color = AppTheme.PrimaryBack
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(24.dp)
+                    .widthIn(min = 280.dp, max = 400.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Text(
+                    text = "Words Pinned Successfully!",
+                    color = AppTheme.PrimaryGreen,
+                    fontSize = rememberFontSize() * 1.2f,
+                    lineHeight = rememberFontSize() * 1.3,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+
+                Text(
+                    text = "What would you like to do next?",
+                    color = AppTheme.PrimaryColor,
+                    fontSize = rememberFontSize(),
+                    lineHeight = rememberFontSize() * 1.1,
+                    textAlign = TextAlign.Center
+                )
+
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Button(
+                        onClick = onAddToPlaylist,
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = AppTheme.PrimaryGreen
+                        ),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text(
+                            text = "Add to Playlist",
+                            color = AppTheme.PrimaryBack,
+                            fontSize = rememberFontSize()
+                        )
+                    }
+
+                    OutlinedButton(
+                        onClick = onGoToUserWords,
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = AppTheme.PrimaryGreen
+                        ),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text(
+                            text = "Go to My Words",
+                            fontSize = rememberFontSize()
+                        )
+                    }
+                }
+            }
         }
     }
 }

@@ -19,6 +19,10 @@ data class PinUserWordsState(
 
     val isInited: Boolean = false,
     override val isEnd: Boolean = false,
+
+    val showCompletionMenu: Boolean = false,
+    val pinnedUserWordIds: List<String> = emptyList(),
+    val navigateToPlayListId: String? = null,
 ) : EndetableState {
 
     val hasFiles get() = image != null || sound != null

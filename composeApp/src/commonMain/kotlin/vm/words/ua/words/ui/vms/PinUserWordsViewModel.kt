@@ -3,16 +3,13 @@ package vm.words.ua.words.ui.vms
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.vinceglb.filekit.readBytes
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import vm.words.ua.core.domain.managers.ByteContentManager
 import vm.words.ua.core.domain.models.ByteContent
+import vm.words.ua.playlist.domain.managers.PinPlayListManager
+import vm.words.ua.playlist.domain.models.PinPlayList
 import vm.words.ua.subscribes.domain.managers.SubscribeCacheManager
 import vm.words.ua.words.domain.managers.SoundManager
 import vm.words.ua.words.domain.managers.UserWordManager
@@ -28,7 +25,8 @@ class PinUserWordsViewModel(
     private val userWordManager: UserWordManager,
     private val subscribeCacheManager: SubscribeCacheManager,
     private val byteContentManager: ByteContentManager,
-    private val soundManager: SoundManager
+    private val soundManager: SoundManager,
+    private val pinPlayListManager: PinPlayListManager
 ) : ViewModel() {
 
     private val mutableState: MutableStateFlow<PinUserWordsState> =
@@ -79,7 +77,13 @@ class PinUserWordsViewModel(
                 handlePlaySound()
             }
 
+            is PinUserWordsAction.AddToPlayList -> {
+                handleAddToPlayList(action.playListId)
+            }
 
+            is PinUserWordsAction.GoToUserWords -> {
+                handleGoToUserWords()
+            }
         }
     }
 
@@ -115,14 +119,16 @@ class PinUserWordsViewModel(
         }
 
         viewModelScope.launch(Dispatchers.Default) {
-            state.value.words.toPinWords().runCatching {
+            val pinnedWords = state.value.words.toPinWords().runCatching {
                 userWordManager.pin(this@runCatching)
-            }.onFailure {
+            }.getOrElse {
                 println("PinUserWordsViewModel - handlePin: ${it.message}")
+                emptyList()
             }
 
             mutableState.value = state.value.copy(
-                isEnd = true,
+                showCompletionMenu = true,
+                pinnedUserWordIds = pinnedWords.map { it.id },
                 isLoading = false
             )
         }
@@ -136,6 +142,36 @@ class PinUserWordsViewModel(
                 image = it.customImage
             )
         }
+    }
+
+    private fun handleAddToPlayList(playListId: String) {
+        if (state.value.pinnedUserWordIds.isEmpty()) return
+
+        setNewValue { it.copy(isLoading = true) }
+
+        viewModelScope.launch(Dispatchers.Default) {
+            try {
+                val pins = state.value.pinnedUserWordIds.map { wordId ->
+                    PinPlayList(
+                        playListId = playListId,
+                        wordId = wordId
+                    )
+                }
+                pinPlayListManager.pin(pins)
+
+                mutableState.value = state.value.copy(
+                    navigateToPlayListId = playListId,
+                    isLoading = false
+                )
+            } catch (e: Exception) {
+                println("PinUserWordsViewModel - handleAddToPlayList: ${e.message}")
+                mutableState.value = state.value.copy(isLoading = false)
+            }
+        }
+    }
+
+    private fun handleGoToUserWords() {
+        mutableState.value = state.value.copy(isEnd = true)
     }
 
     @OptIn(ExperimentalUuidApi::class)

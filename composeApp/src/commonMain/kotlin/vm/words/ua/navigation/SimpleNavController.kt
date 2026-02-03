@@ -91,7 +91,7 @@ class SimpleNavController {
         clearViewModelStoreOwner(poppedRoute)
     }
 
-    private fun navigateAndClear(route: String) {
+    fun navigateAndClear(route: String) {
         backStack.clear()
         navigateParams.clear()
         returnParams.clear()

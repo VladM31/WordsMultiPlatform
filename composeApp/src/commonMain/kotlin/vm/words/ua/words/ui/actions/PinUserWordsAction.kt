@@ -14,4 +14,7 @@ interface PinUserWordsAction {
     data object Pin : PinUserWordsAction
     data object NextWord : PinUserWordsAction
     data object PreviousWord : PinUserWordsAction
+
+    data class AddToPlayList(val playListId: String) : PinUserWordsAction
+    data object GoToUserWords : PinUserWordsAction
 }
