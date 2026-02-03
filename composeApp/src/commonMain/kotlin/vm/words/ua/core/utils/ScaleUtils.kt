@@ -36,7 +36,7 @@ fun getWidthDeviceFormat(maxWidth: Dp): DeviceFormat {
 }
 
 @Composable
-fun getScaleFactor(): Float {
+fun rememberScaleFactor(): Float {
     val maxWidth = appWidthDp()
     return remember(maxWidth) {
         getScaleFactor(maxWidth)
@@ -44,7 +44,7 @@ fun getScaleFactor(): Float {
 }
 
 @Composable
-fun getWidthDeviceFormat(): DeviceFormat {
+fun rememberWidthDeviceFormat(): DeviceFormat {
     val maxWidth = appWidthDp()
     return remember(maxWidth) {
         getWidthDeviceFormat(maxWidth)
@@ -53,7 +53,7 @@ fun getWidthDeviceFormat(): DeviceFormat {
 
 @Composable
 fun isNotPhoneFormat(): Boolean {
-    val format = getWidthDeviceFormat()
+    val format = rememberWidthDeviceFormat()
     val isLandscape = currentOrientation().isLandscape
     val platform = currentPlatform()
     return remember(format, isLandscape) {

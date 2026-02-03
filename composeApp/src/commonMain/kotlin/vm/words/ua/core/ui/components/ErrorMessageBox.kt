@@ -15,8 +15,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.models.ErrorMessage
-import vm.words.ua.core.utils.getScaleFactor
 import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberScaleFactor
 
 @Composable
 fun ErrorMessageBox(
@@ -62,7 +62,7 @@ private fun ErrorMessageAlertDialog(
     onDismiss: (() -> Unit)? = null
 ) {
     var visible by remember(message.id) { mutableStateOf(true) }
-    val scale = getScaleFactor()
+    val scale = rememberScaleFactor()
 
     val fontSize = remember {
         rememberFontSize(scale) * 0.85

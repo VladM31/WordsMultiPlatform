@@ -37,10 +37,7 @@ import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.ErrorMessageBox
 import vm.words.ua.core.ui.components.ImageFromBytes
-import vm.words.ua.core.utils.getScaleFactor
-import vm.words.ua.core.utils.getWidthDeviceFormat
-import vm.words.ua.core.utils.rememberFontSize
-import vm.words.ua.core.utils.rememberLabelFontSize
+import vm.words.ua.core.utils.*
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.words.domain.models.UserWord
@@ -467,7 +464,7 @@ private fun ImageCard(
 ) {
 
 
-    val scale = getScaleFactor()
+    val scale = rememberScaleFactor()
     val imageSize = (300 * scale).dp
 
     Column(

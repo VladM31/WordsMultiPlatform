@@ -38,7 +38,7 @@ fun PlayListItem(
     val enabled = playList.count > 0L
     val dateText = playList.createdAt.toFormatDateTime()
 
-    val scaleFactor = getScaleFactor()
+    val scaleFactor = rememberScaleFactor()
 
     val titleSize = rememberFontSize()
     val iconSize = rememberIconSize() * 0.8f

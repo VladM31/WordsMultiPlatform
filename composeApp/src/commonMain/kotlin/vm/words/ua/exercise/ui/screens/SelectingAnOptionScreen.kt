@@ -15,8 +15,8 @@ import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.CenteredLoader
-import vm.words.ua.core.utils.getWidthDeviceFormat
 import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberWidthDeviceFormat
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.exercise.domain.models.data.ExerciseWordDetails
 import vm.words.ua.exercise.ui.actions.SelectingAnOptionAction
@@ -59,7 +59,7 @@ private fun SelectingAnOptionScreen(
 ) {
     val scroll = rememberScrollState()
     val state = viewModel.state.collectAsState()
-    val isPhoneFormat = getWidthDeviceFormat().isPhone
+    val isPhoneFormat = rememberWidthDeviceFormat().isPhone
     val param = navController.getParamOrThrow<ExerciseBundle>()
     val fontSize = rememberFontSize()
 

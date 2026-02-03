@@ -12,9 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.components.AppToolBar
-import vm.words.ua.core.utils.getScaleFactor
 import vm.words.ua.core.utils.isNotPhoneFormat
 import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberScaleFactor
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.exercise.ui.actions.WriteByImageAndFieldAction
 import vm.words.ua.exercise.ui.bundles.ExerciseBundle
@@ -126,7 +126,7 @@ private fun WriteByImageAndFieldContent(
     val span: (LazyGridItemSpanScope) -> GridItemSpan = {
         if (columns == 1) GridItemSpan(it.maxLineSpan) else GridItemSpan(1)
     }
-    val scale = getScaleFactor()
+    val scale = rememberScaleFactor()
     val minHeightModifier = remember(scale) {
         if (columns == 1) {
             Modifier

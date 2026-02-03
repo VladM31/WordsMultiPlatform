@@ -21,9 +21,9 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
-import vm.words.ua.core.utils.getScaleFactor
-import vm.words.ua.core.utils.getWidthDeviceFormat
 import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberScaleFactor
+import vm.words.ua.core.utils.rememberWidthDeviceFormat
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.exercise.ui.actions.LettersMatchAction
 import vm.words.ua.exercise.ui.bundles.ExerciseBundle
@@ -160,7 +160,7 @@ private fun Content(
 @Composable
 private fun LetterItem(letter: String, fontSize: TextUnit, scale: Float, isError: Boolean, onClick: () -> Unit) {
     val shape = RoundedCornerShape(12.dp)
-    val widthDeviceFormat = getWidthDeviceFormat()
+    val widthDeviceFormat = rememberWidthDeviceFormat()
     val deviceScale = remember(widthDeviceFormat) {
         if (widthDeviceFormat.isPhone){
             1f
@@ -207,7 +207,7 @@ private fun LettersGrid(
     letters: List<LettersMatchState.Letter>,
     onClick: (Char, String) -> Unit,
 ) {
-    val scale = getScaleFactor()
+    val scale = rememberScaleFactor()
     LazyVerticalGrid(columns = GridCells.Adaptive(56.dp), modifier = Modifier.fillMaxSize().heightIn(max = 400.dp)) {
         items(letters.size) { idx ->
             val l = letters[idx]

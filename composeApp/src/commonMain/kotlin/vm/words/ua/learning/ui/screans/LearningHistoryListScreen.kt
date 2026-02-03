@@ -19,8 +19,8 @@ import androidx.compose.ui.unit.sp
 import kotlinx.datetime.format.char
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
-import vm.words.ua.core.utils.getScaleFactor
 import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberScaleFactor
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.learning.domain.models.LearningHistory
 import vm.words.ua.learning.domain.models.enums.LearningHistoryType
@@ -137,7 +137,7 @@ private fun LearningHistoryItem(
     modifier: Modifier = Modifier
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
-        val scaleFactor = getScaleFactor()
+        val scaleFactor = rememberScaleFactor()
         val titleSize = rememberFontSize()
         val detailsSize = (14 * scaleFactor).sp
         val cardPadding = (16 * scaleFactor).dp

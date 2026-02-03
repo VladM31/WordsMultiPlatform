@@ -18,9 +18,9 @@ import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.ErrorMessageBox
 import vm.words.ua.core.ui.components.SingleSelectInput
 import vm.words.ua.core.ui.components.TextInput
-import vm.words.ua.core.utils.getScaleFactor
 import vm.words.ua.core.utils.isNotPhoneFormat
 import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberScaleFactor
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
@@ -216,7 +216,7 @@ private fun SoundSwitch(
     state: DefaultAddWordState,
     viewModel: DefaultAddWordVm
 ) {
-    val scale = getScaleFactor()
+    val scale = rememberScaleFactor()
     val minHeight = remember(scale) {
         (56 * scale).dp
     }

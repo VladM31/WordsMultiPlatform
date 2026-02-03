@@ -24,7 +24,7 @@ fun rememberFontSize(scaleFactor: Float): TextUnit {
 
 @Composable
 fun rememberIconSize(): Dp {
-    val scaleFactor = getScaleFactor()
+    val scaleFactor = rememberScaleFactor()
     return remember(scaleFactor) {
         (45 * scaleFactor).dp
     }
@@ -32,13 +32,13 @@ fun rememberIconSize(): Dp {
 
 @Composable
 fun getIconButtonSize() : Dp{
-    val iconSize = rememberIconSize(getScaleFactor())
+    val iconSize = rememberIconSize(rememberScaleFactor())
     return iconSize * 1.2f
 }
 
 @Composable
 fun rememberFontSize(): TextUnit {
-    val scale = getScaleFactor()
+    val scale = rememberScaleFactor()
     return remember(scale) {
         (24 * scale).sp
     }
@@ -55,5 +55,5 @@ fun rememberLabelFontSize(): TextUnit {
 
 @Composable
 fun getImageSize() : Dp{
-    return (300 * getScaleFactor()).dp
+    return (300 * rememberScaleFactor()).dp
 }

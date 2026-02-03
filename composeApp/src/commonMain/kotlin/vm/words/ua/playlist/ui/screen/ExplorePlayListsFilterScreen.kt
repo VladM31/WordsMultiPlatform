@@ -17,9 +17,9 @@ import vm.words.ua.core.domain.models.enums.CEFR
 import vm.words.ua.core.domain.models.enums.Language
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.*
-import vm.words.ua.core.utils.getScaleFactor
 import vm.words.ua.core.utils.isNotPhoneFormat
 import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberScaleFactor
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.playlist.domain.models.enums.PublicPlaylistSortField
@@ -178,7 +178,7 @@ fun ExplorePlayListsFilterScreen(
             Button(
                 onClick = { viewModel.send(ExplorePlayListsFilterAction.Find) },
                 modifier = Modifier
-                    .widthIn(max = 300.dp * getScaleFactor())
+                    .widthIn(max = 300.dp * rememberScaleFactor())
                     .padding(16.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = AppTheme.PrimaryGreen,

@@ -22,9 +22,9 @@ import vm.words.ua.auth.ui.vms.LoginViewModel
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppTextField
 import vm.words.ua.core.ui.components.PrimaryButton
-import vm.words.ua.core.utils.getScaleFactor
 import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberIconSize
+import vm.words.ua.core.utils.rememberScaleFactor
 import vm.words.ua.utils.hints.ui.utils.ViewHintStep
 import vm.words.ua.utils.hints.ui.utils.viewHint
 import wordsmultiplatform.composeapp.generated.resources.Res
@@ -40,7 +40,7 @@ fun LoginForm(
     onGoogleClick: () -> Unit = {},
     showGoogleSignIn: Boolean = false
 ) {
-    val scaleFactor = getScaleFactor()
+    val scaleFactor = rememberScaleFactor()
     val textWeight = 0.75f
 
     val phoneState = viewModel.state.map { it.username }.distinctUntilChanged().collectAsState(initial = "")

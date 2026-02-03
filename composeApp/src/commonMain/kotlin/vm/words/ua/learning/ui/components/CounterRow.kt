@@ -16,8 +16,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.utils.getScaleFactor
 import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberScaleFactor
 
 @Composable
 fun CounterRow(
@@ -28,7 +28,7 @@ fun CounterRow(
     minValue: Int = 0,
     maxValue: Int = Int.MAX_VALUE
 ) {
-    val iconSize = 56.dp * getScaleFactor()
+    val iconSize = 56.dp * rememberScaleFactor()
     val iconBtnSize = iconSize * 1.05f
 
 
