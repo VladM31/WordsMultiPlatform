@@ -13,17 +13,14 @@ import vm.words.ua.core.net.requests.AudioGenerationRequest
 import vm.words.ua.core.net.requests.SaveFileRequest
 import vm.words.ua.core.utils.toPair
 import vm.words.ua.words.domain.managers.UserWordManager
-import vm.words.ua.words.domain.models.DeleteUserWord
-import vm.words.ua.words.domain.models.PinUserWord
-import vm.words.ua.words.domain.models.SaveWord
-import vm.words.ua.words.domain.models.UserWord
-import vm.words.ua.words.domain.models.Word
+import vm.words.ua.words.domain.models.*
 import vm.words.ua.words.domain.models.filters.UserWordFilter
 import vm.words.ua.words.net.clients.UserWordClient
 import vm.words.ua.words.net.requests.DeleteUserWordRequest
 import vm.words.ua.words.net.requests.PinUserWordRequest
 import vm.words.ua.words.net.requests.UserWordRequest
 import vm.words.ua.words.net.requests.WordRequest
+import vm.words.ua.words.net.responds.UserWordRespond
 import vm.words.ua.words.net.responds.WordRespond
 
 class UserWordManagerImpl(
@@ -46,15 +43,17 @@ class UserWordManagerImpl(
         )
 
         return PagedModels.of(paged) {
-            UserWord(
-                id = it.id,
-                learningGrade = it.learningGrade,
-                createdAt = it.createdAt,
-                lastReadDate = it.lastReadDate,
-                word = it.word.toWord()
-            )
+            toWord(it)
         }
     }
+
+    private fun toWord(respond: UserWordRespond): UserWord = UserWord(
+        id = respond.id,
+        learningGrade = respond.learningGrade,
+        createdAt = respond.createdAt,
+        lastReadDate = respond.lastReadDate,
+        word = respond.word.toWord()
+    )
 
     override suspend fun save(words: Collection<SaveWord>) {
         withContext(kotlinx.coroutines.Dispatchers.Default) {
@@ -66,13 +65,13 @@ class UserWordManagerImpl(
         }
     }
 
-    override suspend fun pin(pins: Collection<PinUserWord>) {
-        withContext(kotlinx.coroutines.Dispatchers.Default) {
+    override suspend fun pin(pins: Collection<PinUserWord>): List<UserWord> {
+        return withContext(kotlinx.coroutines.Dispatchers.Default) {
             val asyncList = pins.map { async { toRequest(it) } }
             userWordClient.pin(
                 userCacheManager.toPair().second,
                 asyncList.awaitAll()
-            )
+            ).map { toWord(it) }
         }
     }
 

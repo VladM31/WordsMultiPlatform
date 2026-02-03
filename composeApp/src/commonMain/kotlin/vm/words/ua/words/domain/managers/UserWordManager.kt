@@ -13,7 +13,7 @@ interface UserWordManager {
 
     suspend fun save(words: Collection<SaveWord>)
 
-    suspend fun pin(pins: Collection<PinUserWord>)
+    suspend fun pin(pins: Collection<PinUserWord>): List<UserWord>
 
     suspend fun delete(requests: List<DeleteUserWord>)
 }

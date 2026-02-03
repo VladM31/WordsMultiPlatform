@@ -12,7 +12,7 @@ interface UserWordClient {
 
     suspend fun save(token: String, requests: List<UserWordRequest>)
 
-    suspend fun pin(token: String, requests: List<PinUserWordRequest>)
+    suspend fun pin(token: String, requests: List<PinUserWordRequest>): List<UserWordRespond>
 
     suspend fun delete(token: String, requests: List<DeleteUserWordRequest>)
 }
