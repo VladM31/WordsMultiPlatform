@@ -8,9 +8,11 @@ enum class Language(
     POLISH("pl"),
     ENGLISH("en"),
     GERMAN("de"),
-    FRENCH("fr"),
+
+    //    FRENCH("fr"),
     UKRAINIAN("ua"),
-    CZECH("cz"),
+
+    //    CZECH("cz"),
     UNDEFINED(null);
 
     val upperShortName: String = _shortName?.uppercase() ?: "UN"

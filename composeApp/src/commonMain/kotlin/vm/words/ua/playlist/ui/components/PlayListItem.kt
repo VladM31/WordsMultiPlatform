@@ -126,24 +126,7 @@ fun PlayListItem(
 
                             Spacer(modifier = Modifier.height(4.dp))
 
-                            // Language badges row
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                playList.language?.let { lang ->
-                                    LanguageBadge(
-                                        langCode = lang.upperShortName,
-                                        color = PlayListItemColors.AccentPrimary
-                                    )
-                                }
-                                playList.translateLanguage?.let { lang ->
-                                    LanguageBadge(
-                                        langCode = lang.upperShortName,
-                                        color = AppTheme.SecondaryColor
-                                    )
-                                }
-                            }
+
 
                             Spacer(modifier = Modifier.height(6.dp))
 
@@ -177,68 +160,9 @@ fun PlayListItem(
                         }
                     }
 
-                    if (hasCefrs.not() && hasTags.not()) {
-                        return@Column
-                    }
-
-
-                    FlowRow(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = cardPadding)
-                            .padding(top = 4.dp, bottom = 12.dp),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp),
-                        verticalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        if (hasCefrs) {
-                            Text(
-                                "CEFR:",
-                                fontSize = rememberLabelFontSize() * 0.9,
-                                color = PlayListItemColors.TextMuted
-                            )
-                            playList.cefrs?.forEach { cefr ->
-                                CefrChip(cefr = cefr.name)
-                            }
-                        }
-
-                        if (hasTags) {
-                            Text(
-                                "Tags:",
-                                fontSize = rememberLabelFontSize() * 0.9,
-                                color = PlayListItemColors.TextMuted
-                            )
-                            playList.tags?.forEach { tag ->
-                                TagChip(tag = tag)
-                            }
-                        }
-                    }
-
-
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun LanguageBadge(
-    langCode: String,
-    color: Color
-) {
-    Box(
-        modifier = Modifier
-            .background(
-                color = color.copy(alpha = 0.15f),
-                shape = RoundedCornerShape(6.dp)
-            )
-            .padding(horizontal = 8.dp, vertical = 4.dp)
-    ) {
-        Text(
-            text = langCode,
-            color = color,
-            fontSize = rememberLabelFontSize(),
-            fontWeight = FontWeight.Bold
-        )
     }
 }
 
@@ -260,47 +184,6 @@ private fun CountBadge(count: Long) {
         )
     }
 }
-
-@Composable
-private fun CefrChip(cefr: String) {
-    Box(
-        modifier = Modifier
-            .background(
-                color = AppTheme.SecondaryColor.copy(alpha = 0.15f),
-                shape = RoundedCornerShape(6.dp)
-            )
-            .padding(horizontal = 8.dp, vertical = 4.dp)
-    ) {
-        Text(
-            text = cefr,
-            color = AppTheme.SecondaryColor,
-            fontSize = rememberLabelFontSize() * 0.9,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 2.dp)
-        )
-    }
-}
-
-@Composable
-private fun TagChip(tag: String) {
-    Box(
-        modifier = Modifier
-            .background(
-                color = PlayListItemColors.AccentPrimary.copy(alpha = 0.12f),
-                shape = RoundedCornerShape(12.dp)
-            )
-            .padding(horizontal = 10.dp, vertical = 4.dp)
-    ) {
-        Text(
-            text = tag,
-            color = PlayListItemColors.AccentPrimary,
-            fontSize = rememberLabelFontSize() * 0.9,
-            fontWeight = FontWeight.Medium,
-            modifier = Modifier.padding(bottom = 2.dp)
-        )
-    }
-}
-
 
 @Composable
 private fun OpenButton(
