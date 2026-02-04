@@ -46,10 +46,9 @@ class SelectingAnOptionVm(
             isCorrect = isCorrect
         )
 
+        val wordCompleted = state.value.toWordCompleted()
         viewModelScope.launch(Dispatchers.Default) {
-            exerciseStatisticalManager.completeWord(
-                state.value.toWordCompleted()
-            )
+            exerciseStatisticalManager.completeWord(wordCompleted)
         }
     }
 

@@ -103,8 +103,9 @@ class LettersMatchVm(
     }
 
     private fun handleNext() {
+        val completedWord = state.value.toWordCompleted()
         viewModelScope.launch(Dispatchers.Default) {
-            exerciseStatisticalManager.completeWord(state.value.toWordCompleted())
+            exerciseStatisticalManager.completeWord(completedWord)
         }
 
         val newIndex = state.value.wordIndex + 1

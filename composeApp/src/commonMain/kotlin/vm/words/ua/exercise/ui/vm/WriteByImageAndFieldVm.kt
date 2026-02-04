@@ -60,10 +60,11 @@ class WriteByImageAndFieldVm(
                 break
             }
         }
-        val mistakeCount =
-            if (textNow == textBuilder.toString().trim()) state.value.mistakeCount else state.value.mistakeCount + 1
 
-        mutableState.value = state.value.copy(wordText = textBuilder.toString(), mistakeCount = mistakeCount)
+        // Увеличиваем attempts при каждой подсказке (кроме первой, которая обрабатывается выше)
+        val mistakeCount = state.value.attempts + 1
+
+        mutableState.value = state.value.copy(wordText = textBuilder.toString(), attempts = mistakeCount)
     }
 
     private fun handleInit(action: WriteByImageAndFieldAction.Init) {
@@ -95,7 +96,7 @@ class WriteByImageAndFieldVm(
             mutableState.value = mutableState.value.copy(
                 isConfirm = false,
                 isEditEnable = false,
-                mistakeCount = state.value.mistakeCount + 1
+                attempts = state.value.attempts + 1
             )
 
             viewModelScope.launch {
@@ -104,15 +105,18 @@ class WriteByImageAndFieldVm(
             }
             return
         }
-        val grade = if (3 - state.value.mistakeCount > 0) 3 - state.value.mistakeCount else 0
+        val grade = if (3 - state.value.attempts > 0) 3 - state.value.attempts else 0
+
+        // Сохраняем WordCompleted ДО обнуления attempts
+        val wordCompleted = state.value.toWordCompleted()
         viewModelScope.launch(Dispatchers.Default) {
-            exerciseStatisticalManager.completeWord(state.value.toWordCompleted())
+            exerciseStatisticalManager.completeWord(wordCompleted)
         }
 
         mutableState.value = state.value.copy(
             isEditEnable = false,
             isConfirm = true,
-            mistakeCount = 0,
+            attempts = 0,
             grades = state.value.grades + grade
         )
         playAudio()

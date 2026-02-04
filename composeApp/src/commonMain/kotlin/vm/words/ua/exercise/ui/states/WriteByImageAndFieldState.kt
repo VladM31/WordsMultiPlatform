@@ -14,7 +14,7 @@ data class WriteByImageAndFieldState(
     override val isEnd: Boolean = false,
     val isInited: Boolean = false,
     val isActiveSubscribe: Boolean = false,
-    val mistakeCount: Int = 0,
+    val attempts: Int = 0,
     val grades: List<Int> = emptyList(),
     override val exercise: Exercise = Exercise.WORD_BY_WRITE_TRANSLATE
 ) : ExerciseState {

@@ -55,10 +55,9 @@ class MatchWordsViewModel(
 
             val isEnd = position == newState.words.size - 1
 
+            val completedWord = newState.toWordCompleted()
             viewModelScope.launch(Dispatchers.Default) {
-                exerciseStatisticalManager.completeWord(
-                    newState.toWordCompleted()
-                )
+                exerciseStatisticalManager.completeWord(completedWord)
             }
 
             mutableState.value = newState.copy(

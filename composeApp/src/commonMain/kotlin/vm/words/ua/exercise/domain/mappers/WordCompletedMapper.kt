@@ -57,8 +57,8 @@ fun WriteByImageAndFieldState.toWordCompleted(): WordCompleted {
         wordId = currentWord.wordId,
         userWordId = currentWord.userWordId,
         exerciseId = this.exercise.id,
-        attempts = this.mistakeCount,
-        isCorrect = mistakeCount < 3,
+        attempts = this.attempts,
+        isCorrect = attempts < 3,
         completedAt = Clock.System.now().toEpochMilliseconds()
     )
 }
