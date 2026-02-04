@@ -30,7 +30,6 @@ MaterialTheme(
             color = AppTheme.PrimaryBack
         ) {
             var isInitialized by rememberSaveable { mutableStateOf(false) }
-            // Show LoaderScreen until initialization is complete
             if (isInitialized.not()) {
                 LoaderScreen {
                     isInitialized = true

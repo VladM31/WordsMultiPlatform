@@ -6,6 +6,11 @@
     <title>Words</title>
     <link rel="icon" type="image/webp" href="icon.webp">
 
+    <!-- 🔄 ВЕРСИЯ ДЛЯ CACHE-BUSTING: Меняйте при каждом деплое! -->
+    <script>
+        window.__APP_VERSION__ = "20260204_001";
+    </script>
+
     <!-- Preconnect for Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -47,7 +52,6 @@
             }
         };
     </script>
-    <script type="application/javascript" src="composeApp.js"></script>
 
     <script type="module">
         // Import the functions you need from the SDKs you need
@@ -64,6 +68,162 @@
             signOut,
             GoogleAuthProvider
         } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAdiBvkaPLN_HHoRb4TxtE9jyp3lKnW4Ws",
+            authDomain: "words-53d45.firebaseapp.com",
+            projectId: "words-53d45",
+            storageBucket: "words-53d45.firebasestorage.app",
+            messagingSenderId: "1005445939198",
+            appId: "1:1005445939198:web:d4405546c35cbf741c8aaf",
+            measurementId: "G-53L6PK51VB"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+        const googleProvider = new GoogleAuthProvider();
+        googleProvider.addScope('email');
+        googleProvider.addScope('profile');
+        console.log('Firebase Analytics initialized');
+        console.log('Firebase Auth initialized');
+
+        // Google Sign-In functions
+        window.isGoogleSignInAvailable = () => {
+            return true; // Firebase Auth is available on web
+        };
+
+        window.signInWithGoogle = async () => {
+            try {
+                const result = await signInWithPopup(auth, googleProvider);
+                const user = result.user;
+
+                // Get the Google OAuth credential (contains the real Google ID Token)
+                const credential = GoogleAuthProvider.credentialFromResult(result);
+                // This is the Google ID Token that can be verified with GoogleIdTokenVerifier
+                const googleIdToken = credential?.idToken || null;
+
+                // Fallback to Firebase ID Token if Google credential not available
+                const firebaseIdToken = await user.getIdToken();
+
+                return {
+                    success: true,
+                    // Prefer Google ID Token for backend verification
+                    idToken: googleIdToken || firebaseIdToken,
+                    googleIdToken: googleIdToken,
+                    firebaseIdToken: firebaseIdToken,
+                    email: user.email || '',
+                    userId: user.uid,
+                    displayName: user.displayName || ''
+                };
+            } catch (error) {
+                console.error('Google Sign-In error:', error);
+                let errorMessage = error.message || 'Unknown error';
+
+                if (error.code === 'auth/popup-closed-by-user') {
+                    errorMessage = 'Sign-in cancelled';
+                } else if (error.code === 'auth/network-request-failed') {
+                    errorMessage = 'Network error. Please check your connection.';
+                } else if (error.code === 'auth/popup-blocked') {
+                    errorMessage = 'Popup was blocked. Please allow popups for this site.';
+                }
+
+                return {
+                    success: false,
+                    error: errorMessage
+                };
+            }
+        };
+
+        window.signOutFromGoogle = async () => {
+            try {
+                await signOut(auth);
+                return {success: true};
+            } catch (error) {
+                console.error('Sign-out error:', error);
+                return {success: false, error: error.message};
+            }
+        };
+
+        window.getCurrentGoogleUser = () => {
+            const user = auth.currentUser;
+            if (user) {
+                return {
+                    email: user.email || '',
+                    userId: user.uid,
+                    displayName: user.displayName || ''
+                };
+            }
+            return null;
+        };
+
+        // Replace placeholder with real Firebase Analytics
+        window.firebaseAnalytics = {
+            logEvent: (eventName, params) => {
+                console.log('Firebase logEvent:', eventName, params);
+                logEvent(analytics, eventName, params);
+            },
+            setUserId: (userId) => {
+                console.log('Firebase setUserId:', userId);
+                setUserId(analytics, userId);
+            },
+            setUserProperties: (properties) => {
+                console.log('Firebase setUserProperties:', properties);
+                setUserProperties(analytics, properties);
+            }
+        };
+
+        // Process queued events
+        if (window._firebaseEventQueue && window._firebaseEventQueue.length > 0) {
+            console.log('Processing', window._firebaseEventQueue.length, 'queued Firebase events');
+            window._firebaseEventQueue.forEach(item => {
+                switch (item.type) {
+                    case 'event':
+                        window.firebaseAnalytics.logEvent(item.eventName, item.params);
+                        break;
+                    case 'userId':
+                        window.firebaseAnalytics.setUserId(item.userId);
+                        break;
+                    case 'properties':
+                        window.firebaseAnalytics.setUserProperties(item.properties);
+                        break;
+                }
+            });
+            window._firebaseEventQueue = null;
+        }
+    </script>
+</head>
+<body>
+<script>
+    // Загружаем главный скрипт с версией для cache-busting
+    const appVersion = window.__APP_VERSION__ || 'dev';
+    const script = document.createElement('script');
+    script.type = 'application/javascript';
+    script.src = `composeApp.js?v=${appVersion}`;
+    script.onerror = function () {
+        console.error('Failed to load composeApp.js');
+        document.body.innerHTML = '<div style="padding:20px;font-family:sans-serif;">Failed to load application. Please refresh the page.</div>';
+    };
+    document.head.appendChild(script);
+</script>
+<!-- ComposeViewport сам создаст <canvas> внутри body -->
+</body>
+</html>
+import {initializeApp} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+import {
+getAnalytics,
+logEvent,
+setUserId,
+setUserProperties
+} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-analytics.js";
+import {
+getAuth,
+signInWithPopup,
+signOut,
+GoogleAuthProvider
+} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
 
         // Your web app's Firebase configuration
         const firebaseConfig = {

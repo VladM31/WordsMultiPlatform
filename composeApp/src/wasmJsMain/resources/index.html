@@ -6,6 +6,11 @@
     <title>Words</title>
     <link rel="icon" type="image/webp" href="icon.webp">
 
+    <!-- 🔄 ВЕРСИЯ ДЛЯ CACHE-BUSTING: Меняйте при каждом деплое! -->
+    <script>
+        window.__APP_VERSION__ = "20260204_001";
+    </script>
+
     <!-- Preconnect for Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -226,6 +231,16 @@
     </script>
 </head>
 <body>
-    <script src="composeApp.js"></script>
+<script>
+    // Загружаем главный скрипт с версией для cache-busting
+    const appVersion = window.__APP_VERSION__ || 'dev';
+    const script = document.createElement('script');
+    script.src = `composeApp.js?v=${appVersion}`;
+    script.onerror = function () {
+        console.error('Failed to load composeApp.js');
+        document.body.innerHTML = '<div style="padding:20px;font-family:sans-serif;">Failed to load application. Please refresh the page.</div>';
+    };
+    document.head.appendChild(script);
+</script>
 </body>
 </html>
