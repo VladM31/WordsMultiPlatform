@@ -10,15 +10,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import vm.words.ua.auth.domain.models.GoogleLoginErrorMessage
 import vm.words.ua.auth.ui.actions.LoginAction
 import vm.words.ua.auth.ui.components.LoginForm
 import vm.words.ua.auth.ui.hints.createLoginScreenHintController
 import vm.words.ua.auth.ui.vms.LoginViewModel
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.ui.components.AppToolBar
-import vm.words.ua.core.ui.components.CenteredContainer
-import vm.words.ua.core.ui.components.ErrorMessageBox
-import vm.words.ua.core.ui.components.VerticalCenteredContainer
+import vm.words.ua.core.ui.components.*
+import vm.words.ua.core.ui.states.ToastData
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
@@ -31,11 +30,13 @@ fun LoginScreen(
 ) {
     val hintController = createLoginScreenHintController()
     val viewModel = rememberInstance<LoginViewModel>()
+    val toaster = rememberToast()
 
     val state by viewModel.state.collectAsState()
     val error = viewModel.state.map { it.errorMessage }
         .distinctUntilChanged()
         .collectAsState(initial = null)
+    val isGoogleSignInError = state.errorMessage is GoogleLoginErrorMessage
 
 
     // Navigate when login is successful
@@ -43,6 +44,21 @@ fun LoginScreen(
         if (state.isEnd) {
             navController.navigateAndClear(Screen.Home)
         }
+    }
+
+    LaunchedEffect(isGoogleSignInError) {
+        if (isGoogleSignInError.not()) {
+            return@LaunchedEffect
+        }
+        // You didnt sign up with google before, so show hint about it
+        toaster.show(
+            ToastData(
+                message = "Try to sign up with Google first",
+                duration = ToastData.Duration.DoubleLong,
+                buttonText = "Sign Up",
+                onButtonClick = { navController.navigate(Screen.GoogleSignUp) }
+            )
+        )
     }
 
     SimpleHintHost(
@@ -78,12 +94,14 @@ fun LoginScreen(
                     // Display error message if present
                     error.value?.let { errorMessage ->
                         Spacer(modifier = Modifier.height(12.dp))
-                        ErrorMessageBox(message = errorMessage)
+                        ErrorMessageBox(message = errorMessage, onDismiss = {
+                            viewModel.sent(LoginAction.DismissErrorMessage)
+                        })
                     }
                 }
             }
         }
     }
 
-
+    AppToast(toaster)
 }

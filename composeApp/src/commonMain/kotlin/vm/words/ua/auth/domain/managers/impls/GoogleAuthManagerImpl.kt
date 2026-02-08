@@ -1,5 +1,6 @@
 package vm.words.ua.auth.domain.managers.impls
 
+import vm.words.ua.auth.domain.exceptions.GoogleLoginException
 import vm.words.ua.auth.domain.managers.GoogleApiManager
 import vm.words.ua.auth.domain.managers.GoogleAuthManager
 import vm.words.ua.auth.domain.mappers.toUser
@@ -20,16 +21,22 @@ class GoogleAuthManagerImpl(
     private val userCacheManager: UserCacheManager
 ) : GoogleAuthManager {
     override suspend fun login(): AuthResult {
-        return try {
+        val req = try {
             val googleInfo = googleApiManager.signIn()
             if (googleInfo.success.not()) {
                 return AuthResult(false, googleInfo.errorMessage ?: "Google sign-in failed")
             }
-            val req = GoogleTokenLoginRequest(googleInfo.idToken ?: throw IllegalStateException("Google token is null"))
+            GoogleTokenLoginRequest(googleInfo.idToken ?: throw IllegalStateException("Google token is null"))
+
+        } catch (e: Exception) {
+            return AuthResult(false, e.message)
+        }
+
+        return try {
             val response = googleAuthClient.loginWithGoogleToken(req)
             toResult(response)
         } catch (e: Exception) {
-            AuthResult(false, e.message)
+            throw GoogleLoginException("Google login failed: ${e.message}")
         }
 
     }

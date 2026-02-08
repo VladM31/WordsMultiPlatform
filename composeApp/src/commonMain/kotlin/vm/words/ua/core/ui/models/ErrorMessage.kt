@@ -4,7 +4,7 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 
-data class ErrorMessage @OptIn(ExperimentalUuidApi::class) constructor(
+open class ErrorMessage @OptIn(ExperimentalUuidApi::class) constructor(
     val message: String = "",
     val id: String = Uuid.random().toString()
 )

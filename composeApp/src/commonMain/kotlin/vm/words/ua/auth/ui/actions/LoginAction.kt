@@ -6,4 +6,5 @@ sealed interface LoginAction{
     data class SetPassword(val value: String): LoginAction
 
     data object GoogleSignIn : LoginAction
+    data object DismissErrorMessage : LoginAction
 }

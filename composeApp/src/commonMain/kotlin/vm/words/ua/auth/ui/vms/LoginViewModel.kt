@@ -6,8 +6,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import vm.words.ua.auth.domain.exceptions.GoogleLoginException
 import vm.words.ua.auth.domain.managers.*
 import vm.words.ua.auth.domain.models.AuthResult
+import vm.words.ua.auth.domain.models.GoogleLoginErrorMessage
 import vm.words.ua.auth.domain.models.google.GmailLoginDto
 import vm.words.ua.auth.ui.actions.LoginAction
 import vm.words.ua.auth.ui.states.LoginState
@@ -43,6 +45,7 @@ class LoginViewModel(
             is LoginAction.SetUsername -> setUsername(action)
             is LoginAction.SetPassword -> setPassword(action)
             is LoginAction.GoogleSignIn -> handleGoogleSignIn()
+            is LoginAction.DismissErrorMessage -> mutableState.value = state.value.copy(errorMessage = null)
         }
     }
 
@@ -60,6 +63,9 @@ class LoginViewModel(
                     isEnd = result.success,
                     errorMessage = error
                 )
+            } catch (e: GoogleLoginException) {
+                mutableState.value =
+                    state.value.copy(errorMessage = GoogleLoginErrorMessage(message = e.message ?: "Error"))
             } catch (e: Exception) {
                 mutableState.value =
                     state.value.copy(errorMessage = ErrorMessage(message = e.message ?: "Error"))

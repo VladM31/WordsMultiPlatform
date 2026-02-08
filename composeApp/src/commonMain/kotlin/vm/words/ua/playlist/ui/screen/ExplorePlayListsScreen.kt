@@ -48,7 +48,7 @@ fun ExplorePlayListsScreen(
             onButtonClick = {
                 navController.navigateAndClear(Screen.PlayList)
             },
-            duration = 5000L
+            duration = ToastData.Duration.Long
         )
 
     }
