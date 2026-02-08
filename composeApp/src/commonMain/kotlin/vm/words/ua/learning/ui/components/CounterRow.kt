@@ -43,7 +43,7 @@ fun CounterRow(
             modifier = Modifier
                 .size(iconBtnSize)
                 .background(
-                    color = AppTheme.PrimaryBackLight,
+                    color = AppTheme.SecondaryBack,
                     shape = CircleShape
                 )
         ) {
@@ -75,7 +75,7 @@ fun CounterRow(
             modifier = Modifier
                 .size(iconBtnSize)
                 .background(
-                    color = AppTheme.PrimaryBackLight,
+                    color = AppTheme.SecondaryBack,
                     shape = CircleShape
                 )
         ) {

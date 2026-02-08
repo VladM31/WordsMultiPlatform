@@ -20,8 +20,8 @@ import vm.words.ua.core.utils.*
 import vm.words.ua.playlist.domain.models.PlayListCountable
 
 private object PlayListItemColors {
-    val CardBackground = AppTheme.PrimaryBackLight
-    val CardBackgroundGradientEnd = AppTheme.PrimaryBackLight
+    val CardBackground = AppTheme.SecondaryBack
+    val CardBackgroundGradientEnd = AppTheme.SecondaryBack
     val AccentPrimary = AppTheme.PrimaryColor
     val TextPrimary = AppTheme.PrimaryText
     val TextMuted = AppTheme.PrimaryDisable

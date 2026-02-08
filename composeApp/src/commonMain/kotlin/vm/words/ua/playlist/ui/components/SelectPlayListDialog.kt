@@ -221,7 +221,7 @@ private fun TopBar(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
-                        color = AppTheme.PrimaryBackLight,
+                        color = AppTheme.SecondaryBack,
                         shape = RoundedCornerShape(12.dp)
                     )
                     .padding(16.dp)

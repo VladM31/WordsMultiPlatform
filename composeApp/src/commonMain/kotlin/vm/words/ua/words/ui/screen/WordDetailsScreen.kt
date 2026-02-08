@@ -496,7 +496,7 @@ private fun SoundButton(
     )
 
     val buttonColor by animateColorAsState(
-        targetValue = if (isPlaying) AppTheme.PrimaryGreenDark else AppTheme.PrimaryColor,
+        targetValue = if (isPlaying) AppTheme.PrimaryColorDark else AppTheme.PrimaryColor,
         animationSpec = tween(200)
     )
 

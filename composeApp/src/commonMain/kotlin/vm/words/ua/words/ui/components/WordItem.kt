@@ -34,8 +34,8 @@ import vm.words.ua.words.domain.models.Word
 
 // Color palette based on AppTheme
 private object WordItemColors {
-    val CardBackground = AppTheme.PrimaryBackLight
-    val CardBackgroundGradientEnd = AppTheme.PrimaryBackLight
+    val CardBackground = AppTheme.SecondaryBack
+    val CardBackgroundGradientEnd = AppTheme.SecondaryBack
     val AccentCyan = AppTheme.PrimaryColor
     val AccentGreen = AppTheme.PrimaryColor
     val TextPrimary = AppTheme.PrimaryText

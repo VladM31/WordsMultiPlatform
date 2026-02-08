@@ -9,15 +9,10 @@ object AppTheme {
     val White = Color(0xFFFFFFFF)
 
     val PrimaryGreen = Color(0xFF44F2C1)
-    val PrimaryGreen60 = Color(0x9944F2C1) // 60% alpha
     val PrimaryGreenStatus = Color(0xFF4BC150)
-    val PrimaryGreenDark = Color(0xFF299375)
 
-    val PrimaryColor = PrimaryGreen
-    val SecondaryColor = Color(0xFFA144F2)
 
-    val PrimaryBack = Color(0xFF1E2127)
-    val PrimaryBackLight = Color(0xFF2C3039)
+
     val PrimaryDisable = Color(0xFF808080)
     val PrimaryRed = Color(0xFFDC0101)
     val PrimaryYellow = Color(0xFFF2C144)
@@ -25,13 +20,18 @@ object AppTheme {
     val PrimaryBlue = Color(0xFF44A1F2)
     val PrimaryGray = Color(0xFFB0B0B0)
 
-    val SecondaryBack = PrimaryBackLight
+    val PrimaryColor = PrimaryGreen
+    val PrimaryColorDark = Color(0xFF299375)
+    val SecondaryColor = Color(0xFFA144F2)
+
+    val PrimaryBack = Color(0xFF1E2127)
+    val SecondaryBack = Color(0xFF2C3039)
+
     val PrimaryText = White
     val SecondaryText = PrimaryGray
+
     val Error = PrimaryRed
 
-    // Material TextInput stroke color in Android resources aliases primary green
-    val MtrlTextInputDefaultBoxStrokeColor = PrimaryGreen
 
     // spotlight background uses ARGB (#DF000000)
     val SpotlightBackground = Color(0xDF000000)
@@ -39,12 +39,12 @@ object AppTheme {
     val ColorScheme: ColorScheme = darkColorScheme(
         primary = PrimaryGreen,
         onPrimary = Black,
-        primaryContainer = PrimaryGreenDark,
+        primaryContainer = PrimaryColorDark,
         onPrimaryContainer = White,
         inversePrimary = PrimaryGreenStatus,
         secondary = PrimaryBlue,
         onSecondary = Black,
-        secondaryContainer = PrimaryBackLight,
+        secondaryContainer = SecondaryBack,
         onSecondaryContainer = White,
         tertiary = PrimaryViolet,
         onTertiary = White,
@@ -52,11 +52,11 @@ object AppTheme {
         onTertiaryContainer = White,
         background = PrimaryBack,
         onBackground = White,
-        surface = PrimaryBackLight,
+        surface = SecondaryBack,
         onSurface = White,
         surfaceVariant = PrimaryGray,
         onSurfaceVariant = Black,
-        inverseSurface = PrimaryGreen60,
+        inverseSurface = PrimaryColor.copy(alpha = 0.60f),
         inverseOnSurface = Black,
         error = PrimaryRed,
         onError = White,
