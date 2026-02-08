@@ -26,7 +26,8 @@ class SimpleNavController {
         private set
 
     private fun updateIsLastScreen() {
-        isLastScreen = backStack.size <= 1
+        isLastScreen = backStack.isEmpty()
+//        println("BackStack: ${backStack.joinToString(" -> ")} | Current: $currentRoute | isLastScreen: $isLastScreen, backStack = ${backStack}")
     }
 
     // Simple multiplatform ViewModelStoreOwner
