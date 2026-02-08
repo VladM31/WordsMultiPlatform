@@ -240,7 +240,7 @@ class GoogleApiManagerDesktop : GoogleApiManager {
     """
 
     companion object {
-        private const val CLIENT_ID = "75072611704-7m8iqm9sf2r26j6kvp498jlb86534aok.apps.googleusercontent.com"
+        private const val CLIENT_ID = "1005445939198-gn7d0rv3tutr8fdcapecj5fk2uvj0tib.apps.googleusercontent.com"
         private const val AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
         private const val SCOPE = "email profile openid"
         private const val LOCALHOST_URL = "http://localhost"
