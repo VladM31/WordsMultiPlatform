@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import vm.words.ua.playlist.domain.managers.PlayListManager
 import vm.words.ua.playlist.domain.models.AssignPlayListsDto
+import vm.words.ua.playlist.domain.models.PublicPlayListCountDto
 import vm.words.ua.playlist.ui.actions.ExplorePlayListsAction
 import vm.words.ua.playlist.ui.states.ExplorePlayListsState
 
@@ -29,7 +30,7 @@ class ExplorePlayListsViewModel(
             is ExplorePlayListsAction.ReFetch -> handleReFetch()
             is ExplorePlayListsAction.UpdateFilter -> handleUpdateFilter(action)
             is ExplorePlayListsAction.LoadMore -> loadPlaylists()
-            is ExplorePlayListsAction.AssignPlayList -> handleAssignPlayList(action.playListId)
+            is ExplorePlayListsAction.AssignPlayList -> handleAssignPlayList(action.playList)
             is ExplorePlayListsAction.ToggleShowCreatedDate -> handleToggleShowCreatedDate(action.show)
         }
     }
@@ -44,8 +45,9 @@ class ExplorePlayListsViewModel(
         }
     }
 
-    private fun handleAssignPlayList(playListId: String) {
-        viewModelScope.launch {
+    private fun handleAssignPlayList(playList: PublicPlayListCountDto) {
+        val playListId = playList.id
+        viewModelScope.launch(Dispatchers.Default) {
             mutableState.value = mutableState.value.copy(isAssigning = true)
             try {
                 val currentAssigned = mutableState.value.assignedIds
@@ -58,13 +60,15 @@ class ExplorePlayListsViewModel(
                     playlists = updatedPlaylists,
                     assignedIds = newAssigned,
                     isAssigning = false,
-                    filter = mutableState.value.filter.copy(notInIds = newAssigned)
+                    filter = mutableState.value.filter.copy(notInIds = newAssigned),
+                    lastAssignedPlayList = playList,
                 )
             } catch (e: Exception) {
                 e.printStackTrace()
                 mutableState.value = mutableState.value.copy(
                     isAssigning = false,
-                    error = e.message ?: "Failed to assign playlist"
+                    error = e.message ?: "Failed to assign playlist",
+                    lastAssignedPlayList = null
                 )
             }
         }

@@ -11,6 +11,7 @@ data class ExplorePlayListsState(
         sortField = PublicPlaylistSortField.CEFR,
         asc = true
     ),
+    val lastAssignedPlayList: PublicPlayListCountDto? = null,
     val isLoading: Boolean = false,
     val isAssigning: Boolean = false,
     val error: String? = null,

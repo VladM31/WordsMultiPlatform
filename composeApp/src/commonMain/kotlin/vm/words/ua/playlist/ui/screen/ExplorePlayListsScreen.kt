@@ -6,17 +6,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
+import vm.words.ua.core.ui.components.AppToast
 import vm.words.ua.core.ui.components.AppToolBar
+import vm.words.ua.core.ui.components.rememberToast
+import vm.words.ua.core.ui.states.ToastData
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
@@ -36,6 +36,28 @@ fun ExplorePlayListsScreen(
     val viewModel = rememberInstance<ExplorePlayListsViewModel>()
     val state by viewModel.state.collectAsState()
     val listState = rememberLazyListState()
+    val toaster = rememberToast()
+
+    val toastData = remember(state.lastAssignedPlayList) {
+        if (state.lastAssignedPlayList == null) {
+            return@remember null
+        }
+        return@remember ToastData(
+            message = "Playlist '${state.lastAssignedPlayList?.name}' added to your playlists",
+            buttonText = "Open",
+            onButtonClick = {
+                navController.navigateAndClear(Screen.PlayList)
+            },
+            duration = 5000L
+        )
+
+    }
+
+    LaunchedEffect(toastData) {
+        toastData?.let {
+            toaster.show(it)
+        }
+    }
 
     // Check for returned filter from filter screen
     LaunchedEffect(navController.currentRoute) {
@@ -107,7 +129,7 @@ fun ExplorePlayListsScreen(
                         showCreatedDate = state.showCreatedDate,
                         isAssigning = state.isAssigning,
                         onAssignClick = {
-                            viewModel.sent(ExplorePlayListsAction.AssignPlayList(playlist.id))
+                            viewModel.sent(ExplorePlayListsAction.AssignPlayList(playlist))
                         },
                         onViewClick = {
                             navController.navigate(
@@ -148,6 +170,8 @@ fun ExplorePlayListsScreen(
                 )
             }
         }
+
     }
+    AppToast(toaster)
 }
 
