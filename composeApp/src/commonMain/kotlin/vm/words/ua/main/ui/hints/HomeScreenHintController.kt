@@ -5,8 +5,8 @@ import vm.words.ua.core.ui.hints.createDefaultHintController
 import vm.words.ua.utils.hints.domain.models.HintPosition
 import vm.words.ua.utils.hints.ui.utils.ViewHintStep
 
-private const val LAST_INDEX = 7
-private const val VALUE_KEY = "home_screen_v1"
+private const val LAST_INDEX = 8
+private const val VALUE_KEY = "home_screen_v2"
 
 enum class HomeScreenHintStep(
     override val text: String,
@@ -27,6 +27,10 @@ enum class HomeScreenHintStep(
     INSTRUCTION_BUTTON(
         text = "Instruction: Opens the instruction page",
         position = HintPosition.BOTTOM,
+    ),
+    EXPLORE_PLAYLISTS_BUTTON(
+        text = "You can explore and follow public playlists",
+        position = HintPosition.TOP,
     ),
 
     PLAY_LIST_BUTTON(

@@ -67,7 +67,11 @@ fun HomeScreen(
             },
             GridButtonItem(
                 text = "Explore Playlists",
-                isAvailable = isOnline
+                isAvailable = isOnline,
+                modifier = Modifier.viewHint(
+                    step = HomeScreenHintStep.EXPLORE_PLAYLISTS_BUTTON,
+                    current = hintController.currentStep
+                )
             ) { navController.navigate(Screen.ExplorePlayLists) },
 
         )
