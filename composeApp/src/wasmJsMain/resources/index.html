@@ -320,14 +320,11 @@
     };
     script.onload = function () {
         console.log('composeApp.js loaded');
-        // Скрываем лоадер после полной загрузки приложения
-        // Даем немного времени на инициализацию WASM
         setTimeout(() => {
             const loader = document.getElementById('app-loader');
             if (loader) {
                 loader.classList.add('hidden');
-                // Полностью удаляем через 500мс (после анимации)
-                setTimeout(() => loader.remove(), 500);
+                setTimeout(() => loader.remove(), 14500);
             }
         }, 500);
     };
