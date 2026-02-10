@@ -33,30 +33,41 @@ fun LoaderScreen(
 ) {
 
     LaunchedEffect(Unit) {
-        if (isInitiated.not()) {
-            initDi()
-            AppRemoteConfig.initialize()
-        }
-
-        val userCacheManager : UserCacheManager by DiContainer.di.instance()
-        val navController : SimpleNavController by DiContainer.di.instance()
-
         try {
-            if (AppRemoteConfig.currentVersion != AppRemoteConfig.version && currentPlatform().isWeb.not()) {
-                navController.navigateAndClear(Screen.UpdateApp)
-                onInitialized()
-                return@LaunchedEffect
+            if (isInitiated.not()) {
+                initDi()
+                AppRemoteConfig.initialize()
             }
-            if (userCacheManager.tokenFlow.value?.isExpired() == false) {
-                navController.navigate(Screen.Home)
-                onInitialized()
-                return@LaunchedEffect
+
+            val userCacheManager : UserCacheManager by DiContainer.di.instance()
+            val navController : SimpleNavController by DiContainer.di.instance()
+
+            try {
+                if (AppRemoteConfig.currentVersion != AppRemoteConfig.version && currentPlatform().isWeb.not()) {
+                    navController.navigateAndClear(Screen.UpdateApp)
+                    return@LaunchedEffect
+                }
+                if (userCacheManager.tokenFlow.value?.isExpired() == false) {
+                    navController.navigate(Screen.Home)
+                    return@LaunchedEffect
+                }
+            } catch (_: Throwable) {
+                // ignore - treat as no token
             }
-        } catch (_: Throwable) {
-            // ignore - treat as no token
+            navController.navigateAndClear(Screen.Login)
+        } catch (e: Throwable) {
+            // Log error if needed
+            e.printStackTrace()
+            // Navigate to login as fallback
+            try {
+                val navController : SimpleNavController by DiContainer.di.instance()
+                navController.navigateAndClear(Screen.Login)
+            } catch (_: Throwable) {
+                // If even DI fails, just call onInitialized
+            }
+        } finally {
+            onInitialized()
         }
-        navController.navigateAndClear(Screen.Login)
-        onInitialized()
     }
 
     Column(
