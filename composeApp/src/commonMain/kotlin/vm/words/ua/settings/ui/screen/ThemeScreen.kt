@@ -102,7 +102,12 @@ fun ThemeScreen(
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
             }
-            items(listOf(AppThemes.NeonCyberpunk, AppThemes.RetroSepia)) { theme ->
+            items(listOf(
+                AppThemes.NeonCyberpunk,
+                AppThemes.NeonGreen,
+                AppThemes.NeonOrange,
+                AppThemes.RetroSepia
+            )) { theme ->
                 ThemeCard(
                     theme = theme,
                     isSelected = currentTheme.id == theme.id,

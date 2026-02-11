@@ -117,7 +117,7 @@ object AppThemes {
         name = "Ocean Night",
         isDark = true,
         primaryColor = Color(0xFF64B5F6),
-        secondaryColor = Color(0xFF4DD0E1),
+        secondaryColor = Color(0xFFFFAB91), // Coral/peach for contrast
         primaryBack = Color(0xFF0D1B2A),
         secondaryBack = Color(0xFF1B263B),
         primaryText = Color.White,
@@ -143,7 +143,7 @@ object AppThemes {
         name = "Forest Night",
         isDark = true,
         primaryColor = Color(0xFF81C784),
-        secondaryColor = Color(0xFFA5D6A7),
+        secondaryColor = Color(0xFFFFD54F), // Golden/amber for contrast
         primaryBack = Color(0xFF1A2F1A),
         secondaryBack = Color(0xFF2D4A2D),
         primaryText = Color.White,
@@ -156,7 +156,7 @@ object AppThemes {
         name = "Sunset Dark",
         isDark = true,
         primaryColor = Color(0xFFFF7043),
-        secondaryColor = Color(0xFFFFAB91),
+        secondaryColor = Color(0xFF64B5F6), // Blue for contrast with orange
         primaryBack = Color(0xFF1F1410),
         secondaryBack = Color(0xFF2D1F1A),
         primaryText = Color.White,
@@ -169,7 +169,7 @@ object AppThemes {
         name = "Midnight Blue",
         isDark = true,
         primaryColor = Color(0xFF5C6BC0),
-        secondaryColor = Color(0xFF7986CB),
+        secondaryColor = Color(0xFFFF8A80), // Coral pink for contrast
         primaryBack = Color(0xFF0A0E1A),
         secondaryBack = Color(0xFF151B30),
         primaryText = Color.White,
@@ -182,7 +182,7 @@ object AppThemes {
         name = "Rose Gold",
         isDark = true,
         primaryColor = Color(0xFFF48FB1),
-        secondaryColor = Color(0xFFCE93D8),
+        secondaryColor = Color(0xFF4DD0E1), // Teal/cyan for contrast with pink
         primaryBack = Color(0xFF1A1215),
         secondaryBack = Color(0xFF2A1F25),
         primaryText = Color.White,
@@ -197,7 +197,7 @@ object AppThemes {
         name = "Clean White",
         isDark = false,
         primaryColor = Color(0xFF2196F3),
-        secondaryColor = Color(0xFF03A9F4),
+        secondaryColor = Color(0xFFFF5722), // Orange for contrast with blue
         primaryBack = Color(0xFFFAFAFA),
         secondaryBack = Color(0xFFFFFFFF),
         primaryText = Color(0xFF212121),
@@ -210,7 +210,7 @@ object AppThemes {
         name = "Cream Light",
         isDark = false,
         primaryColor = Color(0xFF795548),
-        secondaryColor = Color(0xFFA1887F),
+        secondaryColor = Color(0xFF00897B), // Teal for contrast with brown
         primaryBack = Color(0xFFFFF8E1),
         secondaryBack = Color(0xFFFFFFFF),
         primaryText = Color(0xFF3E2723),
@@ -223,7 +223,7 @@ object AppThemes {
         name = "Sky Blue",
         isDark = false,
         primaryColor = Color(0xFF0288D1),
-        secondaryColor = Color(0xFF4FC3F7),
+        secondaryColor = Color(0xFFFF7043), // Orange for contrast
         primaryBack = Color(0xFFE3F2FD),
         secondaryBack = Color(0xFFFFFFFF),
         primaryText = Color(0xFF01579B),
@@ -236,7 +236,7 @@ object AppThemes {
         name = "Mint Fresh",
         isDark = false,
         primaryColor = Color(0xFF00897B),
-        secondaryColor = Color(0xFF4DB6AC),
+        secondaryColor = Color(0xFFFF7043), // Coral/orange for contrast with teal
         primaryBack = Color(0xFFE0F2F1),
         secondaryBack = Color(0xFFFFFFFF),
         primaryText = Color(0xFF004D40),
@@ -249,7 +249,7 @@ object AppThemes {
         name = "Lavender",
         isDark = false,
         primaryColor = Color(0xFF7E57C2),
-        secondaryColor = Color(0xFFB39DDB),
+        secondaryColor = Color(0xFFFFA726), // Amber/orange for contrast with purple
         primaryBack = Color(0xFFF3E5F5),
         secondaryBack = Color(0xFFFFFFFF),
         primaryText = Color(0xFF4A148C),
@@ -262,7 +262,7 @@ object AppThemes {
         name = "Peach",
         isDark = false,
         primaryColor = Color(0xFFE64A19),
-        secondaryColor = Color(0xFFFF8A65),
+        secondaryColor = Color(0xFF26A69A), // Teal for contrast with orange
         primaryBack = Color(0xFFFBE9E7),
         secondaryBack = Color(0xFFFFFFFF),
         primaryText = Color(0xFFBF360C),
@@ -275,7 +275,7 @@ object AppThemes {
         name = "Sage Green",
         isDark = false,
         primaryColor = Color(0xFF558B2F),
-        secondaryColor = Color(0xFF8BC34A),
+        secondaryColor = Color(0xFFEC407A), // Pink for contrast with green
         primaryBack = Color(0xFFF1F8E9),
         secondaryBack = Color(0xFFFFFFFF),
         primaryText = Color(0xFF33691E),
@@ -302,13 +302,49 @@ object AppThemes {
         accentBlue = Color(0xFF00F0FF)
     )
 
+    /** Neon Green - Electric green neon */
+    val NeonGreen = AppThemeConfig(
+        id = "neon_green",
+        name = "Neon Green",
+        isDark = true,
+        primaryColor = Color(0xFF39FF14),  // Electric Green
+        secondaryColor = Color(0xFFFF1493), // Deep Pink
+        primaryBack = Color(0xFF0A0F0A),
+        secondaryBack = Color(0xFF1A251A),
+        primaryText = Color(0xFFE0FFE0),
+        secondaryText = Color(0xFF90EE90),
+        accentGreen = Color(0xFF00FF00),
+        accentRed = Color(0xFFFF073A),
+        accentYellow = Color(0xFFCCFF00),
+        accentViolet = Color(0xFFFF00FF),
+        accentBlue = Color(0xFF00FFFF)
+    )
+
+    /** Neon Orange - Hot orange neon */
+    val NeonOrange = AppThemeConfig(
+        id = "neon_orange",
+        name = "Neon Orange",
+        isDark = true,
+        primaryColor = Color(0xFFFF6600),  // Neon Orange
+        secondaryColor = Color(0xFF00FFFF), // Cyan
+        primaryBack = Color(0xFF1A0A00),
+        secondaryBack = Color(0xFF2D1500),
+        primaryText = Color(0xFFFFE0CC),
+        secondaryText = Color(0xFFFFB380),
+        accentGreen = Color(0xFF39FF14),
+        accentRed = Color(0xFFFF0000),
+        accentYellow = Color(0xFFFFFF00),
+        accentViolet = Color(0xFFFF00FF),
+        accentBlue = Color(0xFF00B4FF)
+    )
+
     /** Retro Sepia - Vintage brown tones */
     val RetroSepia = AppThemeConfig(
         id = "retro_sepia",
         name = "Retro Sepia",
         isDark = false,
         primaryColor = Color(0xFF8B4513),  // Saddle Brown
-        secondaryColor = Color(0xFFD2691E), // Chocolate
+        secondaryColor = Color(0xFF2E7D32), // Forest green for contrast
         primaryBack = Color(0xFFF5E6D3),   // Antique White
         secondaryBack = Color(0xFFFAEBD7),
         primaryText = Color(0xFF3E2723),
@@ -318,6 +354,99 @@ object AppThemes {
         accentYellow = Color(0xFFDAA520),  // Goldenrod
         accentViolet = Color(0xFF800080),  // Purple
         accentBlue = Color(0xFF4682B4)     // Steel Blue
+    )
+
+    /** Yellow Light - Sunny yellow theme */
+    val YellowLight = AppThemeConfig(
+        id = "yellow_light",
+        name = "Sunny Yellow",
+        isDark = false,
+        primaryColor = Color(0xFFF9A825),  // Amber/Yellow
+        secondaryColor = Color(0xFF7B1FA2), // Purple for contrast
+        primaryBack = Color(0xFFFFFDE7),   // Light Yellow
+        secondaryBack = Color(0xFFFFFFFF),
+        primaryText = Color(0xFF5D4037),
+        secondaryText = Color(0xFF795548)
+    )
+
+    /** Yellow Dark - Golden dark theme */
+    val YellowDark = AppThemeConfig(
+        id = "yellow_dark",
+        name = "Golden Night",
+        isDark = true,
+        primaryColor = Color(0xFFFFD600),  // Vivid Yellow
+        secondaryColor = Color(0xFF7C4DFF), // Deep Purple for contrast
+        primaryBack = Color(0xFF1A1A0A),
+        secondaryBack = Color(0xFF2D2D15),
+        primaryText = Color.White,
+        secondaryText = Color(0xFFD4D4A0)
+    )
+
+    /** Galaxy - Deep space theme */
+    val Galaxy = AppThemeConfig(
+        id = "galaxy",
+        name = "Galaxy",
+        isDark = true,
+        primaryColor = Color(0xFF9C27B0),  // Purple
+        secondaryColor = Color(0xFF00BCD4), // Cyan
+        primaryBack = Color(0xFF0D0D1A),   // Deep space blue
+        secondaryBack = Color(0xFF1A1A2E),
+        primaryText = Color(0xFFE8E8FF),
+        secondaryText = Color(0xFFB8B8D0),
+        accentGreen = Color(0xFF00E676),
+        accentRed = Color(0xFFFF5252),
+        accentYellow = Color(0xFFFFD740),
+        accentViolet = Color(0xFFE040FB),
+        accentBlue = Color(0xFF40C4FF)
+    )
+
+    /** Autumn - Warm fall colors */
+    val Autumn = AppThemeConfig(
+        id = "autumn",
+        name = "Autumn",
+        isDark = false,
+        primaryColor = Color(0xFFBF360C),  // Deep Orange
+        secondaryColor = Color(0xFF1B5E20), // Dark Green for contrast
+        primaryBack = Color(0xFFFFF3E0),   // Light Orange
+        secondaryBack = Color(0xFFFFFFFF),
+        primaryText = Color(0xFF3E2723),
+        secondaryText = Color(0xFF5D4037),
+        accentGreen = Color(0xFF558B2F),
+        accentRed = Color(0xFFC62828),
+        accentYellow = Color(0xFFF9A825),
+        accentViolet = Color(0xFF6A1B9A),
+        accentBlue = Color(0xFF0277BD)
+    )
+
+    /** Cherry Blossom - Japanese sakura theme */
+    val CherryBlossom = AppThemeConfig(
+        id = "cherry_blossom",
+        name = "Cherry Blossom",
+        isDark = false,
+        primaryColor = Color(0xFFE91E63),  // Pink
+        secondaryColor = Color(0xFF4CAF50), // Green for contrast
+        primaryBack = Color(0xFFFCE4EC),   // Light Pink
+        secondaryBack = Color(0xFFFFFFFF),
+        primaryText = Color(0xFF880E4F),
+        secondaryText = Color(0xFFC2185B)
+    )
+
+    /** Northern Lights - Aurora theme */
+    val NorthernLights = AppThemeConfig(
+        id = "northern_lights",
+        name = "Northern Lights",
+        isDark = true,
+        primaryColor = Color(0xFF00E5FF),  // Cyan
+        secondaryColor = Color(0xFFAA00FF), // Purple
+        primaryBack = Color(0xFF001524),   // Dark blue
+        secondaryBack = Color(0xFF002233),
+        primaryText = Color(0xFFE0FFFF),
+        secondaryText = Color(0xFF80DEEA),
+        accentGreen = Color(0xFF00FF7F),   // Spring Green
+        accentRed = Color(0xFFFF6B6B),
+        accentYellow = Color(0xFFFFE66D),
+        accentViolet = Color(0xFFDA70D6),  // Orchid
+        accentBlue = Color(0xFF00BFFF)     // Deep Sky Blue
     )
 
     /** All available themes */
@@ -330,6 +459,9 @@ object AppThemes {
         SunsetDark,
         MidnightBlue,
         RoseGoldDark,
+        YellowDark,
+        Galaxy,
+        NorthernLights,
         // Light themes
         CleanWhite,
         CreamLight,
@@ -338,8 +470,13 @@ object AppThemes {
         LavenderLight,
         PeachLight,
         SageGreen,
-        // Special themes
+        YellowLight,
+        Autumn,
+        CherryBlossom,
+        // Special/Neon themes
         NeonCyberpunk,
+        NeonGreen,
+        NeonOrange,
         RetroSepia
     )
 
