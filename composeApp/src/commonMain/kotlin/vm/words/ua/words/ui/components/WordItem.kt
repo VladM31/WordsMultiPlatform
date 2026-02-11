@@ -26,24 +26,12 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import vm.words.ua.core.ui.AppTheme
+import vm.words.ua.core.ui.AppColors
 import vm.words.ua.core.utils.getScaleFactor
 import vm.words.ua.core.utils.toFormatDateTime
 import vm.words.ua.words.domain.models.UserWord
 import vm.words.ua.words.domain.models.Word
 
-// Color palette based on AppTheme
-private object WordItemColors {
-    val CardBackground = AppTheme.SecondaryBack
-    val CardBackgroundGradientEnd = AppTheme.SecondaryBack
-    val AccentCyan = AppTheme.PrimaryColor
-    val AccentGreen = AppTheme.PrimaryColor
-    val TextPrimary = AppTheme.PrimaryText
-    val TextSecondary = AppTheme.SecondaryText
-    val TextMuted = AppTheme.PrimaryDisable
-    val ButtonBackground = AppTheme.SecondaryBack
-    val CartActive = AppTheme.PrimaryColor
-}
 
 @Composable
 fun WordItem(
@@ -59,9 +47,16 @@ fun WordItem(
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         val scaleFactor = getScaleFactor(maxWidth)
 
+        // Reactive colors
+        val cardBackground = AppColors.secondaryBack
+        val accentPrimary = AppColors.primaryColor
+        val accentSecondary = AppColors.secondaryColor
+        val textPrimary = AppColors.primaryText
+        val textSecondary = AppColors.secondaryText
+        val textMuted = AppColors.primaryDisable
+
         val titleSize = (18 * scaleFactor).sp
         val translateSize = (16 * scaleFactor).sp
-        val categorySize = (13 * scaleFactor).sp
         val dateSize = (11 * scaleFactor).sp
         val iconSize = (20 * scaleFactor).dp
         val cardPadding = (16 * scaleFactor).dp
@@ -74,7 +69,7 @@ fun WordItem(
 
         // Cart animation
         val cartBorderColor by animateColorAsState(
-            targetValue = if (isSelected) WordItemColors.CartActive else Color.Transparent,
+            targetValue = if (isSelected) accentPrimary else Color.Transparent,
             animationSpec = tween(400)
         )
 
@@ -100,7 +95,7 @@ fun WordItem(
                 },
             shape = RoundedCornerShape(14.dp),
             colors = CardDefaults.cardColors(
-                containerColor = AppTheme.SecondaryBack
+                containerColor = cardBackground
             ),
             elevation = CardDefaults.cardElevation(0.dp)
         ) {
@@ -110,8 +105,8 @@ fun WordItem(
                     .background(
                         brush = Brush.linearGradient(
                             colors = listOf(
-                                WordItemColors.CardBackground,
-                                WordItemColors.CardBackgroundGradientEnd
+                                cardBackground,
+                                cardBackground
                             )
                         )
                     )
@@ -139,12 +134,12 @@ fun WordItem(
                             ) {
                                 LanguageBadge(
                                     langCode = word.lang.upperShortName,
-                                    color = WordItemColors.AccentCyan
+                                    color = accentPrimary
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                     text = word.original,
-                                    color = WordItemColors.TextPrimary,
+                                    color = textPrimary,
                                     fontSize = titleSize,
                                     fontWeight = FontWeight.SemiBold
                                 )
@@ -158,12 +153,12 @@ fun WordItem(
                             ) {
                                 LanguageBadge(
                                     langCode = word.translateLang.upperShortName,
-                                    color = AppTheme.SecondaryColor
+                                    color = accentSecondary
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                     text = word.translate,
-                                    color = WordItemColors.TextSecondary,
+                                    color = textSecondary,
                                     fontSize = translateSize,
                                     fontWeight = FontWeight.Normal
                                 )
@@ -172,7 +167,7 @@ fun WordItem(
                             // Category
                             word.category?.let { category ->
                                 Spacer(modifier = Modifier.height(8.dp))
-                                CategoryChip(category = category)
+                                CategoryChip(category = category, accentColor = accentPrimary)
                             }
                         }
 
@@ -193,7 +188,10 @@ fun WordItem(
                                         onClick = onSelect,
                                         size = iconSize * 1.8f,
                                         notSelectedImage = it,
-                                        selectedIcon = selectedIcon
+                                        selectedIcon = selectedIcon,
+                                        accentColor = accentPrimary,
+                                        buttonBackground = cardBackground,
+                                        textSecondaryColor = textSecondary
                                     )
                                 }
 
@@ -201,7 +199,8 @@ fun WordItem(
                                 // Open button
                                 OpenButton(
                                     onClick = onOpen,
-                                    size = iconSize * 1.8f
+                                    size = iconSize * 1.8f,
+                                    accentColor = accentPrimary
                                 )
                             }
 
@@ -215,7 +214,10 @@ fun WordItem(
                                     InfoButton(
                                         isExpanded = showMetaInfo,
                                         onClick = { showMetaInfo = !showMetaInfo },
-                                        size = iconSize * 1.2f
+                                        size = iconSize * 1.2f,
+                                        accentColor = accentSecondary,
+                                        buttonBackground = cardBackground,
+                                        textSecondaryColor = textSecondary
                                     )
                                 }
 
@@ -223,7 +225,10 @@ fun WordItem(
                                 MediaIndicators(
                                     hasImage = word.imageLink != null,
                                     hasSound = word.soundLink != null,
-                                    iconSize = iconSize * 0.9f
+                                    iconSize = iconSize * 0.9f,
+                                    accentColor = accentPrimary,
+                                    secondaryColor = accentSecondary,
+                                    buttonBackground = cardBackground
                                 )
                             }
                         }
@@ -237,7 +242,7 @@ fun WordItem(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(
-                                color = WordItemColors.ButtonBackground.copy(alpha = 0.5f)
+                                color = cardBackground.copy(alpha = 0.5f)
                             )
                             .padding(horizontal = cardPadding, vertical = 8.dp),
                         horizontalArrangement = Arrangement.spacedBy(24.dp)
@@ -246,14 +251,18 @@ fun WordItem(
                             MetaInfoText(
                                 label = "Added",
                                 value = it.toFormatDateTime(),
-                                fontSize = dateSize
+                                fontSize = dateSize,
+                                mutedColor = textMuted,
+                                secondaryColor = textSecondary
                             )
                         }
                         userWord?.lastReadDate?.let {
                             MetaInfoText(
                                 label = "Last read",
                                 value = it.toFormatDateTime(),
-                                fontSize = dateSize
+                                fontSize = dateSize,
+                                mutedColor = textMuted,
+                                secondaryColor = textSecondary
                             )
                         }
                     }
@@ -286,18 +295,18 @@ private fun LanguageBadge(
 }
 
 @Composable
-private fun CategoryChip(category: String) {
+private fun CategoryChip(category: String, accentColor: Color) {
     Box(
         modifier = Modifier
             .background(
-                color = WordItemColors.AccentGreen.copy(alpha = 0.12f),
+                color = accentColor.copy(alpha = 0.12f),
                 shape = RoundedCornerShape(12.dp)
             )
             .padding(horizontal = 10.dp, vertical = 4.dp)
     ) {
         Text(
             text = category,
-            color = WordItemColors.AccentGreen,
+            color = accentColor,
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium
         )
@@ -308,17 +317,19 @@ private fun CategoryChip(category: String) {
 private fun MetaInfoText(
     label: String,
     value: String,
-    fontSize: androidx.compose.ui.unit.TextUnit
+    fontSize: androidx.compose.ui.unit.TextUnit,
+    mutedColor: Color,
+    secondaryColor: Color
 ) {
     Column {
         Text(
             text = label,
-            color = WordItemColors.TextMuted,
+            color = mutedColor,
             fontSize = fontSize * 0.9f
         )
         Text(
             text = value,
-            color = WordItemColors.TextSecondary.copy(alpha = 0.7f),
+            color = secondaryColor.copy(alpha = 0.7f),
             fontSize = fontSize
         )
     }
@@ -330,21 +341,24 @@ private fun SelectButton(
     selectedIcon: ImageVector,
     isSelected: Boolean,
     onClick: () -> Unit,
-    size: androidx.compose.ui.unit.Dp
+    size: androidx.compose.ui.unit.Dp,
+    accentColor: Color,
+    buttonBackground: Color,
+    textSecondaryColor: Color
 ) {
     val backgroundColor by animateColorAsState(
         targetValue = if (isSelected)
-            WordItemColors.CartActive.copy(alpha = 0.2f)
+            accentColor.copy(alpha = 0.2f)
         else
-            WordItemColors.ButtonBackground,
+            buttonBackground,
         animationSpec = tween(200)
     )
 
     val iconColor by animateColorAsState(
         targetValue = if (isSelected)
-            WordItemColors.CartActive
+            accentColor
         else
-            WordItemColors.TextSecondary,
+            textSecondaryColor,
         animationSpec = tween(200)
     )
 
@@ -390,21 +404,24 @@ private fun SelectButton(
 private fun InfoButton(
     isExpanded: Boolean,
     onClick: () -> Unit,
-    size: androidx.compose.ui.unit.Dp
+    size: androidx.compose.ui.unit.Dp,
+    accentColor: Color,
+    buttonBackground: Color,
+    textSecondaryColor: Color
 ) {
     val backgroundColor by animateColorAsState(
         targetValue = if (isExpanded)
-            AppTheme.SecondaryColor.copy(alpha = 0.2f)
+            accentColor.copy(alpha = 0.2f)
         else
-            WordItemColors.ButtonBackground.copy(alpha = 0.6f),
+            buttonBackground.copy(alpha = 0.6f),
         animationSpec = tween(200)
     )
 
     val iconColor by animateColorAsState(
         targetValue = if (isExpanded)
-            AppTheme.SecondaryColor
+            accentColor
         else
-            WordItemColors.TextSecondary,
+            textSecondaryColor,
         animationSpec = tween(200)
     )
 
@@ -430,14 +447,15 @@ private fun InfoButton(
 @Composable
 private fun OpenButton(
     onClick: () -> Unit,
-    size: androidx.compose.ui.unit.Dp
+    size: androidx.compose.ui.unit.Dp,
+    accentColor: Color
 ) {
     Surface(
         onClick = onClick,
         modifier = Modifier.size(size),
         shape = RoundedCornerShape(12.dp),
-        color = WordItemColors.AccentCyan.copy(alpha = 0.15f),
-        contentColor = WordItemColors.AccentCyan
+        color = accentColor.copy(alpha = 0.15f),
+        contentColor = accentColor
     ) {
         Box(
             contentAlignment = Alignment.Center
@@ -455,7 +473,10 @@ private fun OpenButton(
 private fun MediaIndicators(
     hasImage: Boolean,
     hasSound: Boolean,
-    iconSize: androidx.compose.ui.unit.Dp
+    iconSize: androidx.compose.ui.unit.Dp,
+    accentColor: Color,
+    secondaryColor: Color,
+    buttonBackground: Color
 ) {
     if (!hasImage && !hasSound) return
 
@@ -463,7 +484,7 @@ private fun MediaIndicators(
         horizontalArrangement = Arrangement.spacedBy(6.dp),
         modifier = Modifier
             .background(
-                color = WordItemColors.ButtonBackground.copy(alpha = 0.6f),
+                color = buttonBackground.copy(alpha = 0.6f),
                 shape = RoundedCornerShape(8.dp)
             )
             .padding(horizontal = 8.dp, vertical = 4.dp)
@@ -472,7 +493,7 @@ private fun MediaIndicators(
             Icon(
                 imageVector = Icons.Outlined.Image,
                 contentDescription = "Has image",
-                tint = WordItemColors.AccentGreen.copy(alpha = 0.8f),
+                tint = accentColor.copy(alpha = 0.8f),
                 modifier = Modifier.size(iconSize)
             )
         }
@@ -481,7 +502,7 @@ private fun MediaIndicators(
             Icon(
                 imageVector = Icons.Outlined.VolumeUp,
                 contentDescription = "Has sound",
-                tint = AppTheme.SecondaryColor.copy(alpha = 0.8f),
+                tint = secondaryColor.copy(alpha = 0.8f),
                 modifier = Modifier.size(iconSize)
             )
         }

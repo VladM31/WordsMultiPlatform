@@ -15,30 +15,28 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import vm.words.ua.core.ui.AppTheme
+import vm.words.ua.core.ui.AppColors
 import vm.words.ua.core.utils.*
 import vm.words.ua.playlist.domain.models.PlayListCountable
-
-private object ExplorePlayListItemColors {
-    val CardBackground = AppTheme.SecondaryBack
-    val CardBackgroundGradientEnd = AppTheme.SecondaryBack
-    val AccentPrimary = AppTheme.PrimaryColor
-    val TextPrimary = AppTheme.PrimaryText
-    val TextMuted = AppTheme.PrimaryDisable
-    val ButtonBackground = AppTheme.SecondaryBack
-}
 
 @Composable
 fun ExplorePlayListItem(
     playList: PlayListCountable,
-    showCreatedDate: Boolean = true,
     isAssigning: Boolean = false,
     onAssignClick: () -> Unit,
     onViewClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val dateText = playList.createdAt.toFormatDate()
+    // Use reactive colors
+    val cardBackground = AppColors.secondaryBack
+    val accentPrimary = AppColors.primaryColor
+    val accentSecondary = AppColors.secondaryColor
+    val textPrimary = AppColors.primaryText
+    val textMuted = AppColors.primaryDisable
+    val accentGreen = AppColors.primaryGreen
+
     val enabled = playList.count > 0L
 
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
@@ -65,7 +63,7 @@ fun ExplorePlayListItem(
                 ),
             shape = RoundedCornerShape(14.dp),
             colors = CardDefaults.cardColors(
-                containerColor = AppTheme.SecondaryBack
+                containerColor = cardBackground
             ),
             elevation = CardDefaults.cardElevation(0.dp)
         ) {
@@ -74,10 +72,7 @@ fun ExplorePlayListItem(
                     .fillMaxWidth()
                     .background(
                         brush = Brush.linearGradient(
-                            colors = listOf(
-                                ExplorePlayListItemColors.CardBackground,
-                                ExplorePlayListItemColors.CardBackgroundGradientEnd
-                            )
+                            colors = listOf(cardBackground, cardBackground)
                         )
                     )
             ) {
@@ -94,7 +89,7 @@ fun ExplorePlayListItem(
                         Box(
                             modifier = Modifier
                                 .background(
-                                    color = ExplorePlayListItemColors.AccentPrimary.copy(alpha = 0.15f),
+                                    color = accentPrimary.copy(alpha = 0.15f),
                                     shape = RoundedCornerShape(12.dp)
                                 )
                                 .padding(12.dp)
@@ -102,7 +97,7 @@ fun ExplorePlayListItem(
                             Icon(
                                 imageVector = Icons.AutoMirrored.Outlined.PlaylistPlay,
                                 contentDescription = null,
-                                tint = ExplorePlayListItemColors.AccentPrimary,
+                                tint = accentPrimary,
                                 modifier = Modifier.size(iconSize * 1.5f)
                             )
                         }
@@ -118,7 +113,7 @@ fun ExplorePlayListItem(
                             // Playlist name
                             Text(
                                 text = playList.name,
-                                color = ExplorePlayListItemColors.TextPrimary,
+                                color = textPrimary,
                                 fontSize = titleSize,
                                 fontWeight = FontWeight.SemiBold,
                                 maxLines = 1
@@ -134,29 +129,26 @@ fun ExplorePlayListItem(
                                 playList.language?.let { lang ->
                                     LanguageBadgeExplore(
                                         langCode = lang.upperShortName,
-                                        color = ExplorePlayListItemColors.AccentPrimary
+                                        color = accentPrimary
                                     )
                                 }
                                 playList.translateLanguage?.let { lang ->
                                     LanguageBadgeExplore(
                                         langCode = lang.upperShortName,
-                                        color = AppTheme.SecondaryColor
+                                        color = accentSecondary
                                     )
                                 }
                             }
 
                             Spacer(modifier = Modifier.height(6.dp))
 
-                            // Count info (date moved below to avoid wrapping on small screens)
+                            // Count info
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(16.dp)
                             ) {
-                                CountBadgeExplore(count = playList.count)
-                                // date removed from here to avoid horizontal wrapping
+                                CountBadgeExplore(count = playList.count, accentColor = accentPrimary)
                             }
-
-
                         }
 
                         // Right panel with view and assign buttons
@@ -167,12 +159,16 @@ fun ExplorePlayListItem(
                             ViewButton(
                                 onClick = onViewClick,
                                 enabled = enabled,
-                                size = iconSize * 1.4f
+                                size = iconSize * 1.4f,
+                                accentColor = accentPrimary,
+                                disabledColor = textMuted
                             )
                             AssignButton(
                                 onClick = onAssignClick,
                                 enabled = !isAssigning,
-                                size = iconSize * 1.4f
+                                size = iconSize * 1.4f,
+                                accentColor = accentGreen,
+                                disabledColor = textMuted
                             )
                         }
                     }
@@ -191,10 +187,10 @@ fun ExplorePlayListItem(
                                 Text(
                                     "CEFR:",
                                     fontSize = rememberLabelFontSize() * 0.9,
-                                    color = ExplorePlayListItemColors.TextMuted
+                                    color = textMuted
                                 )
                                 playList.cefrs?.forEach { cefr ->
-                                    CefrChipExplore(cefr = cefr.name)
+                                    CefrChipExplore(cefr = cefr.name, accentColor = accentSecondary)
                                 }
                             }
 
@@ -202,10 +198,10 @@ fun ExplorePlayListItem(
                                 Text(
                                     "Tags:",
                                     fontSize = rememberLabelFontSize() * 0.9,
-                                    color = ExplorePlayListItemColors.TextMuted
+                                    color = textMuted
                                 )
                                 playList.tags?.forEach { tag ->
-                                    TagChipExplore(tag = tag)
+                                    TagChipExplore(tag = tag, accentColor = accentPrimary)
                                 }
                             }
                         }
@@ -239,18 +235,18 @@ private fun LanguageBadgeExplore(
 }
 
 @Composable
-private fun CountBadgeExplore(count: Long) {
+private fun CountBadgeExplore(count: Long, accentColor: Color) {
     Box(
         modifier = Modifier
             .background(
-                color = ExplorePlayListItemColors.AccentPrimary.copy(alpha = 0.12f),
+                color = accentColor.copy(alpha = 0.12f),
                 shape = RoundedCornerShape(8.dp)
             )
             .padding(horizontal = 10.dp, vertical = 4.dp)
     ) {
         Text(
             text = "$count words",
-            color = ExplorePlayListItemColors.AccentPrimary,
+            color = accentColor,
             fontSize = rememberLabelFontSize(),
             fontWeight = FontWeight.Medium
         )
@@ -258,18 +254,18 @@ private fun CountBadgeExplore(count: Long) {
 }
 
 @Composable
-private fun CefrChipExplore(cefr: String) {
+private fun CefrChipExplore(cefr: String, accentColor: Color) {
     Box(
         modifier = Modifier
             .background(
-                color = AppTheme.SecondaryColor.copy(alpha = 0.15f),
+                color = accentColor.copy(alpha = 0.15f),
                 shape = RoundedCornerShape(6.dp)
             )
             .padding(horizontal = 8.dp, vertical = 4.dp)
     ) {
         Text(
             text = cefr,
-            color = AppTheme.SecondaryColor,
+            color = accentColor,
             fontSize = rememberLabelFontSize() * 0.9,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 2.dp)
@@ -278,18 +274,18 @@ private fun CefrChipExplore(cefr: String) {
 }
 
 @Composable
-private fun TagChipExplore(tag: String) {
+private fun TagChipExplore(tag: String, accentColor: Color) {
     Box(
         modifier = Modifier
             .background(
-                color = ExplorePlayListItemColors.AccentPrimary.copy(alpha = 0.12f),
+                color = accentColor.copy(alpha = 0.12f),
                 shape = RoundedCornerShape(12.dp)
             )
             .padding(horizontal = 10.dp, vertical = 4.dp)
     ) {
         Text(
             text = tag,
-            color = ExplorePlayListItemColors.AccentPrimary,
+            color = accentColor,
             fontSize = rememberLabelFontSize() * 0.9,
             fontWeight = FontWeight.Medium,
             modifier = Modifier.padding(bottom = 2.dp)
@@ -301,17 +297,16 @@ private fun TagChipExplore(tag: String) {
 private fun ViewButton(
     onClick: () -> Unit,
     enabled: Boolean,
-    size: androidx.compose.ui.unit.Dp
+    size: Dp,
+    accentColor: Color,
+    disabledColor: Color
 ) {
     val backgroundColor = if (enabled)
-        ExplorePlayListItemColors.AccentPrimary.copy(alpha = 0.15f)
+        accentColor.copy(alpha = 0.15f)
     else
-        ExplorePlayListItemColors.ButtonBackground.copy(alpha = 0.3f)
+        disabledColor.copy(alpha = 0.3f)
 
-    val iconColor = if (enabled)
-        ExplorePlayListItemColors.AccentPrimary
-    else
-        ExplorePlayListItemColors.TextMuted
+    val iconColor = if (enabled) accentColor else disabledColor
 
     Surface(
         onClick = onClick,
@@ -321,9 +316,7 @@ private fun ViewButton(
         color = backgroundColor,
         contentColor = iconColor
     ) {
-        Box(
-            contentAlignment = Alignment.Center
-        ) {
+        Box(contentAlignment = Alignment.Center) {
             Icon(
                 imageVector = Icons.Outlined.Visibility,
                 contentDescription = "View playlist",
@@ -337,17 +330,16 @@ private fun ViewButton(
 private fun AssignButton(
     onClick: () -> Unit,
     enabled: Boolean,
-    size: androidx.compose.ui.unit.Dp
+    size: Dp,
+    accentColor: Color,
+    disabledColor: Color
 ) {
     val backgroundColor = if (enabled)
-        AppTheme.PrimaryColor.copy(alpha = 0.15f)
+        accentColor.copy(alpha = 0.15f)
     else
-        ExplorePlayListItemColors.ButtonBackground.copy(alpha = 0.3f)
+        disabledColor.copy(alpha = 0.3f)
 
-    val iconColor = if (enabled)
-        AppTheme.PrimaryColor
-    else
-        ExplorePlayListItemColors.TextMuted
+    val iconColor = if (enabled) accentColor else disabledColor
 
     Surface(
         onClick = onClick,
@@ -357,9 +349,7 @@ private fun AssignButton(
         color = backgroundColor,
         contentColor = iconColor
     ) {
-        Box(
-            contentAlignment = Alignment.Center
-        ) {
+        Box(contentAlignment = Alignment.Center) {
             if (enabled) {
                 Icon(
                     imageVector = Icons.Filled.Add,

@@ -125,7 +125,6 @@ fun ExplorePlayListsScreen(
                     val playlist = state.playlists[index]
                     ExplorePlayListItem(
                         playList = playlist,
-                        showCreatedDate = state.showCreatedDate,
                         isAssigning = state.isAssigning,
                         onAssignClick = {
                             viewModel.sent(ExplorePlayListsAction.AssignPlayList(playlist))
