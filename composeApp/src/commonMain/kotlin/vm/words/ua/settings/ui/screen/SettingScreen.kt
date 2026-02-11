@@ -37,6 +37,9 @@ fun SettingScreen(
             GridButtonItem("Profile") {
                 navController.navigate(Screen.Profile)
             },
+            GridButtonItem("Theme") {
+                navController.navigate(Screen.Theme)
+            },
             GridButtonItem("Policy") {
                 navController.navigate(Screen.Policy)
             },

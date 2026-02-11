@@ -7,6 +7,7 @@ import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.settings.ui.screen.PolicyScreen
 import vm.words.ua.settings.ui.screen.ProfileScreen
 import vm.words.ua.settings.ui.screen.SettingScreen
+import vm.words.ua.settings.ui.screen.ThemeScreen
 
 class SettingScreenProvider : ScreenProvider {
     @Composable
@@ -25,6 +26,10 @@ class SettingScreenProvider : ScreenProvider {
 
             Screen.Profile.route -> {
                 ProfileScreen(navController = navController)
+            }
+
+            Screen.Theme.route -> {
+                ThemeScreen(navController = navController)
             }
 
             else -> {

@@ -1,69 +1,61 @@
 package vm.words.ua.core.ui
 
 import androidx.compose.material3.ColorScheme
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.ui.graphics.Color
+import vm.words.ua.core.ui.theme.ThemeManager
 
 object AppTheme {
     val Black = Color(0xFF000000)
     val White = Color(0xFFFFFFFF)
 
-    val PrimaryGreen = Color(0xFF4BC150)
+    val PrimaryGreen: Color
+        get() = currentTheme.accentGreen
 
+    val PrimaryDisable: Color
+        get() = currentTheme.disabledColor
 
+    val PrimaryRed: Color
+        get() = currentTheme.accentRed
 
-    val PrimaryDisable = Color(0xFF808080)
-    val PrimaryRed = Color(0xFFDC0101)
-    val PrimaryYellow = Color(0xFFF2C144)
-    val PrimaryViolet = Color(0xFFA144F2)
-    val PrimaryBlue = Color(0xFF44A1F2)
-    val PrimaryGray = Color(0xFFB0B0B0)
+    val PrimaryYellow: Color
+        get() = currentTheme.accentYellow
 
-    val PrimaryColor = Color(0xFF44F2C1)
+    val PrimaryViolet: Color
+        get() = currentTheme.accentViolet
 
-    val PrimaryColorDark = Color(0xFF299375)
-    val SecondaryColor = Color(0xFFA144F2)
+    val PrimaryBlue: Color
+        get() = currentTheme.accentBlue
 
-    val PrimaryBack = Color(0xFF1E2127)
-    val SecondaryBack = Color(0xFF2C3039)
+    val PrimaryGray: Color
+        get() = currentTheme.secondaryText
 
-    val PrimaryText = White
-    val SecondaryText = PrimaryGray
+    val PrimaryColor: Color
+        get() = currentTheme.primaryColor
 
-    val Error = PrimaryRed
+    val PrimaryColorDark: Color
+        get() = currentTheme.primaryColor.copy(alpha = 0.7f)
 
+    val SecondaryColor: Color
+        get() = currentTheme.secondaryColor
 
-    // spotlight background uses ARGB (#DF000000)
-    val SpotlightBackground = Color(0xDF000000)
+    val PrimaryBack: Color
+        get() = currentTheme.primaryBack
 
-    val ColorScheme: ColorScheme = darkColorScheme(
-        primary = PrimaryColor,
-        onPrimary = Black,
-        primaryContainer = PrimaryColorDark,
-        onPrimaryContainer = White,
-        inversePrimary = PrimaryGreen,
-        secondary = PrimaryBlue,
-        onSecondary = Black,
-        secondaryContainer = SecondaryBack,
-        onSecondaryContainer = White,
-        tertiary = PrimaryViolet,
-        onTertiary = White,
-        tertiaryContainer = PrimaryBack,
-        onTertiaryContainer = White,
-        background = PrimaryBack,
-        onBackground = White,
-        surface = SecondaryBack,
-        onSurface = White,
-        surfaceVariant = PrimaryGray,
-        onSurfaceVariant = Black,
-        inverseSurface = PrimaryColor.copy(alpha = 0.60f),
-        inverseOnSurface = Black,
-        error = PrimaryRed,
-        onError = White,
-        errorContainer = PrimaryRed.copy(alpha = 0.12f), // Approximate low-opacity container
-        onErrorContainer = PrimaryRed,
-        outline = PrimaryDisable,
-        outlineVariant = PrimaryGray,
-        scrim = SpotlightBackground
-    )
+    val SecondaryBack: Color
+        get() = currentTheme.secondaryBack
+
+    val PrimaryText: Color
+        get() = currentTheme.primaryText
+
+    val SecondaryText: Color
+        get() = currentTheme.secondaryText
+
+    val Error: Color
+        get() = currentTheme.accentRed
+
+    private val currentTheme
+        get() = ThemeManager.instance.currentTheme.value
+
+    val ColorScheme: ColorScheme
+        get() = currentTheme.colorScheme
 }
