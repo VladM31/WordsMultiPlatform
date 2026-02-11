@@ -92,14 +92,14 @@ fun ConfirmSignUpScreen(
                         modifier = Modifier
                             .size(88.dp)
                             .background(
-                                AppTheme.PrimaryGreen.copy(alpha = 0.12f),
+                                AppTheme.PrimaryColor.copy(alpha = 0.12f),
                                 shape = CircleShape
                             ),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = "✓",
-                            color = AppTheme.PrimaryGreen,
+                            color = AppTheme.PrimaryColor,
                             fontSize = 36.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -132,7 +132,7 @@ fun ConfirmSignUpScreen(
                     // Show contact info (phone) so user knows where the message was sent
                     Text(
                         text = "Sent to: ${bundle.phoneNumber}",
-                        color = AppTheme.PrimaryGreen,
+                        color = AppTheme.PrimaryColor,
                         fontSize = rememberFontSize() * 0.95f,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(bottom = 18.dp)
@@ -152,7 +152,7 @@ fun ConfirmSignUpScreen(
                     TextButton(
                         onClick = { navController.popBackStack() },
                     ) {
-                        Text(text = "Back to Login", color = AppTheme.PrimaryGreen)
+                        Text(text = "Back to Login", color = AppTheme.PrimaryColor)
                     }
 
                 }

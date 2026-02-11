@@ -41,16 +41,16 @@ fun <T> MultiSelect(
             value = selectedText,
             onValueChange = {},
             readOnly = true,
-            label = { Text(label, color = AppTheme.PrimaryGreen, fontSize = rememberLabelFontSize()) },
+            label = { Text(label, color = AppTheme.PrimaryColor, fontSize = rememberLabelFontSize()) },
             modifier = Modifier.fillMaxWidth().menuAnchor(MenuAnchorType.PrimaryNotEditable),
             textStyle = TextStyle(fontSize = fontSize),
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = AppTheme.PrimaryGreen,
-                unfocusedBorderColor = AppTheme.PrimaryGreen.copy(alpha = 0.5f),
-                focusedTextColor = AppTheme.PrimaryGreen,
-                unfocusedTextColor = AppTheme.PrimaryGreen,
-                cursorColor = AppTheme.PrimaryGreen
+                focusedBorderColor = AppTheme.PrimaryColor,
+                unfocusedBorderColor = AppTheme.PrimaryColor.copy(alpha = 0.5f),
+                focusedTextColor = AppTheme.PrimaryColor,
+                unfocusedTextColor = AppTheme.PrimaryColor,
+                cursorColor = AppTheme.PrimaryColor
             )
         )
 
@@ -71,12 +71,12 @@ fun <T> MultiSelect(
                                 checked = isChecked,
                                 onCheckedChange = { onToggle(item) },
                                 colors = CheckboxDefaults.colors(
-                                    checkedColor = AppTheme.PrimaryGreen,
-                                    uncheckedColor = AppTheme.PrimaryGreen,
+                                    checkedColor = AppTheme.PrimaryColor,
+                                    uncheckedColor = AppTheme.PrimaryColor,
                                     checkmarkColor = AppTheme.PrimaryBack
                                 )
                             )
-                            Text(toLabel(item), color = AppTheme.PrimaryGreen, fontSize = fontSize)
+                            Text(toLabel(item), color = AppTheme.PrimaryColor, fontSize = fontSize)
                         }
                     },
                     onClick = { onToggle(item) }

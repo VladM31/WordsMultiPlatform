@@ -57,15 +57,15 @@ fun StringListInput(
                         selection = TextRange(newSelectionStart, newSelectionEnd)
                     )
                 },
-                label = { Text(label, color = AppTheme.PrimaryGreen, fontSize = rememberLabelFontSize()) },
+                label = { Text(label, color = AppTheme.PrimaryColor, fontSize = rememberLabelFontSize()) },
                 modifier = Modifier.weight(1f),
                 textStyle = TextStyle(fontSize = rememberFontSize()),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = AppTheme.PrimaryGreen,
-                    unfocusedBorderColor = AppTheme.PrimaryGreen.copy(alpha = 0.5f),
-                    focusedTextColor = AppTheme.PrimaryGreen,
-                    unfocusedTextColor = AppTheme.PrimaryGreen,
-                    cursorColor = AppTheme.PrimaryGreen
+                    focusedBorderColor = AppTheme.PrimaryColor,
+                    unfocusedBorderColor = AppTheme.PrimaryColor.copy(alpha = 0.5f),
+                    focusedTextColor = AppTheme.PrimaryColor,
+                    unfocusedTextColor = AppTheme.PrimaryColor,
+                    cursorColor = AppTheme.PrimaryColor
                 )
             )
             IconButton(
@@ -83,7 +83,7 @@ fun StringListInput(
                 Icon(
                     painter = painterResource(Res.drawable.add),
                     contentDescription = "Add",
-                    tint = AppTheme.PrimaryGreen
+                    tint = AppTheme.PrimaryColor
                 )
             }
         }
@@ -99,14 +99,14 @@ fun StringListInput(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(item, color = AppTheme.PrimaryGreen, fontSize = rememberFontSize())
+                    Text(item, color = AppTheme.PrimaryColor, fontSize = rememberFontSize())
                     OutlinedButton(
                         onClick = {
                             val updated = currentItems.toMutableList().also { it.remove(item) }
                             onItemsChange(if (updated.isEmpty()) null else updated)
                         }
                     ) {
-                        Text(removeButtonText, color = AppTheme.PrimaryGreen, fontSize = rememberFontSize())
+                        Text(removeButtonText, color = AppTheme.PrimaryColor, fontSize = rememberFontSize())
                     }
                 }
             }

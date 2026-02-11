@@ -8,7 +8,6 @@ object AppTheme {
     val Black = Color(0xFF000000)
     val White = Color(0xFFFFFFFF)
 
-    val PrimaryGreen = Color(0xFF44F2C1)
     val PrimaryGreenStatus = Color(0xFF4BC150)
 
 
@@ -20,7 +19,8 @@ object AppTheme {
     val PrimaryBlue = Color(0xFF44A1F2)
     val PrimaryGray = Color(0xFFB0B0B0)
 
-    val PrimaryColor = PrimaryGreen
+    val PrimaryColor = Color(0xFF44F2C1)
+
     val PrimaryColorDark = Color(0xFF299375)
     val SecondaryColor = Color(0xFFA144F2)
 
@@ -37,7 +37,7 @@ object AppTheme {
     val SpotlightBackground = Color(0xDF000000)
 
     val ColorScheme: ColorScheme = darkColorScheme(
-        primary = PrimaryGreen,
+        primary = PrimaryColor,
         onPrimary = Black,
         primaryContainer = PrimaryColorDark,
         onPrimaryContainer = White,

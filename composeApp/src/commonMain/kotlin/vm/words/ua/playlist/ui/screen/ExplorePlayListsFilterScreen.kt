@@ -181,7 +181,7 @@ fun ExplorePlayListsFilterScreen(
                     .widthIn(max = 300.dp * rememberScaleFactor())
                     .padding(16.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = AppTheme.PrimaryGreen,
+                    containerColor = AppTheme.PrimaryColor,
                     contentColor = AppTheme.PrimaryBack
                 )
             ) {

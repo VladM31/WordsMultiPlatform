@@ -114,16 +114,16 @@ fun PlayListFilterScreen(
                         OutlinedTextField(
                             value = state.name,
                             onValueChange = { viewModel.send(PlayListFilterAction.ChangeName(it)) },
-                            label = { Text("Playlist name", fontSize = labelTextSize, color = AppTheme.PrimaryGreen) },
+                            label = { Text("Playlist name", fontSize = labelTextSize, color = AppTheme.PrimaryColor) },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .heightIn(min = fieldHeight),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = AppTheme.PrimaryGreen,
-                                unfocusedBorderColor = AppTheme.PrimaryGreen.copy(alpha = 0.5f),
-                                focusedTextColor = AppTheme.PrimaryGreen,
-                                unfocusedTextColor = AppTheme.PrimaryGreen,
-                                cursorColor = AppTheme.PrimaryGreen
+                                focusedBorderColor = AppTheme.PrimaryColor,
+                                unfocusedBorderColor = AppTheme.PrimaryColor.copy(alpha = 0.5f),
+                                focusedTextColor = AppTheme.PrimaryColor,
+                                unfocusedTextColor = AppTheme.PrimaryColor,
+                                cursorColor = AppTheme.PrimaryColor
                             ),
                             textStyle = androidx.compose.ui.text.TextStyle(fontSize = inputTextSize),
                             singleLine = true
@@ -133,7 +133,7 @@ fun PlayListFilterScreen(
                         Text(
                             text = "Count",
                             fontSize = titleTextSize,
-                            color = AppTheme.PrimaryGreen,
+                            color = AppTheme.PrimaryColor,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -146,16 +146,16 @@ fun PlayListFilterScreen(
                             OutlinedTextField(
                                 value = state.startCount,
                                 onValueChange = { viewModel.send(PlayListFilterAction.ChangeStartCount(it)) },
-                                label = { Text("Start", fontSize = labelTextSize, color = AppTheme.PrimaryGreen) },
+                                label = { Text("Start", fontSize = labelTextSize, color = AppTheme.PrimaryColor) },
                                 modifier = Modifier
                                     .weight(1f)
                                     .heightIn(min = fieldHeight),
                                 colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = AppTheme.PrimaryGreen,
-                                    unfocusedBorderColor = AppTheme.PrimaryGreen.copy(alpha = 0.5f),
-                                    focusedTextColor = AppTheme.PrimaryGreen,
-                                    unfocusedTextColor = AppTheme.PrimaryGreen,
-                                    cursorColor = AppTheme.PrimaryGreen
+                                    focusedBorderColor = AppTheme.PrimaryColor,
+                                    unfocusedBorderColor = AppTheme.PrimaryColor.copy(alpha = 0.5f),
+                                    focusedTextColor = AppTheme.PrimaryColor,
+                                    unfocusedTextColor = AppTheme.PrimaryColor,
+                                    cursorColor = AppTheme.PrimaryColor
                                 ),
                                 textStyle = androidx.compose.ui.text.TextStyle(fontSize = inputTextSize),
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -165,16 +165,16 @@ fun PlayListFilterScreen(
                             OutlinedTextField(
                                 value = state.endCount,
                                 onValueChange = { viewModel.send(PlayListFilterAction.ChangeEndCount(it)) },
-                                label = { Text("End", fontSize = labelTextSize, color = AppTheme.PrimaryGreen) },
+                                label = { Text("End", fontSize = labelTextSize, color = AppTheme.PrimaryColor) },
                                 modifier = Modifier
                                     .weight(1f)
                                     .heightIn(min = fieldHeight),
                                 colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = AppTheme.PrimaryGreen,
-                                    unfocusedBorderColor = AppTheme.PrimaryGreen.copy(alpha = 0.5f),
-                                    focusedTextColor = AppTheme.PrimaryGreen,
-                                    unfocusedTextColor = AppTheme.PrimaryGreen,
-                                    cursorColor = AppTheme.PrimaryGreen
+                                    focusedBorderColor = AppTheme.PrimaryColor,
+                                    unfocusedBorderColor = AppTheme.PrimaryColor.copy(alpha = 0.5f),
+                                    focusedTextColor = AppTheme.PrimaryColor,
+                                    unfocusedTextColor = AppTheme.PrimaryColor,
+                                    cursorColor = AppTheme.PrimaryColor
                                 ),
                                 textStyle = androidx.compose.ui.text.TextStyle(fontSize = inputTextSize),
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -191,7 +191,7 @@ fun PlayListFilterScreen(
                             .padding(buttonPadding)
                             .height(buttonHeight),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = AppTheme.PrimaryGreen,
+                            containerColor = AppTheme.PrimaryColor,
                             contentColor = AppTheme.PrimaryBack
                         )
                     ) {

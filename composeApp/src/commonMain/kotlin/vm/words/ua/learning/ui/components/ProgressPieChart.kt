@@ -83,13 +83,13 @@ fun ProgressPieChart(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text = "Progress",
-                    color = AppTheme.PrimaryGreen,
+                    color = AppTheme.PrimaryColor,
                     fontSize = rememberLabelFontSize(),
                     fontWeight = FontWeight.Medium
                 )
                 Text(
                     text = "${animatedLearned.toInt()}%",
-                    color = AppTheme.PrimaryGreen,
+                    color = AppTheme.PrimaryColor,
                     fontSize = rememberFontSize(),
                     fontWeight = FontWeight.Bold
                 )
@@ -102,7 +102,7 @@ fun ProgressPieChart(
         Row(
             horizontalArrangement = Arrangement.spacedBy(35.dp)
         ) {
-            LegendItem(color = AppTheme.PrimaryGreen, label = "Learned")
+            LegendItem(color = AppTheme.PrimaryColor, label = "Learned")
             LegendItem(color = AppTheme.PrimaryRed, label = "Not learned")
         }
     }
@@ -124,7 +124,7 @@ private fun LegendItem(
         )
         Text(
             text = label,
-            color = AppTheme.PrimaryGreen,
+            color = AppTheme.PrimaryColor,
             fontSize = 14.sp
         )
     }

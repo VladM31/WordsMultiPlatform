@@ -76,7 +76,7 @@ actual fun PdfContent(
     ) {
         if (isLoading) {
             CircularProgressIndicator(
-                color = AppTheme.PrimaryGreen,
+                color = AppTheme.PrimaryColor,
                 modifier = Modifier.align(Alignment.Center)
             )
         } else {

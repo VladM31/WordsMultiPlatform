@@ -28,14 +28,14 @@ fun TextInput(
             onValueChange(truncated.ifBlank { null })
         },
         textStyle = TextStyle(fontSize = fontSize),
-        label = { Text(label, color = AppTheme.PrimaryGreen, fontSize = labelFontSize) },
+        label = { Text(label, color = AppTheme.PrimaryColor, fontSize = labelFontSize) },
         modifier = Modifier.fillMaxWidth(),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = AppTheme.PrimaryGreen,
-            unfocusedBorderColor = AppTheme.PrimaryGreen.copy(alpha = 0.5f),
-            focusedTextColor = AppTheme.PrimaryGreen,
-            unfocusedTextColor = AppTheme.PrimaryGreen,
-            cursorColor = AppTheme.PrimaryGreen
+            focusedBorderColor = AppTheme.PrimaryColor,
+            unfocusedBorderColor = AppTheme.PrimaryColor.copy(alpha = 0.5f),
+            focusedTextColor = AppTheme.PrimaryColor,
+            unfocusedTextColor = AppTheme.PrimaryColor,
+            cursorColor = AppTheme.PrimaryColor
         )
     )
 }

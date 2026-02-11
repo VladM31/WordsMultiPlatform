@@ -63,7 +63,7 @@ fun PublicPlayListDetailsScreen(
             if (state.isLoading && playList == null) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),
-                    color = AppTheme.PrimaryGreen
+                    color = AppTheme.PrimaryColor
                 )
                 return@Box
             }

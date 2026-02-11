@@ -51,7 +51,7 @@ fun CounterRow(
                 imageVector = Icons.Rounded.Remove,
                 contentDescription = "Minus",
                 modifier = Modifier.size(iconSize),
-                tint = if (count > minValue) AppTheme.PrimaryGreen
+                tint = if (count > minValue) AppTheme.PrimaryColor
                 else AppTheme.PrimaryDisable
             )
         }
@@ -60,7 +60,7 @@ fun CounterRow(
 
         Text(
             text = count.toString(),
-            color = AppTheme.PrimaryGreen,
+            color = AppTheme.PrimaryColor,
             fontSize = rememberFontSize(),
             fontWeight = FontWeight.Bold,
             modifier = Modifier.widthIn(min = 50.dp),
@@ -83,7 +83,7 @@ fun CounterRow(
                 imageVector = Icons.Rounded.Add,
                 contentDescription = "Plus",
                 modifier = Modifier.size(iconSize),
-                tint = if (count < maxValue) AppTheme.PrimaryGreen
+                tint = if (count < maxValue) AppTheme.PrimaryColor
                 else AppTheme.PrimaryDisable
             )
         }

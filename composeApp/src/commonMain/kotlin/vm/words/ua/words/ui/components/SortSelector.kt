@@ -67,7 +67,7 @@ fun <T> SortSelector(
                             label = {
                                 Text(
                                     label,
-                                    color = AppTheme.PrimaryGreen,
+                                    color = AppTheme.PrimaryColor,
                                     fontSize = rememberLabelFontSize()
                                 )
                             },
@@ -81,11 +81,11 @@ fun <T> SortSelector(
                             },
                             textStyle = TextStyle(fontSize = rememberFontSize()),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = AppTheme.PrimaryGreen,
-                                unfocusedBorderColor = AppTheme.PrimaryGreen.copy(alpha = 0.5f),
-                                focusedTextColor = AppTheme.PrimaryGreen,
-                                unfocusedTextColor = AppTheme.PrimaryGreen,
-                                cursorColor = AppTheme.PrimaryGreen
+                                focusedBorderColor = AppTheme.PrimaryColor,
+                                unfocusedBorderColor = AppTheme.PrimaryColor.copy(alpha = 0.5f),
+                                focusedTextColor = AppTheme.PrimaryColor,
+                                unfocusedTextColor = AppTheme.PrimaryColor,
+                                cursorColor = AppTheme.PrimaryColor
                             )
                         )
 
@@ -99,7 +99,7 @@ fun <T> SortSelector(
                                     text = {
                                         Text(
                                             "Default",
-                                            color = AppTheme.PrimaryGreen,
+                                            color = AppTheme.PrimaryColor,
                                             fontSize = rememberLabelFontSize()
                                         )
                                     },
@@ -115,7 +115,7 @@ fun <T> SortSelector(
                                     text = {
                                         Text(
                                             toLabel(item),
-                                            color = AppTheme.PrimaryGreen,
+                                            color = AppTheme.PrimaryColor,
                                             fontSize = rememberLabelFontSize()
                                         )
                                     },
@@ -138,7 +138,7 @@ fun <T> SortSelector(
                         label = {
                             Text(
                                 label,
-                                color = AppTheme.PrimaryGreen,
+                                color = AppTheme.PrimaryColor,
                                 fontSize = rememberLabelFontSize()
                             )
                         },
@@ -151,11 +151,11 @@ fun <T> SortSelector(
                             )
                         },
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = AppTheme.PrimaryGreen,
-                            unfocusedBorderColor = AppTheme.PrimaryGreen.copy(alpha = 0.5f),
-                            focusedTextColor = AppTheme.PrimaryGreen,
-                            unfocusedTextColor = AppTheme.PrimaryGreen,
-                            cursorColor = AppTheme.PrimaryGreen
+                            focusedBorderColor = AppTheme.PrimaryColor,
+                            unfocusedBorderColor = AppTheme.PrimaryColor.copy(alpha = 0.5f),
+                            focusedTextColor = AppTheme.PrimaryColor,
+                            unfocusedTextColor = AppTheme.PrimaryColor,
+                            cursorColor = AppTheme.PrimaryColor
                         )
                     )
 
@@ -165,7 +165,7 @@ fun <T> SortSelector(
                             title = {
                                 Text(
                                     label,
-                                    color = AppTheme.PrimaryGreen,
+                                    color = AppTheme.PrimaryColor,
                                     fontSize = rememberLabelFontSize()
                                 )
                             },
@@ -182,7 +182,7 @@ fun <T> SortSelector(
                                                 .padding(12.dp)) {
                                             Text(
                                                 "Default",
-                                                color = AppTheme.PrimaryGreen,
+                                                color = AppTheme.PrimaryColor,
                                                 fontSize = rememberFontSize()
                                             )
                                         }
@@ -199,7 +199,7 @@ fun <T> SortSelector(
                                                 .padding(12.dp)) {
                                             Text(
                                                 toLabel(item),
-                                                color = AppTheme.PrimaryGreen,
+                                                color = AppTheme.PrimaryColor,
                                                 fontSize = rememberFontSize()
                                             )
                                         }
@@ -221,7 +221,7 @@ fun <T> SortSelector(
             Icon(
                 painter = painterResource(Res.drawable.arrow),
                 contentDescription = if (asc) "Ascending" else "Descending",
-                tint = AppTheme.PrimaryGreen,
+                tint = AppTheme.PrimaryColor,
                 modifier = Modifier.rotate(if (asc) -90f else 90f)
             )
         }

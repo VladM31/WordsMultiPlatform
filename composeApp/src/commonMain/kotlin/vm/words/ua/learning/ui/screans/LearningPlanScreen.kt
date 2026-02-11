@@ -76,7 +76,7 @@ fun LearningPlanScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = AppTheme.PrimaryGreen)
+                CircularProgressIndicator(color = AppTheme.PrimaryColor)
             }
             return@Column
         }
@@ -125,7 +125,7 @@ private fun CreateBtn(onClick: () -> Unit) {
             TextButton(
                 onClick = onClick,
                 colors = ButtonDefaults.textButtonColors(
-                    contentColor = AppTheme.PrimaryGreen
+                    contentColor = AppTheme.PrimaryColor
                 )
             ) {
                 Icon(
@@ -256,7 +256,7 @@ private fun ModifyPlan(
                 .fillMaxWidth()
                 .padding(16.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = AppTheme.PrimaryGreen,
+                containerColor = AppTheme.PrimaryColor,
                 contentColor = AppTheme.PrimaryBack
             )
         ) {

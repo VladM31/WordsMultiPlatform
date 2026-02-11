@@ -189,7 +189,7 @@ fun WordFilterScreen(
                     .fillMaxWidth()
                     .padding(16.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = AppTheme.PrimaryGreen,
+                    containerColor = AppTheme.PrimaryColor,
                     contentColor = AppTheme.PrimaryBack
                 )
             ) {

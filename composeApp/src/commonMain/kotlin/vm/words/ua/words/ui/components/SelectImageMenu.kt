@@ -53,7 +53,7 @@ fun SelectImageMenu(
                 onClick = { imagePicker.launch() },
                 modifier = Modifier.weight(3f),
                 colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = AppTheme.PrimaryGreen
+                    contentColor = AppTheme.PrimaryColor
                 )
             ) {
                 Text(
@@ -73,7 +73,7 @@ fun SelectImageMenu(
                 Icon(
                     painter = painterResource(Res.drawable.delete),
                     contentDescription = "Remove",
-                    tint = AppTheme.PrimaryGreen,
+                    tint = AppTheme.PrimaryColor,
                     modifier = Modifier.size(rememberIconSize())
                 )
             }
@@ -82,7 +82,7 @@ fun SelectImageMenu(
         image?.let { file ->
             Text(
                 text = "Selected: ${file.name}",
-                color = AppTheme.PrimaryGreen,
+                color = AppTheme.PrimaryColor,
                 fontSize = rememberFontSize() * 0.85f,
                 lineHeight = rememberFontSize() * 1.1f
             )

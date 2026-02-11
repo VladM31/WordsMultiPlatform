@@ -49,7 +49,7 @@ fun SelectionBottomMenu(
                 onClick = onUnselect,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = AppTheme.PrimaryBack,
-                    contentColor = AppTheme.PrimaryGreen
+                    contentColor = AppTheme.PrimaryColor
                 ),
                 contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp)
             ) {
@@ -72,7 +72,7 @@ fun SelectionBottomMenu(
             Button(
                 onClick = onApply,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = AppTheme.PrimaryGreen,
+                    containerColor = AppTheme.PrimaryColor,
                     contentColor = AppTheme.PrimaryBack
                 ),
                 contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp)

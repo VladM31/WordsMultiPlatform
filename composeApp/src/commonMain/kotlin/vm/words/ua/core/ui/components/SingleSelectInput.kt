@@ -36,24 +36,24 @@ fun <T> SingleSelectInput(
             onValueChange = {},
             readOnly = true,
             textStyle = TextStyle(fontSize = fontSize),
-            label = { Text(label, color = AppTheme.PrimaryGreen, fontSize = labelFontSize) },
+            label = { Text(label, color = AppTheme.PrimaryColor, fontSize = labelFontSize) },
             modifier = modifier
                 .fillMaxWidth()
                 .menuAnchor(MenuAnchorType.PrimaryNotEditable),
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = AppTheme.PrimaryGreen,
-                unfocusedBorderColor = AppTheme.PrimaryGreen.copy(alpha = 0.5f),
-                focusedTextColor = AppTheme.PrimaryGreen,
-                unfocusedTextColor = AppTheme.PrimaryGreen,
-                cursorColor = AppTheme.PrimaryGreen
+                focusedBorderColor = AppTheme.PrimaryColor,
+                unfocusedBorderColor = AppTheme.PrimaryColor.copy(alpha = 0.5f),
+                focusedTextColor = AppTheme.PrimaryColor,
+                unfocusedTextColor = AppTheme.PrimaryColor,
+                cursorColor = AppTheme.PrimaryColor
             ),
             // Render helper text below the field when provided
             supportingText = if (helperText != null) {
                 {
                     Text(
                         helperText,
-                        color = AppTheme.PrimaryGreen.copy(alpha = 0.7f),
+                        color = AppTheme.PrimaryColor.copy(alpha = 0.7f),
                         fontSize = rememberLabelFontSize() * 0.65
                     )
                 }
@@ -65,7 +65,7 @@ fun <T> SingleSelectInput(
         ) {
             if (showNone) {
                 DropdownMenuItem(
-                    text = { Text(noneLabel, color = AppTheme.PrimaryGreen, fontSize = labelFontSize) },
+                    text = { Text(noneLabel, color = AppTheme.PrimaryColor, fontSize = labelFontSize) },
                     onClick = {
                         onSelect(null)
                         expanded = false
@@ -74,7 +74,7 @@ fun <T> SingleSelectInput(
             }
             items.forEach { item ->
                 DropdownMenuItem(
-                    text = { Text(toLabel(item), color = AppTheme.PrimaryGreen, fontSize = labelFontSize) },
+                    text = { Text(toLabel(item), color = AppTheme.PrimaryColor, fontSize = labelFontSize) },
                     onClick = {
                         onSelect(item)
                         expanded = false

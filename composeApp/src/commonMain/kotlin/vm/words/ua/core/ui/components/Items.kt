@@ -29,7 +29,7 @@ fun <T> ColumnScope.Items(
         if (isLoading && content.isEmpty()) {
             CircularProgressIndicator(
                 modifier = Modifier.align(Alignment.Center),
-                color = AppTheme.PrimaryGreen
+                color = AppTheme.PrimaryColor
             )
             return
         }
@@ -68,7 +68,7 @@ fun <T> ColumnScope.Items(
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator(
-                        color = AppTheme.PrimaryGreen,
+                        color = AppTheme.PrimaryColor,
                         modifier = Modifier.size(32.dp)
                     )
                 }
@@ -80,7 +80,7 @@ fun <T> ColumnScope.Items(
                 }
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),
-                    color = AppTheme.PrimaryGreen
+                    color = AppTheme.PrimaryColor
                 )
             }
         }

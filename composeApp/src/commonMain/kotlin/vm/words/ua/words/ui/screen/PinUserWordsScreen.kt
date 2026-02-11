@@ -123,7 +123,7 @@ fun PinUserWordsScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = AppTheme.PrimaryGreen)
+                CircularProgressIndicator(color = AppTheme.PrimaryColor)
             }
             return@Column
         }
@@ -188,7 +188,7 @@ private fun TopMenu(
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        color = AppTheme.PrimaryGreen.copy(alpha = 0.1f)
+        color = AppTheme.PrimaryColor.copy(alpha = 0.1f)
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -196,7 +196,7 @@ private fun TopMenu(
         ) {
             Text(
                 text = "Word ${state.index + 1} of ${state.words.size}",
-                color = AppTheme.PrimaryGreen,
+                color = AppTheme.PrimaryColor,
                 fontSize = rememberFontSize() * 0.9f,
             )
             state.currentWord?.let { word ->
@@ -305,7 +305,7 @@ private fun WordNavigator(
             modifier = Modifier.weight(1f),
             enabled = state.index > 0,
             colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = AppTheme.PrimaryGreen
+                contentColor = AppTheme.PrimaryColor
             )
         ) {
             Text(leftArrow, fontSize = rememberFontSize())
@@ -316,7 +316,7 @@ private fun WordNavigator(
             modifier = Modifier.weight(2f),
             enabled = state.hasUpdate,
             colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = AppTheme.PrimaryGreen
+                contentColor = AppTheme.PrimaryColor
             )
         ) {
             Text("Save", fontSize = rememberFontSize())
@@ -331,7 +331,7 @@ private fun WordNavigator(
             modifier = Modifier.weight(1f),
             enabled = state.index < state.words.size - 1,
             colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = AppTheme.PrimaryGreen
+                contentColor = AppTheme.PrimaryColor
             )
         ) {
             Text(rightArrow, fontSize = rememberFontSize())
@@ -358,7 +358,7 @@ private fun CompletionMenuDialog(
             ) {
                 Text(
                     text = "Words Pinned Successfully!",
-                    color = AppTheme.PrimaryGreen,
+                    color = AppTheme.PrimaryColor,
                     fontSize = rememberFontSize() * 1.2f,
                     lineHeight = rememberFontSize() * 1.3,
                     fontWeight = FontWeight.Bold,
@@ -381,7 +381,7 @@ private fun CompletionMenuDialog(
                         onClick = onAddToPlaylist,
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = AppTheme.PrimaryGreen
+                            containerColor = AppTheme.PrimaryColor
                         ),
                         shape = RoundedCornerShape(8.dp)
                     ) {
@@ -396,7 +396,7 @@ private fun CompletionMenuDialog(
                         onClick = onGoToUserWords,
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = AppTheme.PrimaryGreen
+                            contentColor = AppTheme.PrimaryColor
                         ),
                         shape = RoundedCornerShape(8.dp)
                     ) {

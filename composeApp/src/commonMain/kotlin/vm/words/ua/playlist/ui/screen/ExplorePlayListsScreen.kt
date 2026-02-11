@@ -98,7 +98,7 @@ fun ExplorePlayListsScreen(
             if (state.playlists.isEmpty() && state.isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),
-                    color = AppTheme.PrimaryGreen
+                    color = AppTheme.PrimaryColor
                 )
                 return@Box
             }
@@ -152,7 +152,7 @@ fun ExplorePlayListsScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         CircularProgressIndicator(
-                            color = AppTheme.PrimaryGreen,
+                            color = AppTheme.PrimaryColor,
                             modifier = Modifier.size(32.dp)
                         )
                     }

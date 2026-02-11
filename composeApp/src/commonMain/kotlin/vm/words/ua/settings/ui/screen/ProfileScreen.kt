@@ -92,7 +92,7 @@ fun ProfileScreen(
                         ProfileInfoItem(
                             label = "Email",
                             value = state.email.orEmpty(),
-                            valueColor = AppTheme.PrimaryGreen
+                            valueColor = AppTheme.PrimaryColor
                         )
                     }
 
@@ -102,7 +102,7 @@ fun ProfileScreen(
                         ProfileInfoItem(
                             label = "Phone",
                             value = state.phoneNumber.orEmpty(),
-                            valueColor = AppTheme.PrimaryGreen
+                            valueColor = AppTheme.PrimaryColor
                         )
                     }
                 }

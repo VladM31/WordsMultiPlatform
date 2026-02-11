@@ -34,7 +34,7 @@ fun ColumnScope.PlayListItems(
         if (state.playlists.isEmpty() && state.isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier.align(Alignment.Center),
-                color = AppTheme.PrimaryGreen
+                color = AppTheme.PrimaryColor
             )
             return
         }
@@ -77,7 +77,7 @@ fun ColumnScope.PlayListItems(
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator(
-                        color = AppTheme.PrimaryGreen,
+                        color = AppTheme.PrimaryColor,
                         modifier = Modifier.size(32.dp)
                     )
                 }

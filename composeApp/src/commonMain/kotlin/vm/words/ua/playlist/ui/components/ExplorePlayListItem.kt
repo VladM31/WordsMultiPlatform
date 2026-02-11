@@ -340,12 +340,12 @@ private fun AssignButton(
     size: androidx.compose.ui.unit.Dp
 ) {
     val backgroundColor = if (enabled)
-        AppTheme.PrimaryGreen.copy(alpha = 0.15f)
+        AppTheme.PrimaryColor.copy(alpha = 0.15f)
     else
         ExplorePlayListItemColors.ButtonBackground.copy(alpha = 0.3f)
 
     val iconColor = if (enabled)
-        AppTheme.PrimaryGreen
+        AppTheme.PrimaryColor
     else
         ExplorePlayListItemColors.TextMuted
 

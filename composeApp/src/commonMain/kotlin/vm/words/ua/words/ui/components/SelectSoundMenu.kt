@@ -67,7 +67,7 @@ fun SelectSoundMenu(
                 onClick = { soundPicker.launch() },
                 modifier = Modifier.weight(3f),
                 colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = AppTheme.PrimaryGreen
+                    contentColor = AppTheme.PrimaryColor
                 )
             ) {
                 Text(
@@ -87,7 +87,7 @@ fun SelectSoundMenu(
                 Icon(
                     painter = painterResource(Res.drawable.delete),
                     contentDescription = "Remove",
-                    tint = AppTheme.PrimaryGreen,
+                    tint = AppTheme.PrimaryColor,
                     modifier = Modifier.size(rememberIconSize())
                 )
             }
@@ -96,7 +96,7 @@ fun SelectSoundMenu(
         sound?.let { file ->
             Text(
                 text = "Selected: ${file.name}",
-                color = AppTheme.PrimaryGreen,
+                color = AppTheme.PrimaryColor,
                 fontSize = rememberFontSize() * 0.85f,
                 lineHeight = rememberFontSize()
             )

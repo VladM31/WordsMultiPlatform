@@ -75,7 +75,7 @@ fun DefaultAddWordScreen(
                 CircularProgressIndicator(
                     modifier = Modifier.size(48.dp)
                         .align(Alignment.Center),
-                    color = AppTheme.PrimaryGreen
+                    color = AppTheme.PrimaryColor
                 )
             }
 
@@ -197,7 +197,7 @@ fun DefaultAddWordScreen(
                     .fillMaxWidth()
                     .padding(10.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = AppTheme.PrimaryGreen,
+                    containerColor = AppTheme.PrimaryColor,
                     contentColor = AppTheme.PrimaryBack
                 )
             ) {
@@ -242,7 +242,7 @@ private fun SoundSwitch(
 
             Text(
                 text = "Generate sound",
-                color = AppTheme.PrimaryGreen,
+                color = AppTheme.PrimaryColor,
                 fontSize = rememberFontSize(),
                 lineHeight = rememberFontSize() * 1.1f
             )

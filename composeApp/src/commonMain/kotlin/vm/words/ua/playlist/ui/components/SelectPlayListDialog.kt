@@ -194,7 +194,7 @@ private fun TopBar(
                 TextButton(
                     onClick = { showCreateField = true },
                     colors = ButtonDefaults.textButtonColors(
-                        contentColor = AppTheme.PrimaryGreen
+                        contentColor = AppTheme.PrimaryColor
                     )
                 ) {
                     Icon(
@@ -244,8 +244,8 @@ private fun TopBar(
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = AppTheme.PrimaryText,
                         unfocusedTextColor = AppTheme.PrimaryText,
-                        cursorColor = AppTheme.PrimaryGreen,
-                        focusedBorderColor = AppTheme.PrimaryGreen,
+                        cursorColor = AppTheme.PrimaryColor,
+                        focusedBorderColor = AppTheme.PrimaryColor,
                         unfocusedBorderColor = AppTheme.PrimaryDisable,
                         errorBorderColor = AppTheme.Error,
                         focusedContainerColor = AppTheme.PrimaryBack,
@@ -296,7 +296,7 @@ private fun TopBar(
                             }
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = AppTheme.PrimaryGreen,
+                            containerColor = AppTheme.PrimaryColor,
                             contentColor = AppTheme.Black
                         ),
                         shape = RoundedCornerShape(8.dp)

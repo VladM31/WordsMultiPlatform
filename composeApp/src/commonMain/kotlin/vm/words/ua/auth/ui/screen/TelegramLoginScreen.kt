@@ -60,7 +60,7 @@ fun TelegramLoginScreen(
                 // show message that user should open telegram and confirm
                 Text(
                     text = "Please open Telegram and confirm login",
-                    color = AppTheme.PrimaryGreen,
+                    color = AppTheme.PrimaryColor,
                     fontSize = rememberFontSize() * 1.3f,
                     lineHeight = rememberFontSize() * 1.4f,
                     textAlign = TextAlign.Center,
@@ -85,7 +85,7 @@ fun TelegramLoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (state.isLoading) {
-                CircularProgressIndicator(color = AppTheme.PrimaryGreen)
+                CircularProgressIndicator(color = AppTheme.PrimaryColor)
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
