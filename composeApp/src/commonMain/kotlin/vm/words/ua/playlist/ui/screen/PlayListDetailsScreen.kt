@@ -8,6 +8,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckBox
 import androidx.compose.material.icons.filled.CheckBoxOutlineBlank
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.jetbrains.compose.resources.painterResource
+import vm.words.ua.core.ui.AppColors
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.PopupMenuButton
@@ -30,9 +32,6 @@ import vm.words.ua.playlist.ui.actions.PlayListDetailsAction
 import vm.words.ua.playlist.ui.vms.PlayListDetailsViewModel
 import vm.words.ua.words.ui.bundles.WordDetailsBundle
 import vm.words.ua.words.ui.components.WordItem
-import wordsmultiplatform.composeapp.generated.resources.Res
-import wordsmultiplatform.composeapp.generated.resources.delete_red
-import wordsmultiplatform.composeapp.generated.resources.play
 
 
 @Composable
@@ -265,10 +264,10 @@ private fun BottomControlPanel(
                     modifier = Modifier.size(60.dp)
                 ) {
                     Icon(
-                        painter = painterResource(Res.drawable.delete_red),
+                        imageVector = Icons.Filled.Delete,
                         contentDescription = "Unpin selected words",
-                        tint = if (selectedWordsCount > 0) Color.Unspecified else Color.Gray,
-                        modifier = Modifier.size(60.dp)
+                        tint = if (selectedWordsCount > 0) AppColors.primaryRed else Color.Gray,
+                        modifier = Modifier.size(40.dp)
                     )
                 }
 
@@ -303,10 +302,10 @@ private fun BottomControlPanel(
                 modifier = Modifier.size(60.dp)
             ) {
                 Icon(
-                    painter = painterResource(Res.drawable.play),
+                    imageVector = Icons.Filled.PlayArrow,
                     contentDescription = "Start training",
-                    tint = if (totalWordsCount > 0) Color.Unspecified else Color.Gray,
-                    modifier = Modifier.size(60.dp)
+                    tint = if (totalWordsCount > 0) AppColors.primaryColor else Color.Gray,
+                    modifier = Modifier.size(40.dp)
                 )
             }
         }

@@ -37,7 +37,7 @@ import vm.words.ua.words.domain.models.Word
 fun WordItem(
     word: Word,
     userWord: UserWord? = null,
-    notSelectedIcon: ImageVector? = Icons.Outlined.ShoppingCart,
+    notSelectedIcon: ImageVector? = Icons.Outlined.AddCircle,
     selectedIcon: ImageVector = Icons.Filled.Check,
     isSelected: Boolean, // Cart state (isInCart)
     onSelect: () -> Unit, // Cart toggle
