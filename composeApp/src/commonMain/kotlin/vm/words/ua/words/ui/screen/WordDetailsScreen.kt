@@ -13,6 +13,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -48,7 +49,6 @@ import vm.words.ua.words.ui.bundles.WordDetailsBundle
 import vm.words.ua.words.ui.states.WordDetailsState
 import vm.words.ua.words.ui.vms.WordDetailsViewModel
 import wordsmultiplatform.composeapp.generated.resources.Res
-import wordsmultiplatform.composeapp.generated.resources.delete_red
 import wordsmultiplatform.composeapp.generated.resources.image_icon
 
 @Composable
@@ -87,7 +87,7 @@ fun WordDetailsScreen(
                 onBackClick = {
                     navController.popBackStack()
                 },
-                additionalButtonImage = painterResource(Res.drawable.delete_red)
+                additionalButtonVector = Icons.Outlined.Delete
             )
 
             if (state.isLoading) {

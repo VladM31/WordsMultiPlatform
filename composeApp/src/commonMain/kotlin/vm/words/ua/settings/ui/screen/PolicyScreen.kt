@@ -3,10 +3,11 @@ package vm.words.ua.settings.ui.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Download
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
-import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.ErrorMessageBox
@@ -15,8 +16,6 @@ import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.settings.ui.vm.PolicyViewModel
 import vm.words.ua.words.ui.components.PdfViewer
-import wordsmultiplatform.composeapp.generated.resources.Res
-import wordsmultiplatform.composeapp.generated.resources.download
 
 @Composable
 fun PolicyScreen(
@@ -36,7 +35,7 @@ fun PolicyScreen(
             title = "Privacy Policy",
             showBackButton = true,
             onBackClick = { navController.popBackStack() },
-            additionalButtonImage = painterResource(Res.drawable.download),
+            additionalButtonVector = Icons.Outlined.Download,
             showAdditionalButton = true,
             onAdditionalClick = {
                 uriHandler.openUri(state.link)

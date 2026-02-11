@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -12,7 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.domain.models.enums.CEFR
 import vm.words.ua.core.domain.models.enums.Language
 import vm.words.ua.core.ui.AppTheme
@@ -27,8 +28,6 @@ import vm.words.ua.words.ui.actions.WordFilterAction
 import vm.words.ua.words.ui.bundles.WordFilterBundle
 import vm.words.ua.words.ui.components.SortSelector
 import vm.words.ua.words.ui.vms.WordFilterViewModel
-import wordsmultiplatform.composeapp.generated.resources.Res
-import wordsmultiplatform.composeapp.generated.resources.delete
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,7 +65,7 @@ fun WordFilterScreen(
             showBackButton = true,
             onBackClick = { navController.popBackStack() },
             showAdditionalButton = true,
-            additionalButtonImage = painterResource(Res.drawable.delete),
+            additionalButtonVector = Icons.Outlined.Delete,
             onAdditionalClick = {
                 viewModel.sent(WordFilterAction.Clear)
             }

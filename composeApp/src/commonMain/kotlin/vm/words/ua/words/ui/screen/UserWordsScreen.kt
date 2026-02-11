@@ -4,11 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
-import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.ErrorMessageBox
@@ -23,8 +24,6 @@ import vm.words.ua.words.ui.bundles.WordDetailsBundle
 import vm.words.ua.words.ui.components.SelectionBottomMenu
 import vm.words.ua.words.ui.components.WordItem
 import vm.words.ua.words.ui.vms.UserWordsViewModel
-import wordsmultiplatform.composeapp.generated.resources.Res
-import wordsmultiplatform.composeapp.generated.resources.find
 
 @Composable
 fun UserWordsScreen(
@@ -87,7 +86,7 @@ fun UserWordsScreen(
                 )
             },
             onBackClick = { navController.popBackStack() },
-            additionalButtonImage = painterResource(Res.drawable.find)
+            additionalButtonVector = Icons.Outlined.Search
         )
 
         Items(

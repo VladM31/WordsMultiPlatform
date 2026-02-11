@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.HelpOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,7 +15,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AdditionalButtonTooltip
 import vm.words.ua.core.ui.components.AppToolBar
@@ -29,8 +30,6 @@ import vm.words.ua.exercise.ui.componets.ExerciseItemSelected
 import vm.words.ua.exercise.ui.componets.ExerciseItemUnselected
 import vm.words.ua.exercise.ui.vm.ExerciseSelectionViewModel
 import vm.words.ua.navigation.SimpleNavController
-import wordsmultiplatform.composeapp.generated.resources.Res
-import wordsmultiplatform.composeapp.generated.resources.question
 import kotlin.time.Duration.Companion.seconds
 
 
@@ -79,7 +78,7 @@ fun ExerciseSelectionScreen(
         AppToolBar(
             title = "Select Exercises",
             onBackClick = { navController.popBackStack() },
-            additionalButtonImage = painterResource(Res.drawable.question),
+            additionalButtonVector = Icons.Outlined.HelpOutline,
             showAdditionalButton = state.canRecommendExercises,
             onAdditionalClick = {
                 viewModel.sent(ExerciseSelectAction.RecommendExercises)

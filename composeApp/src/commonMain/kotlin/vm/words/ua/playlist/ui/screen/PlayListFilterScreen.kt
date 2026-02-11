@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -13,7 +15,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.CenteredContainer
@@ -24,8 +25,6 @@ import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.playlist.domain.models.filters.PlayListCountFilter
 import vm.words.ua.playlist.ui.actions.PlayListFilterAction
 import vm.words.ua.playlist.ui.vms.PlayListFilterViewModel
-import wordsmultiplatform.composeapp.generated.resources.Res
-import wordsmultiplatform.composeapp.generated.resources.delete
 
 @Composable
 fun PlayListFilterScreen(
@@ -73,7 +72,7 @@ fun PlayListFilterScreen(
                 navController.popBackStack()
             },
             showAdditionalButton = true,
-            additionalButtonImage = painterResource(Res.drawable.delete),
+            additionalButtonVector = Icons.Outlined.Delete,
             onAdditionalClick = {
                 viewModel.send(PlayListFilterAction.Clear)
             }

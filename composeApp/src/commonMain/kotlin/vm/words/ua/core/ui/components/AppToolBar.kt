@@ -60,6 +60,7 @@ fun AppToolBar(
     title: String,
     modifier: Modifier = Modifier,
     backButtonImage: Painter = painterResource(Res.drawable.arrow),
+    backButtonVector: ImageVector? = null,
     onBackClick: (() -> Unit)? = null,
     onAdditionalClick: (() -> Unit)? = null,
     showBackButton: Boolean = true,
@@ -109,7 +110,8 @@ fun AppToolBar(
                     showBackButton = showBackButton,
                     buttonSize = buttonSize,
                     iconSize = iconSize,
-                    backButtonImage = backButtonImage
+                    backButtonImage = backButtonImage,
+                    backButtonVector = backButtonVector
                 )
 
                 // Title
@@ -159,6 +161,7 @@ private fun BackButton(
     onBackClick: (() -> Unit)?,
     showBackButton: Boolean,
     backButtonImage: Painter,
+    backButtonVector: ImageVector?,
     buttonSize: Dp,
     iconSize: Dp
 ) {
@@ -171,12 +174,21 @@ private fun BackButton(
         onClick = onBackClick ?: {},
         modifier = Modifier.size(buttonSize)
     ) {
-        Icon(
-            painter = backButtonImage,
-            contentDescription = "Back",
-            tint = AppTheme.PrimaryColor,
-            modifier = Modifier.size(iconSize)
-        )
+        if (backButtonVector != null) {
+            Icon(
+                imageVector = backButtonVector,
+                contentDescription = "Back",
+                tint = AppTheme.PrimaryColor,
+                modifier = Modifier.size(iconSize)
+            )
+        } else {
+            Icon(
+                painter = backButtonImage,
+                contentDescription = "Back",
+                tint = AppTheme.PrimaryColor,
+                modifier = Modifier.size(iconSize)
+            )
+        }
     }
 }
 

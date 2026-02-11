@@ -7,6 +7,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ExposurePlus1
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -18,7 +20,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.utils.rememberFontSize
@@ -33,8 +34,6 @@ import vm.words.ua.exercise.ui.states.LettersMatchState
 import vm.words.ua.exercise.ui.utils.toText
 import vm.words.ua.exercise.ui.vm.LettersMatchVm
 import vm.words.ua.navigation.SimpleNavController
-import wordsmultiplatform.composeapp.generated.resources.Res
-import wordsmultiplatform.composeapp.generated.resources.plus_one
 
 @Composable
 fun LetterMatchByDescriptionScreen(
@@ -87,7 +86,7 @@ private fun LettersMatchScreen(
             AppToolBar(
                 title = param.currentExercise.text,
                 onBackClick = { navController.popBackStack() },
-                additionalButtonImage = painterResource(Res.drawable.plus_one),
+                additionalButtonVector = Icons.Outlined.ExposurePlus1,
                 onAdditionalClick = {
                     viewModel.sent(LettersMatchAction.PlusOneLetter)
                 },

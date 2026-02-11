@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -11,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToast
 import vm.words.ua.core.ui.components.AppToolBar
@@ -25,8 +26,6 @@ import vm.words.ua.playlist.domain.models.filters.PublicPlayListCountFilter
 import vm.words.ua.playlist.ui.actions.ExplorePlayListsAction
 import vm.words.ua.playlist.ui.components.ExplorePlayListItem
 import vm.words.ua.playlist.ui.vms.ExplorePlayListsViewModel
-import wordsmultiplatform.composeapp.generated.resources.Res
-import wordsmultiplatform.composeapp.generated.resources.find
 
 @Composable
 fun ExplorePlayListsScreen(
@@ -87,7 +86,7 @@ fun ExplorePlayListsScreen(
             onAdditionalClick = {
                 navController.navigate(Screen.ExplorePlayListsFilter, state.filter)
             },
-            additionalButtonImage = painterResource(Res.drawable.find)
+            additionalButtonVector = Icons.Outlined.Search
         )
 
         Box(
