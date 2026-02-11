@@ -9,7 +9,7 @@ import ComposeApp
 public class GoogleSignInHelper {
 
     public static let shared = GoogleSignInHelper()
-
+    
     /// Web Client ID from Firebase Console - MUST match the one used on Android
     /// This is required for Firebase Auth to validate the ID token
     private let webClientID = "1005445939198-rlkom295h4c9rmuf4jd43cv87nm9qpsk.apps.googleusercontent.com"

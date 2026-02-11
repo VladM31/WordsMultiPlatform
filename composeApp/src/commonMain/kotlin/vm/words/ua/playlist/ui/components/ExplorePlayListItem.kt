@@ -38,7 +38,7 @@ fun ExplorePlayListItem(
     onViewClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val dateText = playList.createdAt.toFormatDateTime()
+    val dateText = playList.createdAt.toFormatDate()
     val enabled = playList.count > 0L
 
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
@@ -147,20 +147,16 @@ fun ExplorePlayListItem(
 
                             Spacer(modifier = Modifier.height(6.dp))
 
-                            // Count and date info
+                            // Count info (date moved below to avoid wrapping on small screens)
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(16.dp)
                             ) {
                                 CountBadgeExplore(count = playList.count)
-                                if (showCreatedDate) {
-                                    Text(
-                                        text = dateText,
-                                        color = ExplorePlayListItemColors.TextMuted,
-                                        fontSize = rememberLabelFontSize() * 0.9
-                                    )
-                                }
+                                // date removed from here to avoid horizontal wrapping
                             }
+
+
                         }
 
                         // Right panel with view and assign buttons
@@ -380,4 +376,3 @@ private fun AssignButton(
         }
     }
 }
-

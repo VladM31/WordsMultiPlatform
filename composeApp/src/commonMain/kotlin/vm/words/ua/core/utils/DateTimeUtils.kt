@@ -9,3 +9,8 @@ fun Instant.toFormatDateTime(): String {
     return "${localDateTime.year}-${localDateTime.monthNumber.toString().padStart(2, '0')}-${localDateTime.dayOfMonth.toString().padStart(2, '0')} " +
             "${localDateTime.hour.toString().padStart(2, '0')}:${localDateTime.minute.toString().padStart(2, '0')}:${localDateTime.second.toString().padStart(2, '0')}"
 }
+
+fun Instant.toFormatDate(): String {
+    val localDateTime = toLocalDateTime(TimeZone.currentSystemDefault())
+    return "${localDateTime.year}-${localDateTime.monthNumber.toString().padStart(2, '0')}-${localDateTime.dayOfMonth.toString().padStart(2, '0')}"
+}

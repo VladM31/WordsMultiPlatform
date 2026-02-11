@@ -130,19 +130,24 @@ fun PlayListItem(
 
                             Spacer(modifier = Modifier.height(6.dp))
 
-                            // Count and date info
+                            // Count info (date moved below to avoid wrapping on small screens)
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(16.dp)
                             ) {
                                 CountBadge(count = playList.count)
-                                if (showCreatedDate) {
-                                    Text(
-                                        text = dateText,
-                                        color = PlayListItemColors.TextMuted,
-                                        fontSize = rememberLabelFontSize() * 0.9
-                                    )
-                                }
+                                // date removed from here to avoid horizontal wrapping
+                            }
+
+                            // Date shown below the count to prevent layout issues on small widths
+                            if (showCreatedDate) {
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = dateText,
+                                    color = PlayListItemColors.TextMuted,
+                                    fontSize = rememberLabelFontSize() * 0.9,
+                                    modifier = Modifier.padding(top = 2.dp)
+                                )
                             }
                         }
 
