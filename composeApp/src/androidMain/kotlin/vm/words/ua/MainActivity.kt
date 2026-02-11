@@ -1,5 +1,6 @@
 package vm.words.ua
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
@@ -7,27 +8,36 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.core.graphics.toColorInt
+import androidx.compose.ui.graphics.toArgb
+import androidx.core.view.WindowCompat
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.initialize
 import vm.words.ua.auth.domain.factories.ActivityHolder
 import vm.words.ua.auth.domain.managers.AuthHistorySettingsFactory
 import vm.words.ua.core.domain.managers.SettingsFactory
+import vm.words.ua.core.ui.theme.ThemeManager
 import vm.words.ua.utils.storage.AndroidStorageConfig
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Enable edge-to-edge display with dark theme colors
-        val darkScrim = "#1E2127".toColorInt()
+        // Make content draw behind system bars
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        // Initial edge-to-edge with transparent bars
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.dark(darkScrim),
-            navigationBarStyle = SystemBarStyle.dark(darkScrim)
+            statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
         )
 
         // Adjust resize for soft keyboard
@@ -53,11 +63,39 @@ class MainActivity : ComponentActivity() {
             ActivityHolder.setActivity(this)
 
             setContent {
-                App(
+                // Observe theme changes and update system bars
+                val currentTheme by ThemeManager.instance.currentTheme.collectAsState()
+
+                LaunchedEffect(currentTheme) {
+                    val backgroundColor = currentTheme.primaryBack.toArgb()
+                    // Set window background color
+                    window.decorView.setBackgroundColor(backgroundColor)
+                    window.statusBarColor = backgroundColor
+                    window.navigationBarColor = backgroundColor
+
+                    val style = if (currentTheme.isDark) {
+                        SystemBarStyle.dark(backgroundColor)
+                    } else {
+                        SystemBarStyle.light(backgroundColor, backgroundColor)
+                    }
+                    enableEdgeToEdge(
+                        statusBarStyle = style,
+                        navigationBarStyle = style
+                    )
+                }
+
+                // Wrap app in Box with background that fills behind system bars
+                Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .safeDrawingPadding()
-                )
+                        .background(currentTheme.primaryBack)
+                ) {
+                    App(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .systemBarsPadding()
+                    )
+                }
             }
         } catch (e: Exception) {
             Log.e("MainActivity", "Error in onCreate", e)
