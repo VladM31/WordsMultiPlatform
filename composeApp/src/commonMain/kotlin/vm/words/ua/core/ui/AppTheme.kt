@@ -8,7 +8,7 @@ object AppTheme {
     val Black = Color(0xFF000000)
     val White = Color(0xFFFFFFFF)
 
-    val PrimaryGreenStatus = Color(0xFF4BC150)
+    val PrimaryGreen = Color(0xFF4BC150)
 
 
 
@@ -41,7 +41,7 @@ object AppTheme {
         onPrimary = Black,
         primaryContainer = PrimaryColorDark,
         onPrimaryContainer = White,
-        inversePrimary = PrimaryGreenStatus,
+        inversePrimary = PrimaryGreen,
         secondary = PrimaryBlue,
         onSecondary = Black,
         secondaryContainer = SecondaryBack,

@@ -449,7 +449,7 @@ private fun InfoChip(
 private fun getCefrColor(cefr: CEFR): Color {
     return when (cefr) {
         CEFR.A1 -> AppTheme.PrimaryColor
-        CEFR.A2 -> AppTheme.PrimaryGreenStatus
+        CEFR.A2 -> AppTheme.PrimaryGreen
         CEFR.B1 -> AppTheme.PrimaryBlue
         CEFR.B2 -> AppTheme.PrimaryViolet
         CEFR.C1 -> AppTheme.PrimaryYellow
