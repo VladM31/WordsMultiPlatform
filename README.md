@@ -12,8 +12,8 @@
 
 ## Links
 
-- [Study Words (Web)](https://studywords.online/) — web version of the application
-- [Words on Google Play](https://play.google.com/store/apps/details?id=com.vlad.words) — Android app on Google Play
+- [Study Words (Web)](https://study-words.com) — web version of the application
+- [Words on Google Play](https://play.google.com/store/apps/details?id=vm.words.ua) — Android app on Google Play
 
 ---
 
