@@ -1,92 +1,116 @@
-# WordsMultiPlatform
+# Words — Multiplatform App for Vocabulary Learning
 
-WordsMultiPlatform is a cross-platform application for working with a dictionary/words (viewing, filtering, and managing
-word cards). The project is written in Kotlin Multiplatform and provides interfaces for Android, iOS, Web (WASM/JS), and
-Desktop (JVM) using shared code.
+> A cross-platform application for learning, managing, and practicing vocabulary.
+> Available on **Android**, **iOS**, **Web**, and **Desktop**.
 
-## Summary
+[![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Web%20%7C%20Desktop-blue)]()
+[![Language](https://img.shields.io/badge/Language-Kotlin-purple)](https://kotlinlang.org/)
+[![UI](https://img.shields.io/badge/UI-Compose%20Multiplatform-green)](https://www.jetbrains.com/compose-multiplatform/)
+[![License](https://img.shields.io/badge/License-Proprietary-red)](LICENSE)
 
-The app allows storing and browsing words, applying filters, paging through results, and selecting highlighted words.
-Main scenarios:
+---
 
-- Viewing a paginated list of words
-- Applying filters (by user and other attributes)
-- Selecting/deselecting words (multiple selection)
-- Synchronization/loading of data via domain managers
+## Links
 
-The project is split into a `shared` module (business logic) and `composeApp` (UI implemented with Compose
-Multiplatform). There is also a native iOS project in `iosApp`.
+- [Study Words (Web)](https://studywords.online/) — web version of the application
+- [Words on Google Play](https://play.google.com/store/apps/details?id=com.vlad.words) — Android app on Google Play
 
-## Technologies
+---
 
-The project uses the following key technologies and libraries:
+## Features
 
-- Kotlin Multiplatform (KMP) — shared code for multiple targets
-- Compose Multiplatform — UI for Desktop / Web / Android (shared UI layer)
-- Kotlin Coroutines + StateFlow — asynchronous programming and state management
-- Gradle (Kotlin DSL) — project build system
-- Kotlin/WASM and Kotlin/JS — web targets (WASM preferred for modern browsers)
-- JVM target — for the Desktop application
-- iOS (SwiftUI entry point) — native container for the mobile UI
-- (Optional) Firebase — Android configuration files (google-services.json) and setup instructions are present
-- Common libraries: Ktor (HTTP), kotlinx-datetime, Coil (image loading) — exact dependencies are listed in
-  `gradle/libs.versions.toml` and `build.gradle.kts`.
+- **Accounts & Authorization** — Google Sign-In, Firebase Authentication
+- **Word Management** — create, edit, delete, and browse word cards with pagination and filters
+- **Exercises & Training** — practice vocabulary with various exercise modes
+- **Progress Tracking** — charts and statistics on your learning progress
+- **Media Attachments** — add images and audio pronunciation to words
+- **Multi-language Support** — learn words in any language pair
+- **Offline Support** — work with your dictionary without an internet connection
+- **Cross-platform Sync** — your data is available on all platforms
 
-> Note: the exact set of external libraries can be found in `build.gradle.kts` and `gradle/libs.versions.toml`.
+## Architecture & Modules
 
-## Repository structure (simplified)
+```
+/composeApp          — Main Compose Multiplatform module (UI + platform code)
+  src/commonMain     — Shared UI and logic for all platforms
+  src/androidMain    — Android-specific implementations
+  src/iosMain        — iOS-specific implementations
+  src/jsMain         — JavaScript web target
+  src/wasmJsMain     — WebAssembly web target
+  src/desktopMain    — Desktop (JVM) target
+/shared              — Shared business logic, models, and domain layer
+/iosApp              — Native iOS container (Swift / SwiftUI)
+/documents           — Policy and legal documents
+```
 
-- /composeApp — main Compose Multiplatform module (UI + platform-specific code)
-  - src/commonMain — common code for all targets
-  - src/androidMain, src/iosMain, src/jsMain, src/jvmMain — platform-specific implementations
-- /shared — shared business logic and models
-- /iosApp — iOS container (Swift/SwiftUI)
-- /gradle, /build — build configuration and outputs
+The project follows a clean architecture approach with dependency injection (Kodein) and reactive state management (StateFlow + Coroutines).
 
-## How to run (Windows)
+## Tech Stack
 
-Build and run via Gradle. Example commands (run from the repository root in Windows command prompt):
+| Category | Technologies |
+|----------|-------------|
+| **Language** | Kotlin 2.2, Kotlin Multiplatform |
+| **UI** | Compose Multiplatform |
+| **Async** | Kotlin Coroutines, StateFlow |
+| **DI** | Kodein |
+| **Networking** | Ktor Client (OkHttp / JS / Darwin engines) |
+| **Serialization** | Kotlinx Serialization |
+| **Auth** | Firebase Authentication, Google Sign-In |
+| **Analytics** | Firebase Analytics, Firebase Crashlytics |
+| **Storage** | Multiplatform Settings |
+| **Charts** | KoalaPlot |
+| **PDF** | PDFBox (Desktop), pdfjs-dist (Web), PDFKit (iOS), android-pdf-viewer (Android) |
+| **Files** | FileKit |
+| **Build** | Gradle (Kotlin DSL) |
 
-- Run Desktop (JVM):
+## Quick Start
 
-  .\gradlew.bat :composeApp:run
+### Requirements
 
-- Run Web (WASM) in development mode:
+- **JDK 17+**
+- **Android Studio** or **IntelliJ IDEA** (with KMP plugin)
+- **Xcode** (for iOS, macOS only)
 
-    .\gradlew.bat :composeApp:wasmJsBrowserDevelopmentRun
+### Clone & Run
 
-- Run Web (JS) in development mode:
+```bash
+git clone https://github.com/VladM31/WordsMultiPlatform.git
+cd WordsMultiPlatform
+```
 
-    .\gradlew.bat :composeApp:jsBrowserDevelopmentRun
+**Desktop (JVM):**
+```bash
+./gradlew :composeApp:run
+```
 
-- iOS: open the `iosApp` folder in Xcode and run from Xcode (macOS required).
+**Web (WASM):**
+```bash
+./gradlew :composeApp:wasmJsBrowserDevelopmentRun
+```
 
-If the project uses services such as Firebase, follow the instructions in `FIREBASE_SETUP.md` and `ANDROID_SETUP.md`.
+**Web (JS):**
+```bash
+./gradlew :composeApp:jsBrowserDevelopmentRun
+```
 
-## Useful files
+**Android:**
+Open the project in Android Studio and run on a device or emulator.
 
-- `FIREBASE_SETUP.md` — how to configure Firebase (if needed)
-- `ANDROID_SETUP.md` — Android build and setup instructions
-- `gradle/libs.versions.toml` — dependency versions
+**iOS:**
+Open `iosApp/iosApp.xcodeproj` in Xcode and run on a simulator or device (macOS required).
 
-## For developers
+## Useful Links
 
-- Shared business logic lives in `shared` and `composeApp/src/commonMain` — changes there apply to all targets.
-- The UI is implemented in `composeApp` using Compose Multiplatform.
-- Screen state is typically managed with `StateFlow` in ViewModels (for example, `WordsViewModel`); asynchronous work
-  uses Coroutines.
-
-## Possible improvements / additions
-
-- API/backend documentation (if an external server is used)
-- Example tests and CI configuration
-- Detailed description of data models and structures
+- [`LICENSE`](LICENSE) — Proprietary License Agreement
+- [`documents/en_policy.pdf`](documents/en_policy.pdf) — Privacy Policy
+- [`gradle/libs.versions.toml`](gradle/libs.versions.toml) — Dependency versions
 
 ## License
 
-This project is distributed under a proprietary license. See the `LICENSE` file in the repository root for full terms:
+Proprietary License (c) 2025 VladM31.
+Use is permitted for personal, educational, or research purposes.
+Commercial use requires written permission.
 
-- `LICENSE` — Proprietary License Agreement (© 2025 VladM31). Use is permitted for personal, educational, or research
-  purposes; commercial use requires written permission. For commercial licensing inquiries contact
-  study.words.go@gmail.com
+## Contacts
 
+For questions and commercial licensing inquiries: **study.words.go@gmail.com**
