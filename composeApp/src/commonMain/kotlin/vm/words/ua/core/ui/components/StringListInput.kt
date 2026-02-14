@@ -1,6 +1,8 @@
 package vm.words.ua.core.ui.components
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,7 +17,6 @@ import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberIconSize
 import vm.words.ua.core.utils.rememberLabelFontSize
 import wordsmultiplatform.composeapp.generated.resources.Res
-import wordsmultiplatform.composeapp.generated.resources.add
 
 /**
  * A reusable component for managing a list of strings with add/remove functionality
@@ -81,9 +82,11 @@ fun StringListInput(
                 modifier = Modifier.size(rememberIconSize())
             ) {
                 Icon(
-                    painter = painterResource(Res.drawable.add),
+                    imageVector = Icons.Filled.Add,
                     contentDescription = "Add",
-                    tint = AppTheme.PrimaryColor
+                    tint = AppTheme.PrimaryColor,
+                    modifier = Modifier.size(rememberIconSize() * 0.95f)
+
                 )
             }
         }
