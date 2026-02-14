@@ -5,6 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -20,7 +22,6 @@ import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberIconSize
 import vm.words.ua.core.utils.rememberLabelFontSize
 import wordsmultiplatform.composeapp.generated.resources.Res
-import wordsmultiplatform.composeapp.generated.resources.arrow
 
 @OptIn(ExperimentalMaterial3Api::class)
 enum class ExpansionMode { Dropdown, Dialog }
@@ -219,10 +220,11 @@ fun <T> SortSelector(
             modifier = Modifier.size(rememberIconSize())
         ) {
             Icon(
-                painter = painterResource(Res.drawable.arrow),
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = if (asc) "Ascending" else "Descending",
                 tint = AppTheme.PrimaryColor,
                 modifier = Modifier.rotate(if (asc) -90f else 90f)
+                    .size(rememberIconSize() * 0.95F)
             )
         }
     }

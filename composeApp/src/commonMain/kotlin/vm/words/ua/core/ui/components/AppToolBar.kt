@@ -6,6 +6,9 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -28,7 +31,6 @@ import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.utils.hints.ui.utils.ViewHintStep
 import vm.words.ua.utils.hints.ui.utils.viewHint
 import wordsmultiplatform.composeapp.generated.resources.Res
-import wordsmultiplatform.composeapp.generated.resources.arrow
 import wordsmultiplatform.composeapp.generated.resources.setting
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -59,7 +61,6 @@ data class AdditionalButtonTooltip(
 fun AppToolBar(
     title: String,
     modifier: Modifier = Modifier,
-    backButtonImage: Painter = painterResource(Res.drawable.arrow),
     backButtonVector: ImageVector? = null,
     onBackClick: (() -> Unit)? = null,
     onAdditionalClick: (() -> Unit)? = null,
@@ -110,7 +111,6 @@ fun AppToolBar(
                     showBackButton = showBackButton,
                     buttonSize = buttonSize,
                     iconSize = iconSize,
-                    backButtonImage = backButtonImage,
                     backButtonVector = backButtonVector
                 )
 
@@ -160,7 +160,6 @@ fun AppToolBar(
 private fun BackButton(
     onBackClick: (() -> Unit)?,
     showBackButton: Boolean,
-    backButtonImage: Painter,
     backButtonVector: ImageVector?,
     buttonSize: Dp,
     iconSize: Dp
@@ -174,21 +173,12 @@ private fun BackButton(
         onClick = onBackClick ?: {},
         modifier = Modifier.size(buttonSize)
     ) {
-        if (backButtonVector != null) {
-            Icon(
-                imageVector = backButtonVector,
-                contentDescription = "Back",
-                tint = AppTheme.PrimaryColor,
-                modifier = Modifier.size(iconSize)
-            )
-        } else {
-            Icon(
-                painter = backButtonImage,
-                contentDescription = "Back",
-                tint = AppTheme.PrimaryColor,
-                modifier = Modifier.size(iconSize)
-            )
-        }
+        Icon(
+            imageVector = backButtonVector ?: Icons.AutoMirrored.Filled.ArrowBack,
+            contentDescription = "Back",
+            tint = AppTheme.PrimaryColor,
+            modifier = Modifier.size(iconSize)
+        )
     }
 }
 
