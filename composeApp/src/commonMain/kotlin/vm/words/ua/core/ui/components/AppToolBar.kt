@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -27,6 +26,7 @@ import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.utils.getScaleFactor
+import vm.words.ua.core.utils.rememberInterfaceMaxWidth
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.utils.hints.ui.utils.ViewHintStep
 import vm.words.ua.utils.hints.ui.utils.viewHint
@@ -100,6 +100,7 @@ fun AppToolBar(
             // Main toolbar content layer
             Row(
                 modifier = Modifier
+                    .widthIn(max = rememberInterfaceMaxWidth())
                     .fillMaxWidth()
                     .zIndex(0f),
                 horizontalArrangement = Arrangement.SpaceBetween,

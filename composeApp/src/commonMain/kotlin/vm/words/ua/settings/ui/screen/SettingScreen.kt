@@ -54,7 +54,7 @@ fun SettingScreen(
             .fillMaxSize()
             .background(AppTheme.PrimaryBack)
     ) {
-        AppToolBar(title = "Settings", showBackButton = false)
+        AppToolBar(title = "", showBackButton = false)
 
         ButtonsGrid(
             items = buttons,

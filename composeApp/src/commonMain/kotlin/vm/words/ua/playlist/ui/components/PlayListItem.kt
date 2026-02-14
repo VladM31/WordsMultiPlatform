@@ -38,8 +38,8 @@ fun PlayListItem(
 
     val scaleFactor = rememberScaleFactor()
 
-    val titleSize = rememberFontSize()
-    val iconSize = rememberIconSize() * 0.8f
+    val titleSize = rememberFontSize() * 0.9f
+    val iconSize = rememberIconSize() * 0.75f
     val cardPadding = (16 * scaleFactor).dp
     val horizontalPadding = (8 * scaleFactor).dp
     val verticalPadding = (6 * scaleFactor).dp
