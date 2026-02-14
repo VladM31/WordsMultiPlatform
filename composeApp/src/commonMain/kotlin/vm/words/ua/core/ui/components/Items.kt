@@ -25,7 +25,7 @@ fun <T> ColumnScope.Items(
 ) {
     val scaleFactor = rememberScaleFactor()
     val maxWidth = remember(scaleFactor) {
-        450.dp * scaleFactor
+        480.dp * scaleFactor
     }
     Box(
         modifier = Modifier
