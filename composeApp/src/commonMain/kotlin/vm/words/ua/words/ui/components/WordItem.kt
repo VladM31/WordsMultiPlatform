@@ -24,10 +24,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import vm.words.ua.core.ui.AppColors
 import vm.words.ua.core.utils.getScaleFactor
+import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.toFormatDateTime
 import vm.words.ua.words.domain.models.UserWord
 import vm.words.ua.words.domain.models.Word
@@ -55,10 +58,10 @@ fun WordItem(
         val textSecondary = AppColors.secondaryText
         val textMuted = AppColors.primaryDisable
 
-        val titleSize = (18 * scaleFactor).sp
-        val translateSize = (16 * scaleFactor).sp
+        val titleSize = rememberFontSize()
+        val translateSize = titleSize * 0.9
         val dateSize = (11 * scaleFactor).sp
-        val iconSize = (20 * scaleFactor).dp
+        val iconSize = (30 * scaleFactor).dp
         val cardPadding = (16 * scaleFactor).dp
         val horizontalPadding = (8 * scaleFactor).dp
         val verticalPadding = (6 * scaleFactor).dp
@@ -134,7 +137,8 @@ fun WordItem(
                             ) {
                                 LanguageBadge(
                                     langCode = word.lang.upperShortName,
-                                    color = accentPrimary
+                                    color = accentPrimary,
+                                    fontSize = titleSize * 0.4
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
@@ -153,7 +157,8 @@ fun WordItem(
                             ) {
                                 LanguageBadge(
                                     langCode = word.translateLang.upperShortName,
-                                    color = accentSecondary
+                                    color = accentSecondary,
+                                    fontSize = translateSize * 0.4
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
@@ -167,7 +172,11 @@ fun WordItem(
                             // Category
                             word.category?.let { category ->
                                 Spacer(modifier = Modifier.height(8.dp))
-                                CategoryChip(category = category, accentColor = accentPrimary)
+                                CategoryChip(
+                                    category = category,
+                                    accentColor = accentPrimary,
+                                    fontSize = titleSize * 0.7
+                                )
                             }
                         }
 
@@ -238,34 +247,7 @@ fun WordItem(
                     if (!(hasMetaInfo && showMetaInfo)) {
                         return@Box
                     }
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(
-                                color = cardBackground.copy(alpha = 0.5f)
-                            )
-                            .padding(horizontal = cardPadding, vertical = 8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(24.dp)
-                    ) {
-                        userWord?.createdAt?.let {
-                            MetaInfoText(
-                                label = "Added",
-                                value = it.toFormatDateTime(),
-                                fontSize = dateSize,
-                                mutedColor = textMuted,
-                                secondaryColor = textSecondary
-                            )
-                        }
-                        userWord?.lastReadDate?.let {
-                            MetaInfoText(
-                                label = "Last read",
-                                value = it.toFormatDateTime(),
-                                fontSize = dateSize,
-                                mutedColor = textMuted,
-                                secondaryColor = textSecondary
-                            )
-                        }
-                    }
+                    MetaInfoRow(cardBackground, cardPadding, userWord, dateSize, textMuted, textSecondary)
                 }
             }
         }
@@ -273,9 +255,45 @@ fun WordItem(
 }
 
 @Composable
+private fun MetaInfoRow(
+    cardBackground: Color,
+    cardPadding: Dp,
+    userWord: UserWord,
+    dateSize: TextUnit,
+    textMuted: Color,
+    textSecondary: Color
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                color = cardBackground.copy(alpha = 0.5f)
+            )
+            .padding(horizontal = cardPadding, vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(24.dp)
+    ) {
+        MetaInfoText(
+            label = "Added",
+            value = userWord.createdAt.toFormatDateTime(),
+            fontSize = dateSize,
+            mutedColor = textMuted,
+            secondaryColor = textSecondary
+        )
+        MetaInfoText(
+            label = "Last read",
+            value = userWord.lastReadDate.toFormatDateTime(),
+            fontSize = dateSize,
+            mutedColor = textMuted,
+            secondaryColor = textSecondary
+        )
+    }
+}
+
+@Composable
 private fun LanguageBadge(
     langCode: String,
-    color: Color
+    color: Color,
+    fontSize: TextUnit
 ) {
     Box(
         modifier = Modifier
@@ -288,14 +306,14 @@ private fun LanguageBadge(
         Text(
             text = langCode,
             color = color,
-            fontSize = 11.sp,
+            fontSize = fontSize,
             fontWeight = FontWeight.Bold
         )
     }
 }
 
 @Composable
-private fun CategoryChip(category: String, accentColor: Color) {
+private fun CategoryChip(category: String, accentColor: Color, fontSize: TextUnit) {
     Box(
         modifier = Modifier
             .background(
@@ -307,7 +325,7 @@ private fun CategoryChip(category: String, accentColor: Color) {
         Text(
             text = category,
             color = accentColor,
-            fontSize = 12.sp,
+            fontSize = fontSize,
             fontWeight = FontWeight.Medium
         )
     }

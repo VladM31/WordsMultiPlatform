@@ -6,11 +6,13 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import vm.words.ua.core.ui.AppTheme
+import vm.words.ua.core.utils.rememberScaleFactor
 
 
 @Composable
@@ -21,10 +23,16 @@ fun <T> ColumnScope.Items(
     isLoading: Boolean,
     listState: LazyListState
 ) {
+    val scaleFactor = rememberScaleFactor()
+    val maxWidth = remember(scaleFactor) {
+        450.dp * scaleFactor
+    }
     Box(
         modifier = Modifier
-            .weight(1f)
-            .fillMaxWidth()
+            .fillMaxSize()
+            .weight(1f),
+        contentAlignment = Alignment.Center
+
     ) {
         if (isLoading && content.isEmpty()) {
             CircularProgressIndicator(
@@ -46,7 +54,8 @@ fun <T> ColumnScope.Items(
 
         LazyColumn(
             state = listState,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxHeight()
+                .widthIn(max = maxWidth),
             contentPadding = PaddingValues(vertical = 8.dp)
         ) {
             items(
