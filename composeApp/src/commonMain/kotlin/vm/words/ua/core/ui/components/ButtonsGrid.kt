@@ -11,7 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,7 +36,7 @@ fun ButtonsGrid(
     items: List<GridButtonItem>,
     modifier: Modifier = Modifier,
     baseButtonWidth: Dp = 300.dp,
-    baseTextSize: Float = 35f
+    baseTextSize: Float = 32f
 ) {
     val scrollState = rememberScrollState()
 
@@ -46,12 +48,14 @@ fun ButtonsGrid(
         val scaleFactor = getScaleFactor(maxWidth)
 
         val maxButtonWidth = baseButtonWidth * scaleFactor
-        val gap = (10 * scaleFactor).dp
-        val horizontalPadding = (12 * scaleFactor).dp
-        val verticalPadding = (8 * scaleFactor).dp
-        val minButtonHeight = (56 * scaleFactor).dp
-        val verticalSpacing = (6 * scaleFactor).dp
+        val gap = (16 * scaleFactor).dp
+        val horizontalPadding = (16 * scaleFactor).dp
+        val verticalPadding = (12 * scaleFactor).dp
+        val minButtonHeight = (64 * scaleFactor).dp
+        val verticalSpacing = (10 * scaleFactor).dp
         val bottomSpacing = (24 * scaleFactor).dp
+        val cornerRadius = (8 * scaleFactor).dp
+        val shadowElevation = (4 * scaleFactor).dp
 
         val textSize = (baseTextSize * scaleFactor).sp
 
@@ -80,8 +84,10 @@ fun ButtonsGrid(
                     Spacer(modifier = Modifier.weight(1f))
 
                     val buttonColors = ButtonDefaults.buttonColors(
-                        containerColor = AppTheme.PrimaryColor.copy(alpha = 0.8f),
-                        contentColor = AppTheme.PrimaryBack
+                        containerColor = AppTheme.PrimaryColor,
+                        contentColor = AppTheme.PrimaryBack,
+                        disabledContainerColor = AppTheme.PrimaryColor.copy(alpha = 0.4f),
+                        disabledContentColor = AppTheme.PrimaryBack.copy(alpha = 0.5f)
                     )
 
                     for (item in row) {
@@ -89,28 +95,45 @@ fun ButtonsGrid(
                             onClick = item.onClick,
                             colors = buttonColors,
                             enabled = item.isAvailable,
-                            shape = RoundedCornerShape(8.dp),
+                            shape = RoundedCornerShape(cornerRadius),
                             modifier = item.modifier
                                 .width(itemWidth)
-                                .heightIn(min = minButtonHeight),
-                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 12.dp)
-                        ) {
-                            if (item.icon != null) {
-                                Icon(
-                                    imageVector = item.icon,
-                                    contentDescription = null,
-                                    modifier = Modifier.size((textSize.value * 0.9f).dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                            }
-                            Text(
-                                text = item.text,
-                                fontSize = textSize,
-                                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                                maxLines = 2,
-                                softWrap = true,
-                                lineHeight = textSize * 1.2f
+                                .heightIn(min = minButtonHeight)
+                                .shadow(
+                                    elevation = if (item.isAvailable) shadowElevation else 0.dp,
+                                    shape = RoundedCornerShape(cornerRadius),
+                                    clip = false
+                                ),
+                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+                            elevation = ButtonDefaults.buttonElevation(
+                                defaultElevation = 2.dp,
+                                pressedElevation = 6.dp,
+                                disabledElevation = 0.dp
                             )
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                if (item.icon != null) {
+                                    Icon(
+                                        imageVector = item.icon,
+                                        contentDescription = item.text,
+                                        modifier = Modifier.size((textSize.value * 1.0f).dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                }
+                                Text(
+                                    text = item.text,
+                                    fontSize = textSize,
+                                    fontWeight = FontWeight.SemiBold,
+                                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                                    maxLines = 2,
+                                    softWrap = true,
+                                    lineHeight = textSize * 1.3f
+                                )
+                            }
                         }
                     }
 
