@@ -1,14 +1,7 @@
 package vm.words.ua.settings.ui.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import org.kodein.di.instance
-import vm.words.ua.core.domain.managers.UserCacheManager
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.DateRange
@@ -16,11 +9,17 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.PrivacyTip
 import androidx.compose.material.icons.outlined.Schedule
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import org.kodein.di.instance
+import vm.words.ua.core.domain.managers.UserCacheManager
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.BottomNavBar
 import vm.words.ua.core.ui.components.ButtonsGrid
 import vm.words.ua.core.ui.components.GridButtonItem
+import vm.words.ua.core.utils.rememberWidthDeviceFormat
 import vm.words.ua.di.DiContainer
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
@@ -31,6 +30,10 @@ fun SettingScreen(
     modifier: Modifier = Modifier
 ) {
     val userCacheManager: UserCacheManager by DiContainer.di.instance()
+    val isPhoneFormat = rememberWidthDeviceFormat().isPhone
+    val spacerHeight = remember(isPhoneFormat) {
+        if (isPhoneFormat) 8.dp else 96.dp
+    }
 
     val buttons = remember {
         listOf(
@@ -60,7 +63,7 @@ fun SettingScreen(
             .fillMaxSize()
             .background(AppTheme.PrimaryBack)
     ) {
-        AppToolBar(title = "", showBackButton = false)
+        Spacer(modifier = Modifier.height(spacerHeight))
 
         ButtonsGrid(
             items = buttons,

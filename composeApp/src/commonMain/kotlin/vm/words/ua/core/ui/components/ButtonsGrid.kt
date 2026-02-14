@@ -152,7 +152,7 @@ private fun ButtonFromItem(
                 shape = RoundedCornerShape(cornerRadius),
                 clip = false
             )
-            .border(BorderStroke(1.dp, AppTheme.PrimaryColor), shape = RoundedCornerShape(cornerRadius)),
+            .border(BorderStroke(2.dp, AppTheme.PrimaryColor), shape = RoundedCornerShape(cornerRadius)),
         contentPadding = PaddingValues(horizontal = 6.dp, vertical = 6.dp),
         elevation = ButtonDefaults.buttonElevation(
             defaultElevation = 2.dp,
@@ -188,7 +188,7 @@ private fun ButtonFromItem(
                 textAlign = TextAlign.Center,
                 maxLines = 2,
                 softWrap = true,
-                lineHeight = textSize * 1.1f,
+                lineHeight = textSize * 1.15f,
                 modifier = Modifier.fillMaxWidth()
             )
         }
