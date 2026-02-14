@@ -192,6 +192,10 @@ kotlin {
             dependencies {
                 // Firebase Analytics for iOS
                 implementation(libs.firebase.analytics)
+
+                // HTTP connectivity for iOS - enables URL-based ping checking
+                implementation(libs.connectivity.http)
+                implementation(libs.connectivity.compose.http)
             }
         }
         iosArm64Main.dependsOn(iosMain)
