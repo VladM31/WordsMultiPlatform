@@ -12,11 +12,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberIconSize
+import vm.words.ua.core.utils.rememberInterfaceMaxWidth
 import vm.words.ua.navigation.Screen
 import vm.words.ua.utils.hints.ui.utils.ViewHintStep
 import vm.words.ua.utils.hints.ui.utils.viewHint
@@ -34,6 +37,7 @@ fun BottomNavBar(
     val iconSize = rememberIconSize() * 1.2f
     val iconModifier = Modifier.size(iconSize)
     val textSize = rememberFontSize() * 0.7
+    val maxWidth = rememberInterfaceMaxWidth() * 1.2f
 
     Row(
         modifier = modifier
@@ -44,82 +48,78 @@ fun BottomNavBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Playlist button
-        val isPlaylist = currentRoute == Screen.PlayList
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = playListHintStep?.let { Modifier.viewHint(it, currentHintStep) } ?: Modifier
-        ) {
-            IconButton(
-                enabled = isPlaylist.not(),
-                onClick = { onNavigate(Screen.PlayList) },
-                modifier = iconModifier
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.Article,
-                    contentDescription = "Playlists",
-                    modifier = Modifier.fillMaxSize(),
-                    tint = if (isPlaylist) AppTheme.PrimaryColor else AppTheme.PrimaryColorDark
-                )
-            }
-            Text(
-                text = "Playlists",
-                color = if (isPlaylist) AppTheme.PrimaryColor else AppTheme.PrimaryColorDark,
-                fontSize = textSize,
-                textAlign = TextAlign.Center
-            )
-        }
+        Item(
+            imageVector = Icons.AutoMirrored.Filled.Article,
+            thisScreen = Screen.PlayList,
+            currentScreen = currentRoute,
+            text = "Playlists",
+            onNavigate = onNavigate,
+            columnModifier = playListHintStep?.let { Modifier.viewHint(it, currentHintStep) } ?: Modifier,
+            iconModifier = iconModifier,
+            textSize = textSize
+        )
+
+
 
         // Home button
-        val isHome = currentRoute == Screen.Home
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = homeHintStep?.let { Modifier.viewHint(it, currentHintStep) } ?: Modifier
-        ) {
-            IconButton(
-                enabled = isHome.not(),
-                onClick = { onNavigate(Screen.Home) },
-                modifier = iconModifier
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Home,
-                    contentDescription = "Home",
-                    modifier = Modifier.fillMaxSize(),
-                    tint = if (isHome) AppTheme.PrimaryColor else AppTheme.PrimaryColorDark
-                )
-            }
-            Text(
-                text = "Home",
-                color = if (isHome) AppTheme.PrimaryColor else AppTheme.PrimaryColorDark,
-                fontSize = textSize,
-                textAlign = TextAlign.Center
-            )
-        }
+        Item(
+            imageVector = Icons.Filled.Home,
+            thisScreen = Screen.Home,
+            currentScreen = currentRoute,
+            text = "Home",
+            onNavigate = onNavigate,
+            columnModifier = homeHintStep?.let { Modifier.viewHint(it, currentHintStep) } ?: Modifier,
+            iconModifier = iconModifier,
+            textSize = textSize
+        )
 
         // Settings button
-        val isSettings = currentRoute == Screen.Settings
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = settingHintStep?.let { Modifier.viewHint(it, currentHintStep) } ?: Modifier
-        ) {
-            IconButton(
-                enabled = isSettings.not(),
-                onClick = { onNavigate(Screen.Settings) },
-                modifier = iconModifier
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "Settings",
-                    modifier = Modifier.fillMaxSize(),
-                    tint = if (isSettings) AppTheme.PrimaryColor else AppTheme.PrimaryColorDark
-                )
-            }
-            Text(
-                text = "Settings",
-                color = if (isSettings) AppTheme.PrimaryColor else AppTheme.PrimaryColorDark,
-                fontSize = textSize,
-                textAlign = TextAlign.Center
-            )
+        Item(
+            imageVector = Icons.Default.Settings,
+            thisScreen = Screen.Settings,
+            currentScreen = currentRoute,
+            text = "Settings",
+            onNavigate = onNavigate,
+            columnModifier = settingHintStep?.let { Modifier.viewHint(it, currentHintStep) } ?: Modifier,
+            iconModifier = iconModifier,
+            textSize = textSize
+        )
+    }
+}
 
+@Composable
+fun Item(
+    imageVector: ImageVector,
+    thisScreen: Screen,
+    currentScreen: Screen,
+    text: String,
+    onNavigate: (Screen) -> Unit,
+    columnModifier: Modifier = Modifier,
+    iconModifier: Modifier = Modifier,
+    textSize: TextUnit
+) {
+    val isSelected = thisScreen == currentScreen
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = columnModifier
+    ) {
+        IconButton(
+            enabled = isSelected.not(),
+            onClick = { onNavigate(thisScreen) },
+            modifier = iconModifier
+        ) {
+            Icon(
+                imageVector = imageVector,
+                contentDescription = text,
+                modifier = Modifier.fillMaxSize(),
+                tint = if (isSelected) AppTheme.PrimaryColor else AppTheme.PrimaryColorDark
+            )
         }
+        Text(
+            text = text,
+            color = if (isSelected) AppTheme.PrimaryColor else AppTheme.PrimaryColorDark,
+            fontSize = textSize,
+            textAlign = TextAlign.Center
+        )
     }
 }
