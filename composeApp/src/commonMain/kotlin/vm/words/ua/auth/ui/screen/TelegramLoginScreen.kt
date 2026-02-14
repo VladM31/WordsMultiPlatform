@@ -31,7 +31,7 @@ fun TelegramLoginScreen(
     val state by viewModel.state.collectAsState()
     val uriHandler = LocalUriHandler.current
     val toaster = rememberToast()
-    val toastData = rememberToastData()
+    val toastData = rememberToastData(navController)
 
     LaunchedEffect(state.isEnd) {
         if (state.isEnd) {
@@ -107,11 +107,13 @@ fun TelegramLoginScreen(
 }
 
 @Composable
-private fun rememberToastData(): ToastData = remember {
+private fun rememberToastData(navController: SimpleNavController): ToastData = remember {
     ToastData(
         message = "Your didn't sign up with Telegram yet",
         buttonText = "Sign up",
-        onButtonClick = {},
+        onButtonClick = {
+            navController.navigateAndClearCurrent(Screen.TelegramSignUp)
+        },
         duration = ToastData.Duration.Long
     )
 }
