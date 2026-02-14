@@ -355,10 +355,7 @@ private fun SelectButton(
     )
 
     val iconColor by animateColorAsState(
-        targetValue = if (isSelected)
-            accentColor
-        else
-            textSecondaryColor,
+        targetValue = accentColor,
         animationSpec = tween(200)
     )
 
@@ -385,7 +382,7 @@ private fun SelectButton(
             if (isSelected) {
                 Icon(
                     imageVector = selectedIcon,
-                    contentDescription = "",
+                    contentDescription = "Word selected",
                     modifier = Modifier.size(size * 0.5f)
                 )
                 return@Box
@@ -393,8 +390,9 @@ private fun SelectButton(
 
             Icon(
                 imageVector = notSelectedImage,
-                contentDescription = "",
-                modifier = Modifier.size(size * 0.5f)
+                contentDescription = "Word not selected",
+                modifier = Modifier.size(size * 0.7f),
+                tint = iconColor
             )
         }
     }
