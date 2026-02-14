@@ -16,11 +16,10 @@ import vm.words.ua.utils.net.ui.components.NoInternetBanner
 
 private val noInternetSupportRoutes = setOf(
     Screen.Home,
-    Screen.UserWords,
-    Screen.UserWordsFilter,
     Screen.Settings,
     Screen.PlayList,
-    Screen.PlayListFilter
+    Screen.PlayListFilter,
+    Screen.Theme
 ).map { it.route }
 
 private val noHomeBtmSupportRoutes = setOf(

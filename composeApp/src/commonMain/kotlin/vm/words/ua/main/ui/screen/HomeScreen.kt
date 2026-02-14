@@ -89,6 +89,7 @@ private fun rememberButtons(
         ) { navController.navigate(WordList) },
         GridButtonItem(
             text = "My Words",
+            isAvailable = isOnline,
             icon = Icons.Outlined.Star,
             modifier = Modifier.viewHint(
                 step = HomeScreenHintStep.MY_WORDS_BUTTON,
