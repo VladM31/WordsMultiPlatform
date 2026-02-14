@@ -37,53 +37,60 @@ fun BottomNavBar(
     val iconSize = rememberIconSize() * 1.2f
     val iconModifier = Modifier.size(iconSize)
     val textSize = rememberFontSize() * 0.7
-    val maxWidth = rememberInterfaceMaxWidth() * 1.2f
+    val maxWidth = rememberInterfaceMaxWidth() * 1.15f
 
     Row(
         modifier = modifier
             .fillMaxWidth()
             .background(AppTheme.PrimaryBack)
-            .padding(vertical = 4.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
+            .padding(vertical = 2.dp),
+        horizontalArrangement = Arrangement.Center
     ) {
-        // Playlist button
-        Item(
-            imageVector = Icons.AutoMirrored.Filled.Article,
-            thisScreen = Screen.PlayList,
-            currentScreen = currentRoute,
-            text = "Playlists",
-            onNavigate = onNavigate,
-            columnModifier = playListHintStep?.let { Modifier.viewHint(it, currentHintStep) } ?: Modifier,
-            iconModifier = iconModifier,
-            textSize = textSize
-        )
+        Row(
+            modifier = modifier
+                .widthIn(max = maxWidth)
+                .fillMaxWidth()
+                .background(AppTheme.PrimaryBack),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Playlist button
+            Item(
+                imageVector = Icons.AutoMirrored.Filled.Article,
+                thisScreen = Screen.PlayList,
+                currentScreen = currentRoute,
+                text = "Playlists",
+                onNavigate = onNavigate,
+                columnModifier = playListHintStep?.let { Modifier.viewHint(it, currentHintStep) } ?: Modifier,
+                iconModifier = iconModifier,
+                textSize = textSize
+            )
 
 
+            // Home button
+            Item(
+                imageVector = Icons.Filled.Home,
+                thisScreen = Screen.Home,
+                currentScreen = currentRoute,
+                text = "Home",
+                onNavigate = onNavigate,
+                columnModifier = homeHintStep?.let { Modifier.viewHint(it, currentHintStep) } ?: Modifier,
+                iconModifier = iconModifier,
+                textSize = textSize
+            )
 
-        // Home button
-        Item(
-            imageVector = Icons.Filled.Home,
-            thisScreen = Screen.Home,
-            currentScreen = currentRoute,
-            text = "Home",
-            onNavigate = onNavigate,
-            columnModifier = homeHintStep?.let { Modifier.viewHint(it, currentHintStep) } ?: Modifier,
-            iconModifier = iconModifier,
-            textSize = textSize
-        )
-
-        // Settings button
-        Item(
-            imageVector = Icons.Default.Settings,
-            thisScreen = Screen.Settings,
-            currentScreen = currentRoute,
-            text = "Settings",
-            onNavigate = onNavigate,
-            columnModifier = settingHintStep?.let { Modifier.viewHint(it, currentHintStep) } ?: Modifier,
-            iconModifier = iconModifier,
-            textSize = textSize
-        )
+            // Settings button
+            Item(
+                imageVector = Icons.Default.Settings,
+                thisScreen = Screen.Settings,
+                currentScreen = currentRoute,
+                text = "Settings",
+                onNavigate = onNavigate,
+                columnModifier = settingHintStep?.let { Modifier.viewHint(it, currentHintStep) } ?: Modifier,
+                iconModifier = iconModifier,
+                textSize = textSize
+            )
+        }
     }
 }
 
