@@ -52,7 +52,7 @@ fun ButtonsGrid(
         val scaleFactor = getScaleFactor(maxWidth)
 
         val maxButtonWidth = baseButtonWidth * scaleFactor
-        val gap = (4 * scaleFactor).dp
+        val gap = (10 * scaleFactor).dp
         val horizontalPadding = (8 * scaleFactor).dp
         val verticalPadding = (8 * scaleFactor).dp
         val minButtonHeight = (64 * scaleFactor).dp
@@ -165,6 +165,9 @@ private fun ButtonFromItem(
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            if (item.run { icon != null || iconPainter != null }) {
+                Spacer(modifier = Modifier.width(3.dp))
+            }
             if (item.icon != null) {
                 Icon(
                     imageVector = item.icon,
@@ -180,7 +183,7 @@ private fun ButtonFromItem(
                 )
             }
             if (item.run { icon != null || iconPainter != null }) {
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(5.dp))
             }
             Text(
                 text = item.text,
