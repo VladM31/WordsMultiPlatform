@@ -6,6 +6,7 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.plus
 import vm.words.ua.auth.domain.managers.TelegramAuthManager
 import vm.words.ua.auth.domain.mappers.toUser
+import vm.words.ua.auth.domain.models.TelegramAuthResult
 import vm.words.ua.auth.domain.models.TelegramAuthSession
 import vm.words.ua.auth.net.clients.TelegramAuthClient
 import vm.words.ua.auth.net.requests.TelegramAuthLoginReq
@@ -22,21 +23,25 @@ class TelegramAuthManagerImpl(
 ) : TelegramAuthManager {
     private val storageManager: KeyValueStorage = AppStorage.create("TelegramAuthManagerImpl")
 
-    override suspend fun startLogin(phoneNumber: String): String {
-        val code = telegramAuthClient.startLogin(
+    override suspend fun startLogin(phoneNumber: String): TelegramAuthResult {
+        val codeRespond = telegramAuthClient.startLogin(
             TelegramAuthStartLoginReq(
                 phoneNumber,
                 getDeviceName()
             )
         )
 
+        if (codeRespond.isNotFound) {
+            return TelegramAuthResult(isNotFound = true)
+        }
+
         val expireDate = Clock.System.now().plus(10, DateTimeUnit.MINUTE)
 
-        storageManager.putString(CODE_KEY, code)
+        storageManager.putString(CODE_KEY, codeRespond.code)
         storageManager.putString(PHONE_NUMBER_KEY, phoneNumber)
         storageManager.putString(EXPIRY_DATE_KEY, expireDate.toEpochMilliseconds().toString())
 
-        return code
+        return TelegramAuthResult(code = codeRespond.code)
     }
 
     override suspend fun login(phoneNumber: String, code: String): Boolean {

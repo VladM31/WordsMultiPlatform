@@ -8,6 +8,7 @@ data class TelegramLoginState(
     val code: String = "",
     val phoneNumber: String = "",
     val isLoading: Boolean = false,
+    val isNotFound: Boolean = false,
     override val errorMessage: ErrorMessage? = null,
     override val isEnd: Boolean = false
 

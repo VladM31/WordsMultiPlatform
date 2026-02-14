@@ -7,9 +7,11 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import io.ktor.http.isSuccess
 import vm.words.ua.auth.net.clients.TelegramAuthClient
 import vm.words.ua.auth.net.requests.TelegramAuthLoginReq
 import vm.words.ua.auth.net.requests.TelegramAuthStartLoginReq
+import vm.words.ua.auth.net.responses.TelegramAuthRespond
 import vm.words.ua.auth.net.responses.TelegramLoginRespond
 import vm.words.ua.core.config.AppRemoteConfig
 
@@ -21,12 +23,24 @@ class KrotTelegramAuthClient(
         "${AppRemoteConfig.baseUrl}/auth"
     }
 
-    override suspend fun startLogin(request: TelegramAuthStartLoginReq): String {
+    override suspend fun startLogin(request: TelegramAuthStartLoginReq): TelegramAuthRespond {
         val respond = httpClient.post("${baseUrl}/telegram-start-login") {
             contentType(ContentType.Application.Json)
             setBody(request)
         }
-        return respond.bodyAsText()
+        if (respond.status.isSuccess()){
+            return TelegramAuthRespond(
+                isNotFound = false,
+                code = respond.bodyAsText()
+            )
+        }
+        if (respond.status == io.ktor.http.HttpStatusCode.NotFound){
+            return TelegramAuthRespond(
+                isNotFound = true,
+                code = null
+            )
+        }
+        throw Exception(respond.bodyAsText())
     }
 
     override suspend fun login(request: TelegramAuthLoginReq): TelegramLoginRespond {

@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import vm.words.ua.auth.domain.managers.AuthHistoryManager
 import vm.words.ua.auth.domain.managers.TelegramAuthManager
+import vm.words.ua.auth.domain.models.TelegramAuthResult
 import vm.words.ua.auth.domain.models.TelegramAuthSession
 import vm.words.ua.auth.ui.actions.TelegramLoginAction
 import vm.words.ua.auth.ui.states.TelegramLoginState
@@ -90,33 +91,58 @@ class TelegramLoginVm(
             }
 
             if (result.isFailure) {
-                analytics.logEvent(
-                    AnalyticsEvents.TELEGRAM_LOGIN_FAILED, mapOf(
-                        "phone_number" to mutableState.value.phoneNumber,
-                        "error" to (result.exceptionOrNull()?.message ?: "Unknown error")
-                    )
-                )
-                mutableState.value = mutableState.value.copy(
-                    errorMessage = ErrorMessage(
-                        result.exceptionOrNull()?.message ?: "Unknown error"
-                    ),
-                    isLoading = false
-                )
+                handleFail(result)
+                return@launch
+            }
+            if (result.getOrNull()?.isNotFound == true) {
+                handleNotFound()
                 return@launch
             }
 
-            mutableState.value = mutableState.value.copy(
-                code = result.getOrNull().orEmpty(),
-                isLoading = false
-            )
-
-            runWaiter(
-                TelegramAuthSession(
-                    phoneNumber = mutableState.value.phoneNumber,
-                    code = mutableState.value.code
-                )
-            )
+            handleWaitAction(result)
         }
+    }
+
+    private suspend fun handleWaitAction(result: Result<TelegramAuthResult>) {
+        mutableState.value = mutableState.value.copy(
+            code = result.getOrNull()?.code.orEmpty(),
+            isLoading = false
+        )
+
+        runWaiter(
+            TelegramAuthSession(
+                phoneNumber = mutableState.value.phoneNumber,
+                code = mutableState.value.code
+            )
+        )
+    }
+
+    private fun handleNotFound() {
+        mutableState.value = mutableState.value.copy(
+            isLoading = false,
+            isNotFound = true
+        )
+        analytics.logEvent(
+            AnalyticsEvents.TELEGRAM_LOGIN_FAILED, mapOf(
+                "phone_number" to mutableState.value.phoneNumber,
+                "error" to "User with this phone number not found"
+            )
+        )
+    }
+
+    private fun handleFail(result: Result<TelegramAuthResult>) {
+        analytics.logEvent(
+            AnalyticsEvents.TELEGRAM_LOGIN_FAILED, mapOf(
+                "phone_number" to mutableState.value.phoneNumber,
+                "error" to (result.exceptionOrNull()?.message ?: "Unknown error")
+            )
+        )
+        mutableState.value = mutableState.value.copy(
+            errorMessage = ErrorMessage(
+                result.exceptionOrNull()?.message ?: "Unknown error"
+            ),
+            isLoading = false
+        )
     }
 
     private suspend fun runWaiter(session: TelegramAuthSession) {
