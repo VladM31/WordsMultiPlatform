@@ -171,7 +171,6 @@ private fun ButtonFromItem(
                     contentDescription = item.text,
                     modifier = Modifier.size(rememberIconSize() * 0.8f)
                 )
-                Spacer(modifier = Modifier.width(6.dp))
             }
             if (item.iconPainter != null) {
                 Icon(
@@ -179,7 +178,9 @@ private fun ButtonFromItem(
                     contentDescription = item.text,
                     modifier = Modifier.size(rememberIconSize() * 0.8f)
                 )
-                Spacer(modifier = Modifier.width(6.dp))
+            }
+            if (item.run { icon != null || iconPainter != null }) {
+                Spacer(modifier = Modifier.width(8.dp))
             }
             Text(
                 text = item.text,
