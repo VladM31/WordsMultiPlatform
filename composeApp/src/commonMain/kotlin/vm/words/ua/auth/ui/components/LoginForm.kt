@@ -1,6 +1,5 @@
 package vm.words.ua.auth.ui.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -22,6 +21,7 @@ import vm.words.ua.auth.ui.vms.LoginViewModel
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppTextField
 import vm.words.ua.core.ui.components.PrimaryButton
+import vm.words.ua.core.ui.icons.TelegramIcon
 import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberIconSize
 import vm.words.ua.core.utils.rememberScaleFactor
@@ -29,7 +29,6 @@ import vm.words.ua.utils.hints.ui.utils.ViewHintStep
 import vm.words.ua.utils.hints.ui.utils.viewHint
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.google_icon
-import wordsmultiplatform.composeapp.generated.resources.telegram_image
 
 @Composable
 fun LoginForm(
@@ -117,12 +116,21 @@ fun LoginForm(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painterResource(Res.drawable.telegram_image),
-                contentDescription = "telegram",
-                modifier = Modifier.size(rememberIconSize() * 1.5f).clickable { onTelegramClick() }
-                    .viewHint(LoginScreenHintStep.TELEGRAM_LOGIN_BUTTON, currentHintStep)
-            )
+            Box(
+                modifier = Modifier
+                    .size(rememberIconSize() * 1.5f)
+                    .background(AppTheme.PrimaryColor, shape = CircleShape)
+                    .clickable { onTelegramClick() }
+                    .viewHint(LoginScreenHintStep.TELEGRAM_LOGIN_BUTTON, currentHintStep),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = TelegramIcon,
+                    contentDescription = "Telegram Sign-In",
+                    tint = AppTheme.PrimaryBack,
+                    modifier = Modifier.size(rememberIconSize() * 1.5f * 0.7f)
+                )
+            }
 
             if (!showGoogleSignIn) {
                 return@Row
@@ -137,6 +145,7 @@ fun LoginForm(
         }
     }
 }
+
 
 @Composable
 private fun GoogleSignInButton(
