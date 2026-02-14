@@ -6,13 +6,12 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.utils.rememberScaleFactor
+import vm.words.ua.core.utils.rememberInterfaceMaxWidth
 
 
 @Composable
@@ -23,10 +22,7 @@ fun <T> ColumnScope.Items(
     isLoading: Boolean,
     listState: LazyListState
 ) {
-    val scaleFactor = rememberScaleFactor()
-    val maxWidth = remember(scaleFactor) {
-        480.dp * scaleFactor
-    }
+    val maxWidth = rememberInterfaceMaxWidth()
     Box(
         modifier = Modifier
             .fillMaxSize()

@@ -61,3 +61,11 @@ fun isNotPhoneFormat(): Boolean {
     }
 }
 
+@Composable
+fun rememberInterfaceMaxWidth(): Dp {
+    val scaleFactor = rememberScaleFactor()
+    return remember(scaleFactor) {
+        480.dp * scaleFactor
+    }
+}
+
