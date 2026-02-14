@@ -4,8 +4,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -27,6 +29,7 @@ import vm.words.ua.core.ui.theme.AppThemeConfig
 import vm.words.ua.core.ui.theme.AppThemes
 import vm.words.ua.core.ui.theme.ThemeManager
 import vm.words.ua.core.ui.theme.rememberCurrentTheme
+import vm.words.ua.core.utils.isNotPhoneFormat
 import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberLabelFontSize
 import vm.words.ua.core.utils.rememberScaleFactor
@@ -38,7 +41,8 @@ fun ThemeScreen(
     modifier: Modifier = Modifier
 ) {
     val currentTheme by rememberCurrentTheme()
-    val titleSize = rememberFontSize()
+    val titleSize = rememberFontSize() * 1.4f
+    val columns = if (isNotPhoneFormat()) 2 else 1
 
     Column(
         modifier = modifier
@@ -51,15 +55,15 @@ fun ThemeScreen(
             onBackClick = { navController.popBackStack() }
         )
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(columns),
+            contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(vertical = 16.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = modifier.fillMaxSize()
+                .padding(horizontal = 16.dp),
         ) {
-            // Dark themes section
-            item {
+            item(span = { GridItemSpan(maxLineSpan) }) {
                 Text(
                     text = "Dark Themes",
                     color = currentTheme.primaryText,
@@ -67,6 +71,7 @@ fun ThemeScreen(
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
+
             }
             items(AppThemes.darkThemes) { theme ->
                 ThemeCard(
@@ -76,8 +81,7 @@ fun ThemeScreen(
                 )
             }
 
-            // Light themes section
-            item {
+            item(span = { GridItemSpan(maxLineSpan) }) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = "Light Themes",
@@ -95,8 +99,7 @@ fun ThemeScreen(
                 )
             }
 
-            // Special themes section
-            item {
+            item(span = { GridItemSpan(maxLineSpan) }) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = "Special Themes",
@@ -119,6 +122,7 @@ fun ThemeScreen(
                 )
             }
         }
+
     }
 }
 
