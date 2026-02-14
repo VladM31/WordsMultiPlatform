@@ -10,7 +10,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -19,13 +22,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.theme.AppThemeConfig
 import vm.words.ua.core.ui.theme.AppThemes
 import vm.words.ua.core.ui.theme.ThemeManager
 import vm.words.ua.core.ui.theme.rememberCurrentTheme
 import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberLabelFontSize
+import vm.words.ua.core.utils.rememberScaleFactor
 import vm.words.ua.navigation.SimpleNavController
 
 @Composable
@@ -154,42 +158,40 @@ private fun ThemeCard(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Theme preview colors
             ThemePreview(theme = theme)
 
-            // Theme name and type
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = theme.name,
                     color = currentTheme.primaryText,
-                    fontSize = 16.sp,
+                    fontSize = rememberLabelFontSize(),
                     fontWeight = FontWeight.SemiBold
                 )
                 Text(
                     text = if (theme.isDark) "Dark" else "Light",
                     color = currentTheme.secondaryText,
-                    fontSize = 12.sp
+                    fontSize = rememberLabelFontSize() * 0.85f
                 )
             }
 
-            // Selected checkmark
-            if (isSelected) {
-                Box(
-                    modifier = Modifier
-                        .size(28.dp)
-                        .background(
-                            color = currentTheme.primaryColor,
-                            shape = CircleShape
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Check,
-                        contentDescription = "Selected",
-                        tint = if (theme.isDark) Color.Black else Color.White,
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
+            if (isSelected.not()) {
+                return@Row
+            }
+            Box(
+                modifier = Modifier
+                    .size(28.dp)
+                    .background(
+                        color = currentTheme.primaryColor,
+                        shape = CircleShape
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = "Selected",
+                    tint = if (theme.isDark) Color.Black else Color.White,
+                    modifier = Modifier.size(18.dp)
+                )
             }
         }
     }
@@ -197,13 +199,15 @@ private fun ThemeCard(
 
 @Composable
 private fun ThemePreview(theme: AppThemeConfig) {
+    val scale = rememberScaleFactor()
+    val themIcon = 32.dp * scale
     Row(
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         // Primary color circle
         Box(
             modifier = Modifier
-                .size(32.dp)
+                .size(themIcon)
                 .background(
                     color = theme.primaryColor,
                     shape = CircleShape
@@ -217,7 +221,7 @@ private fun ThemePreview(theme: AppThemeConfig) {
         // Secondary color circle
         Box(
             modifier = Modifier
-                .size(32.dp)
+                .size(themIcon)
                 .background(
                     color = theme.secondaryColor,
                     shape = CircleShape
@@ -231,7 +235,7 @@ private fun ThemePreview(theme: AppThemeConfig) {
         // Background preview
         Box(
             modifier = Modifier
-                .size(32.dp)
+                .size(themIcon)
                 .background(
                     color = theme.primaryBack,
                     shape = CircleShape
