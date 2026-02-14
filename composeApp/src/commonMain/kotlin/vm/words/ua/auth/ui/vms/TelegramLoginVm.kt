@@ -7,6 +7,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import vm.words.ua.auth.domain.managers.AuthHistoryManager
 import vm.words.ua.auth.domain.managers.TelegramAuthManager
 import vm.words.ua.auth.domain.models.TelegramAuthResult
@@ -120,7 +121,7 @@ class TelegramLoginVm(
     private fun handleNotFound() {
         mutableState.value = mutableState.value.copy(
             isLoading = false,
-            isNotFound = true
+            isNotFoundId = Clock.System.now().toEpochMilliseconds()
         )
         analytics.logEvent(
             AnalyticsEvents.TELEGRAM_LOGIN_FAILED, mapOf(
