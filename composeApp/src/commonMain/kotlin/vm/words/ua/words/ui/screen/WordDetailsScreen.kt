@@ -11,8 +11,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -20,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -557,12 +560,12 @@ private fun StatsCard(
                 StatItem(
                     label = "Created",
                     value = formatInstant(userWord.createdAt),
-                    icon = "📅"
+                    icon = Icons.Outlined.DateRange
                 )
                 StatItem(
                     label = "Last Read",
                     value = formatInstant(userWord.lastReadDate),
-                    icon = "📖"
+                    icon = Icons.AutoMirrored.Filled.MenuBook
                 )
             }
         }
@@ -580,14 +583,16 @@ private fun formatInstant(instant: Instant): String {
 private fun StatItem(
     label: String,
     value: String,
-    icon: String
+    icon: ImageVector
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = icon,
-            fontSize = 24.sp
+        Icon(
+            imageVector = icon,
+            contentDescription = label,
+            modifier = Modifier.size(24.dp),
+            tint = AppTheme.PrimaryText
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
