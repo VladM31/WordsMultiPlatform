@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberLabelFontSize
+import vm.words.ua.core.utils.rememberScaleFactor
 
 @Composable
 fun ProgressPieChart(
@@ -32,8 +33,8 @@ fun ProgressPieChart(
     val learnedPercent = if (need > 0) {
         (learned.toFloat() / need) * 100f
     } else 0f
+    val scaleFactor = rememberScaleFactor()
 
-    // Анимация
     val animatedLearned by animateFloatAsState(
         targetValue = learnedPercent,
         animationSpec = tween(durationMillis = 500),
@@ -45,11 +46,11 @@ fun ProgressPieChart(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
-            modifier = Modifier.size(200.dp),
+            modifier = Modifier.size(170.dp * scaleFactor),
             contentAlignment = Alignment.Center
         ) {
             Canvas(modifier = Modifier.fillMaxSize()) {
-                val strokeWidth = 40.dp.toPx()
+                val strokeWidth = (32.dp * scaleFactor).toPx()
                 val radius = (size.minDimension - strokeWidth) / 2
                 val topLeft = Offset(
                     (size.width - radius * 2) / 2,
@@ -67,7 +68,6 @@ fun ProgressPieChart(
                     style = Stroke(width = strokeWidth, cap = StrokeCap.Butt)
                 )
 
-                // Learned (зелёный)
                 drawArc(
                     color = Color(0xFF44F2C1),
                     startAngle = -90f,
@@ -79,7 +79,6 @@ fun ProgressPieChart(
                 )
             }
 
-            // Center text
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text = "Progress",
@@ -98,7 +97,6 @@ fun ProgressPieChart(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Legend
         Row(
             horizontalArrangement = Arrangement.spacedBy(35.dp)
         ) {

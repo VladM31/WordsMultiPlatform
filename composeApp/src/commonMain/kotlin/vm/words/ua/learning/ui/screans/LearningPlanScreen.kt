@@ -20,16 +20,13 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import vm.words.ua.core.domain.models.enums.CEFR
 import vm.words.ua.core.domain.models.enums.Language
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.ErrorMessageBox
 import vm.words.ua.core.ui.components.SingleSelectInput
-import vm.words.ua.core.utils.isNotPhoneFormat
-import vm.words.ua.core.utils.rememberFontSize
-import vm.words.ua.core.utils.rememberIconSize
+import vm.words.ua.core.utils.*
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.learning.domain.models.enums.PlanStatus
 import vm.words.ua.learning.ui.actions.LearningPlanAction
@@ -44,7 +41,7 @@ fun LearningPlanScreen(
     navController: SimpleNavController,
     modifier: Modifier = Modifier,
 
-) {
+    ) {
     val viewModel: LearningPlanVm = rememberInstance<LearningPlanVm>()
     val state by viewModel.state.collectAsState()
 
@@ -61,7 +58,8 @@ fun LearningPlanScreen(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.Top
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         AppToolBar(
             title = "Learning Plan",
@@ -81,28 +79,30 @@ fun LearningPlanScreen(
             return@Column
         }
 
-        if (state.learningPlan == null && state.detailsState == null) {
-            CreateBtn(
-                onClick = {
-                    viewModel.sent(LearningPlanAction.ModifyPlan)
-                }
-            )
-            return@Column
-        }
+        Column(modifier = Modifier.widthIn(max = rememberInterfaceMaxWidth()).fillMaxWidth()) {
+            if (state.learningPlan == null && state.detailsState == null) {
+                CreateBtn(
+                    onClick = {
+                        viewModel.sent(LearningPlanAction.ModifyPlan)
+                    }
+                )
+                return@Column
+            }
 
-        if (state.detailsState != null) {
-            ModifyPlan(
-                viewModel = viewModel,
-                state = state
-            )
-            return@Column
-        }
+            if (state.detailsState != null) {
+                ModifyPlan(
+                    viewModel = viewModel,
+                    state = state
+                )
+                return@Column
+            }
 
-        if (state.learningPlan == null) {
-            return@Column
-        }
+            if (state.learningPlan == null) {
+                return@Column
+            }
 
-        PlanViewer(state)
+            PlanViewer(state)
+        }
     }
 
     state.errorMessage?.let {
@@ -279,7 +279,7 @@ private fun PlanViewer(state: LearningPlanState) {
         Text(
             text = "Words learned today",
             color = AppTheme.PrimaryColor,
-            fontSize = 20.sp
+            fontSize = rememberFontSize()
         )
 
         Text(
@@ -287,7 +287,7 @@ private fun PlanViewer(state: LearningPlanState) {
                 "${it.learnedWordsToDay} / ${it.learningPlan?.wordsPerDay ?: 0}"
             },
             color = AppTheme.PrimaryColor,
-            fontSize = 36.sp
+            fontSize = rememberFontSize() * 1.3f
         )
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -303,14 +303,14 @@ private fun PlanViewer(state: LearningPlanState) {
             Text(
                 text = "Added words",
                 color = AppTheme.PrimaryColor,
-                fontSize = 18.sp,
+                fontSize = rememberLabelFontSize(),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.weight(1f)
             )
             Text(
                 text = "Learned words",
                 color = AppTheme.PrimaryColor,
-                fontSize = 18.sp,
+                fontSize = rememberLabelFontSize(),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.weight(1f)
             )
@@ -321,14 +321,14 @@ private fun PlanViewer(state: LearningPlanState) {
             Text(
                 text = state.addedWords.toString(),
                 color = AppTheme.PrimaryColor,
-                fontSize = 32.sp,
+                fontSize = rememberFontSize(),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.weight(1f)
             )
             Text(
                 text = state.learnedWords.toString(),
                 color = AppTheme.PrimaryColor,
-                fontSize = 32.sp,
+                fontSize = rememberFontSize(),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.weight(1f)
             )
@@ -340,14 +340,14 @@ private fun PlanViewer(state: LearningPlanState) {
         Text(
             text = "CEFR level",
             color = AppTheme.PrimaryColor,
-            fontSize = 20.sp
+            fontSize = rememberLabelFontSize()
         )
 
 
         Text(
             text = state.learningPlan?.cefr?.name.orEmpty(),
             color = AppTheme.PrimaryColor,
-            fontSize = 36.sp
+            fontSize = rememberFontSize()
         )
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -357,14 +357,14 @@ private fun PlanViewer(state: LearningPlanState) {
             Text(
                 text = "Native language",
                 color = AppTheme.PrimaryColor,
-                fontSize = 18.sp,
+                fontSize = rememberLabelFontSize(),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.weight(1f)
             )
             Text(
                 text = "Learning language",
                 color = AppTheme.PrimaryColor,
-                fontSize = 18.sp,
+                fontSize = rememberLabelFontSize(),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.weight(1f)
             )
@@ -376,7 +376,7 @@ private fun PlanViewer(state: LearningPlanState) {
             Text(
                 text = state.learningPlan?.nativeLang?.titleCase.orEmpty(),
                 color = AppTheme.PrimaryColor,
-                fontSize = 32.sp,
+                fontSize = rememberFontSize(),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.weight(1f)
             )
@@ -384,7 +384,7 @@ private fun PlanViewer(state: LearningPlanState) {
             Text(
                 text = state.learningPlan?.learningLang?.titleCase.orEmpty(),
                 color = AppTheme.PrimaryColor,
-                fontSize = 32.sp,
+                fontSize = rememberFontSize(),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.weight(1f)
             )
