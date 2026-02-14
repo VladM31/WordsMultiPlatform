@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.sp
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToast
 import vm.words.ua.core.ui.components.AppToolBar
+import vm.words.ua.core.ui.components.ErrorMessageBox
 import vm.words.ua.core.ui.components.rememberToast
 import vm.words.ua.core.ui.states.ToastData
 import vm.words.ua.di.rememberInstance
@@ -156,19 +157,11 @@ fun ExplorePlayListsScreen(
                     }
                 }
             }
-
-            state.error?.let { error ->
-                Text(
-                    text = "Error: $error",
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(16.dp),
-                    color = AppTheme.Error,
-                    fontSize = 14.sp
-                )
-            }
         }
 
+    }
+    state.errorMessage?.let {
+        ErrorMessageBox(it)
     }
     AppToast(toaster)
 }

@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import vm.words.ua.core.ui.models.ErrorMessage
 import vm.words.ua.playlist.domain.managers.PlayListManager
 import vm.words.ua.playlist.domain.models.AssignPlayListsDto
 import vm.words.ua.playlist.domain.models.PublicPlayListCountDto
@@ -67,7 +68,7 @@ class ExplorePlayListsViewModel(
                 e.printStackTrace()
                 mutableState.value = mutableState.value.copy(
                     isAssigning = false,
-                    error = e.message ?: "Failed to assign playlist",
+                    errorMessage = ErrorMessage(e.message ?: "Failed to assign playlist"),
                     lastAssignedPlayList = null
                 )
             }
@@ -105,7 +106,7 @@ class ExplorePlayListsViewModel(
         currentLoadJob?.cancel()
 
         currentLoadJob = viewModelScope.launch(Dispatchers.Default) {
-            mutableState.value = mutableState.value.copy(isLoading = true, error = null)
+            mutableState.value = mutableState.value.copy(isLoading = true, errorMessage = null)
 
             try {
                 val filter = mutableState.value.filter.copy(
@@ -132,7 +133,7 @@ class ExplorePlayListsViewModel(
                 e.printStackTrace()
                 mutableState.value = mutableState.value.copy(
                     isLoading = false,
-                    error = e.message ?: "Failed to load playlists"
+                    errorMessage = ErrorMessage(e.message ?: "Failed to load playlists")
                 )
             }
         }

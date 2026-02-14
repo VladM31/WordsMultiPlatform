@@ -1,5 +1,7 @@
 package vm.words.ua.playlist.ui.states
 
+import vm.words.ua.core.ui.models.ErrorMessage
+import vm.words.ua.core.ui.states.ErrorableState
 import vm.words.ua.playlist.domain.models.PublicPlayListCountDto
 import vm.words.ua.playlist.domain.models.enums.PublicPlaylistSortField
 import vm.words.ua.playlist.domain.models.filters.PublicPlayListCountFilter
@@ -14,9 +16,10 @@ data class ExplorePlayListsState(
     val lastAssignedPlayList: PublicPlayListCountDto? = null,
     val isLoading: Boolean = false,
     val isAssigning: Boolean = false,
-    val error: String? = null,
+
     val currentPage: Int = 0,
     val hasMore: Boolean = true,
-    val showCreatedDate: Boolean = true
-)
+    val showCreatedDate: Boolean = true,
+    override val errorMessage: ErrorMessage? = null
+) : ErrorableState
 
