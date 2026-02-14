@@ -9,6 +9,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import org.kodein.di.instance
 import vm.words.ua.core.domain.managers.UserCacheManager
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.Palette
+import androidx.compose.material.icons.outlined.PrivacyTip
+import androidx.compose.material.icons.outlined.Schedule
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.BottomNavBar
@@ -27,23 +34,22 @@ fun SettingScreen(
 
     val buttons = remember {
         listOf(
-//            GridButtonItem("Subscription", isAvailable = false),
-            GridButtonItem("History") {
+            GridButtonItem("History", icon = Icons.Outlined.Schedule) {
                 navController.navigate(Screen.StatisticLearningHistory)
             },
-            GridButtonItem("Plan") {
+            GridButtonItem("Plan", icon = Icons.Filled.DateRange) {
                 navController.navigate(Screen.LeaningPlan)
             },
-            GridButtonItem("Profile") {
+            GridButtonItem("Profile", icon = Icons.Filled.Person) {
                 navController.navigate(Screen.Profile)
             },
-            GridButtonItem("Theme") {
+            GridButtonItem("Theme", icon = Icons.Outlined.Palette) {
                 navController.navigate(Screen.Theme)
             },
-            GridButtonItem("Policy") {
+            GridButtonItem("Policy", icon = Icons.Outlined.PrivacyTip) {
                 navController.navigate(Screen.Policy)
             },
-            GridButtonItem("Log Out") {
+            GridButtonItem("Log Out", icon = Icons.AutoMirrored.Filled.ExitToApp) {
                 userCacheManager.clear()
             }
         )

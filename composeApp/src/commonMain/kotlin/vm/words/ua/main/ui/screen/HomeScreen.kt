@@ -7,6 +7,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.MenuBook
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Explore
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.outlined.Star
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.BottomNavBar
@@ -34,6 +40,7 @@ fun HomeScreen(
             GridButtonItem(
                 text = "Words",
                 isAvailable = isOnline,
+                icon = Icons.AutoMirrored.Filled.MenuBook,
                 modifier = Modifier.viewHint(
                     step = HomeScreenHintStep.WORDS_BUTTON,
                     current = hintController.currentStep
@@ -41,6 +48,7 @@ fun HomeScreen(
             ) { navController.navigate(WordList) },
             GridButtonItem(
                 text = "My Words",
+                icon = Icons.Outlined.Star,
                 modifier = Modifier.viewHint(
                     step = HomeScreenHintStep.MY_WORDS_BUTTON,
                     current = hintController.currentStep
@@ -49,6 +57,7 @@ fun HomeScreen(
             GridButtonItem(
                 text = "Add Word",
                 isAvailable = isOnline,
+                icon = Icons.Filled.Add,
                 modifier = Modifier.viewHint(
                     step = HomeScreenHintStep.ADD_WORD_BUTTON,
                     current = hintController.currentStep
@@ -58,6 +67,7 @@ fun HomeScreen(
             GridButtonItem(
                 text = "Instruction",
                 isAvailable = isOnline,
+                icon = Icons.Filled.Info,
                 modifier = Modifier.viewHint(
                     step = HomeScreenHintStep.INSTRUCTION_BUTTON,
                     current = hintController.currentStep
@@ -68,6 +78,7 @@ fun HomeScreen(
             GridButtonItem(
                 text = "Explore Playlists",
                 isAvailable = isOnline,
+                icon = Icons.Filled.Explore,
                 modifier = Modifier.viewHint(
                     step = HomeScreenHintStep.EXPLORE_PLAYLISTS_BUTTON,
                     current = hintController.currentStep

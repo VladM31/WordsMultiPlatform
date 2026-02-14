@@ -6,10 +6,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -23,6 +25,7 @@ data class GridButtonItem(
     val text: String,
     val modifier: Modifier = Modifier,
     val isAvailable: Boolean = true,
+    val icon: ImageVector? = null,
     val onClick: () -> Unit = {}
 )
 
@@ -77,7 +80,7 @@ fun ButtonsGrid(
                     Spacer(modifier = Modifier.weight(1f))
 
                     val buttonColors = ButtonDefaults.buttonColors(
-                        containerColor = AppTheme.PrimaryColor,
+                        containerColor = AppTheme.PrimaryColor.copy(alpha = 0.8f),
                         contentColor = AppTheme.PrimaryBack
                     )
 
@@ -92,6 +95,14 @@ fun ButtonsGrid(
                                 .heightIn(min = minButtonHeight),
                             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 12.dp)
                         ) {
+                            if (item.icon != null) {
+                                Icon(
+                                    imageVector = item.icon,
+                                    contentDescription = null,
+                                    modifier = Modifier.size((textSize.value * 0.9f).dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                            }
                             Text(
                                 text = item.text,
                                 fontSize = textSize,
