@@ -71,7 +71,6 @@ actual fun createPlatformSettings(name: String): Settings {
                     store(fos, null)
                 }
             } catch (_: Throwable) {
-                // по желанию можешь добавить лог
             }
         }
     }

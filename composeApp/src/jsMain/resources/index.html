@@ -6,7 +6,6 @@
     <title>Words</title>
     <link rel="icon" type="image/webp" href="icon.webp">
 
-    <!-- 🔄 ВЕРСИЯ ДЛЯ CACHE-BUSTING: Меняйте при каждом деплое! -->
     <script>
         window.__APP_VERSION__ = "20260204_001";
     </script>
@@ -260,7 +259,6 @@
     </script>
 </head>
 <body>
-<!-- Loading screen - будет скрыт после загрузки приложения -->
 <div id="app-loader">
     <div class="loader-spinner"></div>
     <div class="loader-text">Loading Words...</div>
@@ -268,7 +266,6 @@
 </div>
 
 <script>
-    // Загружаем главный скрипт с версией для cache-busting
     const appVersion = window.__APP_VERSION__ || 'dev';
     const script = document.createElement('script');
     script.type = 'application/javascript';

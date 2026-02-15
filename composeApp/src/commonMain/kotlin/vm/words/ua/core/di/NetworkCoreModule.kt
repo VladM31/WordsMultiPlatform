@@ -13,11 +13,7 @@ import vm.words.ua.core.net.client.RenderedPdfClient
 import vm.words.ua.core.net.client.impls.KrotFileApiClient
 import vm.words.ua.core.net.client.impls.KrotRenderedPdfClient
 
-/**
- * Модуль Kodein-DI для сетевых зависимостей
- */
 internal val networkCoreModule = DI.Module("networkCoreModule") {
-    // HTTP клиент (singleton)
     bind<HttpClient>() with singleton {
         HttpClientFactory.createHttpClient()
     }

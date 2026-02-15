@@ -6,14 +6,10 @@ import io.ktor.client.plugins.logging.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 
-/**
- * Фабрика для создания HTTP клиента с настройками
- */
 object HttpClientFactory {
 
     fun createHttpClient(): HttpClient {
         return HttpClient {
-            // Настройка JSON сериализации
             install(ContentNegotiation) {
                 json(Json {
                     prettyPrint = true

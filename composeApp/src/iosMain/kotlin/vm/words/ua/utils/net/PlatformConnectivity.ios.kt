@@ -5,7 +5,6 @@ import io.ktor.client.*
 import io.ktor.client.engine.darwin.*
 
 actual fun createConnectivity(): Connectivity {
-    // Explicitly create HttpClient to use HTTP-based connectivity (not device-based)
     val httpClient = HttpClient(Darwin)
 
     return Connectivity(httpClient = httpClient) {

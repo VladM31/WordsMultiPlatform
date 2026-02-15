@@ -10,7 +10,6 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.googleServices)
-    // Apply Crashlytics plugin for Android only
     alias(libs.plugins.firebaseCrashlytics)
 }
 
@@ -29,14 +28,12 @@ kotlin {
                 sourceMaps = false
             }
 
-            // ⚡ DEV: занимает 2–6 секунд
             runTask {
                 devtool = "eval"
             }
 
-            // ⚡ PROD: безопасно отключаем только source maps
             webpackTask {
-                devtool = "none"  // НЕЛЬЗЯ менять mode!!!
+                devtool = "none"
             }
         }
         binaries.executable()
@@ -58,9 +55,7 @@ kotlin {
             baseName = "ComposeApp"
             isStatic = true
             xcf.add(this)
-            // Линкуем PDFKit для корректного рендера PDFView
             linkerOpts("-framework", "PDFKit")
-            // Ensure proper linking of Compose Material3 for iOS and resolve KoalaoPlot symbols
             linkerOpts("-undefined", "dynamic_lookup")
         }
     }
@@ -94,7 +89,6 @@ kotlin {
                 implementation("io.github.vinceglb:filekit-dialogs-compose:0.12.0")
                 implementation("io.github.vinceglb:filekit-coil:0.12.0")
 
-                // Connectivity: общая часть для всех платформ
                 implementation(libs.connectivity.core)
                 implementation(libs.connectivity.compose)
                 implementation("io.github.koalaplot:koalaplot-core:0.5.3")
@@ -107,16 +101,13 @@ kotlin {
                 implementation("androidx.core:core-ktx:1.13.1")
                 implementation(libs.ktor.client.okhttp)
                 implementation(libs.ktor.client.android)
-                // Use maintained fork on Maven Central
                 implementation("com.github.mhiew:android-pdf-viewer:3.2.0-beta.1")
                 implementation("androidx.security:security-crypto:1.1.0")
 
-                // Google Sign-In via Credential Manager
                 implementation(libs.androidx.credentials)
                 implementation(libs.androidx.credentials.play.services)
                 implementation(libs.googleid)
 
-                // Crashlytics
                 implementation(libs.firebase.crashlytics.ktx)
             }
         }
@@ -166,7 +157,6 @@ kotlin {
             }
         }
 
-        // Девайсный sourceSet: Android + iOS, нативный мониторинг сети
         val deviceMain by creating {
             dependsOn(commonMain)
             androidMain.dependsOn(this)
@@ -201,18 +191,6 @@ kotlin {
         iosArm64Main.dependsOn(iosMain)
         iosSimulatorArm64Main.dependsOn(iosMain)
 
-        // HTTP-sourceSet: Desktop JVM + JS + Wasm, мониторинг через HTTP-пинги
-        val httpMain by creating {
-            dependsOn(commonMain)
-            desktopMain.dependsOn(this)
-            jsMain.dependsOn(this)
-            wasmJsMain.dependsOn(this)
-
-            dependencies {
-                implementation(libs.connectivity.http)
-                implementation(libs.connectivity.compose.http)
-            }
-        }
     }
 }
 
@@ -258,24 +236,16 @@ compose.desktop {
             packageVersion = "1.0.1"
 
             macOS {
-                // путь до .icns относительно этого build.gradle.kts
                 iconFile.set(project.file("icon.icns"))
             }
-
-            // если захочешь иконку отдельно под Windows — можно так:
-            // windows {
-            //     iconFile.set(project.file("icon.ico"))
-            // }
         }
     }
 }
 
-// Fix duplicate handling for wasmJs resources
 tasks.withType<Copy> {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-// Custom task to install and run Android app
 tasks.register("installAndRunDebug") {
     group = "android"
     description = "Install and run the debug APK on connected device"
@@ -298,7 +268,6 @@ tasks.register("installAndRunDebug") {
     }
 }
 
-// Custom task to run iOS app in simulator
 tasks.register("iosSimulatorArm64Run") {
     group = "ios"
     description = "Build and run the iOS app on ARM64 simulator (M1/M2 Mac)"
@@ -325,23 +294,19 @@ tasks.register("iosSimulatorArm64Run") {
         }
 
         println("🚀 Launching iOS Simulator...")
-        // App is built to Xcode's DerivedData directory
         val homeDir = System.getProperty("user.home")
         val appPath = "$homeDir/Library/Developer/Xcode/DerivedData/iosApp-bxpfibllityukmdutqwcfggofsxj/Build/Products/Debug-iphonesimulator/WordsMultiPlatform.app"
 
         try {
-            // Boot simulator if needed
             project.exec {
                 commandLine("xcrun", "simctl", "boot", "iPhone 17 Pro")
                 isIgnoreExitValue = true
             }
 
-            // Install app
             project.exec {
                 commandLine("xcrun", "simctl", "install", "booted", appPath)
             }
 
-            // Launch app
             project.exec {
                 commandLine("xcrun", "simctl", "launch", "booted", "vm.words.ua.WordsMultiPlatform")
             }
@@ -354,7 +319,6 @@ tasks.register("iosSimulatorArm64Run") {
     }
 }
 
-// Shortcut task for iOS simulator
 tasks.register("iosRun") {
     group = "ios"
     description = "Build and run iOS app (shortcut)"
