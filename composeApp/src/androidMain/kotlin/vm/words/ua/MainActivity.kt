@@ -1,6 +1,7 @@
 package vm.words.ua
 
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
@@ -28,11 +29,23 @@ import vm.words.ua.core.ui.theme.ThemeManager
 import vm.words.ua.utils.storage.AndroidStorageConfig
 
 class MainActivity : ComponentActivity() {
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // Make content draw behind system bars
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        // Configure edge-to-edge manually for Android 15+ compatibility
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            // Set cutout mode to ALWAYS for Android 15+ compatibility
+            window.attributes.layoutInDisplayCutoutMode =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS
+                } else {
+                    WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+                }
+        }
 
         // Initial edge-to-edge with transparent bars
         enableEdgeToEdge(
@@ -70,8 +83,6 @@ class MainActivity : ComponentActivity() {
                     val backgroundColor = currentTheme.primaryBack.toArgb()
                     // Set window background color
                     window.decorView.setBackgroundColor(backgroundColor)
-                    window.statusBarColor = backgroundColor
-                    window.navigationBarColor = backgroundColor
 
                     val style = if (currentTheme.isDark) {
                         SystemBarStyle.dark(backgroundColor)

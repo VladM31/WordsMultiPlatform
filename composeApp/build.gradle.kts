@@ -97,11 +97,11 @@ kotlin {
 
         val androidMain by getting {
             dependencies {
-                implementation("androidx.activity:activity-compose:1.9.3")
-                implementation("androidx.core:core-ktx:1.13.1")
+                implementation("androidx.activity:activity-compose:1.10.0")
+                implementation("androidx.core:core-ktx:1.15.0")
                 implementation(libs.ktor.client.okhttp)
                 implementation(libs.ktor.client.android)
-                implementation("com.github.mhiew:android-pdf-viewer:3.2.0-beta.1")
+                implementation("com.github.mhiew:android-pdf-viewer:3.2.0-beta.3")
                 implementation("androidx.security:security-crypto:1.1.0")
 
                 implementation(libs.androidx.credentials)
@@ -209,11 +209,22 @@ android {
         targetSdk = 35
         versionCode = 4
         versionName = "1.1.0"
+
+        ndk {
+            // Explicitly specify supported ABIs
+            // This helps ensure proper compilation for 16KB page size
+            abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
+        }
     }
 
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+
+        // Ensure proper handling of native libraries
+        jniLibs {
+            useLegacyPackaging = false
         }
     }
 
@@ -227,6 +238,17 @@ android {
         getByName("release") {
             // keepCrashlytics and mapping files
             isMinifyEnabled = false
+
+            // Enable proguard for native library optimization
+            ndk {
+                debugSymbolLevel = "FULL"
+            }
+        }
+
+        getByName("debug") {
+            ndk {
+                debugSymbolLevel = "FULL"
+            }
         }
     }
 }
