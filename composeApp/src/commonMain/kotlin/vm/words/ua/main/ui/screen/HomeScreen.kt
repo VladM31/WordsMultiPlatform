@@ -17,7 +17,6 @@ import vm.words.ua.core.ui.components.BottomNavBar
 import vm.words.ua.core.ui.components.ButtonsGrid
 import vm.words.ua.core.ui.components.GridButtonItem
 import vm.words.ua.core.utils.appHeightDp
-import vm.words.ua.core.utils.rememberWidthDeviceFormat
 import vm.words.ua.main.ui.hints.HomeScreenHintController
 import vm.words.ua.main.ui.hints.HomeScreenHintStep
 import vm.words.ua.main.ui.hints.createHomeScreenHintController
@@ -35,10 +34,9 @@ fun HomeScreen(
 ) {
     val hintController = createHomeScreenHintController()
     val isOnline = hasInternet()
-    val isPhoneFormat = rememberWidthDeviceFormat().isPhone
-    val isNotBigHeight = appHeightDp() < 500.dp
-    val spacerHeight = remember(isPhoneFormat, isNotBigHeight) {
-        if (isPhoneFormat && isNotBigHeight) 8.dp else 96.dp
+    val isTinyHeight = appHeightDp() < 500.dp
+    val spacerHeight = remember(isTinyHeight) {
+        if (isTinyHeight) 8.dp else 90.dp
     }
 
     val buttons = rememberButtons(isOnline, hintController, navController)
