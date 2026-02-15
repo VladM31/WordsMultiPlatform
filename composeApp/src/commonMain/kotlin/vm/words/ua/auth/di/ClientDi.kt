@@ -13,11 +13,8 @@ import vm.words.ua.auth.net.clients.impls.KrotTelegramAuthClient
 import vm.words.ua.auth.net.clients.impls.KrotUserClient
 import vm.words.ua.auth.net.clients.impls.KtorAuthClient
 
-/**
- * Модуль Kodein-DI для сетевых зависимостей
- */
+
 internal val client = DI.Module("client") {
-    // Auth клиент (singleton)
     bind<AuthClient>() with singleton {
         KtorAuthClient(instance())
     }

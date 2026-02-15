@@ -8,10 +8,7 @@ import org.kodein.di.direct
 import org.kodein.di.instance
 import vm.words.ua.navigation.SimpleNavController
 
-/**
- * Android-specific implementation using AndroidX ViewModel
- * This survives configuration changes like screen rotation
- */
+
 @Composable
 actual inline fun <reified T : Any> rememberInstance(): T {
     val isViewModel = ViewModel::class.java.isAssignableFrom(T::class.java)
