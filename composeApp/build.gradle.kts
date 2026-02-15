@@ -97,11 +97,11 @@ kotlin {
 
         val androidMain by getting {
             dependencies {
-                implementation("androidx.activity:activity-compose:1.10.0")
-                implementation("androidx.core:core-ktx:1.15.0")
+                implementation("androidx.activity:activity-compose:1.10.1")
+                implementation("androidx.core:core-ktx:1.16.0")
                 implementation(libs.ktor.client.okhttp)
                 implementation(libs.ktor.client.android)
-                implementation("com.github.mhiew:android-pdf-viewer:3.2.0-beta.3")
+                // PDF rendering uses native Android PdfRenderer API (no external native libs)
                 implementation("androidx.security:security-crypto:1.1.0")
 
                 implementation(libs.androidx.credentials)
@@ -205,9 +205,8 @@ android {
     defaultConfig {
         applicationId = "vm.words.ua"
         minSdk = 24
-        //noinspection OldTargetApi
         targetSdk = 35
-        versionCode = 4
+        versionCode = 5
         versionName = "1.1.0"
 
         ndk {
@@ -220,11 +219,6 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-
-        // Ensure proper handling of native libraries
-        jniLibs {
-            useLegacyPackaging = false
         }
     }
 

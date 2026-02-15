@@ -11,15 +11,15 @@ kotlinx-datetime = "0.6.1"
 ktor = "3.0.2"
 multiplatform-settings = "1.1.1"
 # Added for Android support
-agp = "8.9.1"
+agp = "8.9.3"
 mp3spi-soundlibs = "1.9.5-1"
 tritonus-share = "0.3.7-2"
 # Firebase
-google-services = "4.4.2"
+google-services = "4.4.4"
 firebase-gitlive = "2.1.0"
 # Crashlytics
-firebase-crashlytics-plugin = "2.9.8"
-firebase-crashlytics-ktx = "18.4.1"
+firebase-crashlytics-plugin = "3.0.6"
+firebase-crashlytics-ktx = "19.4.4"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -56,9 +56,9 @@ firebase-common = { module = "dev.gitlive:firebase-common", version.ref = "fireb
 firebase-auth = { module = "dev.gitlive:firebase-auth", version.ref = "firebase-gitlive" }
 
 # Android Credential Manager
-androidx-credentials = { module = "androidx.credentials:credentials", version = "1.3.0" }
-androidx-credentials-play-services = { module = "androidx.credentials:credentials-play-services-auth", version = "1.3.0" }
-googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version = "1.1.1" }
+androidx-credentials = { module = "androidx.credentials:credentials", version = "1.5.0" }
+androidx-credentials-play-services = { module = "androidx.credentials:credentials-play-services-auth", version = "1.5.0" }
+googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version = "1.2.0" }
 
 # Crashlytics (Android only)
 firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-ktx", version.ref = "firebase-crashlytics-ktx" }
