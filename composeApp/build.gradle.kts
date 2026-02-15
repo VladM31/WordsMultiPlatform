@@ -121,6 +121,10 @@ kotlin {
                 implementation("org.apache.pdfbox:pdfbox:2.0.30")
                 implementation(libs.mp3spi)
                 implementation(libs.tritonus.share)
+
+                // HTTP connectivity for Desktop - enables URL-based ping checking
+                implementation(libs.connectivity.http)
+                implementation(libs.connectivity.compose.http)
             }
         }
 

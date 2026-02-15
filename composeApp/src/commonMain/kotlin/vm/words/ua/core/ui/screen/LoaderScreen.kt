@@ -43,7 +43,10 @@ fun LoaderScreen(
             val navController : SimpleNavController by DiContainer.di.instance()
 
             try {
-                if (AppRemoteConfig.currentVersion != AppRemoteConfig.version && currentPlatform().isWeb.not()) {
+                val isOldVersion = AppRemoteConfig.currentVersion != AppRemoteConfig.version
+                val isNotAvailableVersion = !AppRemoteConfig.availableVersions.contains(AppRemoteConfig.version)
+                val isNotWeb = currentPlatform().isWeb.not()
+                if (isOldVersion && isNotAvailableVersion && isNotWeb) {
                     navController.navigateAndClear(Screen.UpdateApp)
                     return@LaunchedEffect
                 }

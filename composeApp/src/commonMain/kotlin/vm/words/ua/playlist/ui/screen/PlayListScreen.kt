@@ -56,7 +56,7 @@ fun PlayListScreen(
             .background(AppTheme.PrimaryBack)
     ) {
         AppToolBar(
-            title = "",
+            title = "Your Playlists",
             showBackButton = true,
             onBackClick = { showCreateDialog = true },
             backButtonVector = Icons.Outlined.Add,

@@ -3,8 +3,8 @@ package vm.words.ua.core.config
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.serialization.json.Json
-import vm.words.ua.core.domain.models.DocItem
-import vm.words.ua.core.domain.models.DocItemType
+import vm.words.ua.core.domain.models.DocumentInfo
+import vm.words.ua.core.domain.models.PlatformDetail
 import vm.words.ua.core.domain.models.RemoteConfigData
 import vm.words.ua.core.platform.AppPlatform
 import vm.words.ua.core.platform.currentPlatform
@@ -13,15 +13,13 @@ import vm.words.ua.utils.storage.managers.KeyValueStorage
 import vm.words.ua.utils.storage.models.StorageSecurity
 
 object AppRemoteConfig {
-    private const val CONFIG_URL = "https://gist.githubusercontent.com/VladM31/54f9cccbe96d9adf02d32791dba4f49e/raw"
+    private const val CONFIG_URL = "https://gist.githubusercontent.com/VladM31/b2ca69b294f53ac8f1fb35c10691d12e/raw"
     private const val STORAGE_NAME = "app_remote_config"
     private const val STORAGE_JSON_KEY = "remote_config_json"
     private const val DEFAULT_BASE_URL = "https://study-words.com"
     private const val DEFAULT_TELEGRAM_BOT = "https://t.me/needlework_number_bot"
-    private const val DEFAULT_UPDATE_LINK = "https://study-words.com/"
-    private const val DEFAULT_VERSION = "1.0.1"
 
-    const val CURRENT_VERSION = "1.0.0"
+    const val CURRENT_VERSION = "1.1.0"
 
     private var configData: RemoteConfigData? = null
         get() {
@@ -46,26 +44,29 @@ object AppRemoteConfig {
     val currentVersion: String
         get() = CURRENT_VERSION
 
-    val instruction: DocItem
-        get() = getDocItemByPlatform(configData?.instructions)
+    val instruction: DocumentInfo
+        get() = getPlatformDetails().instruction
 
-    val defaultInstruction: DocItem
-        get() = getDefaultDocItem(configData?.instructions)
+    val defaultInstruction: DocumentInfo
+        get() = getUnknowPlatformDetails().instruction
 
-    val policy: DocItem
-        get() = getDocItemByPlatform(configData?.policies)
+    val policy: DocumentInfo
+        get() = getPlatformDetails().policy
 
-    val defaultPolicy: DocItem
-        get() = getDefaultDocItem(configData?.policies)
+    val defaultPolicy: DocumentInfo
+        get() = getUnknowPlatformDetails().policy
 
     val telegramBotLink: String
         get() = configData?.telegramBotLink ?: DEFAULT_TELEGRAM_BOT
 
     val updateLink: String
-        get() = configData?.updateLink ?: DEFAULT_UPDATE_LINK
+        get() = getPlatformDetails().updateLink
 
     val version: String
-        get() = configData?.version ?: DEFAULT_VERSION
+        get() = getPlatformDetails().version
+
+    val availableVersions: Set<String>
+        get() = getPlatformDetails().availableVersions
 
 
     suspend fun initialize() {
@@ -129,20 +130,17 @@ object AppRemoteConfig {
         }
     }
 
-    private fun getCurrentPlatformType(): DocItemType {
-        return if (currentPlatform() == AppPlatform.WASM) {
-            DocItemType.WEB
-        } else {
-            DocItemType.DEFAULT_TYPE
+    private fun getPlatformDetails(): PlatformDetail {
+        val platform = currentPlatform()
+        if (configData == null) {
+            loadFromCache()
         }
+        return configData?.details?.find { it.platform == platform.name }
+            ?: throw IllegalStateException("No platform details found for ${platform.name}")
     }
 
-    private fun getDocItemByPlatform(items: List<DocItem>?): DocItem {
-        val type = getCurrentPlatformType()
-        return items?.find { it.type == type } ?: DocItem()
-    }
-
-    private fun getDefaultDocItem(items: List<DocItem>?): DocItem {
-        return items?.find { it.type == DocItemType.DEFAULT_TYPE } ?: DocItem()
+    private fun getUnknowPlatformDetails(): PlatformDetail {
+        return configData?.details?.find { it.platform == AppPlatform.UNKNOWN.name }
+            ?: throw IllegalStateException("No platform details found for ${AppPlatform.UNKNOWN}")
     }
 }

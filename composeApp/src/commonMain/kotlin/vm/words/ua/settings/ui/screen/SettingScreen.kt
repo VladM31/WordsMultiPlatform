@@ -9,16 +9,19 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.PrivacyTip
 import androidx.compose.material.icons.outlined.Schedule
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.kodein.di.instance
+import vm.words.ua.core.config.AppRemoteConfig
 import vm.words.ua.core.domain.managers.UserCacheManager
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.BottomNavBar
 import vm.words.ua.core.ui.components.ButtonsGrid
 import vm.words.ua.core.ui.components.GridButtonItem
+import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberWidthDeviceFormat
 import vm.words.ua.di.DiContainer
 import vm.words.ua.navigation.Screen
@@ -70,6 +73,13 @@ fun SettingScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
+        )
+        Text(
+            text = "Version " + AppRemoteConfig.version,
+            color = AppTheme.PrimaryDisable,
+            fontSize = rememberFontSize() * 0.5,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center
         )
 
         BottomNavBar(currentRoute = Screen.Settings, onNavigate = { route -> navController.navigateAndClear(route) })

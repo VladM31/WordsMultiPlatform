@@ -1,12 +1,17 @@
 package vm.words.ua.utils.net
 
 import dev.jordond.connectivity.Connectivity
+import io.ktor.client.*
+import io.ktor.client.engine.okhttp.*
 
-actual fun createConnectivity(): Connectivity =
-    Connectivity {
+actual fun createConnectivity(): Connectivity {
+    val httpClient = HttpClient(OkHttp)
+
+    return Connectivity(httpClient = httpClient) {
         autoStart = true
         urls("cloudflare.com", "study-words.com")
-        port = 80
+        port = 443
         pollingIntervalMs = 15.seconds
         timeoutMs = 5.seconds
     }
+}
