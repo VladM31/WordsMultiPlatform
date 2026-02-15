@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import vm.words.ua.core.ui.AppColors
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.utils.rememberFontSize
@@ -174,13 +175,16 @@ private fun LetterItem(letter: String, fontSize: TextUnit, scale: Float, isError
         56.dp * scale
     }
 
-    val color = if (isError) AppTheme.Error else AppTheme.PrimaryColor
+    val errorColor = androidx.compose.ui.graphics.Color.Red
+    val primaryColor = AppColors.primaryColor
+    val color = if (isError) errorColor else primaryColor
+    println("LetterItem: letter=$letter, isError=$isError, color=$color, errorColor=$errorColor, primaryColor=$primaryColor")
 
     Surface(
         modifier = Modifier
             .padding(4.dp)
-            .width(width) // минимальная ширина
-            .height(height) // фиксированная высота
+            .width(width)
+            .height(height)
             .clip(shape)
             .clickable(onClick = onClick),
         shape = shape,
@@ -208,12 +212,16 @@ private fun LettersGrid(
 ) {
     val scale = rememberScaleFactor()
     LazyVerticalGrid(columns = GridCells.Adaptive(56.dp), modifier = Modifier.fillMaxSize().heightIn(max = 400.dp)) {
-        items(letters.size) { idx ->
+        items(
+            count = letters.size,
+            key = { idx -> letters[idx].id }
+        ) { idx ->
             val l = letters[idx]
+            val isError = errorLetter?.letter?.id == l.id
             LetterItem(
                 letter = l.letter.toString(),
                 fontSize = fontSize,
-                isError = errorLetter?.letter?.id == l.id,
+                isError = isError,
                 scale = scale
             ) {
                 onClick(l.letter, l.id)
