@@ -23,9 +23,6 @@ import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.utils.getScaleFactor
 import vm.words.ua.core.utils.rememberIconSize
 
-/**
- * Simple data holder for a grid button.
- */
 data class GridButtonItem(
     val text: String,
     val modifier: Modifier = Modifier,

@@ -67,16 +67,11 @@ object AppRemoteConfig {
     val version: String
         get() = configData?.version ?: DEFAULT_VERSION
 
-    /**
-     * Initialize configuration by loading data from remote source
-     */
+
     suspend fun initialize() {
         refresh()
     }
 
-    /**
-     * Refresh configuration values from remote source
-     */
     suspend fun refresh() {
         try {
             loadFromRemote()
@@ -121,8 +116,7 @@ object AppRemoteConfig {
     private fun cacheConfig(jsonString: String) {
         try {
             storage.putString(STORAGE_JSON_KEY, jsonString)
-        } catch (e: Throwable) {
-            // Ignore storage errors - cache is not critical
+        } catch (_: Throwable) {
         }
     }
 

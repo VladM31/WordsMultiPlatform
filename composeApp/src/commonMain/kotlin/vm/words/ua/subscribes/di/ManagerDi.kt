@@ -7,9 +7,7 @@ import org.kodein.di.singleton
 import vm.words.ua.subscribes.domain.managers.SubscribeCacheManager
 import vm.words.ua.subscribes.domain.managers.impl.InMemorySubscribeCacheManager
 
-/**
- * Модуль Kodein-DI для менеджеров Subscribe
- */
+
 internal val subscribesManagerModule = DI.Module("subscribesManager") {
     bind<SubscribeCacheManager>() with singleton {
         InMemorySubscribeCacheManager(

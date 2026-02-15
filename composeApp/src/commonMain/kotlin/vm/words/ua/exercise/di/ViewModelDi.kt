@@ -6,9 +6,7 @@ import org.kodein.di.factory
 import org.kodein.di.instance
 import vm.words.ua.exercise.ui.vm.*
 
-/**
- * Модуль Kodein-DI для ViewModels Exercise
- */
+
 internal val exerciseViewModelModule = DI.Module("exerciseViewModel") {
     bind<ExerciseSelectionViewModel>() with factory {
         ExerciseSelectionViewModel(

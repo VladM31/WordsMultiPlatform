@@ -8,20 +8,10 @@ import vm.words.ua.auth.domain.models.google.GoogleSignInResult
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-/**
- * iOS implementation of GoogleApiManager using native Google Sign-In SDK
- *
- * Requirements (must be configured in Xcode):
- * 1. Add GoogleSignIn SPM package: https://github.com/google/GoogleSignIn-iOS
- * 2. Add FirebaseAuth SPM package (from firebase-ios-sdk)
- * 3. Configure URL schemes in Info.plist with reversed client ID
- * 4. GoogleSignInHelper.swift must be in iosApp target
- * 5. Call GoogleSignInHelperBridge.configure() from Swift at app startup
- */
+
 class GoogleApiManagerIos : GoogleApiManager {
 
     override fun isAvailable(): Boolean {
-        // Google Sign-In is available on iOS when properly configured
         return GoogleSignInHelperBridge.isConfigured()
     }
 
@@ -45,32 +35,15 @@ class GoogleApiManagerIos : GoogleApiManager {
 }
 
 
-/**
- * Bridge interface to Swift GoogleSignInHelper
- * This is configured from Swift side during app initialization
- *
- * Usage from Swift:
- * ```swift
- * GoogleSignInHelperBridge.shared.configure(
- *     signIn: { callback in GoogleSignInHelper.shared.signIn { callback($0) } },
- *     signOut: { GoogleSignInHelper.shared.signOut() },
- *     isAvailable: { GoogleSignInHelper.shared.isAvailable() }
- * )
- * ```
- */
 object GoogleSignInHelperBridge {
 
     private var helperConfigured = false
 
-    // Function handlers set from Swift side
     private var signInHandler: ((callback: (Map<String, Any?>) -> Unit) -> Unit)? = null
     private var signOutHandler: (() -> Unit)? = null
     private var isAvailableHandler: (() -> Boolean)? = null
 
-    /**
-     * Configure the bridge from Swift
-     * Must be called at app startup before using Google Sign-In
-     */
+
     fun configure(
         signIn: (callback: (Map<String, Any?>) -> Unit) -> Unit,
         signOut: () -> Unit,

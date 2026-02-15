@@ -13,10 +13,6 @@ import vm.words.ua.subscribes.di.subscribesModule
 import vm.words.ua.utils.net.di.newUtilsModule
 import vm.words.ua.words.di.wordsModule
 
-
-/**
- * Все модули приложения
- */
 val appModules = DI {
     import(navigationModule)
     import(coreModule)
@@ -34,17 +30,6 @@ object DiContainer {
     val di = appModules
 }
 
-/**
- * Composable делегат для получения зависимости из DI
- * Автоматически оборачивает вызов в remember для стабильности между рекомпозициями
- *
- * На Android использует androidx.lifecycle.viewmodel для ViewModel,
- * чтобы сохранять состояние при изменении конфигурации (поворот экрана)
- *
- * Использование:
- * ```
- * val viewModel = rememberInstance<LoginViewModel>()
- * ```
- */
+
 @Composable
 expect inline fun <reified T : Any> rememberInstance(): T

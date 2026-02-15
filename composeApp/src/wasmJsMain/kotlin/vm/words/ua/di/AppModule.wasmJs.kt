@@ -10,10 +10,7 @@ import org.kodein.di.instance
 import vm.words.ua.navigation.SimpleNavController
 import kotlin.reflect.KClass
 
-/**
- * WasmJS/Web implementation using ViewModelStoreOwner and ViewModelProvider.Factory
- * Proper ViewModel lifecycle management per route
- */
+
 @Composable
 actual inline fun <reified T : Any> rememberInstance(): T {
     return if (isViewModel<T>()) {
@@ -41,7 +38,6 @@ actual inline fun <reified T : Any> rememberInstance(): T {
 
 @PublishedApi
 internal inline fun <reified T : Any> isViewModel(): Boolean {
-    // For WasmJS, check simple name contains ViewModel pattern
     val simpleName = T::class.simpleName ?: return false
     return simpleName.endsWith("ViewModel") || simpleName == "ViewModel"
 }

@@ -9,9 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import vm.words.ua.core.domain.managers.SettingsFactory
 
-/**
- * Manager for saving and loading app theme preference
- */
+
 class ThemeManager(
     private val settings: Settings
 ) {

@@ -10,13 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-/**
- * Компонент-контейнер, который центрирует содержимое с заданной максимальной шириной
- *
- * @param maxWidth максимальная ширина содержимого. Если ширина экрана больше, содержимое будет центрировано
- * @param modifier модификатор для контейнера
- * @param content содержимое, которое нужно отобразить
- */
+
 @Composable
 fun CenteredContainer(
     maxWidth: Dp = 600.dp,

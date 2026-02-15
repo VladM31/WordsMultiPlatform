@@ -5,9 +5,7 @@ import vm.words.ua.auth.domain.managers.GoogleApiManager
 import vm.words.ua.auth.domain.models.google.GoogleSignInResult
 import kotlin.js.Promise
 
-/**
- * JS (Browser) implementation of GoogleSignInManager using Firebase Auth
- */
+
 class GoogleApiManagerJs : GoogleApiManager {
 
     override fun isAvailable(): Boolean {
@@ -22,7 +20,6 @@ class GoogleApiManagerJs : GoogleApiManager {
 
             if (success) {
                 val email = (resultJs.email as? String) ?: ""
-                val userId = (resultJs.userId as? String) ?: ""
                 val displayName = resultJs.displayName as? String
                 val idToken = resultJs.idToken as? String
 

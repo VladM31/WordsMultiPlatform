@@ -1,13 +1,9 @@
 package vm.words.ua.core.analytics
 
-/**
- * Common analytics event names used throughout the app
- */
+
 object AnalyticsEvents {
-    // Screen events
     const val SCREEN_VIEW = "screen_view"
 
-    // Auth events
     const val LOGIN_SUCCESS = "login_success"
     const val LOGIN_FAILED = "login_failed"
 

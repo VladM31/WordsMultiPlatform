@@ -1,12 +1,10 @@
 package vm.words.ua.core.domain.crypto
 
-import java.util.Base64
+import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 
-/**
- * JVM implementation using AES encryption
- */
+
 class JvmTokenCipher : TokenCipher {
     private val key = "WordsApp12345678" // 16 bytes for AES-128
     private val secretKey = SecretKeySpec(key.toByteArray(), "AES")

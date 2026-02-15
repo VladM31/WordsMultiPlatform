@@ -35,22 +35,15 @@ import wordsmultiplatform.composeapp.generated.resources.setting
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-/**
- * Position of the tooltip relative to the button
- */
+
 enum class TooltipPosition {
-    TOP,    // Above the button
-    BOTTOM, // Below the button
-    LEFT,   // To the left of the button
-    RIGHT   // To the right of the button
+    TOP,
+    BOTTOM,
+    LEFT,
+    RIGHT
 }
 
-/**
- * Tooltip configuration for additional button
- * @param text Text to display in tooltip
- * @param duration How long to show the tooltip before it disappears
- * @param position Position of the tooltip relative to the button
- */
+
 data class AdditionalButtonTooltip(
     val text: String,
     val duration: Duration = 3.seconds,
@@ -97,7 +90,6 @@ fun AppToolBar(
                 .padding(horizontal = horizontalPadding),
             contentAlignment = Alignment.Center
         ) {
-            // Main toolbar content layer
             Row(
                 modifier = Modifier
                     .widthIn(max = rememberInterfaceMaxWidth())
@@ -106,7 +98,6 @@ fun AppToolBar(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Back Button
                 BackButton(
                     onBackClick = onBackClick,
                     showBackButton = showBackButton,
@@ -115,7 +106,6 @@ fun AppToolBar(
                     backButtonVector = backButtonVector
                 )
 
-                // Title
                 Text(
                     text = title,
                     color = AppTheme.PrimaryColor,
@@ -128,7 +118,6 @@ fun AppToolBar(
                         .padding(horizontal = titleHorizontalPadding)
                 )
 
-                // Additional Button
                 AdditionalButton(
                     onAdditionalClick = onAdditionalClick,
                     showAdditionalButton = showAdditionalButton,
@@ -144,7 +133,6 @@ fun AppToolBar(
                 )
             }
 
-            // Tooltip overlay layer - positioned above toolbar content
             if (showAdditionalButton && additionalButtonTooltip != null) {
                 AdditionalButtonTooltipView(
                     tooltip = additionalButtonTooltip,

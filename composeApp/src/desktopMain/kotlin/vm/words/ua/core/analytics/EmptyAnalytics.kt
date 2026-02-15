@@ -1,9 +1,6 @@
 package vm.words.ua.core.analytics
 
-/**
- * Empty implementation of Analytics for Desktop platform
- * Events are logged to console in debug mode
- */
+
 class EmptyAnalytics : Analytics {
     override fun logEvent(eventName: String, parameters: Map<String, Any>?) {
         println("Analytics Event: $eventName, params: $parameters")

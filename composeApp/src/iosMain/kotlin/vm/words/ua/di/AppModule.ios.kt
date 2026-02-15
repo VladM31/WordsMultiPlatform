@@ -10,10 +10,7 @@ import org.kodein.di.instance
 import vm.words.ua.navigation.SimpleNavController
 import kotlin.reflect.KClass
 
-/**
- * iOS implementation using ViewModelStoreOwner and ViewModelProvider.Factory
- * Similar to Android for proper ViewModel lifecycle management
- */
+
 @Composable
 actual inline fun <reified T : Any> rememberInstance(): T {
     return if (isViewModel<T>()) {

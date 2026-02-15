@@ -24,16 +24,7 @@ import java.net.URI
 import java.net.URLEncoder
 import kotlin.coroutines.resume
 
-/**
- * Desktop (JVM) implementation of [GoogleApiManager] using OAuth 2.0 with browser.
- *
- * Flow:
- * 1. Opens browser for Google authentication
- * 2. Receives auth code via local callback server
- * 3. Exchanges code for tokens via backend (keeps client_secret secure)
- *
- * Backend endpoint: `POST /auth/google/exchange`
- */
+
 class GoogleApiManagerDesktop : GoogleApiManager {
 
     private val httpClient by lazy { createHttpClient() }
@@ -67,10 +58,8 @@ class GoogleApiManagerDesktop : GoogleApiManager {
     }
 
     override suspend fun signOut() {
-        // Desktop: no persistent session to clear
     }
 
-    // ==================== OAuth Flow ====================
 
     private suspend fun awaitAuthCode(port: Int, redirectUri: String): String? =
         suspendCancellableCoroutine { continuation ->

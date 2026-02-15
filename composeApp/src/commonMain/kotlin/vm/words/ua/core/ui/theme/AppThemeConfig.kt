@@ -5,9 +5,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 
-/**
- * Represents a theme configuration for the app
- */
+
 data class AppThemeConfig(
     val id: String,
     val name: String,
@@ -91,9 +89,7 @@ data class AppThemeConfig(
         }
 }
 
-/**
- * All available themes in the app
- */
+
 object AppThemes {
 
     // ===== DARK THEMES =====

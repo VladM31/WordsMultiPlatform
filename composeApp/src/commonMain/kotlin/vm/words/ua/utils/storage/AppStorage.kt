@@ -7,20 +7,11 @@ import vm.words.ua.utils.storage.managers.KeyValueStorage
 import vm.words.ua.utils.storage.managers.SettingsKeyValueStorage
 import vm.words.ua.utils.storage.models.StorageSecurity
 
-/**
- * Платформенная реализация создания Settings по имени хранилища.
- */
+
 expect fun createPlatformSettings(name: String): Settings
 
 object AppStorage {
 
-    /**
-     * Создаёт KMP-аналог SharedPreferences / NSUserDefaults / localStorage и т.п.
-     *
-     * @param name        имя хранилища (аналог имени SharedPreferences)
-     * @param security    NON_SECURITY / SECURITY
-     * @param cryptoKey   ключ для XOR-шифрования (по умолчанию = name)
-     */
     fun create(
         name: String,
         security: StorageSecurity = StorageSecurity.NON_SECURITY,

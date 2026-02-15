@@ -2,9 +2,7 @@
 
 package vm.words.ua.core.analytics
 
-/**
- * JS function adapters using JsFun annotation
- */
+
 @OptIn(ExperimentalWasmJsInterop::class)
 @JsFun("(eventName) => { console.log('JsFun logFirebaseEvent called:', eventName); if (window.logFirebaseEvent) { window.logFirebaseEvent(eventName, null); } }")
 private external fun logFirebaseEventJs(eventName: JsString)
@@ -21,16 +19,13 @@ private external fun setFirebaseUserPropertyJs(name: JsString, value: JsString)
 @JsFun("(screenName, screenClass) => { console.log('JsFun logFirebaseScreenView called:', screenName, screenClass); if (window.logFirebaseScreenView) { window.logFirebaseScreenView(screenName, screenClass); } }")
 private external fun logFirebaseScreenViewJs(screenName: JsString, screenClass: JsString?)
 
-/**
- * WasmJS implementation of Analytics using Firebase Analytics
- */
+
 class FirebaseAnalytics : Analytics {
 
     override fun logEvent(eventName: String, parameters: Map<String, Any>?) {
         try {
             logFirebaseEventJs(eventName.toJsString())
         } catch (_: Throwable) {
-            // Silently fail if Firebase is not available
         }
     }
 
@@ -38,7 +33,6 @@ class FirebaseAnalytics : Analytics {
         try {
             setFirebaseUserPropertyJs(name.toJsString(), value.toJsString())
         } catch (_: Throwable) {
-            // Silently fail if Firebase is not available
         }
     }
 
@@ -46,7 +40,6 @@ class FirebaseAnalytics : Analytics {
         try {
             setFirebaseUserIdJs(userId?.toJsString())
         } catch (_: Throwable) {
-            // Silently fail if Firebase is not available
         }
     }
 
@@ -54,7 +47,6 @@ class FirebaseAnalytics : Analytics {
         try {
             logFirebaseScreenViewJs(screenName.toJsString(), screenClass?.toJsString())
         } catch (_: Throwable) {
-            // Silently fail if Firebase is not available
         }
     }
 }
