@@ -70,7 +70,8 @@ fun AppToolBar(
     BoxWithConstraints(
         modifier = modifier
             .fillMaxWidth()
-            .background(AppTheme.PrimaryBack)
+            .background(AppTheme.PrimaryBack),
+        contentAlignment = Alignment.Center
     ) {
         val scaleFactor = getScaleFactor(maxWidth)
 
@@ -85,14 +86,14 @@ fun AppToolBar(
 
         Box(
             modifier = Modifier
+                .widthIn(max = rememberInterfaceMaxWidth())
                 .fillMaxWidth()
                 .height(toolbarHeight)
-                .padding(horizontal = horizontalPadding),
-            contentAlignment = Alignment.Center
+                .padding(horizontal = horizontalPadding)
         ) {
             Row(
                 modifier = Modifier
-                    .widthIn(max = rememberInterfaceMaxWidth())
+
                     .fillMaxWidth()
                     .zIndex(0f),
                 horizontalArrangement = Arrangement.SpaceBetween,
