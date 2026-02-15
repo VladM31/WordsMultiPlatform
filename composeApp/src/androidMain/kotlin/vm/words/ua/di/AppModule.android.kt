@@ -14,23 +14,21 @@ import vm.words.ua.navigation.SimpleNavController
  */
 @Composable
 actual inline fun <reified T : Any> rememberInstance(): T {
-    return if (ViewModel::class.java.isAssignableFrom(T::class.java)) {
-        // Obtain navController from DI so each route has its own ViewModelStore
-        val navController: SimpleNavController = DiContainer.di.direct.instance()
-        viewModel(
-            viewModelStoreOwner = navController.viewModelStoreOwner(),
-            modelClass = T::class.java as Class<ViewModel>,
-            factory = object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <VM : ViewModel> create(modelClass: Class<VM>): VM {
-                    return DiContainer.di.direct.instance<T>() as VM
-                }
-            }
-        ) as T
-    } else {
-        // For non-ViewModel instances, use regular DI
-        androidx.compose.runtime.remember {
+    val isViewModel = ViewModel::class.java.isAssignableFrom(T::class.java)
+    if (!isViewModel) {
+        return androidx.compose.runtime.remember {
             DiContainer.di.direct.instance<T>()
         }
     }
+    val navController: SimpleNavController = DiContainer.di.direct.instance()
+    return viewModel(
+        viewModelStoreOwner = navController.viewModelStoreOwner(),
+        modelClass = T::class.java as Class<ViewModel>,
+        factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <VM : ViewModel> create(modelClass: Class<VM>): VM {
+                return DiContainer.di.direct.instance<T>() as VM
+            }
+        }
+    ) as T
 }
