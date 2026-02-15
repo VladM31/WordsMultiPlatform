@@ -20,7 +20,6 @@ import vm.words.ua.auth.ui.hints.LoginScreenHintStep
 import vm.words.ua.auth.ui.vms.LoginViewModel
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppTextField
-import vm.words.ua.core.ui.components.PrimaryButton
 import vm.words.ua.core.ui.icons.TelegramIcon
 import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberIconSize
@@ -79,27 +78,61 @@ fun LoginForm(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Sign up",
-                color = AppTheme.PrimaryColor,
-                fontSize = rememberFontSize(scaleFactor * textWeight),
-                modifier = Modifier
-                    .viewHint(LoginScreenHintStep.SIGN_UP_LINK, currentHintStep)
-                    .clickable { onJoinNowClick() }
+                text = "Don't have an account?",
+                color = AppTheme.SecondaryText,
+                fontSize = rememberFontSize(scaleFactor * textWeight * 0.9f)
             )
+
+            Box(
+                modifier = Modifier
+                    .background(
+                        color = AppTheme.PrimaryColor.copy(alpha = 0.1f),
+                        shape = androidx.compose.foundation.shape.RoundedCornerShape((8 * scaleFactor).dp)
+                    )
+                    .clickable { onJoinNowClick() }
+                    .viewHint(LoginScreenHintStep.SIGN_UP_LINK, currentHintStep)
+                    .padding(horizontal = (12 * scaleFactor).dp, vertical = (6 * scaleFactor).dp)
+            ) {
+                Text(
+                    text = "Sign up",
+                    color = AppTheme.PrimaryColor,
+                    fontSize = rememberFontSize(scaleFactor * textWeight),
+                    modifier = Modifier
+                )
+            }
         }
 
-        Spacer(modifier = Modifier.size((12 * scaleFactor).dp))
+        Spacer(modifier = Modifier.size((16 * scaleFactor).dp))
 
-        PrimaryButton(
-            text = "Sign in",
+        androidx.compose.material3.Button(
             onClick = { viewModel.sent(LoginAction.Submit) },
-            modifier = Modifier.fillMaxWidth()
-                .padding(4.dp)
-                .viewHint(LoginScreenHintStep.LOGIN_BUTTON, currentHintStep)
-        )
+            modifier = Modifier
+                .fillMaxWidth()
+                .viewHint(LoginScreenHintStep.LOGIN_BUTTON, currentHintStep),
+            colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                containerColor = AppTheme.PrimaryColor,
+                contentColor = AppTheme.PrimaryBack
+            ),
+            elevation = androidx.compose.material3.ButtonDefaults.buttonElevation(
+                defaultElevation = (4 * scaleFactor).dp,
+                pressedElevation = (8 * scaleFactor).dp,
+                disabledElevation = 0.dp
+            ),
+            shape = androidx.compose.foundation.shape.RoundedCornerShape((12 * scaleFactor).dp),
+            contentPadding = PaddingValues(
+                vertical = (7 * scaleFactor).dp
+            )
+        ) {
+            Text(
+                text = "Sign in",
+                fontSize = rememberFontSize(),
+                modifier = Modifier
+            )
+        }
 
         Spacer(modifier = Modifier.size((8 * scaleFactor).dp))
 
