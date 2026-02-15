@@ -251,6 +251,10 @@ compose.desktop {
     application {
         mainClass = "vm.words.ua.MainKt"
 
+        buildTypes.release.proguard {
+            configurationFiles.from(project.file("proguard-rules.pro"))
+        }
+
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "vm.words.ua"
