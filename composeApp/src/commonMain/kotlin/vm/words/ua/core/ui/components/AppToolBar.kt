@@ -79,8 +79,8 @@ fun AppToolBar(
         val titleSize = (26 * scaleFactor).sp
         val titleHorizontalPadding = (16 * scaleFactor).dp
 
-        val iconSize = (40 * scaleFactor).dp
-        val buttonSize = iconSize * 1.2f
+        val iconSize = (56 * scaleFactor).dp
+        val buttonSize = iconSize * 1.05f
         val additionalButtonModifier = Modifier.size(iconSize)
 
         Box(

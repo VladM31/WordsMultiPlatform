@@ -22,6 +22,7 @@ import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.PopupMenuButton
 import vm.words.ua.core.ui.components.PopupMenuItem
+import vm.words.ua.core.utils.*
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.exercise.ui.bundles.ExerciseSelectionBundle
 import vm.words.ua.navigation.Screen
@@ -69,12 +70,14 @@ fun PlayListDetailsScreen(
         modifier = modifier
             .fillMaxSize()
             .background(AppTheme.PrimaryBack)
-            .padding(top = 3.dp)
+            .padding(top = 3.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
             modifier = Modifier
+                .widthIn(max = rememberInterfaceMaxWidth())
                 .fillMaxWidth()
-                .height(56.dp)
+                .height(40.dp * rememberScaleFactor())
         ) {
             AppToolBar(
                 title = state.name,
@@ -107,40 +110,47 @@ fun PlayListDetailsScreen(
             }
         }
 
-        LazyColumn(
+        Column(
             modifier = Modifier
-                .weight(1f)
                 .fillMaxWidth()
-                .padding(horizontal = 5.dp),
-            verticalArrangement = Arrangement.spacedBy(5.dp)
+                .weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            itemsIndexed(
-                items = state.words,
-                key = { _, word -> word.userWord.id }
-            ) { index, pinnedWord ->
-                WordItem(
-                    word = pinnedWord.userWord.word,
-                    isSelected = state.selectedWords.containsKey(pinnedWord.userWord.id),
-                    notSelectedIcon = Icons.Filled.CheckBoxOutlineBlank,
-                    selectedIcon = Icons.Filled.CheckBox,
-                    onSelect = {
-                        viewModel.sent(
-                            PlayListDetailsAction.SelectWord(
-                                pinnedWord.userWord.id,
-                                index
+            LazyColumn(
+                modifier = Modifier
+
+                    .widthIn(max = rememberInterfaceMaxWidth())
+                    .padding(horizontal = 5.dp),
+                verticalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
+                itemsIndexed(
+                    items = state.words,
+                    key = { _, word -> word.userWord.id }
+                ) { index, pinnedWord ->
+                    WordItem(
+                        word = pinnedWord.userWord.word,
+                        isSelected = state.selectedWords.containsKey(pinnedWord.userWord.id),
+                        notSelectedIcon = Icons.Filled.CheckBoxOutlineBlank,
+                        selectedIcon = Icons.Filled.CheckBox,
+                        onSelect = {
+                            viewModel.sent(
+                                PlayListDetailsAction.SelectWord(
+                                    pinnedWord.userWord.id,
+                                    index
+                                )
                             )
-                        )
-                    },
-                    onOpen = {
-                        navController.navigate(
-                            Screen.WordDetails,
-                            WordDetailsBundle(
-                                userWord = pinnedWord.userWord,
-                                word = pinnedWord.userWord.word
+                        },
+                        onOpen = {
+                            navController.navigate(
+                                Screen.WordDetails,
+                                WordDetailsBundle(
+                                    userWord = pinnedWord.userWord,
+                                    word = pinnedWord.userWord.word
+                                )
                             )
-                        )
-                    }
-                )
+                        }
+                    )
+                }
             }
         }
 
@@ -237,76 +247,84 @@ private fun BottomControlPanel(
     modifier: Modifier = Modifier
 ) {
     val hasSelected = selectedWordsCount > 0
+    val iconSize = rememberIconSize()
 
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .height(80.dp),
+            .height(iconSize * 1.1f),
         color = AppTheme.PrimaryBack,
-        shadowElevation = 8.dp
+        shadowElevation = 8.dp,
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Left side: Two buttons
             Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier
+                    .widthIn(max = rememberInterfaceMaxWidth())
+                    .fillMaxSize()
+                    .padding(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Unpin button
+                // Left side: Two buttons
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Unpin button
+                    IconButton(
+                        onClick = onUnpin,
+                        enabled = selectedWordsCount > 0,
+                        modifier = Modifier.size(iconSize)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Delete,
+                            contentDescription = "Unpin selected words",
+                            tint = if (selectedWordsCount > 0) AppColors.primaryRed else Color.Gray,
+                            modifier = Modifier.size(iconSize)
+                        )
+                    }
+
+                    // Unselect button
+                    Button(
+                        onClick = onUnselect,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (hasSelected) AppTheme.PrimaryColor else AppTheme.PrimaryGray
+                        ),
+                        shape = CircleShape,
+                        enabled = hasSelected
+                    ) {
+                        Text(
+                            text = "Unselect",
+                            color = AppTheme.PrimaryBack,
+                            fontSize = rememberLabelFontSize()
+                        )
+                    }
+                }
+
+                // Center: Words count
+                Text(
+                    text = if (selectedWordsCount == 0) "All" else "$selectedWordsCount",
+                    color = AppTheme.PrimaryColor,
+                    fontSize = rememberFontSize()
+                )
+
+                // Right side: Play button
                 IconButton(
-                    onClick = onUnpin,
-                    enabled = selectedWordsCount > 0,
-                    modifier = Modifier.size(60.dp)
+                    onClick = onPlay,
+                    enabled = totalWordsCount > 0,
+                    modifier = Modifier.size(iconSize)
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.Delete,
-                        contentDescription = "Unpin selected words",
-                        tint = if (selectedWordsCount > 0) AppColors.primaryRed else Color.Gray,
-                        modifier = Modifier.size(40.dp)
+                        imageVector = Icons.Filled.PlayArrow,
+                        contentDescription = "Start training",
+                        tint = if (totalWordsCount > 0) AppColors.primaryColor else Color.Gray,
+                        modifier = Modifier.size(iconSize)
                     )
                 }
-
-                // Unselect button
-                Button(
-                    onClick = onUnselect,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if (hasSelected) AppTheme.PrimaryColor else AppTheme.PrimaryGray
-                    ),
-                    shape = CircleShape,
-                    enabled = hasSelected
-                ) {
-                    Text(
-                        text = "Unselect",
-                        color = AppTheme.PrimaryBack,
-                        fontSize = 24.sp
-                    )
-                }
-            }
-
-            // Center: Words count
-            Text(
-                text = if (selectedWordsCount == 0) "All" else "$selectedWordsCount",
-                color = AppTheme.PrimaryColor,
-                fontSize = 24.sp
-            )
-
-            // Right side: Play button
-            IconButton(
-                onClick = onPlay,
-                enabled = totalWordsCount > 0,
-                modifier = Modifier.size(60.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.PlayArrow,
-                    contentDescription = "Start training",
-                    tint = if (totalWordsCount > 0) AppColors.primaryColor else Color.Gray,
-                    modifier = Modifier.size(40.dp)
-                )
             }
         }
     }

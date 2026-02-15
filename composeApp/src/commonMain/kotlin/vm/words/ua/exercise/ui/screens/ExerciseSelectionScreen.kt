@@ -21,6 +21,7 @@ import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.CenteredLoader
 import vm.words.ua.core.ui.components.TooltipPosition
 import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberInterfaceMaxWidth
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.exercise.domain.mappers.toScreen
 import vm.words.ua.exercise.ui.actions.ExerciseSelectAction
@@ -73,7 +74,8 @@ fun ExerciseSelectionScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(AppTheme.PrimaryBack)
+            .background(AppTheme.PrimaryBack),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         AppToolBar(
             title = "Select Exercises",
@@ -108,10 +110,11 @@ fun ExerciseSelectionScreen(
         LazyColumn(
             modifier = Modifier
                 .weight(1f)
+                .widthIn(max = rememberInterfaceMaxWidth())
+                .fillMaxWidth()
                 .padding(vertical = 4.dp, horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
-            // Выбранные упражнения
             items(
                 state.exercises.filter { it.isSelected }.sortedBy { it.number }
             ) { exerciseSelection ->
@@ -124,14 +127,12 @@ fun ExerciseSelectionScreen(
                 )
             }
 
-            // Пространство между выбранными и невыбранными
             if (state.selectedExercises.isNotEmpty()) {
                 item {
                     Spacer(modifier = Modifier.height(4.dp))
                 }
             }
 
-            // Невыбранные упражнения
             items(
                 state.exercises.filter { !it.isSelected }
             ) { exerciseSelection ->

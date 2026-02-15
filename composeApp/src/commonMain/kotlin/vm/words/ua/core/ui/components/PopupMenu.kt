@@ -3,7 +3,10 @@ package vm.words.ua.core.ui.components
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.utils.getScaleFactor
+import vm.words.ua.core.utils.rememberScaleFactor
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.setting
 
@@ -33,52 +36,48 @@ fun PopupMenuButton(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    BoxWithConstraints(modifier = modifier) {
-        val scaleFactor = getScaleFactor(maxWidth)
+    val scaleFactor = rememberScaleFactor()
 
-        // Используем те же размеры, что и в AppToolBar
-        val iconSize = (40 * scaleFactor).dp
-        val buttonSize = iconSize * 1.2f
-        val scaledTextSize = (16 * scaleFactor).sp
-        val scaledMenuIconSize = (24 * scaleFactor).dp
+    val iconSize = (40 * scaleFactor).dp
+    val buttonSize = iconSize * 1.2f
+    val scaledTextSize = (16 * scaleFactor).sp
+    val scaledMenuIconSize = (24 * scaleFactor).dp
 
+    Box(modifier) {
+        IconButton(
+            onClick = { expanded = true },
+            modifier = Modifier.size(buttonSize)
+        ) {
+            Icon(
+                painter = buttonIcon,
+                contentDescription = "Menu",
+                tint = AppTheme.PrimaryColor,
+                modifier = Modifier.size(iconSize)
+            )
+        }
 
-        Box {
-            IconButton(
-                onClick = { expanded = true },
-                modifier = Modifier.size(buttonSize)
-            ) {
-                Icon(
-                    painter = buttonIcon,
-                    contentDescription = "Menu",
-                    tint = AppTheme.PrimaryColor,
-                    modifier = Modifier.size(iconSize)
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            offset = DpOffset(0.dp, (8 * scaleFactor).dp),
+            modifier = Modifier
+                .background(AppTheme.SecondaryBack)
+                .border(BorderStroke(2.dp, AppTheme.PrimaryColor))
+        ) {
+            items.forEachIndexed { index, item ->
+                ShowDropdownMenuItem(
+                    item = item,
+                    scaledMenuIconSize = scaledMenuIconSize,
+                    scaledTextSize = scaledTextSize,
+                    scaleFactor = scaleFactor,
+                    onDismiss = { expanded = false }
                 )
-            }
 
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                offset = DpOffset(0.dp, (8 * scaleFactor).dp),
-                modifier = Modifier
-                    .background(AppTheme.SecondaryBack)
-                    .border(BorderStroke(2.dp, AppTheme.PrimaryColor))
-            ) {
-                items.forEachIndexed { index, item ->
-                    ShowDropdownMenuItem(
-                        item = item,
-                        scaledMenuIconSize = scaledMenuIconSize,
-                        scaledTextSize = scaledTextSize,
-                        scaleFactor = scaleFactor,
-                        onDismiss = { expanded = false }
+                if (index < items.lastIndex) {
+                    HorizontalDivider(
+                        color = AppTheme.PrimaryGray.copy(alpha = 0.3f),
+                        thickness = 1.dp
                     )
-
-                    if (index < items.lastIndex) {
-                        HorizontalDivider(
-                            color = AppTheme.PrimaryGray.copy(alpha = 0.3f),
-                            thickness = 1.dp
-                        )
-                    }
                 }
             }
         }
