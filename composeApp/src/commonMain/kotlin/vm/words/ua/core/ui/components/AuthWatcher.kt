@@ -23,6 +23,9 @@ fun AuthWatcher() {
         if (isNotExpired) {
             return@LaunchedEffect
         }
+        if (current == Screen.UpdateApp.route) {
+            return@LaunchedEffect
+        }
 
         if (current != Screen.Login.route) {
             println("AuthWatcher: navigating to login from $current")

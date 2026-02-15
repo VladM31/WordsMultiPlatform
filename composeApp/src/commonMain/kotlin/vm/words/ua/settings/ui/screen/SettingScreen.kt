@@ -21,6 +21,7 @@ import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.BottomNavBar
 import vm.words.ua.core.ui.components.ButtonsGrid
 import vm.words.ua.core.ui.components.GridButtonItem
+import vm.words.ua.core.utils.appHeightDp
 import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberWidthDeviceFormat
 import vm.words.ua.di.DiContainer
@@ -34,9 +35,11 @@ fun SettingScreen(
 ) {
     val userCacheManager: UserCacheManager by DiContainer.di.instance()
     val isPhoneFormat = rememberWidthDeviceFormat().isPhone
-    val spacerHeight = remember(isPhoneFormat) {
-        if (isPhoneFormat) 8.dp else 96.dp
+    val isNotBigHeight = appHeightDp() < 500.dp
+    val spacerHeight = remember(isPhoneFormat, isNotBigHeight) {
+        if (isPhoneFormat && isNotBigHeight) 8.dp else 96.dp
     }
+
 
     val buttons = remember {
         listOf(

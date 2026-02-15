@@ -44,7 +44,7 @@ fun LoaderScreen(
 
             try {
                 val isOldVersion = AppRemoteConfig.currentVersion != AppRemoteConfig.version
-                val isNotAvailableVersion = !AppRemoteConfig.availableVersions.contains(AppRemoteConfig.version)
+                val isNotAvailableVersion = !AppRemoteConfig.availableVersions.contains(AppRemoteConfig.currentVersion)
                 val isNotWeb = currentPlatform().isWeb.not()
                 if (isOldVersion && isNotAvailableVersion && isNotWeb) {
                     navController.navigateAndClear(Screen.UpdateApp)
@@ -81,13 +81,14 @@ fun LoaderScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CircularProgressIndicator(modifier = Modifier.size(48.dp))
-        if (!message.isNullOrEmpty()) {
-            Text(
-                text = message,
-                color = AppTheme.PrimaryColor,
-                style = MaterialTheme.typography.bodyMedium
-            )
+        if (message.isNullOrEmpty()) {
+            return@Column
         }
+        Text(
+            text = message,
+            color = AppTheme.PrimaryColor,
+            style = MaterialTheme.typography.bodyMedium
+        )
     }
 }
 
