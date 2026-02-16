@@ -41,7 +41,11 @@ kotlin {
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        browser()
+        browser {
+            commonWebpackConfig {
+                devServer?.open = false
+            }
+        }
         binaries.executable()
     }
 
@@ -142,10 +146,11 @@ kotlin {
         val wasmJsMain by getting {
             dependencies {
                 implementation(libs.ktor.client.js)
-                implementation(npm("pdfjs-dist", "4.7.76"))
 
                 implementation(libs.connectivity.http)
                 implementation(libs.connectivity.compose.http)
+
+                implementation(npm("compression-webpack-plugin", "11.1.0"))
             }
         }
 
@@ -262,12 +267,27 @@ compose.desktop {
         }
 
         nativeDistributions {
+            includeAllModules = true
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "vm.words.ua"
-            packageVersion = "1.0.1"
+
+            packageName = "Words"
+            packageVersion = "1.1.0"
+            description = "Words App"
+            vendor = "VM"
+
+            windows {
+                iconFile.set(project.file("icon.ico"))
+                shortcut = true
+                menuGroup = "Words"
+                dirChooser = true
+            }
 
             macOS {
                 iconFile.set(project.file("icon.icns"))
+            }
+
+            linux {
+                iconFile.set(project.file("icon.png"))
             }
         }
     }
