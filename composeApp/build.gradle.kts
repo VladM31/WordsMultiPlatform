@@ -105,7 +105,6 @@ kotlin {
                 implementation("androidx.core:core-ktx:1.16.0")
                 implementation(libs.ktor.client.okhttp)
                 implementation(libs.ktor.client.android)
-                // PDF rendering uses native Android PdfRenderer API (no external native libs)
                 implementation("androidx.security:security-crypto:1.1.0")
 
                 implementation(libs.androidx.credentials)
@@ -121,12 +120,10 @@ kotlin {
                 implementation(compose.desktop.currentOs)
                 implementation(libs.kotlinx.coroutinesSwing)
                 implementation(libs.ktor.client.okhttp)
-                // PDF rendering for JVM/Desktop
                 implementation("org.apache.pdfbox:pdfbox:2.0.30")
                 implementation(libs.mp3spi)
                 implementation(libs.tritonus.share)
 
-                // HTTP connectivity for Desktop - enables URL-based ping checking
                 implementation(libs.connectivity.http)
                 implementation(libs.connectivity.compose.http)
             }
@@ -182,30 +179,23 @@ kotlin {
                 implementation(libs.connectivity.device)
                 implementation(libs.connectivity.compose.device)
 
-                // Firebase Analytics - only for Android and iOS
                 implementation(libs.firebase.analytics)
                 implementation(libs.firebase.common)
                 implementation(libs.firebase.auth)
             }
         }
 
-        // Create a shared iOS source set that aggregates iOS-specific actuals placed in src/iosMain
-        // and make platform-specific iosArm64Main / iosSimulatorArm64Main depend on it.
         val iosMain by creating {
             dependsOn(deviceMain)
-            // Add any iOS-only dependencies here if needed
             dependencies {
-                // Firebase Analytics for iOS
                 implementation(libs.firebase.analytics)
 
-                // HTTP connectivity for iOS - enables URL-based ping checking
                 implementation(libs.connectivity.http)
                 implementation(libs.connectivity.compose.http)
             }
         }
         iosArm64Main.dependsOn(iosMain)
         iosSimulatorArm64Main.dependsOn(iosMain)
-
     }
 }
 
@@ -221,8 +211,6 @@ android {
         versionName = "1.1.0"
 
         ndk {
-            // Explicitly specify supported ABIs
-            // This helps ensure proper compilation for 16KB page size
             abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
         }
     }
@@ -238,13 +226,9 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    // Enable resource shrinking and mapping for Crashlytics (optional)
     buildTypes {
         getByName("release") {
-            // keepCrashlytics and mapping files
             isMinifyEnabled = false
-
-            // Enable proguard for native library optimization
             ndk {
                 debugSymbolLevel = "FULL"
             }
@@ -262,8 +246,13 @@ compose.desktop {
     application {
         mainClass = "vm.words.ua.MainKt"
 
+        jvmArgs += listOf(
+            "-Xmx512m",
+            "-Dfile.encoding=UTF-8"
+        )
+
         buildTypes.release.proguard {
-            configurationFiles.from(project.file("proguard-rules.pro"))
+            isEnabled.set(false)
         }
 
         nativeDistributions {
@@ -329,7 +318,6 @@ tasks.register("iosSimulatorArm64Run") {
 
         val xcodebuildPath = "/usr/bin/xcodebuild"
 
-        // Build the iOS app
         println("🔨 Building with xcodebuild...")
         project.exec {
             workingDir = file("${rootProject.projectDir}/iosApp")
