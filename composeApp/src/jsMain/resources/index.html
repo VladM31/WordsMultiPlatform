@@ -7,7 +7,7 @@
     <link rel="icon" type="image/webp" href="icon.webp">
 
     <script>
-        window.__APP_VERSION__ = "20260204_001";
+        window.__APP_VERSION__ = "20260216_002";
     </script>
 
     <!-- Preconnect for Google Fonts -->
@@ -287,9 +287,9 @@
             const loader = document.getElementById('app-loader');
             if (loader) {
                 loader.classList.add('hidden');
-                setTimeout(() => loader.remove(), 14500);
+                setTimeout(() => loader.remove(), 500);
             }
-        }, 500);
+        }, 14500);
     };
     document.head.appendChild(script);
 </script>

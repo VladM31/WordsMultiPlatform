@@ -133,6 +133,9 @@ kotlin {
                 implementation(libs.ktor.client.js)
                 implementation(npm("pdfjs-dist", "4.7.76"))
                 implementation(compose.html.core)
+
+                implementation(libs.connectivity.http)
+                implementation(libs.connectivity.compose.http)
             }
         }
 
@@ -140,6 +143,9 @@ kotlin {
             dependencies {
                 implementation(libs.ktor.client.js)
                 implementation(npm("pdfjs-dist", "4.7.76"))
+
+                implementation(libs.connectivity.http)
+                implementation(libs.connectivity.compose.http)
             }
         }
 
