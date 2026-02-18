@@ -29,7 +29,6 @@ fun AppTextField(
     label: String? = null,
     singleLine: Boolean = true,
     isPassword: Boolean = false,
-    // Optional helper text shown below the input
     helperText: String? = null
 ) {
     BoxWithConstraints(modifier.padding(top = 3.dp)) {
@@ -58,7 +57,14 @@ fun AppTextField(
                 unfocusedPlaceholderColor = primaryColor70
             ),
             supportingText = if (helperText != null) {
-                { Text(helperText, color = primaryColor70, fontSize = rememberLabelFontSize() * 0.65) }
+                {
+                    Text(
+                        helperText,
+                        color = primaryColor70,
+                        fontSize = rememberLabelFontSize() * 0.65,
+                        lineHeight = rememberLabelFontSize() * 0.75
+                    )
+                }
             } else null
         )
     }

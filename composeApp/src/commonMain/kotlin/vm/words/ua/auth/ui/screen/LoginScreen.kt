@@ -1,7 +1,6 @@
 package vm.words.ua.auth.ui.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -84,18 +83,16 @@ fun LoginScreen(
             )
 
             CenteredContainer(maxWidth = 500.dp, modifier = Modifier.padding(16.dp)) {
-                BoxWithConstraints {
-                    LoginForm(
-                        viewModel = viewModel,
-                        currentHintStep = hintController.currentStep,
-                        onJoinNowClick = { navController.navigate(Screen.SignUpProvider) },
-                        onTelegramClick = { navController.navigate(Screen.TelegramLogin) },
-                        onGoogleClick = {
-                            viewModel.sent(LoginAction.GoogleSignIn)
-                        },
-                        showGoogleSignIn = state.isGoogleSignInAvailable
-                    )
-                }
+                LoginForm(
+                    viewModel = viewModel,
+                    currentHintStep = hintController.currentStep,
+                    onJoinNowClick = { navController.navigate(Screen.SignUpProvider) },
+                    onTelegramClick = { navController.navigate(Screen.TelegramLogin) },
+                    onGoogleClick = {
+                        viewModel.sent(LoginAction.GoogleSignIn)
+                    },
+                    showGoogleSignIn = state.isGoogleSignInAvailable
+                )
 
                 // Display error message if present
                 error.value?.let { errorMessage ->
