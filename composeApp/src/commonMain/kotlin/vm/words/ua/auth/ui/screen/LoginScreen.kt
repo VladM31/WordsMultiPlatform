@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -82,7 +84,12 @@ fun LoginScreen(
                 showBackButton = false
             )
 
-            CenteredContainer(maxWidth = 500.dp, modifier = Modifier.padding(16.dp)) {
+            CenteredContainer(
+                maxWidth = 500.dp,
+                modifier = Modifier
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
                 LoginForm(
                     viewModel = viewModel,
                     currentHintStep = hintController.currentStep,
