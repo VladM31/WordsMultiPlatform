@@ -5,9 +5,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Palette
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -39,7 +40,6 @@ fun LoginForm(
     onJoinNowClick: () -> Unit = {},
     onTelegramClick: () -> Unit = {},
     onGoogleClick: () -> Unit = {},
-    onThemeClick: () -> Unit = {},
     showGoogleSignIn: Boolean = false
 ) {
     val scaleFactor = rememberScaleFactor()
@@ -126,18 +126,7 @@ fun LoginForm(
 
             OAuthSignIn(onTelegramClick, currentHintStep, iconSize, showGoogleSignIn, onGoogleClick)
             // Small theme icon in top-right corner
-            IconButton(
-                onClick = onThemeClick,
-                modifier = Modifier
-                    .size((32 * scaleFactor).dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Palette,
-                    contentDescription = "Change Theme",
-                    tint = AppTheme.PrimaryColor.copy(alpha = 0.6f),
-                    modifier = Modifier.size((20 * scaleFactor).dp)
-                )
-            }
+
         }
 
 
