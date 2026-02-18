@@ -35,7 +35,7 @@ fun SettingScreen(
     val userCacheManager: UserCacheManager by DiContainer.di.instance()
     val isTinyHeight = appHeightDp() < 600.dp
     val spacerHeight = remember(isTinyHeight) {
-        if (isTinyHeight) 8.dp else 90.dp
+        if (isTinyHeight) 8.dp else 60.dp
     }
 
 
