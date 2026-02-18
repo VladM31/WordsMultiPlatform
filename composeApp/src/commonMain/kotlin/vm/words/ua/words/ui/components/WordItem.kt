@@ -145,7 +145,8 @@ fun WordItem(
                                     text = word.original,
                                     color = textPrimary,
                                     fontSize = titleSize,
-                                    fontWeight = FontWeight.SemiBold
+                                    fontWeight = FontWeight.SemiBold,
+                                    lineHeight = titleSize * 1.1f
                                 )
                             }
 
@@ -165,7 +166,8 @@ fun WordItem(
                                     text = word.translate,
                                     color = textSecondary,
                                     fontSize = translateSize,
-                                    fontWeight = FontWeight.Normal
+                                    fontWeight = FontWeight.Normal,
+                                    lineHeight = translateSize * 1.1f
                                 )
                             }
 
@@ -307,7 +309,8 @@ private fun LanguageBadge(
             text = langCode,
             color = color,
             fontSize = fontSize,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            lineHeight = fontSize * 1.1f
         )
     }
 }
@@ -326,7 +329,8 @@ private fun CategoryChip(category: String, accentColor: Color, fontSize: TextUni
             text = category,
             color = accentColor,
             fontSize = fontSize,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
+            lineHeight = fontSize * 1.1f
         )
     }
 }
@@ -335,7 +339,7 @@ private fun CategoryChip(category: String, accentColor: Color, fontSize: TextUni
 private fun MetaInfoText(
     label: String,
     value: String,
-    fontSize: androidx.compose.ui.unit.TextUnit,
+    fontSize: TextUnit,
     mutedColor: Color,
     secondaryColor: Color
 ) {
@@ -343,12 +347,14 @@ private fun MetaInfoText(
         Text(
             text = label,
             color = mutedColor,
-            fontSize = fontSize * 0.9f
+            fontSize = fontSize * 0.9f,
+            lineHeight = fontSize
         )
         Text(
             text = value,
             color = secondaryColor.copy(alpha = 0.7f),
-            fontSize = fontSize
+            fontSize = fontSize,
+            lineHeight = fontSize * 1.1f
         )
     }
 }
