@@ -98,6 +98,7 @@ fun LoginScreen(
                     onGoogleClick = {
                         viewModel.sent(LoginAction.GoogleSignIn)
                     },
+                    onThemeClick = { navController.navigate(Screen.Theme) },
                     showGoogleSignIn = state.isGoogleSignInAvailable
                 )
 
