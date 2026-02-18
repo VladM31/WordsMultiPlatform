@@ -55,7 +55,11 @@ class LoginViewModel(
             try {
                 val result = googleAuthManager.login()
                 val error = result.message?.let {
-                    ErrorMessage(message = it)
+                    if (result.isNotFound) {
+                        null
+                    } else {
+                        ErrorMessage(message = it)
+                    }
                 }
 
                 emitEvent(result.success)
