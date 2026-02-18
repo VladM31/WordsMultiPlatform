@@ -1,10 +1,12 @@
 package vm.words.ua.auth.domain.managers.impls
 
 import vm.words.ua.auth.domain.exceptions.GoogleLoginException
+import vm.words.ua.auth.domain.exceptions.GoogleNotFoundException
 import vm.words.ua.auth.domain.managers.GoogleApiManager
 import vm.words.ua.auth.domain.managers.GoogleAuthManager
 import vm.words.ua.auth.domain.mappers.toUser
 import vm.words.ua.auth.domain.models.AuthResult
+import vm.words.ua.auth.domain.models.OAuthResult
 import vm.words.ua.auth.domain.models.google.GmailLoginDto
 import vm.words.ua.auth.domain.models.google.GoogleSingUpDto
 import vm.words.ua.auth.net.clients.GoogleAuthClient
@@ -20,21 +22,23 @@ class GoogleAuthManagerImpl(
     private val googleApiManager: GoogleApiManager,
     private val userCacheManager: UserCacheManager
 ) : GoogleAuthManager {
-    override suspend fun login(): AuthResult {
+    override suspend fun login(): OAuthResult {
         val req = try {
             val googleInfo = googleApiManager.signIn()
             if (googleInfo.success.not()) {
-                return AuthResult(false, googleInfo.errorMessage ?: "Google sign-in failed")
+                return OAuthResult(false, googleInfo.errorMessage ?: "Google sign-in failed")
             }
             GoogleTokenLoginRequest(googleInfo.idToken ?: throw IllegalStateException("Google token is null"))
-
         } catch (e: Exception) {
-            return AuthResult(false, e.message)
+            return OAuthResult(false, e.message)
         }
 
         return try {
             val response = googleAuthClient.loginWithGoogleToken(req)
-            toResult(response)
+            val result = toResult(response)
+            OAuthResult(true, result.message)
+        } catch (e: GoogleNotFoundException) {
+            OAuthResult(false, e.message ?: "Google user not found", isNotFound = true)
         } catch (e: Exception) {
             throw GoogleLoginException("Google login failed: ${e.message}")
         }

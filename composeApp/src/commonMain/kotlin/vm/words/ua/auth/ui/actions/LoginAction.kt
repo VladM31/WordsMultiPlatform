@@ -7,4 +7,5 @@ sealed interface LoginAction{
 
     data object GoogleSignIn : LoginAction
     data object DismissErrorMessage : LoginAction
+    data object ClearNotFound : LoginAction
 }

@@ -12,6 +12,7 @@ data class LoginState(
     val password: String = "",
     val isGoogleSignInAvailable: Boolean = false,
     val telegramLoginSession: TelegramAuthSession? = null,
+    val isNotFoundGoogle: Boolean = false,
     override val errorMessage: ErrorMessage? = null,
     override val isEnd: Boolean = false
 ) : ErrorableState, EndetableState {

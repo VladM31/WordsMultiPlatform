@@ -46,6 +46,7 @@ class LoginViewModel(
             is LoginAction.SetPassword -> setPassword(action)
             is LoginAction.GoogleSignIn -> handleGoogleSignIn()
             is LoginAction.DismissErrorMessage -> mutableState.value = state.value.copy(errorMessage = null)
+            is LoginAction.ClearNotFound -> mutableState.value = state.value.copy(isNotFoundGoogle = false)
         }
     }
 
@@ -57,11 +58,12 @@ class LoginViewModel(
                     ErrorMessage(message = it)
                 }
 
-                emitEvent(result)
+                emitEvent(result.success)
 
                 mutableState.value = state.value.copy(
                     isEnd = result.success,
-                    errorMessage = error
+                    errorMessage = error,
+                    isNotFoundGoogle = result.isNotFound
                 )
             } catch (e: GoogleLoginException) {
                 mutableState.value =
@@ -123,7 +125,7 @@ class LoginViewModel(
             authHistoryManager.updateLastUsername(state.value.username)
         }
 
-        emitEvent(result)
+        emitEvent(result.success)
 
         mutableState.value = state.value.copy(
             isEnd = result.success,
@@ -144,8 +146,8 @@ class LoginViewModel(
         }
     }
 
-    private fun emitEvent(result: AuthResult) {
-        val eventName = if (result.success) {
+    private fun emitEvent(success: Boolean) {
+        val eventName = if (success) {
             AnalyticsEvents.LOGIN_SUCCESS
         } else {
             AnalyticsEvents.LOGIN_FAILED

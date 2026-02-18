@@ -48,6 +48,12 @@ fun LoginScreen(
             navController.navigateAndClear(Screen.Home)
         }
     }
+    LaunchedEffect(state.isNotFoundGoogle) {
+        if (state.isNotFoundGoogle) {
+            viewModel.sent(LoginAction.ClearNotFound)
+            navController.navigate(Screen.GoogleSignUp)
+        }
+    }
 
     LaunchedEffect(isGoogleSignInError) {
         if (isGoogleSignInError.not()) {
@@ -77,29 +83,25 @@ fun LoginScreen(
                 showBackButton = false
             )
 
-            CenteredContainer(maxWidth = 500.dp) {
-                VerticalCenteredContainer(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    BoxWithConstraints {
-                        LoginForm(
-                            viewModel = viewModel,
-                            currentHintStep = hintController.currentStep,
-                            onJoinNowClick = { navController.navigate(Screen.SignUpProvider) },
-                            onTelegramClick = { navController.navigate(Screen.TelegramLogin) },
-                            onGoogleClick = {
-                                viewModel.sent(LoginAction.GoogleSignIn)
-                            },
-                            showGoogleSignIn = state.isGoogleSignInAvailable
-                        )
-                    }
+            CenteredContainer(maxWidth = 500.dp, modifier = Modifier.padding(16.dp)) {
+                BoxWithConstraints {
+                    LoginForm(
+                        viewModel = viewModel,
+                        currentHintStep = hintController.currentStep,
+                        onJoinNowClick = { navController.navigate(Screen.SignUpProvider) },
+                        onTelegramClick = { navController.navigate(Screen.TelegramLogin) },
+                        onGoogleClick = {
+                            viewModel.sent(LoginAction.GoogleSignIn)
+                        },
+                        showGoogleSignIn = state.isGoogleSignInAvailable
+                    )
+                }
 
-                    // Display error message if present
-                    error.value?.let { errorMessage ->
-                        ErrorMessageBox(message = errorMessage, onDismiss = {
-                            viewModel.sent(LoginAction.DismissErrorMessage)
-                        })
-                    }
+                // Display error message if present
+                error.value?.let { errorMessage ->
+                    ErrorMessageBox(message = errorMessage, onDismiss = {
+                        viewModel.sent(LoginAction.DismissErrorMessage)
+                    })
                 }
             }
         }
