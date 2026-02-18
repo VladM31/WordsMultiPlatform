@@ -23,6 +23,7 @@ import vm.words.ua.core.ui.components.AppTextField
 import vm.words.ua.core.ui.icons.TelegramIcon
 import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberIconSize
+import vm.words.ua.core.utils.rememberLabelFontSize
 import vm.words.ua.core.utils.rememberScaleFactor
 import vm.words.ua.utils.hints.ui.utils.ViewHintStep
 import vm.words.ua.utils.hints.ui.utils.viewHint
@@ -39,8 +40,7 @@ fun LoginForm(
     showGoogleSignIn: Boolean = false
 ) {
     val scaleFactor = rememberScaleFactor()
-    val textWeight = 0.75f
-
+    val iconSize = rememberIconSize() * 1.2f
     val phoneState = viewModel.state.map { it.username }.distinctUntilChanged().collectAsState(initial = "")
     val passState = viewModel.state.map { it.password }.distinctUntilChanged().collectAsState(initial = "")
 
@@ -84,7 +84,7 @@ fun LoginForm(
             Text(
                 text = "Don't have an account?",
                 color = AppTheme.SecondaryText,
-                fontSize = rememberFontSize(scaleFactor * textWeight * 0.9f)
+                fontSize = rememberLabelFontSize()
             )
 
             Box(
@@ -100,7 +100,7 @@ fun LoginForm(
                 Text(
                     text = "Sign up",
                     color = AppTheme.PrimaryColor,
-                    fontSize = rememberFontSize(scaleFactor * textWeight),
+                    fontSize = rememberLabelFontSize(),
                     modifier = Modifier
                 )
             }
@@ -139,7 +139,7 @@ fun LoginForm(
         Text(
             text = "Sign in with",
             color = AppTheme.PrimaryColor,
-            fontSize = rememberFontSize(scaleFactor * textWeight)
+            fontSize = rememberLabelFontSize()
         )
 
         Spacer(modifier = Modifier.size((8 * scaleFactor).dp))
@@ -151,7 +151,7 @@ fun LoginForm(
         ) {
             Box(
                 modifier = Modifier
-                    .size(rememberIconSize() * 1.5f)
+
                     .background(AppTheme.PrimaryColor, shape = CircleShape)
                     .clickable { onTelegramClick() }
                     .viewHint(LoginScreenHintStep.TELEGRAM_LOGIN_BUTTON, currentHintStep),
@@ -161,7 +161,7 @@ fun LoginForm(
                     imageVector = TelegramIcon,
                     contentDescription = "Telegram Sign-In",
                     tint = AppTheme.PrimaryBack,
-                    modifier = Modifier.size(rememberIconSize() * 1.5f * 0.7f)
+                    modifier = Modifier.size(iconSize)
                 )
             }
 
@@ -172,7 +172,7 @@ fun LoginForm(
 
             GoogleSignInButton(
                 onClick = onGoogleClick,
-                iconSize = rememberIconSize() * 1.5f,
+                iconSize = iconSize,
                 currentHintStep = currentHintStep
             )
         }
@@ -200,7 +200,7 @@ private fun GoogleSignInButton(
             painter = painterResource(Res.drawable.google_icon),
             contentDescription = "Google Sign-In",
             tint = AppTheme.PrimaryBack,
-            modifier = Modifier.size(iconSize * 0.7f)
+            modifier = Modifier.size(iconSize)
         )
     }
 }
