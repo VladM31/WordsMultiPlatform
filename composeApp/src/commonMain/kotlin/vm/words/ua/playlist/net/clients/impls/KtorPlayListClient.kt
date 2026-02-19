@@ -12,10 +12,7 @@ import vm.words.ua.playlist.domain.models.filters.PlayListCountFilter
 import vm.words.ua.playlist.domain.models.filters.PlayListFilter
 import vm.words.ua.playlist.net.clients.PlayListClient
 import vm.words.ua.playlist.net.requests.*
-import vm.words.ua.playlist.net.responds.AssignedPlaylistRespond
-import vm.words.ua.playlist.net.responds.PlayListCountRespond
-import vm.words.ua.playlist.net.responds.PlayListRespond
-import vm.words.ua.playlist.net.responds.PublicPlayListCountRespond
+import vm.words.ua.playlist.net.responds.*
 
 class KtorPlayListClient(
     private val client: HttpClient
@@ -89,15 +86,14 @@ class KtorPlayListClient(
     override suspend fun assignPlayLists(
         token: String,
         req: AssignPlayListsRequest
-    ) {
+    ): List<PlaylistIdRespond> {
         val response = client.post("$baseUrl/words-api/play-list/assign") {
             header("Authorization", token)
             contentType(ContentType.Application.Json)
             setBody(req)
         }
         if (response.status.isSuccess()) {
-
-            return
+            return response.body()
         }
         val body = response.runCatching {
             bodyAsText()

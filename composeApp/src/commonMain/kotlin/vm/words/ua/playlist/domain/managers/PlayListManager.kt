@@ -13,7 +13,7 @@ interface PlayListManager {
     suspend fun findBy(filter: PublicPlayListFilter): PagedModels<PlayList>
 
     suspend fun getAssignedPlaylists(): Set<AssignedPlaylistDto>
-    suspend fun assignPlayLists(dto: AssignPlayListsDto)
+    suspend fun assignPlayLists(dto: AssignPlayListsDto): List<PlaylistIdDto>
 
     suspend fun update(playLists: List<UpdatePlayList>)
     suspend fun updateGrades(grades: List<PlayListGrade>)

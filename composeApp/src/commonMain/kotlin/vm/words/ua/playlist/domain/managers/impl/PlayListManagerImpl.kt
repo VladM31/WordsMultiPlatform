@@ -98,11 +98,11 @@ class PlayListManagerImpl(
         }
     }
 
-    override suspend fun assignPlayLists(dto: AssignPlayListsDto) {
-        playListClient.assignPlayLists(
+    override suspend fun assignPlayLists(dto: AssignPlayListsDto): List<PlaylistIdDto> {
+        return playListClient.assignPlayLists(
             getToken(),
             AssignPlayListsRequest(dto.playListIds)
-        )
+        ).map { PlaylistIdDto(it.id) }
     }
 
     private fun PublicPlayListCountRespond.toPublicPlayListCountDto(): PublicPlayListCountDto = PublicPlayListCountDto(
