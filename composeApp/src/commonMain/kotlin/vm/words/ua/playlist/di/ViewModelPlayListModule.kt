@@ -40,4 +40,10 @@ internal val viewModelPlayListModule = DI.Module("viewModelPlayListModule"){
             playListManager = instance()
         )
     }
+
+    bind<FastStartPlayListVm>() with factory {
+        FastStartPlayListVm(
+            playListManager = instance()
+        )
+    }
 }

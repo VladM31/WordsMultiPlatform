@@ -23,6 +23,7 @@ import vm.words.ua.main.ui.hints.createHomeScreenHintController
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.Screen.WordList
 import vm.words.ua.navigation.SimpleNavController
+import vm.words.ua.playlist.ui.screen.FastStartPlayListScreen
 import vm.words.ua.utils.hints.ui.components.SimpleHintHost
 import vm.words.ua.utils.hints.ui.utils.viewHint
 import vm.words.ua.utils.net.hasInternet
@@ -32,6 +33,11 @@ fun HomeScreen(
     navController: SimpleNavController,
     modifier: Modifier = Modifier
 ) {
+    if (true) {
+        return FastStartPlayListScreen(
+            navController = navController
+        )
+    }
     val hintController = createHomeScreenHintController()
     val isOnline = hasInternet()
     val isTinyHeight = appHeightDp() < 600.dp
