@@ -1,10 +1,10 @@
 package vm.words.ua.playlist.domain.managers.impl
 
 import vm.words.ua.core.domain.managers.UserCacheManager
-import vm.words.ua.playlist.domain.models.PinPlayList
 import vm.words.ua.playlist.domain.managers.PinPlayListManager
+import vm.words.ua.playlist.domain.models.PinPlayList
 import vm.words.ua.playlist.net.clients.PinPlayListClient
-import vm.words.ua.playlist.net.models.requests.PinPlayRequest
+import vm.words.ua.playlist.net.requests.PinPlayRequest
 
 class PinPlayListManagerImpl(
     private val pinPlayListClient: PinPlayListClient,

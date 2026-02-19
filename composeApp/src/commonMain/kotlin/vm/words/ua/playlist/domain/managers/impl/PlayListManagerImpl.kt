@@ -8,10 +8,10 @@ import vm.words.ua.playlist.domain.models.*
 import vm.words.ua.playlist.domain.models.PlayList.PinnedWord
 import vm.words.ua.playlist.domain.models.filters.*
 import vm.words.ua.playlist.net.clients.PlayListClient
-import vm.words.ua.playlist.net.models.requests.*
-import vm.words.ua.playlist.net.models.responses.PlayListCountRespond
-import vm.words.ua.playlist.net.models.responses.PlayListRespond
-import vm.words.ua.playlist.net.models.responses.PublicPlayListCountRespond
+import vm.words.ua.playlist.net.requests.*
+import vm.words.ua.playlist.net.responses.PlayListCountRespond
+import vm.words.ua.playlist.net.responses.PlayListRespond
+import vm.words.ua.playlist.net.responses.PublicPlayListCountRespond
 import vm.words.ua.words.domain.models.UserWord
 import vm.words.ua.words.domain.models.Word
 

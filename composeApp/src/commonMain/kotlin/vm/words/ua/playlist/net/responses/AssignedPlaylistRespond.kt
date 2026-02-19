@@ -1,4 +1,4 @@
-package vm.words.ua.playlist.net.models.responses
+package vm.words.ua.playlist.net.responses
 
 import kotlinx.serialization.Serializable
 

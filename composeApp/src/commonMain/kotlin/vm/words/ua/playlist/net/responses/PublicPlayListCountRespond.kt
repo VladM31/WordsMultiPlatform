@@ -1,13 +1,12 @@
-package vm.words.ua.playlist.net.models.responses
+package vm.words.ua.playlist.net.responses
 
 import kotlinx.serialization.Serializable
 import vm.words.ua.core.domain.models.enums.CEFR
 import vm.words.ua.core.domain.models.enums.Language
 
 @Serializable
-data class PlayListCountRespond(
+data class PublicPlayListCountRespond(
     val id: String,
-    val userId: String,
     val name: String,
     val createdAt: String,
     val count: Long,
