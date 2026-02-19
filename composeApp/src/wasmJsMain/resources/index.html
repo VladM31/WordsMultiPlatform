@@ -97,6 +97,24 @@
             font-size: 14px;
             text-align: center;
         }
+
+        .loader-progress-bar {
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 2px;
+            margin-top: 20px;
+            display: none;
+            overflow: hidden;
+        }
+
+        .loader-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: #44F2C1;
+            border-radius: 2px;
+            transition: width 0.2s ease-out;
+        }
     </style>
     <!-- Initialize Firebase BEFORE composeApp loads -->
     <script>
@@ -290,10 +308,88 @@
 <div id="app-loader">
     <div class="loader-spinner"></div>
     <div class="loader-text">Loading Words...</div>
-    <div class="loader-subtitle">Preparing your learning experience</div>
+    <div class="loader-subtitle" id="loader-subtitle">Preparing your learning experience</div>
+    <div class="loader-progress-bar" id="loader-progress-bar">
+        <div class="loader-progress-fill" id="loader-progress-fill"></div>
+    </div>
 </div>
 
 <script>
+    // Track WASM download progress by intercepting fetch
+    (function () {
+        const origFetch = window.fetch;
+        let wasmTotal = 0;
+        let wasmLoaded = 0;
+        let hasSize = false;
+
+        window.fetch = function (input, init) {
+            const url = typeof input === 'string' ? input : (input && input.url ? input.url : '');
+            const isWasm = /\.wasm(\?|$)/.test(url);
+
+            return origFetch.apply(this, arguments).then(function (response) {
+                if (!isWasm || !response.ok || !response.body) return response;
+
+                const contentLen = parseInt(response.headers.get('content-length') || '0');
+                if (contentLen > 0) {
+                    wasmTotal += contentLen;
+                    hasSize = true;
+                }
+
+                const reader = response.body.getReader();
+                const stream = new ReadableStream({
+                    pull(controller) {
+                        return reader.read().then(function (r) {
+                            if (r.done) {
+                                controller.close();
+                                return;
+                            }
+                            wasmLoaded += r.value.byteLength;
+                            updateProgress();
+                            controller.enqueue(r.value);
+                        });
+                    },
+                    cancel(reason) {
+                        return reader.cancel(reason);
+                    }
+                });
+
+                return new Response(stream, {
+                    headers: response.headers,
+                    status: response.status,
+                    statusText: response.statusText
+                });
+            });
+        };
+
+        function updateProgress() {
+            const subtitle = document.getElementById('loader-subtitle');
+            const bar = document.getElementById('loader-progress-bar');
+            const fill = document.getElementById('loader-progress-fill');
+            if (bar) bar.style.display = 'block';
+            if (hasSize && wasmTotal > 0) {
+                const pct = Math.min(99, Math.round(wasmLoaded / wasmTotal * 100));
+                if (subtitle) subtitle.textContent = 'Downloading... ' + pct + '%';
+                if (fill) fill.style.width = pct + '%';
+            } else {
+                if (subtitle) subtitle.textContent = 'Downloading...';
+            }
+        }
+    })();
+
+    // Called by Kotlin main() when WASM is loaded and app is starting
+    window.hideAppLoader = function () {
+        const loader = document.getElementById('app-loader');
+        if (!loader) return;
+        const fill = document.getElementById('loader-progress-fill');
+        if (fill) fill.style.width = '100%';
+        setTimeout(function () {
+            loader.classList.add('hidden');
+            setTimeout(function () {
+                loader.remove();
+            }, 500);
+        }, 200);
+    };
+
     const appVersion = window.__APP_VERSION__ || 'dev';
     const script = document.createElement('script');
     script.src = `composeApp.js?v=${appVersion}`;
@@ -310,13 +406,6 @@
     };
     script.onload = function () {
         console.log('composeApp.js loaded');
-        setTimeout(() => {
-            const loader = document.getElementById('app-loader');
-            if (loader) {
-                loader.classList.add('hidden');
-                setTimeout(() => loader.remove(), 500);
-            }
-        }, 14500);
     };
     document.head.appendChild(script);
 </script>

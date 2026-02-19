@@ -10,6 +10,7 @@ import kotlinx.browser.window
 fun main() {
     window.onload = {
         val body = document.body ?: error("document.body is null")
+        js("if (window.hideAppLoader) window.hideAppLoader()")
         ComposeViewport(body) {
             App()
         }
