@@ -20,11 +20,12 @@ fun <T> ColumnScope.Items(
     toKey: (List<T>, Int) -> Any,
     toItem: @Composable (index: Int, item: T) -> Unit,
     isLoading: Boolean,
-    listState: LazyListState
+    listState: LazyListState,
+    modifier: Modifier = Modifier,
 ) {
     val maxWidth = rememberInterfaceMaxWidth()
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .weight(1f),
         contentAlignment = Alignment.Center

@@ -12,6 +12,8 @@ data class FastStartPlayListState(
     val type: PlayListType = PlayListType.YOUR,
     val disabledTypes: Set<PlayListType> = emptySet(),
     val playListByType: Map<PlayListType, List<PlayListCountable>> = emptyMap(),
+    val isLoadingByType: Map<PlayListType, Boolean> = emptyMap(),
+    val hasNextByType: Map<PlayListType, Boolean> = emptyMap(),
 
     val wordsByPlayListId: Map<String, List<PlayList.PinnedWord>> = emptyMap(),
     val isLoadingByPlayListId: Map<String, Boolean> = emptyMap(),
@@ -32,5 +34,17 @@ data class FastStartPlayListState(
 
     fun playLists(): List<PlayListCountable> {
         return playListByType[type] ?: emptyList()
+    }
+
+    fun isLoadingPlayListType(): Boolean {
+        return isLoadingByType[type] ?: false
+    }
+
+    fun hasMorePlayLists(): Boolean {
+        return hasNextByType[type] ?: false
+    }
+
+    fun isLoadingWords(playListId: String): Boolean {
+        return isLoadingByPlayListId[playListId] ?: false
     }
 }

@@ -6,10 +6,10 @@ import vm.words.ua.playlist.domain.models.enums.PlaylistSortField
 
 @Serializable
 data class PublicPlayListFilter(
-    val ids: Set<String>?,
-    val name: String?,
-    val sortField: PlaylistSortField,
-    val asc: Boolean,
-    val page: Int,
-    val size: Int
+    val ids: Set<String>? = null,
+    val name: String? = null,
+    val sortField: PlaylistSortField = PlaylistSortField.NAME,
+    val asc: Boolean = true,
+    val page: Int = 0,
+    val size: Int = 20
 ) : Queryable

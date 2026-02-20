@@ -2,6 +2,7 @@ package vm.words.ua.playlist.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Article
 import androidx.compose.material.icons.filled.Explore
@@ -11,6 +12,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -22,6 +24,8 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
+import vm.words.ua.core.ui.components.ErrorMessageBox
+import vm.words.ua.core.ui.components.Items
 import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberIconSize
 import vm.words.ua.core.utils.rememberInterfaceMaxWidth
@@ -29,6 +33,8 @@ import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.playlist.domain.models.enums.PlayListType
 import vm.words.ua.playlist.ui.actions.FastStartPlayListAction
+import vm.words.ua.playlist.ui.components.FastStartPlayListItem
+import vm.words.ua.playlist.ui.states.FastStartPlayListState
 import vm.words.ua.playlist.ui.vms.FastStartPlayListVm
 
 
@@ -38,11 +44,17 @@ fun FastStartPlayListScreen(
 ) {
     val viewModel = rememberInstance<FastStartPlayListVm>()
     val state by viewModel.state.collectAsState()
+    val listState = rememberLazyListState()
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
+    // Load more when reaching end of list
+    LaunchedEffect(listState.canScrollForward, state.isLoading) {
+        if (!listState.canScrollForward && !state.isLoading && state.hasMorePlayLists()) {
+            viewModel.send(FastStartPlayListAction.LoadMore)
+        }
+    }
+
+
+    Column(modifier = Modifier.fillMaxSize()) {
         AppToolBar(
             title = "Playlists",
             showBackButton = true,
@@ -53,14 +65,33 @@ fun FastStartPlayListScreen(
 
         if (state.isLoading) {
             CircularProgressIndicator(
-                modifier = Modifier.align(Alignment.Center),
+                modifier = Modifier.align(Alignment.CenterHorizontally),
                 color = AppTheme.PrimaryColor
             )
-            return@Box
+            return@Column
         }
+        Items(
+            content = state.playLists(),
+            listState = listState,
+            isLoading = state.isLoadingPlayListType(),
+            toKey = { list, index -> list[index].id },
+            toItem = { _, item ->
+                FastStartPlayListItem(
+                    playList = item,
+                    isLoading = state.isLoadingWords(item.id),
+                    isExpanded = state.isExpandedByPlayListId[item.id] ?: false,
+                    words = state.words(item.id),
+                    onStartClick = {},
+                    onExpandClick = {
+                        viewModel.send(FastStartPlayListAction.ToggleExpand(item.id))
+                    }
+                )
+            },
+            modifier = Modifier.padding(4.dp)
+        )
 
         BottomMenu(
-            visibility = state.type,
+            state = state,
             onClick = { newVisibility ->
                 viewModel.send(FastStartPlayListAction.ChangeType(newVisibility))
             }
@@ -68,11 +99,15 @@ fun FastStartPlayListScreen(
     }
 
 
+    state.errorMessage?.let {
+        ErrorMessageBox(it)
+    }
+
 }
 
 @Composable
-fun BoxScope.BottomMenu(
-    visibility: PlayListType,
+fun ColumnScope.BottomMenu(
+    state: FastStartPlayListState,
     onClick: (PlayListType) -> Unit,
 ) {
     val iconSize = rememberIconSize() * 1.2f
@@ -84,7 +119,7 @@ fun BoxScope.BottomMenu(
         modifier = Modifier
             .fillMaxWidth()
             .background(AppTheme.PrimaryBack)
-            .align(Alignment.BottomCenter)
+            .align(Alignment.End)
             .padding(vertical = 2.dp),
         horizontalArrangement = Arrangement.Center
     ) {
@@ -101,22 +136,23 @@ fun BoxScope.BottomMenu(
             Item(
                 imageVector = Icons.AutoMirrored.Filled.Article,
                 thisType = PlayListType.YOUR,
-                currentType = visibility,
+                currentType = state.type,
                 text = "Your",
                 onClick = onClick,
                 iconModifier = iconModifier,
                 textSize = textSize,
-                isDisabled = true
+                isDisabled = state.disabledTypes.contains(PlayListType.YOUR)
             )
 
             Item(
                 imageVector = Icons.Filled.Explore,
                 thisType = PlayListType.PUBLIC,
-                currentType = visibility,
+                currentType = state.type,
                 text = "Public",
                 onClick = onClick,
                 iconModifier = iconModifier,
-                textSize = textSize
+                textSize = textSize,
+                isDisabled = state.disabledTypes.contains(PlayListType.PUBLIC)
             )
         }
     }

@@ -11,7 +11,19 @@ data class PagedModels<T>(
         val size: Long,
         val totalElements: Long,
         val totalPages: Long
-    )
+    ) {
+        val isFirst: Boolean
+            get() = number == 0L
+
+        val isLast: Boolean
+            get() = number == totalPages - 1
+    }
+
+    fun isEmpty() = content.isEmpty()
+
+    fun isNotEmpty() = content.isNotEmpty()
+
+    fun first() = content.first()
 
     companion object {
         fun <T> empty() = PagedModels<T>(
