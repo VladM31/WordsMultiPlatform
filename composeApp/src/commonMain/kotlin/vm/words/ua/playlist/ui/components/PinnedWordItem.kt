@@ -1,0 +1,160 @@
+package vm.words.ua.playlist.ui.components
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
+import vm.words.ua.core.ui.AppColors
+import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberLabelFontSize
+import vm.words.ua.core.utils.rememberScaleFactor
+import vm.words.ua.playlist.domain.models.PlayList
+import vm.words.ua.words.domain.models.Word
+
+@Composable
+fun PinnedWordItem(
+    pinnedWord: PlayList.PinnedWord,
+    modifier: Modifier = Modifier
+) {
+    val word = pinnedWord.userWord.word
+
+    val cardBackground = AppColors.primaryBack
+    val accentPrimary = AppColors.primaryColor
+    val accentSecondary = AppColors.secondaryColor
+    val textPrimary = AppColors.primaryText
+    val textMuted = AppColors.primaryDisable
+    val accentViolet = AppColors.primaryViolet
+
+    val scaleFactor = rememberScaleFactor()
+    val titleSize = rememberFontSize() * 0.8f
+    val labelSize = titleSize * 0.85f
+    val innerPadding = (12 * scaleFactor).dp
+    val horizontalPadding = (4 * scaleFactor).dp
+    val verticalPadding = (4 * scaleFactor).dp
+
+    BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = horizontalPadding, vertical = verticalPadding)
+                .shadow(
+                    elevation = 4.dp,
+                    shape = RoundedCornerShape(14.dp),
+                    ambientColor = Color.Black.copy(alpha = 0.08f),
+                    spotColor = Color.Black.copy(alpha = 0.08f)
+                ),
+            shape = RoundedCornerShape(12.dp),
+            colors = CardDefaults.cardColors(containerColor = cardBackground),
+            elevation = CardDefaults.cardElevation(0.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(innerPadding)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.Top,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    // Left: original word + translation
+                    WordMainBox(word, textPrimary, titleSize, accentPrimary)
+
+                    WordDetails(word, accentSecondary, textMuted, labelSize, accentPrimary, accentViolet)
+                }
+
+            }
+        }
+    }
+}
+
+@Composable
+private fun RowScope.WordMainBox(
+    word: Word,
+    textPrimary: Color,
+    titleSize: TextUnit,
+    accentPrimary: Color
+) {
+    Column(
+        modifier = Modifier
+            .weight(1f)
+            .padding(end = 8.dp)
+    ) {
+        Text(
+            text = word.original,
+            color = textPrimary,
+            fontSize = titleSize,
+            fontWeight = FontWeight.Bold,
+            maxLines = 2
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = word.translate,
+            color = accentPrimary,
+            fontSize = titleSize * 0.9f,
+            fontWeight = FontWeight.Medium,
+            maxLines = 2
+        )
+    }
+}
+
+@Composable
+private fun WordDetails(
+    word: Word,
+    accentSecondary: Color,
+    textMuted: Color,
+    labelSize: TextUnit,
+    accentPrimary: Color,
+    accentViolet: Color
+) {
+    Column(
+        horizontalAlignment = Alignment.End,
+        verticalArrangement = Arrangement.spacedBy(5.dp)
+    ) {
+        // Language direction: UA → EN
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            WordBadge(text = word.lang.upperShortName, color = accentSecondary)
+            Text(
+                text = "→",
+                color = textMuted,
+                fontSize = labelSize * 0.9f
+            )
+            WordBadge(text = word.translateLang.upperShortName, color = accentPrimary)
+        }
+
+        // CEFR badge
+        WordBadge(text = word.cefr.name, color = accentViolet)
+    }
+}
+
+@Composable
+private fun WordBadge(text: String, color: Color) {
+    Box(
+        modifier = Modifier
+            .background(
+                color = color.copy(alpha = 0.15f),
+                shape = RoundedCornerShape(4.dp)
+            )
+            .padding(horizontal = 5.dp, vertical = 2.dp)
+    ) {
+        Text(
+            text = text,
+            color = color,
+            fontSize = rememberLabelFontSize() * 0.65f,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
