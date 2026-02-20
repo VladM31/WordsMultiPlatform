@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.update
 import vm.words.ua.core.domain.models.PagedModels
 import vm.words.ua.core.ui.models.ErrorMessage
 import vm.words.ua.playlist.domain.managers.PlayListManager
+import vm.words.ua.playlist.domain.models.AssignPlayListsDto
+import vm.words.ua.playlist.domain.models.PlayList
 import vm.words.ua.playlist.domain.models.PlayListCountable
 import vm.words.ua.playlist.domain.models.enums.PlayListType
 import vm.words.ua.playlist.domain.models.filters.PlayListFilter
@@ -90,7 +92,47 @@ class FastStartPlayListVm(
             is FastStartPlayListAction.LoadMore -> handleLoadMore()
             is FastStartPlayListAction.ChangeType -> handleChangeType(action)
             is FastStartPlayListAction.ToggleExpand -> handleToggleExpand(action)
+            is FastStartPlayListAction.Start -> handleStart(action)
         }
+    }
+
+    private fun handleStart(action: FastStartPlayListAction.Start) {
+        val words = state.value.words(action.playListId)
+        if (words.isNotEmpty() && state.value.type == PlayListType.YOUR) {
+            mutableState.update {
+                it.copy(selectedPlayListId = action.playListId)
+            }
+            return
+        }
+        val type = state.value.type
+        mutableState.update {
+            it.copy(isLoading = true)
+        }
+        viewModelScope.launch(Dispatchers.Default) {
+            var playListId: String = action.playListId
+            if (type == PlayListType.PUBLIC) {
+                playListId = playListManager.assignPlayLists(AssignPlayListsDto(playListIds = setOf(action.playListId)))
+                    .first()
+                    .id
+            }
+
+            val playListModels = getWords(PlayListType.YOUR, playListId)
+            if (playListModels.isEmpty()) {
+                handleEmptyWords(playListId)
+                return@launch
+            }
+            val playList = playListModels.first()
+            mutableState.update {
+                it.copy(
+                    selectedPlayListId = playListId,
+                    wordsByPlayListId = it.wordsByPlayListId + (playListId to playList.words),
+                    isLoadingByPlayListId = it.isLoadingByPlayListId + (playListId to false),
+                    isExpandedByPlayListId = it.isExpandedByPlayListId + (playListId to false)
+                )
+            }
+        }
+
+
     }
 
     private fun handleToggleExpand(action: FastStartPlayListAction.ToggleExpand) {
@@ -111,18 +153,9 @@ class FastStartPlayListVm(
         val mode = state.value.type
 
         viewModelScope.launch(Dispatchers.Default) {
-            val playListModels = if (mode == PlayListType.PUBLIC) {
-                playListManager.findBy(PublicPlayListFilter(ids = setOf(action.playListId), size = 1))
-            } else {
-                playListManager.findBy(PlayListFilter(ids = listOf(action.playListId), size = 1))
-            }
+            val playListModels = getWords(mode, action.playListId)
             if (playListModels.isEmpty()) {
-                mutableState.update {
-                    it.copy(
-                        isLoadingByPlayListId = it.isLoadingByPlayListId + (action.playListId to false),
-                        errorMessage = ErrorMessage("PlayList not found")
-                    )
-                }
+                handleEmptyWords(action.playListId)
                 return@launch
             }
             val playList = playListModels.first()
@@ -134,6 +167,27 @@ class FastStartPlayListVm(
                 )
             }
         }.setErrorListener()
+    }
+
+    private fun handleEmptyWords(playListId: String) {
+        mutableState.update {
+            it.copy(
+                isLoadingByPlayListId = it.isLoadingByPlayListId + (playListId to false),
+                errorMessage = ErrorMessage("PlayList not found")
+            )
+        }
+    }
+
+    private suspend fun getWords(
+        mode: PlayListType,
+        playListId: String
+    ): PagedModels<PlayList> {
+        val playListModels = if (mode == PlayListType.PUBLIC) {
+            playListManager.findBy(PublicPlayListFilter(ids = setOf(playListId), size = 1))
+        } else {
+            playListManager.findBy(PlayListFilter(ids = listOf(playListId), size = 1))
+        }
+        return playListModels
     }
 
     private fun handleLoadMore() {

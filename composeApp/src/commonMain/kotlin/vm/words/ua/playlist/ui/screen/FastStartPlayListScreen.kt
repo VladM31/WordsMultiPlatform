@@ -30,6 +30,8 @@ import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberIconSize
 import vm.words.ua.core.utils.rememberInterfaceMaxWidth
 import vm.words.ua.di.rememberInstance
+import vm.words.ua.exercise.ui.bundles.ExerciseSelectionBundle
+import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.playlist.domain.models.enums.PlayListType
 import vm.words.ua.playlist.ui.actions.FastStartPlayListAction
@@ -51,6 +53,20 @@ fun FastStartPlayListScreen(
         if (!listState.canScrollForward && !state.isLoading && state.hasMorePlayLists()) {
             viewModel.send(FastStartPlayListAction.LoadMore)
         }
+    }
+
+    LaunchedEffect(state.selectedPlayListId) {
+        if (state.selectedPlayListId.isNullOrBlank()) {
+            return@LaunchedEffect
+        }
+        navController.navigateAndClearCurrent(
+            Screen.ExerciseSelection,
+            ExerciseSelectionBundle(
+                playListId = state.selectedPlayListId,
+                words = state.words(state.selectedPlayListId.orEmpty())
+                    .map { it.userWord }
+            )
+        )
     }
 
 
@@ -81,7 +97,9 @@ fun FastStartPlayListScreen(
                     isLoading = state.isLoadingWords(item.id),
                     isExpanded = state.isExpandedByPlayListId[item.id] ?: false,
                     words = state.words(item.id),
-                    onStartClick = {},
+                    onStartClick = {
+                        viewModel.send(FastStartPlayListAction.Start(item.id))
+                    },
                     onExpandClick = {
                         viewModel.send(FastStartPlayListAction.ToggleExpand(item.id))
                     }

@@ -5,13 +5,17 @@ import vm.words.ua.core.ui.hints.createDefaultHintController
 import vm.words.ua.utils.hints.domain.models.HintPosition
 import vm.words.ua.utils.hints.ui.utils.ViewHintStep
 
-private const val LAST_INDEX = 8
-private const val VALUE_KEY = "home_screen_v2"
+private const val LAST_INDEX = 9
+private const val VALUE_KEY = "home_screen_v3"
 
 enum class HomeScreenHintStep(
     override val text: String,
     override val position: HintPosition,
 ) : ViewHintStep {
+    FAST_START_BUTTON(
+        text = "Fast start: Quickly start learning with a playlist",
+        position = HintPosition.BOTTOM,
+    ),
     WORDS_BUTTON(
         text = "Words: Opens the standard word library",
         position = HintPosition.BOTTOM,

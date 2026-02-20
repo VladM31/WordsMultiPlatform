@@ -37,6 +37,10 @@ class PlayListScreenProvider : ScreenProvider {
                 PublicPlayListDetailsScreen(navController = navController)
             }
 
+            Screen.FastStart.route -> {
+                FastStartPlayListScreen(navController = navController)
+            }
+
             else -> {
                 return false
             }

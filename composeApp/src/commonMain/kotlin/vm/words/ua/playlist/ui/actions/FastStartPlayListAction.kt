@@ -6,6 +6,8 @@ interface FastStartPlayListAction {
 
     data class ChangeType(val type: PlayListType) : FastStartPlayListAction
     data class ToggleExpand(val playListId: String) : FastStartPlayListAction
+    data class Start(val playListId: String) : FastStartPlayListAction
 
     data object LoadMore : FastStartPlayListAction
+
 }

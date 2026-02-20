@@ -32,6 +32,7 @@ sealed class Screen(val route: String) {
     data object ExplorePlayLists : Screen("explore_playlists")
     data object ExplorePlayListsFilter : Screen("explore_playlists_filter")
     data object PublicPlayListDetails : Screen("public_playlist_details")
+    data object FastStart : Screen("fast_start_select_playlist")
 
     data object ExerciseSelection : Screen("exercise_selection")
 

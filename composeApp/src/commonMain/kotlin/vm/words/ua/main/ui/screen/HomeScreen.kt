@@ -7,6 +7,7 @@ import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Start
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -23,7 +24,6 @@ import vm.words.ua.main.ui.hints.createHomeScreenHintController
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.Screen.WordList
 import vm.words.ua.navigation.SimpleNavController
-import vm.words.ua.playlist.ui.screen.FastStartPlayListScreen
 import vm.words.ua.utils.hints.ui.components.SimpleHintHost
 import vm.words.ua.utils.hints.ui.utils.viewHint
 import vm.words.ua.utils.net.hasInternet
@@ -33,11 +33,6 @@ fun HomeScreen(
     navController: SimpleNavController,
     modifier: Modifier = Modifier
 ) {
-    if (true) {
-        return FastStartPlayListScreen(
-            navController = navController
-        )
-    }
     val hintController = createHomeScreenHintController()
     val isOnline = hasInternet()
     val isTinyHeight = appHeightDp() < 600.dp
@@ -84,6 +79,15 @@ private fun rememberButtons(
     navController: SimpleNavController
 ): List<GridButtonItem> = remember(isOnline, hintController.currentStep) {
     listOf(
+        GridButtonItem(
+            text = "Fast start",
+            isAvailable = isOnline,
+            icon = Icons.Filled.Start,
+            modifier = Modifier.viewHint(
+                step = HomeScreenHintStep.FAST_START_BUTTON,
+                current = hintController.currentStep
+            )
+        ) { navController.navigate(Screen.FastStart) },
         GridButtonItem(
             text = "Words",
             isAvailable = isOnline,

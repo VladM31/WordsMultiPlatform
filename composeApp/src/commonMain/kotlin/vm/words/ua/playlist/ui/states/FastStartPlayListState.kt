@@ -22,11 +22,15 @@ data class FastStartPlayListState(
     val publicFilter: PublicPlayListCountFilter = PublicPlayListCountFilter(),
     val yourFilter: PlayListCountFilter = PlayListCountFilter(),
 
-
+    val selectedPlayListId: String? = null,
     val isLoading: Boolean = true,
     override val errorMessage: ErrorMessage? = null
 
 ) : ErrorableState {
+
+    data class StartState(
+        val playListId: String
+    )
 
     fun words(playListId: String): List<PlayList.PinnedWord> {
         return wordsByPlayListId[playListId] ?: emptyList()
