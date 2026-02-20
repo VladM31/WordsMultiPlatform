@@ -20,7 +20,7 @@ data class PublicPlayListCountFilter(
     val name: String? = null,
 
     val count: Range<Long>? = null,
-    val sortField: PublicPlaylistSortField = PublicPlaylistSortField.CREATED_AT,
+    val sortField: PublicPlaylistSortField = PublicPlaylistSortField.NAME,
     val asc: Boolean = false,
     val page: Int = 0,
     val size: Int = 20

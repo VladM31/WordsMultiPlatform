@@ -7,7 +7,7 @@ import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Start
+import androidx.compose.material.icons.filled.RocketLaunch
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -82,7 +82,7 @@ private fun rememberButtons(
         GridButtonItem(
             text = "Fast start",
             isAvailable = isOnline,
-            icon = Icons.Filled.Start,
+            icon = Icons.Filled.RocketLaunch,
             modifier = Modifier.viewHint(
                 step = HomeScreenHintStep.FAST_START_BUTTON,
                 current = hintController.currentStep
