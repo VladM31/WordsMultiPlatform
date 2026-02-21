@@ -69,3 +69,11 @@ fun rememberInterfaceMaxWidth(): Dp {
     }
 }
 
+@Composable
+fun rememberButtonMaxWidth(): Dp {
+    val scaleFactor = rememberScaleFactor()
+    return remember(scaleFactor) {
+        200.dp * scaleFactor
+    }
+}
+

@@ -17,6 +17,7 @@ import vm.words.ua.core.ui.components.CenteredContainer
 import vm.words.ua.core.ui.components.PrimaryButton
 import vm.words.ua.core.ui.components.TextInput
 import vm.words.ua.core.utils.isNotPhoneFormat
+import vm.words.ua.core.utils.rememberButtonMaxWidth
 import vm.words.ua.core.utils.rememberInterfaceMaxWidth
 import vm.words.ua.core.utils.rememberScaleFactor
 import vm.words.ua.di.rememberInstance
@@ -138,7 +139,7 @@ fun PlayListFilterScreen(
                 viewModel.send(PlayListFilterAction.Find)
             },
             modifier = Modifier.padding(bottom = 10.dp)
-                .widthIn(max = 200.dp * rememberScaleFactor())
+                .widthIn(max = rememberButtonMaxWidth())
                 .fillMaxWidth()
                 .align(CenterHorizontally)
         )
