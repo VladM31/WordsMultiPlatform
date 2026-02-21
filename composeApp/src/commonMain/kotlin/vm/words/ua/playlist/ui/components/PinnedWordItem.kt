@@ -1,6 +1,5 @@
 package vm.words.ua.playlist.ui.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -15,8 +14,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppColors
+import vm.words.ua.core.ui.components.TagBadge
 import vm.words.ua.core.utils.rememberFontSize
-import vm.words.ua.core.utils.rememberLabelFontSize
 import vm.words.ua.core.utils.rememberScaleFactor
 import vm.words.ua.playlist.domain.models.PlayList
 import vm.words.ua.words.domain.models.Word
@@ -70,7 +69,7 @@ fun PinnedWordItem(
                     // Left: original word + translation
                     WordMainBox(word, textPrimary, titleSize, accentPrimary)
 
-                    WordDetails(word, accentSecondary, textMuted, labelSize, accentPrimary, accentViolet)
+                    WordDetails(word, accentSecondary, accentViolet)
                 }
 
             }
@@ -112,49 +111,15 @@ private fun RowScope.WordMainBox(
 private fun WordDetails(
     word: Word,
     accentSecondary: Color,
-    textMuted: Color,
-    labelSize: TextUnit,
-    accentPrimary: Color,
     accentViolet: Color
 ) {
     Column(
         horizontalAlignment = Alignment.End,
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
-        // Language direction: UA → EN
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            WordBadge(text = word.lang.upperShortName, color = accentSecondary)
-            Text(
-                text = "→",
-                color = textMuted,
-                fontSize = labelSize * 0.9f
-            )
-            WordBadge(text = word.translateLang.upperShortName, color = accentPrimary)
-        }
 
         // CEFR badge
-        WordBadge(text = word.cefr.name, color = accentViolet)
+        TagBadge(text = word.cefr.name, color = accentViolet)
     }
 }
 
-@Composable
-private fun WordBadge(text: String, color: Color) {
-    Box(
-        modifier = Modifier
-            .background(
-                color = color.copy(alpha = 0.15f),
-                shape = RoundedCornerShape(4.dp)
-            )
-            .padding(horizontal = 5.dp, vertical = 2.dp)
-    ) {
-        Text(
-            text = text,
-            color = color,
-            fontSize = rememberLabelFontSize() * 0.65f,
-            fontWeight = FontWeight.Bold
-        )
-    }
-}

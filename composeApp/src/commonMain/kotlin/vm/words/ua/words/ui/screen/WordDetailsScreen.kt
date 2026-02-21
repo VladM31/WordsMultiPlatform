@@ -32,7 +32,6 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.domain.models.ByteContent
-import vm.words.ua.core.domain.models.enums.CEFR
 import vm.words.ua.core.platform.AppPlatform
 import vm.words.ua.core.platform.currentOrientation
 import vm.words.ua.core.platform.currentPlatform
@@ -41,6 +40,7 @@ import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.ErrorMessageBox
 import vm.words.ua.core.ui.components.ImageFromBytes
+import vm.words.ua.core.ui.theme.toColor
 import vm.words.ua.core.utils.*
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
@@ -356,7 +356,7 @@ private fun WordCard(
                 InfoChip(
                     label = "CEFR",
                     value = word.cefr.name,
-                    color = getCefrColor(word.cefr)
+                    color = word.cefr.toColor()
                 )
 
                 word.category?.let { category ->
@@ -448,17 +448,6 @@ private fun InfoChip(
     }
 }
 
-@Composable
-private fun getCefrColor(cefr: CEFR): Color {
-    return when (cefr) {
-        CEFR.A1 -> AppTheme.PrimaryColor
-        CEFR.A2 -> AppTheme.PrimaryGreen
-        CEFR.B1 -> AppTheme.PrimaryBlue
-        CEFR.B2 -> AppTheme.PrimaryViolet
-        CEFR.C1 -> AppTheme.PrimaryYellow
-        CEFR.C2 -> AppTheme.PrimaryRed
-    }
-}
 
 @Composable
 private fun ImageCard(

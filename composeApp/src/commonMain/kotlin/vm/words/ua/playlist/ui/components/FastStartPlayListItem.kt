@@ -3,7 +3,6 @@ package vm.words.ua.playlist.ui.components
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -18,8 +17,10 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppColors
+import vm.words.ua.core.ui.components.TagBadge
 import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberIconSize
 import vm.words.ua.core.utils.rememberLabelFontSize
@@ -76,31 +77,7 @@ fun FastStartPlayListItem(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
-                    Column(modifier = Modifier.weight(1f).padding(end = 8.dp)) {
-                        Text(
-                            text = playList.name,
-                            color = textPrimary,
-                            fontSize = titleSize,
-                            fontWeight = FontWeight.SemiBold,
-                            maxLines = 2
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Box(
-                            modifier = Modifier
-                                .background(
-                                    color = accentPrimary.copy(alpha = 0.12f),
-                                    shape = RoundedCornerShape(8.dp)
-                                )
-                                .padding(horizontal = 8.dp, vertical = 3.dp)
-                        ) {
-                            Text(
-                                text = "${playList.count} words",
-                                color = accentPrimary,
-                                fontSize = rememberLabelFontSize(),
-                                fontWeight = FontWeight.Medium
-                            )
-                        }
-                    }
+                    ContentView(playList, textPrimary, titleSize, accentPrimary, textMuted)
 
                     // Start + Expand buttons
                     Row(
@@ -148,6 +125,48 @@ fun FastStartPlayListItem(
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun RowScope.ContentView(
+    playList: PlayListCountable,
+    textPrimary: Color,
+    titleSize: TextUnit,
+    accentPrimary: Color,
+    textMuted: Color
+) {
+    Column(modifier = Modifier.weight(1f).padding(end = 8.dp)) {
+        Text(
+            text = playList.name,
+            color = textPrimary,
+            fontSize = titleSize,
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 2
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TagBadge("${playList.count} words", accentPrimary)
+            Spacer(modifier = Modifier.width(4.dp))
+            playList.translateLanguage?.let {
+                TagBadge(it.upperShortName, color = AppColors.secondaryColor)
+            }
+            if (playList.language != null && playList.translateLanguage != null) {
+                Text(
+                    text = "→",
+                    color = textMuted,
+                    fontSize = rememberLabelFontSize() * 0.9
+                )
+            }
+
+            playList.language?.let {
+                TagBadge(it.upperShortName, color = accentPrimary)
             }
         }
     }
