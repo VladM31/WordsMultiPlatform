@@ -9,11 +9,11 @@ import vm.words.ua.core.ui.AppTheme
 fun CEFR.toColor(): Color {
     return when (this) {
         // Use a slightly toned-down primary color for A1 (beginner) so it's visually distinct but still consistent
-        CEFR.A1 -> AppTheme.PrimaryColorDark
-        CEFR.A2 -> AppTheme.PrimaryGreen
-        CEFR.B1 -> AppTheme.PrimaryBlue
-        CEFR.B2 -> AppTheme.PrimaryViolet
-        CEFR.C1 -> AppTheme.PrimaryYellow
+        CEFR.A1 -> AppTheme.PrimaryGreen
+        CEFR.A2 -> AppTheme.PrimaryBlue
+        CEFR.B1 -> AppTheme.PrimaryViolet
+        CEFR.B2 -> AppTheme.PrimaryYellow
+        CEFR.C1 -> AppTheme.PrimaryOrange
         CEFR.C2 -> AppTheme.PrimaryRed
     }
 }

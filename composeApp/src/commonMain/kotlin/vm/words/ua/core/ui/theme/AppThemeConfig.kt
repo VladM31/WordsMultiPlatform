@@ -19,6 +19,7 @@ data class AppThemeConfig(
     val accentGreen: Color = Color(0xFF4BC150),
     val accentRed: Color = Color(0xFFDC0101),
     val accentYellow: Color = Color(0xFFF2C144),
+    val accentOrange: Color = Color(0xFFFF9800),
     val accentViolet: Color = Color(0xFFA144F2),
     val accentBlue: Color = Color(0xFF44A1F2),
     val disabledColor: Color = Color(0xFF808080)
@@ -487,4 +488,3 @@ object AppThemes {
     /** Light themes only */
     val lightThemes = allThemes.filter { !it.isDark }
 }
-

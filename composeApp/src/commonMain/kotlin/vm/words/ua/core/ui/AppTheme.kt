@@ -34,6 +34,10 @@ object AppTheme {
     val PrimaryGray: Color
         get() = currentTheme.secondaryText
 
+    // New orange accent
+    val PrimaryOrange: Color
+        get() = currentTheme.accentOrange
+
     val PrimaryColor: Color
         get() = currentTheme.primaryColor
 
@@ -137,8 +141,12 @@ object AppColors {
         @Composable
         get() = theme.secondaryText
 
+    // New composable accessor for orange
+    val primaryOrange: Color
+        @Composable
+        get() = theme.accentOrange
+
     val error: Color
         @Composable
         get() = theme.accentRed
 }
-
