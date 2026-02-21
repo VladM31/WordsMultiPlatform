@@ -6,6 +6,9 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,8 +20,6 @@ import androidx.compose.ui.window.Dialog
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.PickerResultLauncher
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
-import vm.words.ua.core.platform.currentPlatform
-import vm.words.ua.core.platform.isWeb
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.CenteredContainer
@@ -26,6 +27,7 @@ import vm.words.ua.core.ui.components.PrimaryButton
 import vm.words.ua.core.utils.isNotPhoneFormat
 import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberInterfaceMaxWidth
+import vm.words.ua.core.utils.rememberScaleFactor
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
@@ -295,10 +297,7 @@ private fun WordNavigator(
     viewModel: PinUserWordsViewModel,
     state: PinUserWordsState
 ) {
-    val platform = currentPlatform()
-    val leftArrow = if (platform.isWeb) "<" else "⬅"
-    val rightArrow = if (platform.isWeb) ">" else "⮕"
-
+    val btnSize = 32.dp * rememberScaleFactor()
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -311,12 +310,16 @@ private fun WordNavigator(
                 contentColor = AppTheme.PrimaryColor
             )
         ) {
-            Text(leftArrow, fontSize = rememberFontSize())
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = "Previous",
+                modifier = Modifier.size(btnSize),
+            )
         }
 
         OutlinedButton(
             onClick = { viewModel.sent(PinUserWordsAction.SaveFiles) },
-            modifier = Modifier.weight(2f),
+            modifier = Modifier.weight(3f),
             enabled = state.hasUpdate,
             colors = ButtonDefaults.outlinedButtonColors(
                 contentColor = AppTheme.PrimaryColor
@@ -324,7 +327,6 @@ private fun WordNavigator(
         ) {
             Text("Save", fontSize = rememberFontSize())
         }
-
 
         OutlinedButton(
             onClick = {
@@ -337,7 +339,11 @@ private fun WordNavigator(
                 contentColor = AppTheme.PrimaryColor
             )
         ) {
-            Text(rightArrow, fontSize = rememberFontSize())
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                contentDescription = "Next",
+                modifier = Modifier.size(btnSize)
+            )
         }
     }
 }
