@@ -34,6 +34,8 @@ import vm.words.ua.exercise.ui.bundles.ExerciseSelectionBundle
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.playlist.domain.models.enums.PlayListType
+import vm.words.ua.playlist.domain.models.filters.PlayListCountFilter
+import vm.words.ua.playlist.domain.models.filters.PublicPlayListCountFilter
 import vm.words.ua.playlist.ui.actions.FastStartPlayListAction
 import vm.words.ua.playlist.ui.components.FastStartPlayListItem
 import vm.words.ua.playlist.ui.states.FastStartPlayListState
@@ -69,6 +71,16 @@ fun FastStartPlayListScreen(
         )
     }
 
+    LaunchedEffect(navController.currentRoute) {
+        val returnValue = navController.getReturnParam<Any>() ?: return@LaunchedEffect
+        (returnValue as? PublicPlayListCountFilter)?.let {
+            viewModel.send(FastStartPlayListAction.UpdatePublicPLFilter(it))
+        }
+        (returnValue as? PlayListCountFilter)?.let {
+            viewModel.send(FastStartPlayListAction.UpdatePlayListFilter(it))
+        }
+    }
+
 
     Column(modifier = Modifier.fillMaxSize()) {
         AppToolBar(
@@ -76,7 +88,14 @@ fun FastStartPlayListScreen(
             showBackButton = true,
             onBackClick = { navController.popBackStack() },
             showAdditionalButton = state.isLoading.not(),
-            additionalButtonVector = Icons.Outlined.Search
+            additionalButtonVector = Icons.Outlined.Search,
+            onAdditionalClick = {
+                if (state.type == PlayListType.PUBLIC) {
+                    navController.navigate(Screen.ExplorePlayListsFilter, state.publicFilter)
+                } else {
+                    navController.navigate(Screen.PlayListFilter, state.yourFilter)
+                }
+            }
         )
 
         if (state.isLoading) {

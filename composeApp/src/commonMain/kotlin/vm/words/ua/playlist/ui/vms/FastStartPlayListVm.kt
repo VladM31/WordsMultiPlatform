@@ -93,7 +93,23 @@ class FastStartPlayListVm(
             is FastStartPlayListAction.ChangeType -> handleChangeType(action)
             is FastStartPlayListAction.ToggleExpand -> handleToggleExpand(action)
             is FastStartPlayListAction.Start -> handleStart(action)
+            is FastStartPlayListAction.UpdatePlayListFilter -> handleUpdatePlayListFilter(action)
+            is FastStartPlayListAction.UpdatePublicPLFilter -> handleUpdatePublicPLFilter(action)
         }
+    }
+
+    private fun handleUpdatePublicPLFilter(action: FastStartPlayListAction.UpdatePublicPLFilter) {
+        mutableState.update {
+            it.copy(publicFilter = action.filter.copy(page = 0))
+        }
+        handleLoadPublicPlayLists(true)
+    }
+
+    private fun handleUpdatePlayListFilter(action: FastStartPlayListAction.UpdatePlayListFilter) {
+        mutableState.update {
+            it.copy(yourFilter = action.filter.copy(page = 0))
+        }
+        handleLoadYourPlayLists(true)
     }
 
     private fun handleStart(action: FastStartPlayListAction.Start) {
@@ -198,13 +214,14 @@ class FastStartPlayListVm(
 
     }
 
-    private fun handleLoadYourPlayLists() {
-        val page = state.value.yourFilter.page + 1
+    private fun handleLoadYourPlayLists(refetch: Boolean = false) {
+        val page = state.value.yourFilter.page + if (refetch) 0 else 1
         val filter = state.value.yourFilter.copy(page = page)
         mutableState.update { it.copy(yourFilter = filter) }
         viewModelScope.launch(Dispatchers.Default) {
+            val previousPlayLists = if (refetch) emptyList() else state.value.playLists()
             val models = playListManager.countBy(filter) as PagedModels<PlayListCountable>
-            val result = state.value.playLists() + models.content
+            val result = previousPlayLists + models.content
             mutableState.update {
                 it.copy(
                     playListByType = it.playListByType + (PlayListType.YOUR to result),
@@ -215,13 +232,14 @@ class FastStartPlayListVm(
     }
 
 
-    private fun handleLoadPublicPlayLists() {
-        val page = state.value.publicFilter.page + 1
+    private fun handleLoadPublicPlayLists(refetch: Boolean = false) {
+        val page = state.value.publicFilter.page + if (refetch) 0 else 1
         val filter = state.value.publicFilter.copy(page = page)
         mutableState.update { it.copy(publicFilter = filter) }
         viewModelScope.launch(Dispatchers.Default) {
+            val previousPlayLists = if (refetch) emptyList() else state.value.playLists()
             val models = playListManager.countBy(filter) as PagedModels<PlayListCountable>
-            val result = state.value.playLists() + models.content
+            val result = previousPlayLists + models.content
             mutableState.update {
                 it.copy(
                     playListByType = it.playListByType + (PlayListType.PUBLIC to result),
