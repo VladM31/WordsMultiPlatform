@@ -1,6 +1,7 @@
 package vm.words.ua.core.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -16,6 +17,7 @@ fun TextInput(
     value: String?,
     label: String,
     maxLength: Int = 255,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     onValueChange: (String?) -> Unit,
 ) {
     val fontSize = rememberFontSize()
@@ -36,6 +38,7 @@ fun TextInput(
             focusedTextColor = AppTheme.PrimaryColor,
             unfocusedTextColor = AppTheme.PrimaryColor,
             cursorColor = AppTheme.PrimaryColor
-        )
+        ),
+        keyboardOptions = keyboardOptions
     )
 }

@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import vm.words.ua.core.domain.models.Range
+import vm.words.ua.playlist.domain.models.enums.PlaylistSortField
 import vm.words.ua.playlist.domain.models.filters.PlayListCountFilter
 import vm.words.ua.playlist.ui.actions.PlayListFilterAction
 import vm.words.ua.playlist.ui.states.PlayListFilterState
@@ -20,6 +21,10 @@ class PlayListFilterViewModel {
             is PlayListFilterAction.ChangeName -> handleChangeName(action)
             is PlayListFilterAction.Find -> handleFind()
             is PlayListFilterAction.Clear -> handleClear()
+            is PlayListFilterAction.SetSortField -> mutableState.value =
+                mutableState.value.copy(sortField = action.sortField)
+
+            is PlayListFilterAction.SetAsc -> mutableState.value = mutableState.value.copy(asc = action.asc)
         }
     }
 
@@ -30,17 +35,21 @@ class PlayListFilterViewModel {
             startCount = action.filter.count?.from?.toString().orEmpty(),
             endCount = action.filter.count?.to?.toString().orEmpty(),
             name = action.filter.name.orEmpty(),
-            isInited = true
+            isInited = true,
+            sortField = action.filter.sortField,
+            asc = action.filter.asc
         )
     }
 
     private fun handleStartCount(action: PlayListFilterAction.ChangeStartCount) {
+        if (action.startCount.isNotBlank() && action.startCount.toLongOrNull() == null) return
         mutableState.value = mutableState.value.copy(
             startCount = action.startCount
         )
     }
 
     private fun handleEndCount(action: PlayListFilterAction.ChangeEndCount) {
+        if (action.endCount.isNotBlank() && action.endCount.toLongOrNull() == null) return
         mutableState.value = mutableState.value.copy(
             endCount = action.endCount
         )
@@ -63,6 +72,8 @@ class PlayListFilterViewModel {
             startCount = "",
             endCount = "",
             name = "",
+            sortField = PlaylistSortField.CREATED_AT,
+            asc = false,
             isInited = true,
             isEnd = false
         )
@@ -77,7 +88,9 @@ class PlayListFilterViewModel {
                     from = currentState.startCount.toLongOrNull(),
                     to = currentState.endCount.toLongOrNull()
                 )
-            } else null
+            } else null,
+            sortField = currentState.sortField,
+            asc = currentState.asc
         )
     }
 }

@@ -1,30 +1,32 @@
 package vm.words.ua.playlist.ui.screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.CenteredContainer
-import vm.words.ua.core.utils.getScaleFactor
-import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.ui.components.PrimaryButton
+import vm.words.ua.core.ui.components.TextInput
+import vm.words.ua.core.utils.isNotPhoneFormat
+import vm.words.ua.core.utils.rememberInterfaceMaxWidth
+import vm.words.ua.core.utils.rememberScaleFactor
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
+import vm.words.ua.playlist.domain.models.enums.PlaylistSortField
 import vm.words.ua.playlist.domain.models.filters.PlayListCountFilter
 import vm.words.ua.playlist.ui.actions.PlayListFilterAction
 import vm.words.ua.playlist.ui.vms.PlayListFilterViewModel
+import vm.words.ua.words.ui.components.ExpansionMode
+import vm.words.ua.words.ui.components.SortSelector
 
 @Composable
 fun PlayListFilterScreen(
@@ -33,13 +35,15 @@ fun PlayListFilterScreen(
 ) {
     val viewModel = rememberInstance<PlayListFilterViewModel>()
     val state by viewModel.state.collectAsState()
-    val scrollState = rememberScrollState()
 
     // Track if we already navigated back to prevent multiple triggers
     val hasNavigatedBack = remember { mutableStateOf(false) }
 
     // Get current filter from navigation params
     val currentFilter = navController.getParam<PlayListCountFilter>() ?: PlayListCountFilter()
+
+    val buttonPadding = (16 * rememberScaleFactor()).dp
+    val buttonHeight = (56 * rememberScaleFactor()).dp
 
     // Initialize with current filter
     LaunchedEffect(Unit) {
@@ -60,11 +64,7 @@ fun PlayListFilterScreen(
         }
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(AppTheme.PrimaryBack)
-    ) {
+    Column(modifier = modifier.fillMaxSize()) {
         AppToolBar(
             title = "Playlist Filter",
             showBackButton = true,
@@ -77,131 +77,70 @@ fun PlayListFilterScreen(
                 viewModel.send(PlayListFilterAction.Clear)
             }
         )
+        val columns = if (isNotPhoneFormat()) 2 else 1
 
-        BoxWithConstraints(
-            modifier = Modifier.weight(1f).fillMaxWidth()
+        CenteredContainer(
+            maxWidth = rememberInterfaceMaxWidth(),
+            modifier = Modifier.weight(1f)
         ) {
-            val scaleFactor = getScaleFactor(maxWidth)
-            val inputTextSize = rememberFontSize(scaleFactor)
-            val labelTextSize = inputTextSize * 0.95f
-            val titleTextSize = inputTextSize * 1.2f
-            val buttonTextSize = (30 * scaleFactor).sp
-            val fieldHeight = (56 * scaleFactor).dp
-            val buttonHeight = (56 * scaleFactor).dp
-            val horizontalPadding = (16 * scaleFactor).dp
-            val verticalPadding = (24 * scaleFactor).dp
-            val spacing = (24 * scaleFactor).dp
-            val buttonPadding = (16 * scaleFactor).dp
-
-            CenteredContainer(
-                maxWidth = 600.dp,
-                modifier = Modifier.fillMaxSize()
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(columns),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                contentPadding = PaddingValues(vertical = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Column(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth()
-                            .verticalScroll(scrollState)
-                            .padding(horizontal = horizontalPadding, vertical = verticalPadding),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(spacing)
-                    ) {
-                        // Name input
-                        OutlinedTextField(
-                            value = state.name,
-                            onValueChange = { viewModel.send(PlayListFilterAction.ChangeName(it)) },
-                            label = { Text("Playlist name", fontSize = labelTextSize, color = AppTheme.PrimaryColor) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .heightIn(min = fieldHeight),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = AppTheme.PrimaryColor,
-                                unfocusedBorderColor = AppTheme.PrimaryColor.copy(alpha = 0.5f),
-                                focusedTextColor = AppTheme.PrimaryColor,
-                                unfocusedTextColor = AppTheme.PrimaryColor,
-                                cursorColor = AppTheme.PrimaryColor
-                            ),
-                            textStyle = androidx.compose.ui.text.TextStyle(fontSize = inputTextSize),
-                            singleLine = true
-                        )
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    TextInput(
+                        label = "Playlist name",
+                        value = state.name
+                    ) { viewModel.send(PlayListFilterAction.ChangeName(it.orEmpty())) }
+                }
 
-                        // Count section
-                        Text(
-                            text = "Count",
-                            fontSize = titleTextSize,
-                            color = AppTheme.PrimaryColor,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                item {
+                    TextInput(
+                        label = "Count from",
+                        value = state.startCount,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    ) { viewModel.send(PlayListFilterAction.ChangeStartCount(it.orEmpty())) }
+                }
 
-                        // Start and End count inputs
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(horizontalPadding)
-                        ) {
-                            OutlinedTextField(
-                                value = state.startCount,
-                                onValueChange = { viewModel.send(PlayListFilterAction.ChangeStartCount(it)) },
-                                label = { Text("Start", fontSize = labelTextSize, color = AppTheme.PrimaryColor) },
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .heightIn(min = fieldHeight),
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = AppTheme.PrimaryColor,
-                                    unfocusedBorderColor = AppTheme.PrimaryColor.copy(alpha = 0.5f),
-                                    focusedTextColor = AppTheme.PrimaryColor,
-                                    unfocusedTextColor = AppTheme.PrimaryColor,
-                                    cursorColor = AppTheme.PrimaryColor
-                                ),
-                                textStyle = androidx.compose.ui.text.TextStyle(fontSize = inputTextSize),
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                singleLine = true
-                            )
+                item {
+                    TextInput(
+                        label = "Count to",
+                        value = state.endCount,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    ) { viewModel.send(PlayListFilterAction.ChangeEndCount(it.orEmpty())) }
+                }
 
-                            OutlinedTextField(
-                                value = state.endCount,
-                                onValueChange = { viewModel.send(PlayListFilterAction.ChangeEndCount(it)) },
-                                label = { Text("End", fontSize = labelTextSize, color = AppTheme.PrimaryColor) },
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .heightIn(min = fieldHeight),
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = AppTheme.PrimaryColor,
-                                    unfocusedBorderColor = AppTheme.PrimaryColor.copy(alpha = 0.5f),
-                                    focusedTextColor = AppTheme.PrimaryColor,
-                                    unfocusedTextColor = AppTheme.PrimaryColor,
-                                    cursorColor = AppTheme.PrimaryColor
-                                ),
-                                textStyle = androidx.compose.ui.text.TextStyle(fontSize = inputTextSize),
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                singleLine = true
-                            )
-                        }
-                    }
-
-                    // Find button at the bottom
-                    Button(
-                        onClick = { viewModel.send(PlayListFilterAction.Find) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(buttonPadding)
-                            .height(buttonHeight),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = AppTheme.PrimaryColor,
-                            contentColor = AppTheme.PrimaryBack
-                        )
-                    ) {
-                        Text(
-                            text = "Find",
-                            fontSize = buttonTextSize,
-                            color = AppTheme.PrimaryBack
-                        )
-                    }
+                // Sort selector
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    SortSelector(
+                        items = PlaylistSortField.entries.toList(),
+                        selected = state.sortField,
+                        toLabel = { it.name.replace("_", " ").lowercase().replaceFirstChar { c -> c.uppercase() } },
+                        showDefault = false,
+                        label = "Sort by",
+                        onSelect = { it?.let { field -> viewModel.send(PlayListFilterAction.SetSortField(field)) } },
+                        asc = state.asc,
+                        onToggleAsc = { viewModel.send(PlayListFilterAction.SetAsc(it)) },
+                        expansionMode = ExpansionMode.Dropdown
+                    )
                 }
             }
         }
+
+        PrimaryButton(
+            text = "Find",
+            onClick = {
+                viewModel.send(PlayListFilterAction.Find)
+            },
+            modifier = Modifier.padding(bottom = 10.dp)
+                .widthIn(max = 200.dp * rememberScaleFactor())
+                .fillMaxWidth()
+                .align(CenterHorizontally)
+        )
     }
 }
