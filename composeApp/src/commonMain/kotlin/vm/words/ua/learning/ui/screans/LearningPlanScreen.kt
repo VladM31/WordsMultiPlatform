@@ -1,12 +1,9 @@
 package vm.words.ua.learning.ui.screans
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
@@ -79,7 +76,7 @@ fun LearningPlanScreen(
             return@Column
         }
 
-        Column(modifier = Modifier.widthIn(max = rememberInterfaceMaxWidth()).fillMaxWidth()) {
+        Column(modifier = Modifier.widthIn(max = rememberInterfaceMaxWidth() * 1.5f).fillMaxWidth()) {
             if (state.learningPlan == null && state.detailsState == null) {
                 CreateBtn(
                     onClick = {
@@ -267,37 +264,34 @@ private fun ModifyPlan(
 
 @Composable
 private fun PlanViewer(state: LearningPlanState) {
+    val columns = if (isNotPhoneFormat()) 2 else 1
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(columns),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        contentPadding = PaddingValues(vertical = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    )
+    {
+        item {
+            TodayBox(state)
+        }
+        item {
+            AllTimeBox(state)
+        }
+    }
+}
+
+@Composable
+private fun AllTimeBox(state: LearningPlanState) {
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .background(AppTheme.PrimaryBack)
-            .verticalScroll(rememberScrollState())
-            .padding(10.dp),
+            .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Words learned today
-        Text(
-            text = "Words learned today",
-            color = AppTheme.PrimaryColor,
-            fontSize = rememberFontSize()
-        )
-
-        Text(
-            text = state.let {
-                "${it.learnedWordsToDay} / ${it.learningPlan?.wordsPerDay ?: 0}"
-            },
-            color = AppTheme.PrimaryColor,
-            fontSize = rememberFontSize() * 1.3f
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        ProgressPieChart(
-            learned = state.learnedWordsToDay,
-            need = state.learningPlan?.wordsPerDay ?: 0
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-
         // Words count labels
         Row(modifier = Modifier.fillMaxWidth()) {
             Text(
@@ -389,6 +383,38 @@ private fun PlanViewer(state: LearningPlanState) {
                 modifier = Modifier.weight(1f)
             )
         }
+    }
+}
+
+@Composable
+private fun TodayBox(state: LearningPlanState) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Words learned today",
+            color = AppTheme.PrimaryColor,
+            fontSize = rememberFontSize(),
+            textAlign = TextAlign.Center,
+            lineHeight = rememberFontSize() * 1.1f
+        )
+
+        Text(
+            text = state.let {
+                "${it.learnedWordsToDay} / ${it.learningPlan?.wordsPerDay ?: 0}"
+            },
+            color = AppTheme.PrimaryColor,
+            fontSize = rememberFontSize() * 1.3f
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+
+        ProgressPieChart(
+            learned = state.learnedWordsToDay,
+            need = state.learningPlan?.wordsPerDay ?: 0
+        )
+        Spacer(modifier = Modifier.height(10.dp))
     }
 }
 
