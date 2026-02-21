@@ -117,8 +117,7 @@ fun UserWordFilterScreen(
                     )
                 }
 
-                // 5. Multi select CEFR using generic MultiSelect component
-                item {
+                item(span = { GridItemSpan(maxLineSpan) }) {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         MultiSelect(
                             items = CEFR.entries.toList(),
@@ -131,9 +130,7 @@ fun UserWordFilterScreen(
                     }
                 }
 
-                // 6. Sort selector and asc toggle in one row
-                item {
-                    // Use the new generic SortSelector: provide items, selected, toLabel and handlers
+                item(span = { GridItemSpan(maxLineSpan) }) {
                     SortSelector(
                         items = UserWordSortBy.entries.toList(),
                         selected = state.sortBy,
@@ -155,7 +152,6 @@ fun UserWordFilterScreen(
                     )
                 }
 
-                // 7. Categories input + list of added items with remove
                 item(span = { GridItemSpan(maxLineSpan) }) {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         StringListInput(
@@ -165,6 +161,7 @@ fun UserWordFilterScreen(
                         )
                     }
                 }
+
             }
         }
 
