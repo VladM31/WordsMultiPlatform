@@ -59,7 +59,7 @@ fun ProgressPieChart(
                 val arcSize = Size(radius * 2, radius * 2)
 
                 drawArc(
-                    color = Color(0xFFDC0101),
+                    color = AppTheme.PrimaryRed,
                     startAngle = -90f + animatedLearned * 3.6f,
                     sweepAngle = (100f - animatedLearned) * 3.6f,
                     useCenter = false,
@@ -69,7 +69,7 @@ fun ProgressPieChart(
                 )
 
                 drawArc(
-                    color = Color(0xFF44F2C1),
+                    color = AppTheme.PrimaryColor,
                     startAngle = -90f,
                     sweepAngle = animatedLearned * 3.6f,
                     useCenter = false,

@@ -446,6 +446,86 @@ object AppThemes {
         accentBlue = Color(0xFF00BFFF)     // Deep Sky Blue
     )
 
+    /** Monochrome Dark - black background with colored accents */
+    val MonochromeDark = AppThemeConfig(
+        id = "monochrome_dark",
+        name = "Monochrome Dark",
+        isDark = true,
+        primaryColor = Color(0xFFFFFFFF),
+        secondaryColor = Color(0xFFAAAAAA),
+        primaryBack = Color(0xFF000000),
+        secondaryBack = Color(0xFF111111),
+        primaryText = Color(0xFFFFFFFF),
+        secondaryText = Color(0xFFAAAAAA),
+        accentGreen = Color(0xFF4BC150),
+        accentRed = Color(0xFFDC0101),
+        accentYellow = Color(0xFFF2C144),
+        accentOrange = Color(0xFFFF9800),
+        accentViolet = Color(0xFFA144F2),
+        accentBlue = Color(0xFF44A1F2),
+        disabledColor = Color(0xFF555555)
+    )
+
+    /** Monochrome Light - white background with colored accents */
+    val MonochromeLight = AppThemeConfig(
+        id = "monochrome_light",
+        name = "Monochrome Light",
+        isDark = false,
+        primaryColor = Color(0xFF000000),
+        secondaryColor = Color(0xFF555555),
+        primaryBack = Color(0xFFFFFFFF),
+        secondaryBack = Color(0xFFF0F0F0),
+        primaryText = Color(0xFF000000),
+        secondaryText = Color(0xFF555555),
+        accentGreen = Color(0xFF4BC150),
+        accentRed = Color(0xFFDC0101),
+        accentYellow = Color(0xFFF2C144),
+        accentOrange = Color(0xFFFF9800),
+        accentViolet = Color(0xFFA144F2),
+        accentBlue = Color(0xFF44A1F2),
+        disabledColor = Color(0xFFAAAAAA)
+    )
+
+    /** Pure Black - fully black-and-white dark theme, no color at all */
+    val PureBlack = AppThemeConfig(
+        id = "pure_black",
+        name = "Pure Black",
+        isDark = true,
+        primaryColor = Color(0xFFFFFFFF),
+        secondaryColor = Color(0xFFB0B0B0),
+        primaryBack = Color(0xFF000000),
+        secondaryBack = Color(0xFF111111),
+        primaryText = Color(0xFFFFFFFF),
+        secondaryText = Color(0xFFAAAAAA),
+        accentGreen = Color(0xFFCCCCCC),
+        accentRed = Color(0xFFCCCCCC),
+        accentYellow = Color(0xFFCCCCCC),
+        accentOrange = Color(0xFFCCCCCC),
+        accentViolet = Color(0xFFCCCCCC),
+        accentBlue = Color(0xFFCCCCCC),
+        disabledColor = Color(0xFF555555)
+    )
+
+    /** Pure White - fully white-and-black light theme, no color at all */
+    val PureWhite = AppThemeConfig(
+        id = "pure_white",
+        name = "Pure White",
+        isDark = false,
+        primaryColor = Color(0xFF000000),
+        secondaryColor = Color(0xFF444444),
+        primaryBack = Color(0xFFFFFFFF),
+        secondaryBack = Color(0xFFF0F0F0),
+        primaryText = Color(0xFF000000),
+        secondaryText = Color(0xFF555555),
+        accentGreen = Color(0xFF333333),
+        accentRed = Color(0xFF333333),
+        accentYellow = Color(0xFF333333),
+        accentOrange = Color(0xFF333333),
+        accentViolet = Color(0xFF333333),
+        accentBlue = Color(0xFF333333),
+        disabledColor = Color(0xFFAAAAAA)
+    )
+
     /** All available themes */
     val allThemes = listOf(
         // Dark themes
@@ -474,7 +554,12 @@ object AppThemes {
         NeonCyberpunk,
         NeonGreen,
         NeonOrange,
-        RetroSepia
+        RetroSepia,
+        // Monochrome themes
+        MonochromeDark,
+        MonochromeLight,
+        PureBlack,
+        PureWhite
     )
 
     /** Get theme by ID, fallback to default */

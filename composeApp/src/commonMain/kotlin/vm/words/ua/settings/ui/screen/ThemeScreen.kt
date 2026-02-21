@@ -54,7 +54,7 @@ fun ThemeScreen(
         )
 
         CenteredContainer(
-            maxWidth = rememberInterfaceMaxWidth() * 2f,
+            maxWidth = rememberInterfaceMaxWidth() * 1.7f,
         ) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(columns),
@@ -116,6 +116,31 @@ fun ThemeScreen(
                         AppThemes.NeonGreen,
                         AppThemes.NeonOrange,
                         AppThemes.RetroSepia
+                    )
+                ) { theme ->
+                    ThemeCard(
+                        theme = theme,
+                        isSelected = currentTheme.id == theme.id,
+                        onClick = { ThemeManager.instance.setTheme(theme) }
+                    )
+                }
+
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "Monochrome Themes",
+                        color = currentTheme.primaryText,
+                        fontSize = titleSize,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                }
+                items(
+                    listOf(
+                        AppThemes.MonochromeDark,
+                        AppThemes.MonochromeLight,
+                        AppThemes.PureBlack,
+                        AppThemes.PureWhite
                     )
                 ) { theme ->
                     ThemeCard(
