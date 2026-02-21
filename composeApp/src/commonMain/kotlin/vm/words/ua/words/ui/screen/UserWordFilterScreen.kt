@@ -1,24 +1,20 @@
 package vm.words.ua.words.ui.screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.domain.models.enums.CEFR
 import vm.words.ua.core.domain.models.enums.Language
-import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.*
 import vm.words.ua.core.utils.isNotPhoneFormat
-import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberInterfaceMaxWidth
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.words.domain.models.enums.UserWordSortBy
@@ -57,8 +53,9 @@ fun UserWordFilterScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .background(AppTheme.PrimaryBack)
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+
     ) {
         AppToolBar(
             title = "Word Filter",
@@ -73,24 +70,23 @@ fun UserWordFilterScreen(
 
         val columns = if (isNotPhoneFormat()) 2 else 1
 
-
-        Column(modifier = Modifier.fillMaxSize()) {
+        CenteredContainer(
+            modifier = Modifier.weight(1f),
+            maxWidth = rememberInterfaceMaxWidth()
+        ) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(columns),
                 modifier = Modifier
-                    .weight(1f)
                     .padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
                 horizontalArrangement = Arrangement.spacedBy(20.dp),
             ) {
-                // 1. Original input
                 item {
                     TextInput(label = "Original", value = state.original) {
                         viewModel.sent(UserWordFilterAction.SetOriginal(it))
                     }
                 }
 
-                // 2. Single select originalLang with ability to clear
                 item {
                     SingleSelectInput(
                         value = state.lang,
@@ -103,14 +99,12 @@ fun UserWordFilterScreen(
                     )
                 }
 
-                // 3. Translate input
                 item {
                     TextInput(label = "Translate", value = state.translate) {
                         viewModel.sent(UserWordFilterAction.SetTranslate(it))
                     }
                 }
 
-                // 4. Single select translateLang with ability to clear
                 item {
                     SingleSelectInput(
                         value = state.translateLang,
@@ -172,25 +166,16 @@ fun UserWordFilterScreen(
                     }
                 }
             }
-
-            // Apply button at the bottom
-            Button(
-                onClick = {
-                    navController.popBackStack(
-                        returnParam = UserWordFilterBundle(filter = state.toFilter())
-                    )
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = AppTheme.PrimaryColor,
-                    contentColor = AppTheme.PrimaryBack
-                )
-            ) {
-                Text("Apply Filter", fontSize = rememberFontSize())
-            }
         }
+
+        PrimaryButton(
+            text = "Find",
+            onClick = {
+                navController.popBackStack(
+                    returnParam = UserWordFilterBundle(filter = state.toFilter())
+                )
+            }
+        )
     }
 }
 

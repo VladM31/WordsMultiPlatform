@@ -8,7 +8,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -17,7 +16,6 @@ import vm.words.ua.core.ui.components.CenteredContainer
 import vm.words.ua.core.ui.components.PrimaryButton
 import vm.words.ua.core.ui.components.TextInput
 import vm.words.ua.core.utils.isNotPhoneFormat
-import vm.words.ua.core.utils.rememberButtonMaxWidth
 import vm.words.ua.core.utils.rememberInterfaceMaxWidth
 import vm.words.ua.core.utils.rememberScaleFactor
 import vm.words.ua.di.rememberInstance
@@ -137,11 +135,7 @@ fun PlayListFilterScreen(
             text = "Find",
             onClick = {
                 viewModel.send(PlayListFilterAction.Find)
-            },
-            modifier = Modifier.padding(bottom = 10.dp)
-                .widthIn(max = rememberButtonMaxWidth())
-                .fillMaxWidth()
-                .align(CenterHorizontally)
+            }
         )
     }
 }
