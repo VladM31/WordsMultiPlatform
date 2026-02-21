@@ -23,12 +23,10 @@ actual class SoundManagerImpl actual constructor() : SoundManager {
             ) as String
             currentUrl = url
 
-            // ВАЖНО: используем new Audio()
             val audio: dynamic = js("new Audio()")
             audio.src = url
             audioElement = audio
 
-            // По окончании воспроизведения освобождаем URL
             try {
                 audio.onended = { _: dynamic ->
                     try {
