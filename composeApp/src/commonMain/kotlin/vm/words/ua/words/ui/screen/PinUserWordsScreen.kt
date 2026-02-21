@@ -21,9 +21,11 @@ import vm.words.ua.core.platform.currentPlatform
 import vm.words.ua.core.platform.isWeb
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
+import vm.words.ua.core.ui.components.CenteredContainer
 import vm.words.ua.core.ui.components.PrimaryButton
 import vm.words.ua.core.utils.isNotPhoneFormat
 import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberInterfaceMaxWidth
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
@@ -267,23 +269,24 @@ private fun BottomMenu(
     viewModel: PinUserWordsViewModel,
     state: PinUserWordsState
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        // Previous/Next navigation
-        WordNavigator(viewModel, state)
+    CenteredContainer(maxWidth = rememberInterfaceMaxWidth(), modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier
+                .padding(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            // Previous/Next navigation
+            WordNavigator(viewModel, state)
 
-        // Save and Pin button
-        PrimaryButton(
-            text = "Pin All Words",
-            onClick = {
-                viewModel.sent(PinUserWordsAction.Pin)
-            },
-            modifier = Modifier.fillMaxWidth()
-        )
+            // Save and Pin button
+            PrimaryButton(
+                text = "Pin All Words",
+                onClick = {
+                    viewModel.sent(PinUserWordsAction.Pin)
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
 }
 

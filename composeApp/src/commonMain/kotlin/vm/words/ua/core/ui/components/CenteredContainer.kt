@@ -14,11 +14,11 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun CenteredContainer(
     maxWidth: Dp = 600.dp,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.fillMaxSize(),
     content: @Composable BoxScope.() -> Unit
 ) {
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier,
         contentAlignment = Alignment.TopCenter
     ) {
         Box(

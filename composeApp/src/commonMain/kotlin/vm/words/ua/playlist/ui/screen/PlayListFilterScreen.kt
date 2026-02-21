@@ -84,7 +84,7 @@ fun PlayListFilterScreen(
 
         CenteredContainer(
             maxWidth = rememberInterfaceMaxWidth(),
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f).fillMaxSize()
         ) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(columns),

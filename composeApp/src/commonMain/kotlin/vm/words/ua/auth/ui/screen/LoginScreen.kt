@@ -95,6 +95,7 @@ fun LoginScreen(
                     modifier = Modifier
                         .padding(16.dp)
                         .verticalScroll(rememberScrollState())
+                        .fillMaxSize()
                 ) {
                     LoginForm(
                         viewModel = viewModel,

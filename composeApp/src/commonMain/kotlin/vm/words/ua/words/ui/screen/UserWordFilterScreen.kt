@@ -71,7 +71,7 @@ fun UserWordFilterScreen(
         val columns = if (isNotPhoneFormat()) 2 else 1
 
         CenteredContainer(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(1f).fillMaxSize(),
             maxWidth = rememberInterfaceMaxWidth()
         ) {
             LazyVerticalGrid(
