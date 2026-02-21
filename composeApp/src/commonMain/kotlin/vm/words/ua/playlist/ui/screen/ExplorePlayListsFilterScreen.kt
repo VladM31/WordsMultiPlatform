@@ -20,12 +20,14 @@ import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.*
 import vm.words.ua.core.utils.isNotPhoneFormat
 import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberInterfaceMaxWidth
 import vm.words.ua.core.utils.rememberScaleFactor
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.playlist.domain.models.enums.PublicPlaylistSortField
 import vm.words.ua.playlist.domain.models.filters.PublicPlayListCountFilter
 import vm.words.ua.playlist.ui.actions.ExplorePlayListsFilterAction
+import vm.words.ua.playlist.ui.states.ExplorePlayListsFilterState
 import vm.words.ua.playlist.ui.vms.ExplorePlayListsFilterViewModel
 import vm.words.ua.words.ui.components.ExpansionMode
 import vm.words.ua.words.ui.components.SortSelector
@@ -39,7 +41,6 @@ fun ExplorePlayListsFilterScreen(
     val viewModel = rememberInstance<ExplorePlayListsFilterViewModel>()
     val state by viewModel.state.collectAsState()
 
-    var sortByExpanded by remember { mutableStateOf(false) }
     val hasNavigatedBack = remember { mutableStateOf(false) }
 
     val currentFilter = navController.getParam<PublicPlayListCountFilter>() ?: PublicPlayListCountFilter()
@@ -77,114 +78,125 @@ fun ExplorePlayListsFilterScreen(
             onAdditionalClick = { viewModel.send(ExplorePlayListsFilterAction.Clear) }
         )
 
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(columns),
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            contentPadding = PaddingValues(vertical = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // Name input
-            item {
-                TextInput(
-                    label = "Playlist name",
-                    value = state.name
-                ) { viewModel.send(ExplorePlayListsFilterAction.ChangeName(it.orEmpty())) }
+        CenteredContainer(maxWidth = rememberInterfaceMaxWidth()) {
+            Column {
+                InputMenu(columns, state, viewModel)
+
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    Button(
+                        onClick = { viewModel.send(ExplorePlayListsFilterAction.Find) },
+                        modifier = Modifier
+                            .widthIn(max = 300.dp * rememberScaleFactor())
+                            .padding(16.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = AppTheme.PrimaryColor,
+                            contentColor = AppTheme.PrimaryBack
+                        )
+                    ) {
+                        Text("Apply Filter", fontSize = rememberFontSize())
+                    }
+                }
             }
+        }
 
 
-            // CEFR multi-select
-            item {
-                MultiSelect(
-                    items = CEFR.entries.toList(),
-                    selected = state.cefrs,
-                    toLabel = { it.name },
-                    onToggle = { viewModel.send(ExplorePlayListsFilterAction.ToggleCefr(it)) },
-                    label = "CEFR levels",
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
+    }
+}
+
+@Composable
+private fun ColumnScope.InputMenu(
+    columns: Int,
+    state: ExplorePlayListsFilterState,
+    viewModel: ExplorePlayListsFilterViewModel
+) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(columns),
+        modifier = Modifier
+            .weight(1f)
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        contentPadding = PaddingValues(vertical = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // Name input
+        item {
+            TextInput(
+                label = "Playlist name",
+                value = state.name
+            ) { viewModel.send(ExplorePlayListsFilterAction.ChangeName(it.orEmpty())) }
+        }
 
 
-            // Language selector
-            item {
-                SingleSelectInput(
-                    value = state.language,
-                    items = Language.entries.filter { it != Language.UNDEFINED },
-                    label = "Language",
-                    toLabel = { it.titleCase },
-                    showNone = true,
-                    noneLabel = "",
-                    onSelect = { viewModel.send(ExplorePlayListsFilterAction.SetLanguage(it)) }
-                )
-            }
+        // CEFR multi-select
+        item {
+            MultiSelect(
+                items = CEFR.entries.toList(),
+                selected = state.cefrs,
+                toLabel = { it.name },
+                onToggle = { viewModel.send(ExplorePlayListsFilterAction.ToggleCefr(it)) },
+                label = "CEFR levels",
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
 
-            // Translate language selector
-            item {
-                SingleSelectInput(
-                    value = state.translateLanguage,
-                    items = Language.entries.filter { it != Language.UNDEFINED },
-                    label = "Translate language",
-                    toLabel = { it.titleCase },
-                    showNone = true,
-                    noneLabel = "",
-                    onSelect = { viewModel.send(ExplorePlayListsFilterAction.SetTranslateLanguage(it)) }
-                )
-            }
 
-            // Sort selector
-            item(span = { GridItemSpan(maxLineSpan) }) {
+        // Language selector
+        item {
+            SingleSelectInput(
+                value = state.language,
+                items = Language.entries.filter { it != Language.UNDEFINED },
+                label = "Language",
+                toLabel = { it.titleCase },
+                showNone = true,
+                noneLabel = "",
+                onSelect = { viewModel.send(ExplorePlayListsFilterAction.SetLanguage(it)) }
+            )
+        }
+
+        // Translate language selector
+        item {
+            SingleSelectInput(
+                value = state.translateLanguage,
+                items = Language.entries.filter { it != Language.UNDEFINED },
+                label = "Translate language",
+                toLabel = { it.titleCase },
+                showNone = true,
+                noneLabel = "",
+                onSelect = { viewModel.send(ExplorePlayListsFilterAction.SetTranslateLanguage(it)) }
+            )
+        }
+
+        // Sort selector
+        item(span = { GridItemSpan(maxLineSpan) }) {
                 SortSelector(
                     items = PublicPlaylistSortField.entries.toList(),
                     selected = state.sortField,
                     toLabel = { it.name.replace("_", " ").lowercase().replaceFirstChar { c -> c.uppercase() } },
                     showDefault = false,
                     label = "Sort by",
-                    expanded = sortByExpanded,
-                    onExpandedChange = { sortByExpanded = it },
                     onSelect = { it?.let { field -> viewModel.send(ExplorePlayListsFilterAction.SetSortField(field)) } },
                     asc = state.asc,
                     onToggleAsc = { viewModel.send(ExplorePlayListsFilterAction.SetAsc(it)) },
                     expansionMode = ExpansionMode.Dropdown
                 )
-            }
-
-            // Tags input
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    StringListInput(
-                        label = "Add tag",
-                        items = state.tags.toList(),
-                        onItemsChange = { newTags ->
-                            val newTagsSet = newTags?.toSet() ?: emptySet()
-                            // Find removed tags
-                            val removed = state.tags - newTagsSet
-                            removed.forEach { tag ->
-                                viewModel.send(ExplorePlayListsFilterAction.RemoveTag(tag))
-                            }
-                        }
-                    )
-                }
-            }
         }
 
-
-
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-            Button(
-                onClick = { viewModel.send(ExplorePlayListsFilterAction.Find) },
-                modifier = Modifier
-                    .widthIn(max = 300.dp * rememberScaleFactor())
-                    .padding(16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = AppTheme.PrimaryColor,
-                    contentColor = AppTheme.PrimaryBack
+        // Tags input
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                StringListInput(
+                    label = "Add tag",
+                    items = state.tags.toList(),
+                    onItemsChange = { newTags ->
+                        val newTagsSet = newTags?.toSet() ?: emptySet()
+                        // Find removed tags
+                        val removed = state.tags - newTagsSet
+                        removed.forEach { tag ->
+                            viewModel.send(ExplorePlayListsFilterAction.RemoveTag(tag))
+                        }
+                    }
                 )
-            ) {
-                Text("Apply Filter", fontSize = rememberFontSize())
             }
         }
     }
