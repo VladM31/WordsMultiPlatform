@@ -25,14 +25,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.components.AppToolBar
+import vm.words.ua.core.ui.components.CenteredContainer
 import vm.words.ua.core.ui.theme.AppThemeConfig
 import vm.words.ua.core.ui.theme.AppThemes
 import vm.words.ua.core.ui.theme.ThemeManager
 import vm.words.ua.core.ui.theme.rememberCurrentTheme
-import vm.words.ua.core.utils.isNotPhoneFormat
-import vm.words.ua.core.utils.rememberFontSize
-import vm.words.ua.core.utils.rememberLabelFontSize
-import vm.words.ua.core.utils.rememberScaleFactor
+import vm.words.ua.core.utils.*
 import vm.words.ua.navigation.SimpleNavController
 
 @Composable
@@ -55,71 +53,77 @@ fun ThemeScreen(
             onBackClick = { navController.popBackStack() }
         )
 
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(columns),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = modifier.fillMaxSize()
-                .padding(horizontal = 16.dp),
+        CenteredContainer(
+            maxWidth = rememberInterfaceMaxWidth() * 2f,
         ) {
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                Text(
-                    text = "Dark Themes",
-                    color = currentTheme.primaryText,
-                    fontSize = titleSize,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(columns),
+                contentPadding = PaddingValues(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = modifier.fillMaxSize()
+                    .padding(horizontal = 8.dp),
+            ) {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Text(
+                        text = "Dark Themes",
+                        color = currentTheme.primaryText,
+                        fontSize = titleSize,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
 
-            }
-            items(AppThemes.darkThemes) { theme ->
-                ThemeCard(
-                    theme = theme,
-                    isSelected = currentTheme.id == theme.id,
-                    onClick = { ThemeManager.instance.setTheme(theme) }
-                )
-            }
+                }
+                items(AppThemes.darkThemes) { theme ->
+                    ThemeCard(
+                        theme = theme,
+                        isSelected = currentTheme.id == theme.id,
+                        onClick = { ThemeManager.instance.setTheme(theme) }
+                    )
+                }
 
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "Light Themes",
-                    color = currentTheme.primaryText,
-                    fontSize = titleSize,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
-            }
-            items(AppThemes.lightThemes) { theme ->
-                ThemeCard(
-                    theme = theme,
-                    isSelected = currentTheme.id == theme.id,
-                    onClick = { ThemeManager.instance.setTheme(theme) }
-                )
-            }
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "Light Themes",
+                        color = currentTheme.primaryText,
+                        fontSize = titleSize,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                }
+                items(AppThemes.lightThemes) { theme ->
+                    ThemeCard(
+                        theme = theme,
+                        isSelected = currentTheme.id == theme.id,
+                        onClick = { ThemeManager.instance.setTheme(theme) }
+                    )
+                }
 
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "Special Themes",
-                    color = currentTheme.primaryText,
-                    fontSize = titleSize,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
-            }
-            items(listOf(
-                AppThemes.NeonCyberpunk,
-                AppThemes.NeonGreen,
-                AppThemes.NeonOrange,
-                AppThemes.RetroSepia
-            )) { theme ->
-                ThemeCard(
-                    theme = theme,
-                    isSelected = currentTheme.id == theme.id,
-                    onClick = { ThemeManager.instance.setTheme(theme) }
-                )
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "Special Themes",
+                        color = currentTheme.primaryText,
+                        fontSize = titleSize,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                }
+                items(
+                    listOf(
+                        AppThemes.NeonCyberpunk,
+                        AppThemes.NeonGreen,
+                        AppThemes.NeonOrange,
+                        AppThemes.RetroSepia
+                    )
+                ) { theme ->
+                    ThemeCard(
+                        theme = theme,
+                        isSelected = currentTheme.id == theme.id,
+                        onClick = { ThemeManager.instance.setTheme(theme) }
+                    )
+                }
             }
         }
 
