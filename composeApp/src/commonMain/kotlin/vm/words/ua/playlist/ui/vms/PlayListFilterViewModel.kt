@@ -1,5 +1,6 @@
 package vm.words.ua.playlist.ui.vms
 
+import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -9,7 +10,7 @@ import vm.words.ua.playlist.domain.models.filters.PlayListCountFilter
 import vm.words.ua.playlist.ui.actions.PlayListFilterAction
 import vm.words.ua.playlist.ui.states.PlayListFilterState
 
-class PlayListFilterViewModel {
+class PlayListFilterViewModel : ViewModel() {
     private val mutableState = MutableStateFlow(PlayListFilterState())
     val state: StateFlow<PlayListFilterState> = mutableState.asStateFlow()
 
