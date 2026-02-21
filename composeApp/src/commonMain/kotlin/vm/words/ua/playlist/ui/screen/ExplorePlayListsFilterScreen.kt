@@ -7,11 +7,9 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.domain.models.enums.CEFR
@@ -19,9 +17,7 @@ import vm.words.ua.core.domain.models.enums.Language
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.*
 import vm.words.ua.core.utils.isNotPhoneFormat
-import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberInterfaceMaxWidth
-import vm.words.ua.core.utils.rememberScaleFactor
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.playlist.domain.models.enums.PublicPlaylistSortField
@@ -79,23 +75,13 @@ fun ExplorePlayListsFilterScreen(
         )
 
         CenteredContainer(maxWidth = rememberInterfaceMaxWidth()) {
-            Column {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 InputMenu(columns, state, viewModel)
 
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                    Button(
-                        onClick = { viewModel.send(ExplorePlayListsFilterAction.Find) },
-                        modifier = Modifier
-                            .widthIn(max = 300.dp * rememberScaleFactor())
-                            .padding(16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = AppTheme.PrimaryColor,
-                            contentColor = AppTheme.PrimaryBack
-                        )
-                    ) {
-                        Text("Apply Filter", fontSize = rememberFontSize())
-                    }
-                }
+                PrimaryButton(
+                    text = "Find",
+                    onClick = { viewModel.send(ExplorePlayListsFilterAction.Find) }
+                )
             }
         }
 
