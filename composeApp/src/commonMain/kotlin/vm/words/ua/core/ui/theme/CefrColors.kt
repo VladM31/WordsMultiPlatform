@@ -8,7 +8,8 @@ import vm.words.ua.core.ui.AppTheme
 @Composable
 fun CEFR.toColor(): Color {
     return when (this) {
-        CEFR.A1 -> AppTheme.PrimaryColor
+        // Use a slightly toned-down primary color for A1 (beginner) so it's visually distinct but still consistent
+        CEFR.A1 -> AppTheme.PrimaryColorDark
         CEFR.A2 -> AppTheme.PrimaryGreen
         CEFR.B1 -> AppTheme.PrimaryBlue
         CEFR.B2 -> AppTheme.PrimaryViolet

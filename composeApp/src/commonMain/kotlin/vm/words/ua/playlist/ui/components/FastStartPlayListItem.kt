@@ -3,9 +3,12 @@ package vm.words.ua.playlist.ui.components
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
@@ -21,9 +24,9 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppColors
 import vm.words.ua.core.ui.components.TagBadge
+import vm.words.ua.core.ui.theme.toColor
 import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberIconSize
-import vm.words.ua.core.utils.rememberLabelFontSize
 import vm.words.ua.core.utils.rememberScaleFactor
 import vm.words.ua.playlist.domain.models.PlayList
 import vm.words.ua.playlist.domain.models.PlayListCountable
@@ -138,6 +141,11 @@ private fun RowScope.ContentView(
     accentPrimary: Color,
     textMuted: Color
 ) {
+    val scaleFactor = rememberScaleFactor()
+    val arrowIconSize = (10 * scaleFactor).dp
+    val hasLangs = playList.language != null || playList.translateLanguage != null
+    val cefrs = playList.cefrs?.sortedBy { it.ordinal }
+
     Column(modifier = Modifier.weight(1f).padding(end = 8.dp)) {
         Text(
             text = playList.name,
@@ -152,24 +160,49 @@ private fun RowScope.ContentView(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Group 1: word count
             TagBadge("${playList.count} words", accentPrimary)
-            Spacer(modifier = Modifier.width(4.dp))
+
+            // Delimiter 1
+            if (hasLangs) {
+                MetaDot(textMuted)
+            }
+
+            // Group 2: langs (translateLang → lang)
             playList.translateLanguage?.let {
                 TagBadge(it.upperShortName, color = AppColors.secondaryColor)
             }
             if (playList.language != null && playList.translateLanguage != null) {
-                Text(
-                    text = "→",
-                    color = textMuted,
-                    fontSize = rememberLabelFontSize() * 0.9
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                    contentDescription = null,
+                    tint = textMuted,
+                    modifier = Modifier.size(arrowIconSize)
                 )
             }
-
             playList.language?.let {
                 TagBadge(it.upperShortName, color = accentPrimary)
             }
+
+            // Delimiter 2 + CEFRs
+            if (cefrs.isNullOrEmpty().not()) {
+                MetaDot(textMuted)
+                cefrs.forEach { cefr ->
+                    TagBadge(cefr.name, cefr.toColor())
+                }
+            }
         }
     }
+}
+
+@Composable
+private fun MetaDot(color: Color) {
+    val size = (rememberScaleFactor() * 3).dp
+    Box(
+        modifier = Modifier
+            .size(size)
+            .background(color.copy(alpha = 0.4f), CircleShape)
+    )
 }
 
 @Composable

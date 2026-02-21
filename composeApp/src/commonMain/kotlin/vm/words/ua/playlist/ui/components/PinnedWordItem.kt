@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppColors
 import vm.words.ua.core.ui.components.TagBadge
+import vm.words.ua.core.ui.theme.toColor
 import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberScaleFactor
 import vm.words.ua.playlist.domain.models.PlayList
@@ -31,13 +32,11 @@ fun PinnedWordItem(
     val accentPrimary = AppColors.primaryColor
     val accentSecondary = AppColors.secondaryColor
     val textPrimary = AppColors.primaryText
-    val textMuted = AppColors.primaryDisable
     val accentViolet = AppColors.primaryViolet
 
     val scaleFactor = rememberScaleFactor()
     val titleSize = rememberFontSize() * 0.8f
-    val labelSize = titleSize * 0.85f
-    val innerPadding = (12 * scaleFactor).dp
+    val innerPadding = (8 * scaleFactor).dp
     val horizontalPadding = (4 * scaleFactor).dp
     val verticalPadding = (4 * scaleFactor).dp
 
@@ -69,7 +68,7 @@ fun PinnedWordItem(
                     // Left: original word + translation
                     WordMainBox(word, textPrimary, titleSize, accentPrimary)
 
-                    WordDetails(word, accentSecondary, accentViolet)
+                    WordDetails(word)
                 }
 
             }
@@ -87,7 +86,7 @@ private fun RowScope.WordMainBox(
     Column(
         modifier = Modifier
             .weight(1f)
-            .padding(end = 8.dp)
+            .padding(end = 6.dp)
     ) {
         Text(
             text = word.original,
@@ -96,7 +95,7 @@ private fun RowScope.WordMainBox(
             fontWeight = FontWeight.Bold,
             maxLines = 2
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(2.dp))
         Text(
             text = word.translate,
             color = accentPrimary,
@@ -109,17 +108,14 @@ private fun RowScope.WordMainBox(
 
 @Composable
 private fun WordDetails(
-    word: Word,
-    accentSecondary: Color,
-    accentViolet: Color
+    word: Word
 ) {
     Column(
         horizontalAlignment = Alignment.End,
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
 
-        // CEFR badge
-        TagBadge(text = word.cefr.name, color = accentViolet)
+        TagBadge(text = word.cefr.name, color = word.cefr.toColor())
     }
 }
 
