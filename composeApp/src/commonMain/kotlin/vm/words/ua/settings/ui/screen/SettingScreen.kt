@@ -76,7 +76,7 @@ fun SettingScreen(
                 .weight(1f)
         )
         Text(
-            text = "Version " + AppRemoteConfig.version,
+            text = "Version " + AppRemoteConfig.currentVersion,
             color = AppTheme.PrimaryDisable,
             fontSize = rememberFontSize() * 0.5,
             modifier = Modifier.fillMaxWidth(),
