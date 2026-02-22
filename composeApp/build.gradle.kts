@@ -207,8 +207,8 @@ android {
         applicationId = "vm.words.ua"
         minSdk = 24
         targetSdk = 35
-        versionCode = 5
-        versionName = "1.1.0"
+        versionCode = 6
+        versionName = "1.1.1"
 
         ndk {
             abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
@@ -260,7 +260,7 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
 
             packageName = "Words"
-            packageVersion = "1.1.0"
+            packageVersion = "1.1.1"
             description = "Words App"
             vendor = "VM"
 
