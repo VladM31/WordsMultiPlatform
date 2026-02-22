@@ -25,7 +25,9 @@ import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppColors
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
+import vm.words.ua.core.ui.components.CenteredContainer
 import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberInterfaceMaxWidth
 import vm.words.ua.core.utils.rememberScaleFactor
 import vm.words.ua.core.utils.rememberWidthDeviceFormat
 import vm.words.ua.di.rememberInstance
@@ -125,56 +127,58 @@ private fun Content(
     }
 
 
-    LazyColumn(
-        modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        item {
-            Text(
-                text = state.value.currentWord().toText(state.value.exercise),
-                color = AppTheme.PrimaryColor,
-                fontSize = fontSize,
-                textAlign = TextAlign.Center,
-                lineHeight = fontSize * 1.1f,
-                modifier = Modifier
-                    .padding(bottom = 8.dp)
-                    .fillMaxWidth()
-            )
-        }
+    CenteredContainer(maxWidth = rememberInterfaceMaxWidth()) {
+        LazyColumn(
+            modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            item {
+                Text(
+                    text = state.value.currentWord().toText(state.value.exercise),
+                    color = AppTheme.PrimaryColor,
+                    fontSize = fontSize,
+                    textAlign = TextAlign.Center,
+                    lineHeight = fontSize * 1.1f,
+                    modifier = Modifier
+                        .padding(bottom = 8.dp)
+                        .fillMaxWidth()
+                )
+            }
 
-        item {
-            val resultWord = state.value.resultWord
-            val displayWord = if (resultWord.endsWith(defaultEndLetter))
-                resultWord.dropLast(defaultEndLetter.length)
-            else
-                resultWord
-            val showReturnIcon = resultWord.endsWith(defaultEndLetter)
+            item {
+                val resultWord = state.value.resultWord
+                val displayWord = if (resultWord.endsWith(defaultEndLetter))
+                    resultWord.dropLast(defaultEndLetter.length)
+                else
+                    resultWord
+                val showReturnIcon = resultWord.endsWith(defaultEndLetter)
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                Text(text = displayWord, fontSize = fontSize * 1.2f, color = AppTheme.PrimaryColor)
-                if (showReturnIcon) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Outlined.KeyboardReturn,
-                        contentDescription = "Enter",
-                        tint = AppTheme.PrimaryColor,
-                        modifier = Modifier.size(fontSize.value.dp * 1.2f)
-                    )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(text = displayWord, fontSize = fontSize * 1.2f, color = AppTheme.PrimaryColor)
+                    if (showReturnIcon) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Outlined.KeyboardReturn,
+                            contentDescription = "Enter",
+                            tint = AppTheme.PrimaryColor,
+                            modifier = Modifier.size(fontSize.value.dp * 1.2f)
+                        )
+                    }
                 }
             }
-        }
 
-        item {
-            LettersGrid(
-                fontSize = fontSize,
-                letters = state.value.letters,
-                errorLetter = state.value.errorLetter,
-                onClick = { letter, id ->
-                    viewModel.sent(LettersMatchAction.ClickOnLetter(letter, id))
-                }
-            )
+            item {
+                LettersGrid(
+                    fontSize = fontSize,
+                    letters = state.value.letters,
+                    errorLetter = state.value.errorLetter,
+                    onClick = { letter, id ->
+                        viewModel.sent(LettersMatchAction.ClickOnLetter(letter, id))
+                    }
+                )
+            }
         }
     }
 }
@@ -223,14 +227,14 @@ private fun LetterItem(letter: String, fontSize: TextUnit, scale: Float, isError
                     tint = color,
                     modifier = Modifier.size(fontSize.value.dp * 1.3f)
                 )
-            } else {
-                Text(
-                    text = letter,
-                    fontSize = fontSize * 1.3f,
-                    color = color,
-                    fontFamily = FontFamily.Monospace
-                )
+                return@Box
             }
+            Text(
+                text = letter,
+                fontSize = fontSize * 1.3f,
+                color = color,
+                fontFamily = FontFamily.Monospace
+            )
         }
     }
 }
