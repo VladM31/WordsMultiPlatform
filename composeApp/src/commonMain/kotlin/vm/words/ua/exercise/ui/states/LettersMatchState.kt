@@ -23,7 +23,7 @@ data class LettersMatchState(
     override val transactionId: String = "",
     override val exercise: Exercise = Exercise.LETTERS_MATCH_BY_TRANSLATION,
 
-    val wordIndex: Int = 0,
+    override val wordIndex: Int = 0,
     override val words: List<ExerciseWordDetails> = emptyList(),
     val isActiveSubscribe: Boolean = false,
     val isInited: Boolean = false,

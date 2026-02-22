@@ -19,6 +19,8 @@ data class MatchWordsState(
     override val transactionId: String = "",
     override val exercise: Exercise = Exercise.MATCH_WORDS,
 ) : ExerciseState {
+    override val wordIndex: Int get() = grades.size
+
     data class WordBox(
         val id: String,
         val index: Int,

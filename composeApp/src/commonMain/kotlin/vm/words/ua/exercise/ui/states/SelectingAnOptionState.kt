@@ -7,7 +7,7 @@ import vm.words.ua.exercise.ui.utils.isEnableImage
 
 @Immutable
 data class SelectingAnOptionState(
-    val wordIndex: Int = 0,
+    override val wordIndex: Int = 0,
     override val words: List<ExerciseWordDetails> = emptyList(),
     val wordsToChoose: List<ExerciseWordDetails> = emptyList(),
     val isInited: Boolean = false,

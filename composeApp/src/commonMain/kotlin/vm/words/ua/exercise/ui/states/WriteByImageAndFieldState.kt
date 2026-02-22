@@ -6,7 +6,7 @@ import vm.words.ua.exercise.ui.utils.isEnableImage
 
 data class WriteByImageAndFieldState(
     override val words: List<ExerciseWordDetails> = emptyList(),
-    val wordIndex: Int = 0,
+    override val wordIndex: Int = 0,
     val isConfirm: Boolean? = null,
     val wordText: String? = null,
     val isEditEnable: Boolean = true,

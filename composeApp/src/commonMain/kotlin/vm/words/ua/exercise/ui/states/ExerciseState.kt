@@ -9,4 +9,5 @@ interface ExerciseState : EndetableState {
     val exercise: Exercise
     val words: List<ExerciseWordDetails>
     val grades: List<Int>
+    val wordIndex: Int
 }

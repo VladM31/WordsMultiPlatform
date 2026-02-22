@@ -18,10 +18,7 @@ import vm.words.ua.core.utils.rememberScaleFactor
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.exercise.ui.actions.WriteByImageAndFieldAction
 import vm.words.ua.exercise.ui.bundles.ExerciseBundle
-import vm.words.ua.exercise.ui.componets.ExerciseImageView
-import vm.words.ua.exercise.ui.componets.NextButton
-import vm.words.ua.exercise.ui.componets.WordInputPanel
-import vm.words.ua.exercise.ui.componets.calcNextButtonHeight
+import vm.words.ua.exercise.ui.componets.*
 import vm.words.ua.exercise.ui.effects.EndExerciseEffect
 import vm.words.ua.exercise.ui.states.WriteByImageAndFieldState
 import vm.words.ua.exercise.ui.utils.toText
@@ -81,6 +78,8 @@ private fun WriteByImageAndFieldScreen(
                 title = param.currentExercise.text,
                 onBackClick = { navController.popBackStack() }
             )
+
+            ExerciseProgressBar(state = state.value, bundle = param)
 
             // Content area takes remaining space and bounds inner scrollable content
             WriteByImageAndFieldContent(

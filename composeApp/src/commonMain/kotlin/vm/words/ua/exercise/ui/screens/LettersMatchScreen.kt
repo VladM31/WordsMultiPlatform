@@ -33,6 +33,7 @@ import vm.words.ua.core.utils.rememberWidthDeviceFormat
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.exercise.ui.actions.LettersMatchAction
 import vm.words.ua.exercise.ui.bundles.ExerciseBundle
+import vm.words.ua.exercise.ui.componets.ExerciseProgressBar
 import vm.words.ua.exercise.ui.componets.NextButton
 import vm.words.ua.exercise.ui.effects.EndExerciseEffect
 import vm.words.ua.exercise.ui.states.LettersMatchState
@@ -98,6 +99,8 @@ private fun LettersMatchScreen(
                 },
                 showAdditionalButton = true
             )
+
+            ExerciseProgressBar(state = state.value, bundle = param)
 
             // Content area takes remaining space and bounds inner scrollable grid
             Content(state, fontSize, viewModel, modifier = Modifier.weight(1f))

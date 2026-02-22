@@ -22,6 +22,7 @@ import vm.words.ua.exercise.domain.models.data.ExerciseWordDetails
 import vm.words.ua.exercise.ui.actions.SelectingAnOptionAction
 import vm.words.ua.exercise.ui.bundles.ExerciseBundle
 import vm.words.ua.exercise.ui.componets.ExerciseImageView
+import vm.words.ua.exercise.ui.componets.ExerciseProgressBar
 import vm.words.ua.exercise.ui.componets.OptionCard
 import vm.words.ua.exercise.ui.effects.EndExerciseEffect
 import vm.words.ua.exercise.ui.utils.isSoundAfterAnswer
@@ -142,6 +143,8 @@ private fun SelectingAnOptionScreen(
                 title = param.currentExercise.text,
                 onBackClick = { navController.popBackStack() }
             )
+
+            ExerciseProgressBar(state = state.value, bundle = param)
 
             // Loading state — show centered loader and stop further composition of content
             if (state.value.isInited.not()) {

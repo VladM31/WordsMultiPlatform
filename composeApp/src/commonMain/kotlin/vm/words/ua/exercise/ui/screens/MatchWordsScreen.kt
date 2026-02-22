@@ -15,6 +15,7 @@ import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.exercise.ui.actions.MatchWordsAction
 import vm.words.ua.exercise.ui.bundles.ExerciseBundle
+import vm.words.ua.exercise.ui.componets.ExerciseProgressBar
 import vm.words.ua.exercise.ui.componets.MatchWordCard
 import vm.words.ua.exercise.ui.effects.EndExerciseEffect
 import vm.words.ua.exercise.ui.vm.MatchWordsViewModel
@@ -49,6 +50,8 @@ fun MatchWordsScreen(
             title = param.currentExercise.text,
             onBackClick = { navController.popBackStack() }
         )
+
+        ExerciseProgressBar(state = state.value, bundle = param)
 
         Row(
             modifier = Modifier
