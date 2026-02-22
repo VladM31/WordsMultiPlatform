@@ -1,13 +1,11 @@
 package vm.words.ua.exercise.ui.states
 
-import vm.words.ua.core.platform.currentPlatform
-import vm.words.ua.core.platform.isWeb
 import vm.words.ua.exercise.domain.models.data.ExerciseWordDetails
 import vm.words.ua.exercise.domain.models.enums.Exercise
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-val defaultEndLetter: String = if (currentPlatform().isWeb) "↵" else "⏎"
+const val defaultEndLetter: String = "\u23CE"
 
 
 data class LettersMatchState(

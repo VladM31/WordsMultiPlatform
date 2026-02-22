@@ -8,8 +8,10 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.KeyboardReturn
 import androidx.compose.material.icons.outlined.ExposurePlus1
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -32,6 +34,7 @@ import vm.words.ua.exercise.ui.bundles.ExerciseBundle
 import vm.words.ua.exercise.ui.componets.NextButton
 import vm.words.ua.exercise.ui.effects.EndExerciseEffect
 import vm.words.ua.exercise.ui.states.LettersMatchState
+import vm.words.ua.exercise.ui.states.defaultEndLetter
 import vm.words.ua.exercise.ui.utils.toText
 import vm.words.ua.exercise.ui.vm.LettersMatchVm
 import vm.words.ua.navigation.SimpleNavController
@@ -140,7 +143,27 @@ private fun Content(
         }
 
         item {
-            Text(text = state.value.resultWord, fontSize = fontSize * 1.2f, color = AppTheme.PrimaryColor)
+            val resultWord = state.value.resultWord
+            val displayWord = if (resultWord.endsWith(defaultEndLetter))
+                resultWord.dropLast(defaultEndLetter.length)
+            else
+                resultWord
+            val showReturnIcon = resultWord.endsWith(defaultEndLetter)
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(text = displayWord, fontSize = fontSize * 1.2f, color = AppTheme.PrimaryColor)
+                if (showReturnIcon) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Outlined.KeyboardReturn,
+                        contentDescription = "Enter",
+                        tint = AppTheme.PrimaryColor,
+                        modifier = Modifier.size(fontSize.value.dp * 1.2f)
+                    )
+                }
+            }
         }
 
         item {
@@ -193,12 +216,21 @@ private fun LetterItem(letter: String, fontSize: TextUnit, scale: Float, isError
         shadowElevation = 2.dp,
     ) {
         Box(contentAlignment = Alignment.Center) {
-            Text(
-                text = letter,
-                fontSize = fontSize * 1.3f,
-                color = color,
-                fontFamily = FontFamily.Monospace
-            )
+            if (letter == defaultEndLetter) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Outlined.KeyboardReturn,
+                    contentDescription = "Enter",
+                    tint = color,
+                    modifier = Modifier.size(fontSize.value.dp * 1.3f)
+                )
+            } else {
+                Text(
+                    text = letter,
+                    fontSize = fontSize * 1.3f,
+                    color = color,
+                    fontFamily = FontFamily.Monospace
+                )
+            }
         }
     }
 }
