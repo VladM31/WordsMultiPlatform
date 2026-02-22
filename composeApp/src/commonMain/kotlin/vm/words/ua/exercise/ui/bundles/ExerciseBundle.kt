@@ -11,6 +11,8 @@ data class ExerciseBundle(
 
     val transactionId: String = "",
     val isActiveSubscribe: Boolean = false,
+
+    val accumulatedResults: List<WordGradeResult> = emptyList(),
 ) {
 
     val currentExercise: Exercise
@@ -22,11 +24,12 @@ data class ExerciseBundle(
     val isLast: Boolean
         get() = number >= exercises.size - 1
 
-    fun toNext(words: List<ExerciseWordDetails>): ExerciseBundle {
+    fun toNext(words: List<ExerciseWordDetails>, newResults: List<WordGradeResult> = emptyList()): ExerciseBundle {
         val newNumber = number + 1
         return copy(
             number = newNumber,
-            words = words
+            words = words,
+            accumulatedResults = accumulatedResults + newResults
         )
     }
 

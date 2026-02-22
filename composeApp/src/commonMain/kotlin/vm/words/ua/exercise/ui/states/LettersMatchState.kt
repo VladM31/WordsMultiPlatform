@@ -18,7 +18,7 @@ data class LettersMatchState(
     val grade: Int = 3,
     val attempts: Int = 0,
     val errorLetter: ErrorLetter? = null,
-    val grades: List<Int> = emptyList(),
+    override val grades: List<Int> = emptyList(),
 
     override val transactionId: String = "",
     override val exercise: Exercise = Exercise.LETTERS_MATCH_BY_TRANSLATION,

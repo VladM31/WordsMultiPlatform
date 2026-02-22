@@ -8,4 +8,5 @@ interface ExerciseState : EndetableState {
     val transactionId: String
     val exercise: Exercise
     val words: List<ExerciseWordDetails>
+    val grades: List<Int>
 }

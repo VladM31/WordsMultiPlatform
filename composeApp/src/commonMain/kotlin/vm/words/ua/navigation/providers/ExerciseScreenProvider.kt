@@ -1,16 +1,7 @@
 package vm.words.ua.navigation.providers
 
 import androidx.compose.runtime.Composable
-import vm.words.ua.exercise.ui.screens.DescriptionByWordsScreen
-import vm.words.ua.exercise.ui.screens.ExerciseSelectionScreen
-import vm.words.ua.exercise.ui.screens.LetterMatchByDescriptionScreen
-import vm.words.ua.exercise.ui.screens.LetterMatchByTranslationScreen
-import vm.words.ua.exercise.ui.screens.MatchWordsScreen
-import vm.words.ua.exercise.ui.screens.WordByDescriptionsScreen
-import vm.words.ua.exercise.ui.screens.WordByOriginalsScreen
-import vm.words.ua.exercise.ui.screens.WordByTranslatesScreen
-import vm.words.ua.exercise.ui.screens.WriteByImageAndDescriptionScreen
-import vm.words.ua.exercise.ui.screens.WriteByImageAndTranslationScreen
+import vm.words.ua.exercise.ui.screens.*
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.ScreenProvider
 
@@ -59,6 +50,10 @@ class ExerciseScreenProvider : ScreenProvider {
 
             Screen.MatchWords.route -> {
                 MatchWordsScreen(navController = navController)
+            }
+
+            Screen.ExerciseResult.route -> {
+                ExerciseResultScreen(navController = navController)
             }
 
             else -> {

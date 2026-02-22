@@ -36,7 +36,6 @@ class MatchWordsViewModel(
             mutableState.value.copy(translate = wordBox)
         }
 
-        // Ждем выбора обоих слов
         if (newState.original == null || newState.translate == null) {
             mutableState.value = newState
             return
@@ -54,6 +53,7 @@ class MatchWordsViewModel(
             translateWords[newState.translate.index] = translateWords[newState.translate.index].copy(position = position)
 
             val isEnd = position == newState.words.size - 1
+            val grade = if (newState.attempts == 0) 1 else 0
 
             val completedWord = newState.toWordCompleted()
             viewModelScope.launch(Dispatchers.Default) {
@@ -66,6 +66,7 @@ class MatchWordsViewModel(
                 originalWords = originalWords.sorted(),
                 translateWords = translateWords.sorted(),
                 isEnd = isEnd,
+                grades = newState.grades + grade,
                 attempts = 0
             )
             return

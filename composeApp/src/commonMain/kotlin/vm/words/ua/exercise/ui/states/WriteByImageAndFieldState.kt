@@ -15,7 +15,7 @@ data class WriteByImageAndFieldState(
     val isInited: Boolean = false,
     val isActiveSubscribe: Boolean = false,
     val attempts: Int = 0,
-    val grades: List<Int> = emptyList(),
+    override val grades: List<Int> = emptyList(),
     override val exercise: Exercise = Exercise.WORD_BY_WRITE_TRANSLATE
 ) : ExerciseState {
     fun currentWord() = words[wordIndex]

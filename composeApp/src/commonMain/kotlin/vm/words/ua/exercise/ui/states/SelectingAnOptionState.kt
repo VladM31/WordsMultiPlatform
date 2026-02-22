@@ -15,7 +15,7 @@ data class SelectingAnOptionState(
     override val isEnd: Boolean = false,
     val waitNext: Boolean = false,
     val isCorrect: Boolean? = null,
-    val grades: List<Int> = emptyList(),
+    override val grades: List<Int> = emptyList(),
     override val exercise: Exercise = Exercise.WORD_BY_ORIGINALS,
     override val transactionId: String = "",
     val isSoundBeforeAnswer: Boolean = false,

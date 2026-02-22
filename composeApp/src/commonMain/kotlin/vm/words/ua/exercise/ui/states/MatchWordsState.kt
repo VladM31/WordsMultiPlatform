@@ -13,6 +13,7 @@ data class MatchWordsState(
     val isInited: Boolean = false,
     val attempts: Int = 0,
     override val isEnd: Boolean = false,
+    override val grades: List<Int> = emptyList(),
     val original: WordBox? = null,
     val translate: WordBox? = null,
     override val transactionId: String = "",
