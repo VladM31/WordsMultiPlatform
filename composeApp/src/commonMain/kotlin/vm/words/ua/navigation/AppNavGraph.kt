@@ -8,6 +8,7 @@ import vm.words.ua.core.analytics.Analytics
 import vm.words.ua.core.platform.AppPlatform
 import vm.words.ua.core.platform.currentPlatform
 import vm.words.ua.core.ui.components.SwipeHandler
+import vm.words.ua.core.ui.components.SwipeProvider
 import vm.words.ua.core.ui.screen.LoaderScreen
 import vm.words.ua.core.ui.screen.UpdateScreen
 import vm.words.ua.di.DiContainer
@@ -69,42 +70,18 @@ fun AppNavGraph() {
 
     BackHandler(navController = navController)
 
-    // Initialize swipe overrides for all directions
-    val swipeRightOverride = remember { mutableStateOf<(() -> Unit)?>(null) }
-    val swipeLeftOverride = remember { mutableStateOf<(() -> Unit)?>(null) }
-    val swipeUpOverride = remember { mutableStateOf<(() -> Unit)?>(null) }
-    val swipeDownOverride = remember { mutableStateOf<(() -> Unit)?>(null) }
 
-    LaunchedEffect(route) {
-        swipeRightOverride.value = null
-        swipeLeftOverride.value = null
-        swipeUpOverride.value = null
-        swipeDownOverride.value = null
-    }
-
-    CompositionLocalProvider(
-        LocalSwipeRightOverride provides swipeRightOverride,
-        LocalSwipeLeftOverride provides swipeLeftOverride,
-        LocalSwipeUpOverride provides swipeUpOverride,
-        LocalSwipeDownOverride provides swipeDownOverride
-    ) {
-        SwipeHandler(
-            modifier = Modifier.fillMaxSize(),
-            onSwipeRight = swipeRightOverride.value,
-            onSwipeLeft = swipeLeftOverride.value,
-            onSwipeUp = swipeUpOverride.value,
-            onSwipeDown = swipeDownOverride.value
-        ) {
-            if (route == Screen.UpdateApp.route) {
-                 UpdateScreen(navController = navController)
-                    return@SwipeHandler
-            }
-            val handled = providers.any { provider ->
-                provider.provide(route, navController)
-            }
-            if (!handled) {
-                LoaderScreen(isInitiated = true) {}
-            }
+    SwipeProvider(route){
+        if (route == Screen.UpdateApp.route) {
+            UpdateScreen(navController = navController)
+            return@SwipeProvider
+        }
+        val handled = providers.any { provider ->
+            provider.provide(route, navController)
+        }
+        if (!handled) {
+            LoaderScreen(isInitiated = true) {}
         }
     }
+
 }
