@@ -1,13 +1,11 @@
 package vm.words.ua.navigation
 
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
+import vm.words.ua.core.ui.animation.NavTransition
 import org.kodein.di.instance
 import vm.words.ua.core.analytics.Analytics
 import vm.words.ua.core.platform.AppPlatform
 import vm.words.ua.core.platform.currentPlatform
-import vm.words.ua.core.ui.components.SwipeHandler
 import vm.words.ua.core.ui.components.SwipeProvider
 import vm.words.ua.core.ui.screen.LoaderScreen
 import vm.words.ua.core.ui.screen.UpdateScreen
@@ -70,18 +68,21 @@ fun AppNavGraph() {
 
     BackHandler(navController = navController)
 
-
-    SwipeProvider(route){
-        if (route == Screen.UpdateApp.route) {
-            UpdateScreen(navController = navController)
-            return@SwipeProvider
-        }
-        val handled = providers.any { provider ->
-            provider.provide(route, navController)
-        }
-        if (!handled) {
-            LoaderScreen(isInitiated = true) {}
+    NavTransition(
+        route = route,
+        isNavigatingBack = navController.isNavigatingBack
+    ) { currentAnimatedRoute ->
+        SwipeProvider(currentAnimatedRoute) {
+            if (currentAnimatedRoute == Screen.UpdateApp.route) {
+                UpdateScreen(navController = navController)
+                return@SwipeProvider
+            }
+            val handled = providers.any { provider ->
+                provider.provide(currentAnimatedRoute, navController)
+            }
+            if (!handled) {
+                LoaderScreen(isInitiated = true) {}
+            }
         }
     }
-
 }

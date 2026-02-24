@@ -59,12 +59,14 @@ fun PlayListScreen(
             title = "Your Playlists",
             showBackButton = true,
             onBackClick = { showCreateDialog = true },
+            onLeftSwipe = null,
             backButtonVector = Icons.Outlined.Add,
             showAdditionalButton = true,
             onAdditionalClick = {
                 navController.navigate(Screen.PlayListFilter, state.filter)
             },
-            additionalButtonVector = Icons.Outlined.Search
+            additionalButtonVector = Icons.Outlined.Search,
+
         )
 
         if (showCreateDialog) {

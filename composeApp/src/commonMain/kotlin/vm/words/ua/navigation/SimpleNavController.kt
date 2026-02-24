@@ -25,6 +25,9 @@ class SimpleNavController {
     var isLastScreen by mutableStateOf(true)
         private set
 
+    var isNavigatingBack by mutableStateOf(false)
+        private set
+
     private fun updateIsLastScreen() {
         isLastScreen = backStack.isEmpty()
 //        println("BackStack: ${backStack.joinToString(" -> ")} | Current: $currentRoute | isLastScreen: $isLastScreen, backStack = ${backStack}")
@@ -65,6 +68,7 @@ class SimpleNavController {
     }
 
     private fun navigate(route: String, param: Any?) {
+        isNavigatingBack = false
         backStack.add(currentRoute)
         currentRoute = route
         navigateParams[route] = param
@@ -81,6 +85,7 @@ class SimpleNavController {
     fun navigateAndClearCurrent(route: String, param: Any? = null) {
 
         val poppedRoute = currentRoute
+        isNavigatingBack = false
         currentRoute = route
         navigateParams[route] = param
 
@@ -90,6 +95,7 @@ class SimpleNavController {
     }
 
     fun navigateAndClear(route: String) {
+        isNavigatingBack = false
         backStack.clear()
         navigateParams.clear()
         returnParams.clear()
@@ -110,6 +116,7 @@ class SimpleNavController {
             val poppedRoute = currentRoute
             val previousRoute = backStack.last()
 
+            isNavigatingBack = true
             returnParams[previousRoute] = returnParam
             currentRoute = backStack.removeAt(backStack.lastIndex)
 
@@ -139,6 +146,7 @@ class SimpleNavController {
             if (returnParam != null) {
                 returnParams[previousRoute] = returnParam
             }
+            isNavigatingBack = true
             currentRoute = backStack.removeAt(backStack.lastIndex)
             // Clear VMs for removed history routes and the popped current route
             removedRoutes.forEach { clearViewModelStoreOwner(it) }
@@ -147,6 +155,7 @@ class SimpleNavController {
             true
         } else {
             val poppedRoute = currentRoute
+            isNavigatingBack = true
             currentRoute = "loader"
             backStack.clear()
             // Clear all VM stores including the previously current and any removed

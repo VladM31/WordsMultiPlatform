@@ -284,14 +284,17 @@ fun AppToolBar(
     title: String,
     navController: SimpleNavController,
     modifier: Modifier = Modifier,
+    onLeftSwipe: (() -> Unit)? = null,
     onAdditionalClick: (() -> Unit)? = null,
     showBackButton: Boolean = true,
     showAdditionalButton: Boolean = false
 ) {
+    val swipe : (() -> Unit) = onLeftSwipe ?: { navController.popBackStack() }
     AppToolBar(
         title = title,
         modifier = modifier,
         onBackClick = { navController.popBackStack() },
+        onLeftSwipe = swipe,
         onAdditionalClick = onAdditionalClick,
         showBackButton = showBackButton,
         showAdditionalButton = showAdditionalButton
