@@ -27,7 +27,6 @@ import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.utils.getScaleFactor
 import vm.words.ua.core.utils.rememberInterfaceMaxWidth
-import vm.words.ua.navigation.LocalSwipeRightOverride
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.utils.hints.ui.utils.ViewHintStep
 import vm.words.ua.utils.hints.ui.utils.viewHint
@@ -57,7 +56,7 @@ fun AppToolBar(
     modifier: Modifier = Modifier,
     backButtonVector: ImageVector? = null,
     onBackClick: (() -> Unit)? = null,
-    onLeftSwipe: (() -> Unit)? = onBackClick,
+    onRightSwipe: (() -> Unit)? = onBackClick,
     onAdditionalClick: (() -> Unit)? = null,
     showBackButton: Boolean = true,
     showAdditionalButton: Boolean = false,
@@ -67,13 +66,7 @@ fun AppToolBar(
     additionalButtonStepHint: ViewHintStep? = null,
     additionalButtonTooltip: AdditionalButtonTooltip? = null,
 ) {
-    val swipeOverride = LocalSwipeRightOverride.current
-    DisposableEffect(onLeftSwipe) {
-        onDispose { swipeOverride.value = null }
-    }
-    LaunchedEffect(onLeftSwipe){
-        swipeOverride.value = onLeftSwipe
-    }
+    SwipeListener(onSwipeRight = onRightSwipe)
 
     BoxWithConstraints(
         modifier = modifier
@@ -294,7 +287,7 @@ fun AppToolBar(
         title = title,
         modifier = modifier,
         onBackClick = { navController.popBackStack() },
-        onLeftSwipe = swipe,
+        onRightSwipe = swipe,
         onAdditionalClick = onAdditionalClick,
         showBackButton = showBackButton,
         showAdditionalButton = showAdditionalButton

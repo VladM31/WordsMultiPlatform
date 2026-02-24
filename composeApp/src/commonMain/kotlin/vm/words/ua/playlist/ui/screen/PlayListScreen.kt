@@ -59,7 +59,7 @@ fun PlayListScreen(
             title = "Your Playlists",
             showBackButton = true,
             onBackClick = { showCreateDialog = true },
-            onLeftSwipe = null,
+            onRightSwipe = null,
             backButtonVector = Icons.Outlined.Add,
             showAdditionalButton = true,
             onAdditionalClick = {
