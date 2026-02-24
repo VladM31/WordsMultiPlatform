@@ -38,10 +38,11 @@ import vm.words.ua.core.utils.rememberScaleFactor
 import vm.words.ua.exercise.ui.bundles.ExerciseResultBundle
 import vm.words.ua.exercise.ui.bundles.WordGradeResult
 import vm.words.ua.navigation.SimpleNavController
+import vm.words.ua.navigation.rememberParamOrThrow
 
 @Composable
 fun ExerciseResultScreen(navController: SimpleNavController) {
-    val bundle = navController.getParamOrThrow<ExerciseResultBundle>()
+    val bundle = navController.rememberParamOrThrow<ExerciseResultBundle>()
     val fontSize = rememberFontSize()
 
     val resultsByExercise = remember(bundle) {

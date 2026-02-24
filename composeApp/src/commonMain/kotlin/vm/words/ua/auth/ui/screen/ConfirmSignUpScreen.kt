@@ -30,6 +30,7 @@ import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
+import vm.words.ua.navigation.rememberParamOrThrow
 
 @Composable
 fun ConfirmSignUpScreen(
@@ -40,7 +41,7 @@ fun ConfirmSignUpScreen(
     val scrollState = rememberScrollState()
     val uriHandler = LocalUriHandler.current
     val state = viewModel.state.collectAsState()
-    val bundle = navController.getParamOrThrow<ConfirmSignBundle>()
+    val bundle = navController.rememberParamOrThrow<ConfirmSignBundle>()
 
     LaunchedEffect(state.value.waitResult) {
         if (state.value.waitResult.not()) {

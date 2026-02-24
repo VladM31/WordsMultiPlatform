@@ -20,6 +20,7 @@ import vm.words.ua.exercise.ui.componets.MatchWordCard
 import vm.words.ua.exercise.ui.effects.EndExerciseEffect
 import vm.words.ua.exercise.ui.vm.MatchWordsViewModel
 import vm.words.ua.navigation.SimpleNavController
+import vm.words.ua.navigation.rememberParamOrThrow
 
 @Composable
 fun MatchWordsScreen(
@@ -27,7 +28,7 @@ fun MatchWordsScreen(
     navController: SimpleNavController
 ) {
     val state = viewModel.state.collectAsState()
-    val param = navController.getParamOrThrow<ExerciseBundle>()
+    val param = navController.rememberParamOrThrow<ExerciseBundle>()
     val fontSize = rememberFontSize()
 
     LaunchedEffect(Unit) {

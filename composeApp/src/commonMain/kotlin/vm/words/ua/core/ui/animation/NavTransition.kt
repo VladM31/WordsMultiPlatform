@@ -11,10 +11,15 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import vm.words.ua.core.platform.AppPlatform
+import vm.words.ua.core.platform.currentPlatform
 
 private const val ENTER_DURATION = 220
 private const val EXIT_DURATION = 160
+private const val ENTER_DURATION_ANDROID = 280
+private const val EXIT_DURATION_ANDROID = 200
 private const val SCALE_INITIAL = 0.94f
 private const val SCALE_TARGET = 0.97f
 
@@ -27,14 +32,22 @@ fun NavTransition(
     modifier: Modifier = Modifier.fillMaxSize(),
     content: @Composable (currentRoute: String) -> Unit
 ) {
-    val enterSpec = tween<Float>(durationMillis = ENTER_DURATION, easing = FastOutSlowInEasing)
-    val exitSpec = tween<Float>(durationMillis = EXIT_DURATION, easing = FastOutLinearInEasing)
+    val isAndroid = remember { currentPlatform() == AppPlatform.ANDROID }
+
+    val enterDuration = if (isAndroid) ENTER_DURATION_ANDROID else ENTER_DURATION
+    val exitDuration = if (isAndroid) EXIT_DURATION_ANDROID else EXIT_DURATION
+
+    val enterSpec = tween<Float>(durationMillis = enterDuration, easing = FastOutSlowInEasing)
+    val exitSpec = tween<Float>(durationMillis = exitDuration, easing = FastOutLinearInEasing)
 
     AnimatedContent(
         targetState = NavState(route, isNavigatingBack),
         transitionSpec = {
             val isBack = targetState.isBack
-            if (isBack) {
+            if (isAndroid) {
+                // On Android (MIUI/HyperOS) skip scale — only smooth fade
+                fadeIn(enterSpec) togetherWith fadeOut(exitSpec)
+            } else if (isBack) {
                 fadeIn(enterSpec) togetherWith
                         (fadeOut(exitSpec) + scaleOut(exitSpec, targetScale = SCALE_TARGET))
             } else {

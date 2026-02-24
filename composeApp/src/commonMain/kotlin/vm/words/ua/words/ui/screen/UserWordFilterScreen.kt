@@ -17,6 +17,7 @@ import vm.words.ua.core.utils.isNotPhoneFormat
 import vm.words.ua.core.utils.rememberInterfaceMaxWidth
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
+import vm.words.ua.navigation.rememberParamOrThrow
 import vm.words.ua.words.domain.models.enums.UserWordSortBy
 import vm.words.ua.words.domain.models.filters.UserWordFilter
 import vm.words.ua.words.ui.actions.UserWordFilterAction
@@ -36,7 +37,7 @@ fun UserWordFilterScreen(
     // Local UI states
     var sortByExpanded by remember { mutableStateOf(false) }
 
-    val bundle = navController.getParamOrThrow<UserWordFilterBundle>();
+    val bundle = navController.rememberParamOrThrow<UserWordFilterBundle>()
 
     // Initialize with current filter
     LaunchedEffect(Unit) {

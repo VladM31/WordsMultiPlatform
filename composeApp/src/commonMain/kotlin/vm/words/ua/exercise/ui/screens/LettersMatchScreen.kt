@@ -41,6 +41,7 @@ import vm.words.ua.exercise.ui.states.defaultEndLetter
 import vm.words.ua.exercise.ui.utils.toText
 import vm.words.ua.exercise.ui.vm.LettersMatchVm
 import vm.words.ua.navigation.SimpleNavController
+import vm.words.ua.navigation.rememberParamOrThrow
 
 @Composable
 fun LetterMatchByDescriptionScreen(
@@ -70,7 +71,7 @@ private fun LettersMatchScreen(
     navController: SimpleNavController,
 ) {
     val state = viewModel.state.collectAsState()
-    val param = navController.getParamOrThrow<ExerciseBundle>()
+    val param = navController.rememberParamOrThrow<ExerciseBundle>()
     val fontSize = rememberFontSize()
 
 

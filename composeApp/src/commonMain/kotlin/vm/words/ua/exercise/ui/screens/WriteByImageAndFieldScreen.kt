@@ -24,6 +24,7 @@ import vm.words.ua.exercise.ui.states.WriteByImageAndFieldState
 import vm.words.ua.exercise.ui.utils.toText
 import vm.words.ua.exercise.ui.vm.WriteByImageAndFieldVm
 import vm.words.ua.navigation.SimpleNavController
+import vm.words.ua.navigation.rememberParamOrThrow
 
 
 @Composable
@@ -54,7 +55,7 @@ private fun WriteByImageAndFieldScreen(
     navController: SimpleNavController,
 ) {
     val state = viewModel.state.collectAsState()
-    val param = navController.getParamOrThrow<ExerciseBundle>()
+    val param = navController.rememberParamOrThrow<ExerciseBundle>()
     val fontSize = rememberFontSize()
 
 

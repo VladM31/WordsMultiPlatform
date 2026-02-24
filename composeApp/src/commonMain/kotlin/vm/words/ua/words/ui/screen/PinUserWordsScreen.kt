@@ -31,6 +31,7 @@ import vm.words.ua.core.utils.rememberScaleFactor
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
+import vm.words.ua.navigation.rememberParamOrThrow
 import vm.words.ua.playlist.domain.models.bundles.PlayListDetailsBundle
 import vm.words.ua.playlist.ui.components.SelectPlayListDialog
 import vm.words.ua.words.ui.actions.PinUserWordsAction
@@ -48,7 +49,7 @@ fun PinUserWordsScreen(
     val viewModel = rememberInstance<PinUserWordsViewModel>()
     val state by viewModel.state.collectAsState()
 
-    val bundle = navController.getParamOrThrow<PinUserWordsBundle>()
+    val bundle = navController.rememberParamOrThrow<PinUserWordsBundle>()
 
     var showPlayListSelector by remember { mutableStateOf(false) }
 

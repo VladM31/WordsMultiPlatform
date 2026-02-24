@@ -31,6 +31,7 @@ import vm.words.ua.exercise.ui.utils.toOptionText
 import vm.words.ua.exercise.ui.utils.toText
 import vm.words.ua.exercise.ui.vm.SelectingAnOptionVm
 import vm.words.ua.navigation.SimpleNavController
+import vm.words.ua.navigation.rememberParamOrThrow
 
 @Composable
 fun WordByTranslatesScreen(navController: SimpleNavController) {
@@ -61,7 +62,7 @@ private fun SelectingAnOptionScreen(
     val scroll = rememberScrollState()
     val state = viewModel.state.collectAsState()
     val isPhoneFormat = rememberWidthDeviceFormat().isPhone
-    val param = navController.getParamOrThrow<ExerciseBundle>()
+    val param = navController.rememberParamOrThrow<ExerciseBundle>()
     val fontSize = rememberFontSize()
 
     val toText = { word: ExerciseWordDetails ->

@@ -72,16 +72,18 @@ fun AppNavGraph() {
         route = route,
         isNavigatingBack = navController.isNavigatingBack
     ) { currentAnimatedRoute ->
-        SwipeProvider(currentAnimatedRoute) {
-            if (currentAnimatedRoute == Screen.UpdateApp.route) {
-                UpdateScreen(navController = navController)
-                return@SwipeProvider
-            }
-            val handled = providers.any { provider ->
-                provider.provide(currentAnimatedRoute, navController)
-            }
-            if (!handled) {
-                LoaderScreen(isInitiated = true) {}
+        CompositionLocalProvider(LocalCurrentRoute provides currentAnimatedRoute) {
+            SwipeProvider(currentAnimatedRoute) {
+                if (currentAnimatedRoute == Screen.UpdateApp.route) {
+                    UpdateScreen(navController = navController)
+                    return@SwipeProvider
+                }
+                val handled = providers.any { provider ->
+                    provider.provide(currentAnimatedRoute, navController)
+                }
+                if (!handled) {
+                    LoaderScreen(isInitiated = true) {}
+                }
             }
         }
     }

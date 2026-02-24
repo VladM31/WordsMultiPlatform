@@ -31,6 +31,7 @@ import vm.words.ua.exercise.ui.componets.ExerciseItemSelected
 import vm.words.ua.exercise.ui.componets.ExerciseItemUnselected
 import vm.words.ua.exercise.ui.vm.ExerciseSelectionViewModel
 import vm.words.ua.navigation.SimpleNavController
+import vm.words.ua.navigation.rememberParamOrThrow
 import kotlin.time.Duration.Companion.seconds
 
 
@@ -41,7 +42,7 @@ fun ExerciseSelectionScreen(
     val viewModel: ExerciseSelectionViewModel = rememberInstance<ExerciseSelectionViewModel>()
     val state by viewModel.state.collectAsState()
     val fontSize = rememberFontSize()
-    val bundle = navController.getParamOrThrow<ExerciseSelectionBundle>() // Adjust the type as needed
+    val bundle = navController.rememberParamOrThrow<ExerciseSelectionBundle>()
 
 
     LaunchedEffect(state.isConfirmed) {
