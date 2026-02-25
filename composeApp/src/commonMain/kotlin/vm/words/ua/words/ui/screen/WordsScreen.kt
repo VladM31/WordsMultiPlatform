@@ -79,7 +79,7 @@ fun WordsScreen(
             listState = listState,
             isLoading = state.isLoading,
             toKey = { content, index -> content[index].id },
-            toItem = { index, item ->
+            toItem = { _, item ->
                 WordItem(
                     word = item,
                     isSelected = state.selectedWords.contains(item.id),

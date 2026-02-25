@@ -73,7 +73,7 @@ fun HomeScreen(
     }
     SwipeListener(
         onSwipeDown = { navController.navigate(Screen.FastStart) },
-        onSwipeUp = { navController.navigate(Screen.Instruction) },
+        onSwipeUp = { navController.navigate(Screen.ExplorePlayLists) },
         onSwipeRight = { navController.navigate(Screen.PlayList) },
         onSwipeLeft = { navController.navigate(Screen.Settings) }
     )
