@@ -44,6 +44,7 @@ import vm.words.ua.core.ui.theme.toColor
 import vm.words.ua.core.utils.*
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
+import vm.words.ua.navigation.rememberParamOrThrow
 import vm.words.ua.words.domain.models.UserWord
 import vm.words.ua.words.domain.models.Word
 import vm.words.ua.words.ui.actions.UserWordsAction
@@ -59,7 +60,7 @@ fun WordDetailsScreen(
     navController: SimpleNavController,
     modifier: Modifier = Modifier
 ) {
-    val bundle = navController.getParam<WordDetailsBundle>() ?: throw IllegalStateException()
+    val bundle = navController.rememberParamOrThrow<WordDetailsBundle>()
     val userWord: UserWord? = bundle.userWord
     val word: Word = bundle.word
 

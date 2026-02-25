@@ -17,3 +17,10 @@ inline fun <reified T> SimpleNavController.rememberParamOrThrow(): T {
     }
 }
 
+@Composable
+inline fun <reified T> SimpleNavController.rememberParam(): T? {
+    val route = LocalCurrentRoute.current
+    return remember(route) {
+        getParam(route)
+    }
+}
