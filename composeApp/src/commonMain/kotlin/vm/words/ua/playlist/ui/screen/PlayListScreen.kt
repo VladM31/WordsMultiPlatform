@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.BottomNavBar
+import vm.words.ua.core.ui.components.SwipeListener
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
@@ -91,4 +92,8 @@ fun PlayListScreen(
             onNavigate = { route -> navController.navigateAndClear(route) }
         )
     }
+
+    SwipeListener(
+        onSwipeLeft = { navController.navigate(Screen.Home) }
+    )
 }

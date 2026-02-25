@@ -21,6 +21,7 @@ import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.BottomNavBar
 import vm.words.ua.core.ui.components.ButtonsGrid
 import vm.words.ua.core.ui.components.GridButtonItem
+import vm.words.ua.core.ui.components.SwipeListener
 import vm.words.ua.core.utils.appHeightDp
 import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.di.DiContainer
@@ -85,6 +86,10 @@ fun SettingScreen(
 
         BottomNavBar(currentRoute = Screen.Settings, onNavigate = { route -> navController.navigateAndClear(route) })
     }
+
+    SwipeListener(
+        onSwipeRight = { navController.navigate(Screen.Home) }
+    )
 }
 
 

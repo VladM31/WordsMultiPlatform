@@ -17,6 +17,7 @@ import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.BottomNavBar
 import vm.words.ua.core.ui.components.ButtonsGrid
 import vm.words.ua.core.ui.components.GridButtonItem
+import vm.words.ua.core.ui.components.SwipeListener
 import vm.words.ua.core.utils.appHeightDp
 import vm.words.ua.main.ui.hints.HomeScreenHintController
 import vm.words.ua.main.ui.hints.HomeScreenHintStep
@@ -70,6 +71,12 @@ fun HomeScreen(
             }
         }
     }
+    SwipeListener(
+        onSwipeDown = { navController.navigate(Screen.FastStart) },
+        onSwipeUp = { navController.navigate(Screen.Instruction) },
+        onSwipeRight = { navController.navigate(Screen.PlayList) },
+        onSwipeLeft = { navController.navigate(Screen.Settings) }
+    )
 }
 
 @Composable
