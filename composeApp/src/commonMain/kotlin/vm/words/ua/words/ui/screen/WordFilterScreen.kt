@@ -44,7 +44,8 @@ fun WordFilterScreen(
     val bundle = navController.getParam<WordFilterBundle>();
 
     // Initialize with current filter
-    LaunchedEffect(Unit) {
+    LaunchedEffect(bundle) {
+        println("WordFilterScreen: LaunchedEffect with bundle: $bundle")
         bundle?.let {
             viewModel.sent(
                 WordFilterAction.Init(

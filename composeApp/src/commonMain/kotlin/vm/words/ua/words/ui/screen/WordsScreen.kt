@@ -42,6 +42,7 @@ fun WordsScreen(
     // Check for returned filter from WordFilterScreen
     LaunchedEffect(navController.currentRoute) {
         navController.getReturnParam<WordFilterBundle>()?.let {
+            println("WordsScreen: Received filter from WordFilterScreen: ${it.filter}")
             viewModel.sent(
                 WordsAction.UpdateFilter(
                     filter = it.filter

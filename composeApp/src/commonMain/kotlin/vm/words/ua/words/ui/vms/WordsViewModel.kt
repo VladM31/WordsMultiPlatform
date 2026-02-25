@@ -93,7 +93,9 @@ class WordsViewModel(
             return
         }
         mutableState.value = state.value.copy(
-            filter = action.filter,
+            filter = action.filter.copy(
+                userId = state.value.filter.userId,
+            ),
             currentPage = 0,
             hasMore = true,
             words = listOf(),
