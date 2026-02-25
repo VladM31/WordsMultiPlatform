@@ -47,7 +47,7 @@ class FastStartPlayListVm(
 
             mutableState.update { state ->
                 state.copy(
-                    type = yourPlayListWaiter.await().isNotEmpty()
+                    visibility = yourPlayListWaiter.await().isNotEmpty()
                         .let { if (it) PlayListType.YOUR else PlayListType.PUBLIC },
                     disabledTypes = disabledTypes,
                     playListByType = mapOf(
@@ -114,13 +114,13 @@ class FastStartPlayListVm(
 
     private fun handleStart(action: FastStartPlayListAction.Start) {
         val words = state.value.words(action.playListId)
-        if (words.isNotEmpty() && state.value.type == PlayListType.YOUR) {
+        if (words.isNotEmpty() && state.value.visibility == PlayListType.YOUR) {
             mutableState.update {
                 it.copy(selectedPlayListId = action.playListId)
             }
             return
         }
-        val type = state.value.type
+        val type = state.value.visibility
         mutableState.update {
             it.copy(isLoading = true)
         }
@@ -166,7 +166,7 @@ class FastStartPlayListVm(
         if (currentExpanded.not()) {
             return
         }
-        val mode = state.value.type
+        val mode = state.value.visibility
 
         viewModelScope.launch(Dispatchers.Default) {
             val playListModels = getWords(mode, action.playListId)
@@ -207,7 +207,7 @@ class FastStartPlayListVm(
     }
 
     private fun handleLoadMore() {
-        when (state.value.type) {
+        when (state.value.visibility) {
             PlayListType.YOUR -> handleLoadYourPlayLists()
             PlayListType.PUBLIC -> handleLoadPublicPlayLists()
         }
@@ -253,7 +253,7 @@ class FastStartPlayListVm(
         if (state.value.disabledTypes.contains(action.type)) {
             return
         }
-        mutableState.update { it.copy(type = action.type) }
+        mutableState.update { it.copy(visibility = action.type) }
     }
 
     private fun Job.setErrorListener() {

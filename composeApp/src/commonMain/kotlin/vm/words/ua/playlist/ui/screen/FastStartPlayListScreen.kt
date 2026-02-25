@@ -26,6 +26,7 @@ import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.ErrorMessageBox
 import vm.words.ua.core.ui.components.Items
+import vm.words.ua.core.ui.components.SwipeListener
 import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberIconSize
 import vm.words.ua.core.utils.rememberInterfaceMaxWidth
@@ -90,11 +91,7 @@ fun FastStartPlayListScreen(
             showAdditionalButton = state.isLoading.not(),
             additionalButtonVector = Icons.Outlined.Search,
             onAdditionalClick = {
-                if (state.type == PlayListType.PUBLIC) {
-                    navController.navigate(Screen.ExplorePlayListsFilter, state.publicFilter)
-                } else {
-                    navController.navigate(Screen.PlayListFilter, state.yourFilter)
-                }
+                navigateToFilter(state, navController)
             }
         )
 
@@ -140,6 +137,45 @@ fun FastStartPlayListScreen(
         ErrorMessageBox(it)
     }
 
+    SwipeListener(
+        onSwipeRight = {
+            if (changeVisibility(state, viewModel, PlayListType.YOUR)) {
+                return@SwipeListener
+            }
+            navController.popBackStack()
+        },
+        onSwipeLeft = {
+            changeVisibility(state, viewModel, PlayListType.PUBLIC)
+        }
+    )
+
+}
+
+private fun changeVisibility(
+    state: FastStartPlayListState,
+    viewModel: FastStartPlayListVm,
+    visibility: PlayListType
+): Boolean {
+    if (state.visibility == visibility) {
+        return false
+    }
+    val isDisabled = state.disabledTypes.contains(visibility)
+    if (isDisabled) {
+        return false
+    }
+    viewModel.send(FastStartPlayListAction.ChangeType(visibility))
+    return true
+}
+
+private fun navigateToFilter(
+    state: FastStartPlayListState,
+    navController: SimpleNavController
+) {
+    if (state.visibility == PlayListType.PUBLIC) {
+        navController.navigate(Screen.ExplorePlayListsFilter, state.publicFilter)
+    } else {
+        navController.navigate(Screen.PlayListFilter, state.yourFilter)
+    }
 }
 
 @Composable
@@ -173,7 +209,7 @@ fun ColumnScope.BottomMenu(
             Item(
                 imageVector = Icons.AutoMirrored.Filled.Article,
                 thisType = PlayListType.YOUR,
-                currentType = state.type,
+                currentType = state.visibility,
                 text = "Your",
                 onClick = onClick,
                 iconModifier = iconModifier,
@@ -184,7 +220,7 @@ fun ColumnScope.BottomMenu(
             Item(
                 imageVector = Icons.Filled.Explore,
                 thisType = PlayListType.PUBLIC,
-                currentType = state.type,
+                currentType = state.visibility,
                 text = "Public",
                 onClick = onClick,
                 iconModifier = iconModifier,

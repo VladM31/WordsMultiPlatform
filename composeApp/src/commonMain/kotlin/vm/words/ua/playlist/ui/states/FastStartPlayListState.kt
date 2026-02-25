@@ -11,7 +11,7 @@ import vm.words.ua.playlist.domain.models.filters.PlayListCountFilter
 import vm.words.ua.playlist.domain.models.filters.PublicPlayListCountFilter
 
 data class FastStartPlayListState(
-    val type: PlayListType = PlayListType.YOUR,
+    val visibility: PlayListType = PlayListType.YOUR,
     val disabledTypes: Set<PlayListType> = emptySet(),
     val playListByType: Map<PlayListType, List<PlayListCountable>> = emptyMap(),
     val isLoadingByType: Map<PlayListType, Boolean> = emptyMap(),
@@ -42,15 +42,15 @@ data class FastStartPlayListState(
     }
 
     fun playLists(): List<PlayListCountable> {
-        return playListByType[type] ?: emptyList()
+        return playListByType[visibility] ?: emptyList()
     }
 
     fun isLoadingPlayListType(): Boolean {
-        return isLoadingByType[type] ?: false
+        return isLoadingByType[visibility] ?: false
     }
 
     fun hasMorePlayLists(): Boolean {
-        return hasNextByType[type] ?: false
+        return hasNextByType[visibility] ?: false
     }
 
     fun isLoadingWords(playListId: String): Boolean {
