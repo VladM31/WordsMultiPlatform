@@ -165,17 +165,6 @@ private fun SummaryCard(bundle: ExerciseResultBundle) {
                     value = (bundle.totalWords - bundle.correctWords).toString(),
                     color = AppTheme.ColorScheme.error
                 )
-                StatItem(
-                    label = "Avg grade",
-                    value = run {
-                        val v = bundle.averageGrade
-                        val rounded = kotlin.math.round(v * 10) / 10.0
-                        val intPart = rounded.toInt()
-                        val decPart = kotlin.math.round((rounded - intPart) * 10).toInt()
-                        "$intPart.$decPart"
-                    },
-                    color = AppTheme.PrimaryColor
-                )
             }
 
             // Exercises completed

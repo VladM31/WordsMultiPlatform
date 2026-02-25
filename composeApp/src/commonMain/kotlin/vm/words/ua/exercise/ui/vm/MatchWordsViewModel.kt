@@ -53,7 +53,7 @@ class MatchWordsViewModel(
             translateWords[newState.translate.index] = translateWords[newState.translate.index].copy(position = position)
 
             val isEnd = position == newState.words.size - 1
-            val grade = if (newState.attempts == 0) 1 else 0
+            val grade = (3 - newState.attempts).coerceAtLeast(0)
 
             val completedWord = newState.toWordCompleted()
             viewModelScope.launch(Dispatchers.Default) {
