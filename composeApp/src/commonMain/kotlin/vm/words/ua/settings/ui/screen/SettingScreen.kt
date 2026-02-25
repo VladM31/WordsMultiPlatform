@@ -88,7 +88,8 @@ fun SettingScreen(
     }
 
     SwipeListener(
-        onSwipeRight = { navController.navigate(Screen.Home) }
+        onSwipeRight = { navController.navigate(Screen.Home) },
+        onSwipeLeft = { navController.navigate(Screen.PlayList) }
     )
 }
 

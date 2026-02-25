@@ -94,6 +94,7 @@ fun PlayListScreen(
     }
 
     SwipeListener(
+        onSwipeRight = { navController.navigate(Screen.Settings) },
         onSwipeLeft = { navController.navigate(Screen.Home) }
     )
 }
