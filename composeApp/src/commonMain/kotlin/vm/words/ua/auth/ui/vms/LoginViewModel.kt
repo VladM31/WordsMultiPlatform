@@ -24,6 +24,7 @@ class LoginViewModel(
     private val authHistoryManager: AuthHistoryManager,
     private val analytics: Analytics,
     private val googleAuthManager: GoogleAuthManager,
+    telegramWebAppManager: TelegramWebAppManager,
     telegramAuthManager: TelegramAuthManager,
     googleApiManager: GoogleApiManager,
     //    val manager = rememberInstance<TelegramWebAppManager>()
@@ -32,7 +33,7 @@ class LoginViewModel(
     private val mutableState = MutableStateFlow(
         LoginState(
             username = authHistoryManager.lastUsername.orEmpty(),
-            isGoogleSignInAvailable = googleApiManager.isAvailable(),
+            isGoogleSignInAvailable = googleApiManager.isAvailable() && telegramWebAppManager.isAvailable.not(),
             telegramLoginSession = telegramAuthManager.session
         )
     )
