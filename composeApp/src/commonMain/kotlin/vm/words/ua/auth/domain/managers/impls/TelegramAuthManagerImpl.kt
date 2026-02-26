@@ -8,9 +8,11 @@ import vm.words.ua.auth.domain.managers.TelegramAuthManager
 import vm.words.ua.auth.domain.mappers.toUser
 import vm.words.ua.auth.domain.models.TelegramAuthResult
 import vm.words.ua.auth.domain.models.TelegramAuthSession
+import vm.words.ua.auth.domain.models.enums.TelegramMiniAppLoginStatus
 import vm.words.ua.auth.net.clients.TelegramAuthClient
 import vm.words.ua.auth.net.requests.telegram.TelegramAuthLoginReq
 import vm.words.ua.auth.net.requests.telegram.TelegramAuthStartLoginReq
+import vm.words.ua.auth.net.requests.telegram.TelegramMiniAppLoginRequest
 import vm.words.ua.core.domain.managers.UserCacheManager
 import vm.words.ua.core.domain.models.Token
 import vm.words.ua.core.platform.getDeviceName
@@ -69,6 +71,34 @@ class TelegramAuthManagerImpl(
         storageManager.remove(EXPIRY_DATE_KEY)
 
         return true
+    }
+
+    override suspend fun loginWithMiniApp(initData: String): TelegramMiniAppLoginStatus {
+        val respond = telegramAuthClient.login(
+            TelegramMiniAppLoginRequest(
+                initData
+            )
+        )
+
+        if (respond.status != TelegramMiniAppLoginStatus.SUCCESS) {
+            return respond.status
+        }
+
+        respond.auth?.let {
+            it.user?.toUser()?.let { user ->
+                userCacheManager.saveUser(user)
+            }
+            it.token?.let { token ->
+                userCacheManager.saveToken(
+                    Token(
+                        token.value,
+                        token.expirationTime
+                    )
+                )
+            }
+        }
+
+        return respond.status
     }
 
     override val session: TelegramAuthSession?
