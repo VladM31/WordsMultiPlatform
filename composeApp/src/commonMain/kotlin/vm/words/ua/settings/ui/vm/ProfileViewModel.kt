@@ -19,14 +19,25 @@ class ProfileViewModel(
     private val userManager: UserManager
 ) : ViewModel() {
 
-    private val mutableState = MutableStateFlow(
+    private val mutableState = MutableStateFlow(createState())
+
+    private fun createState(): ProfileState = if (userCacheManager.isExpired) {
+        ProfileState(
+            firstName = "",
+            lastName = "",
+            email = "",
+            phoneNumber = "",
+            errorMessage = ErrorMessage(message = "Session expired. Please log in again.")
+        )
+    } else {
         ProfileState(
             firstName = userCacheManager.user.firstName,
             lastName = userCacheManager.user.lastName,
             email = userCacheManager.user.email,
             phoneNumber = userCacheManager.user.phoneNumber,
         )
-    )
+    }
+
     val state: StateFlow<ProfileState> = mutableState
 
 
