@@ -1,18 +1,17 @@
 package vm.words.ua.auth.net.clients.impls
 
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
-import io.ktor.client.statement.bodyAsText
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
-import io.ktor.http.isSuccess
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import vm.words.ua.auth.net.clients.TelegramAuthClient
-import vm.words.ua.auth.net.requests.TelegramAuthLoginReq
-import vm.words.ua.auth.net.requests.TelegramAuthStartLoginReq
-import vm.words.ua.auth.net.responses.TelegramAuthRespond
+import vm.words.ua.auth.net.requests.telegram.TelegramAuthLoginReq
+import vm.words.ua.auth.net.requests.telegram.TelegramAuthStartLoginReq
+import vm.words.ua.auth.net.requests.telegram.TelegramMiniAppLoginRequest
 import vm.words.ua.auth.net.responses.TelegramLoginRespond
+import vm.words.ua.auth.net.responses.telegram.TelegramAuthRespond
+import vm.words.ua.auth.net.responses.telegram.TelegramMiniAppRespond
 import vm.words.ua.core.config.AppRemoteConfig
 
 class KrotTelegramAuthClient(
@@ -47,6 +46,14 @@ class KrotTelegramAuthClient(
         val respond = httpClient.post("${baseUrl}/telegram-login") {
             contentType(ContentType.Application.Json)
             setBody(request)
+        }
+        return respond.body()
+    }
+
+    override suspend fun login(req: TelegramMiniAppLoginRequest): TelegramMiniAppRespond {
+        val respond = httpClient.post("${baseUrl}/telegram/mini-app/login") {
+            contentType(ContentType.Application.Json)
+            setBody(req)
         }
         return respond.body()
     }

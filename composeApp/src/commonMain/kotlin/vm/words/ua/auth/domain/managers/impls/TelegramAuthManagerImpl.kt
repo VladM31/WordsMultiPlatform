@@ -9,8 +9,8 @@ import vm.words.ua.auth.domain.mappers.toUser
 import vm.words.ua.auth.domain.models.TelegramAuthResult
 import vm.words.ua.auth.domain.models.TelegramAuthSession
 import vm.words.ua.auth.net.clients.TelegramAuthClient
-import vm.words.ua.auth.net.requests.TelegramAuthLoginReq
-import vm.words.ua.auth.net.requests.TelegramAuthStartLoginReq
+import vm.words.ua.auth.net.requests.telegram.TelegramAuthLoginReq
+import vm.words.ua.auth.net.requests.telegram.TelegramAuthStartLoginReq
 import vm.words.ua.core.domain.managers.UserCacheManager
 import vm.words.ua.core.domain.models.Token
 import vm.words.ua.core.platform.getDeviceName

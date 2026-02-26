@@ -1,4 +1,4 @@
-package vm.words.ua.auth.net.responses
+package vm.words.ua.auth.net.responses.telegram
 
 data class TelegramAuthRespond(
     val isNotFound: Boolean,
