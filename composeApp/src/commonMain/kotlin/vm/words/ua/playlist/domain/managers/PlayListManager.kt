@@ -7,7 +7,7 @@ import vm.words.ua.playlist.domain.models.filters.*
 interface PlayListManager {
     suspend fun countBy(filter: PlayListCountFilter): PagedModels<PlayListCount>
     suspend fun countBy(filter: PublicPlayListCountFilter): PagedModels<PublicPlayListCountDto>
-
+    suspend fun countRandom(): PlayListCount?
 
     suspend fun findBy(filter: PlayListFilter): PagedModels<PlayList>
     suspend fun findBy(filter: PublicPlayListFilter): PagedModels<PlayList>

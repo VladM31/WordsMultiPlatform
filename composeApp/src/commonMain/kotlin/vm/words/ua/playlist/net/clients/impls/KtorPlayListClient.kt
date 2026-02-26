@@ -18,11 +18,13 @@ class KtorPlayListClient(
     private val client: HttpClient
 ) : PlayListClient {
 
-    private val baseUrl: String = AppRemoteConfig.baseUrl
+    private val baseUrl: String by lazy {
+        "${AppRemoteConfig.baseUrl}/words-api/play-list"
+    }
 
     override suspend fun countBy(token: String, filter: PlayListCountFilter): PagedRespond<PlayListCountRespond> {
         return try {
-            val response = client.get("$baseUrl/words-api/play-list/count") {
+            val response = client.get("$baseUrl/count") {
                 header("Authorization", token)
                 filter.toQueryMap().forEach { parameter(it.key, it.value) }
             }
@@ -36,7 +38,7 @@ class KtorPlayListClient(
 
     override suspend fun findBy(token: String, filter: PlayListFilter): PagedRespond<PlayListRespond> {
         return try {
-            val response = client.get("$baseUrl/words-api/play-list") {
+            val response = client.get("$baseUrl") {
                 header("Authorization", token)
                 filter.toQueryMap().forEach { parameter(it.key, it.value) }
             }
@@ -53,7 +55,7 @@ class KtorPlayListClient(
         filter: PublicPlayListGetRequest
     ): PagedRespond<PlayListRespond> {
         return try {
-            val response = client.get("$baseUrl/words-api/play-list/public") {
+            val response = client.get("$baseUrl/public") {
                 header("Authorization", token)
                 filter.toQueryMap().forEach { parameter(it.key, it.value) }
             }
@@ -69,15 +71,31 @@ class KtorPlayListClient(
         token: String,
         filter: PublicPlayListCountRequest
     ): PagedRespond<PublicPlayListCountRespond> {
-        val response = client.get("$baseUrl/words-api/play-list/count/public") {
+        val response = client.get("$baseUrl/count/public") {
             header("Authorization", token)
             filter.toQueryMap().forEach { parameter(it.key, it.value) }
         }
         return response.body<PagedRespond<PublicPlayListCountRespond>>()
     }
 
+    override suspend fun countRandom(token: String): PlayListCountRespond? {
+        val response = client.get("$baseUrl/random") {
+            header("Authorization", token)
+        }
+        if (response.status == HttpStatusCode.NotFound) {
+            return null
+        }
+        if (response.status.isSuccess().not()) {
+            val body = response.runCatching {
+                bodyAsText()
+            }.getOrDefault("Unknown error")
+            throw Exception(body)
+        }
+        return response.body<PlayListCountRespond>()
+    }
+
     override suspend fun getAssignedPlaylists(token: String): Set<AssignedPlaylistRespond> {
-        val response = client.get("$baseUrl/words-api/play-list/assigned") {
+        val response = client.get("$baseUrl/assigned") {
             header("Authorization", token)
         }
         return response.body<Set<AssignedPlaylistRespond>>()
@@ -87,7 +105,7 @@ class KtorPlayListClient(
         token: String,
         req: AssignPlayListsRequest
     ): List<PlaylistIdRespond> {
-        val response = client.post("$baseUrl/words-api/play-list/assign") {
+        val response = client.post("$baseUrl/assign") {
             header("Authorization", token)
             contentType(ContentType.Application.Json)
             setBody(req)
@@ -104,7 +122,7 @@ class KtorPlayListClient(
 
     override suspend fun save(token: String, playLists: List<SavePlayListRequest>) {
         try {
-            client.post("$baseUrl/words-api/play-list") {
+            client.post("$baseUrl") {
                 header("Authorization", token)
                 contentType(ContentType.Application.Json)
                 setBody(playLists)
@@ -116,7 +134,7 @@ class KtorPlayListClient(
 
     override suspend fun update(token: String, playLists: List<UpdatePlayListRequest>) {
         try {
-            client.put("$baseUrl/words-api/play-list") {
+            client.put("$baseUrl") {
                 header("Authorization", token)
                 contentType(ContentType.Application.Json)
                 setBody(playLists)
@@ -128,7 +146,7 @@ class KtorPlayListClient(
 
     override suspend fun updateGrades(token: String, grades: List<PlayListGradeRequest>) {
         try {
-            client.put("$baseUrl/words-api/play-list/grades") {
+            client.put("$baseUrl/grades") {
                 header("Authorization", token)
                 contentType(ContentType.Application.Json)
                 setBody(grades)
@@ -140,7 +158,7 @@ class KtorPlayListClient(
 
     override suspend fun delete(token: String, filter: DeletePlayListFilter) {
         try {
-            client.delete("$baseUrl/words-api/play-list/delete") {
+            client.delete("$baseUrl/delete") {
                 header("Authorization", token)
                 filter.toQueryMap().forEach {
                     parameter(it.key, it.value)

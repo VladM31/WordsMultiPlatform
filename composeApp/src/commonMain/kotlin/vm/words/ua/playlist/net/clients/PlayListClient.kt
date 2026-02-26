@@ -10,6 +10,7 @@ import vm.words.ua.playlist.net.responds.*
 interface PlayListClient {
     suspend fun countBy(token: String, filter: PlayListCountFilter): PagedRespond<PlayListCountRespond>
     suspend fun countBy(token: String, filter: PublicPlayListCountRequest): PagedRespond<PublicPlayListCountRespond>
+    suspend fun countRandom(token: String): PlayListCountRespond?
 
     suspend fun findBy(token: String, filter: PlayListFilter): PagedRespond<PlayListRespond>
     suspend fun findBy(token: String, filter: PublicPlayListGetRequest): PagedRespond<PlayListRespond>

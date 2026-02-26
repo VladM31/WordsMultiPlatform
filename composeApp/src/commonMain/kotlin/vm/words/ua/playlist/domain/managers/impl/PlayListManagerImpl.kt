@@ -86,6 +86,10 @@ class PlayListManagerImpl(
 
     }
 
+    override suspend fun countRandom(): PlayListCount? {
+        return playListClient.countRandom(getToken())?.toPlayListCount()
+    }
+
     override suspend fun getAssignedPlaylists(): Set<AssignedPlaylistDto> {
         return try {
             val respond = playListClient.getAssignedPlaylists(
