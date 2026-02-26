@@ -22,7 +22,8 @@ internal val viewModelDi = DI.Module("viewModel") {
     bind<TelegramSignUpViewModel>() with factory {
         TelegramSignUpViewModel(
             authManager = instance(),
-            analytics = instance()
+            analytics = instance(),
+            telegramWebAppManager = instance(),
         )
     }
 
@@ -36,7 +37,8 @@ internal val viewModelDi = DI.Module("viewModel") {
         TelegramLoginVm(
             telegramAuthManager = instance(),
             authHistoryManager = instance(),
-            analytics = instance()
+            analytics = instance(),
+            telegramWebAppManager = instance()
         )
     }
 

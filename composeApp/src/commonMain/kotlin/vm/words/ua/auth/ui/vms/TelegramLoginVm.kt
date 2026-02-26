@@ -9,9 +9,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import vm.words.ua.auth.domain.managers.AuthHistoryManager
+import vm.words.ua.auth.domain.managers.ContactRequestStatus
 import vm.words.ua.auth.domain.managers.TelegramAuthManager
+import vm.words.ua.auth.domain.managers.TelegramWebAppManager
 import vm.words.ua.auth.domain.models.TelegramAuthResult
 import vm.words.ua.auth.domain.models.TelegramAuthSession
+import vm.words.ua.auth.domain.models.enums.TelegramMiniAppLoginStatus
 import vm.words.ua.auth.ui.actions.TelegramLoginAction
 import vm.words.ua.auth.ui.states.TelegramLoginState
 import vm.words.ua.core.analytics.Analytics
@@ -25,12 +28,14 @@ import vm.words.ua.utils.validation.schemes.isPhoneNumber
 class TelegramLoginVm(
     private val telegramAuthManager: TelegramAuthManager,
     private val authHistoryManager: AuthHistoryManager,
-    private val analytics: Analytics
+    private val analytics: Analytics,
+    private val telegramWebAppManager: TelegramWebAppManager,
 ) : ViewModel() {
 
     private val mutableState = MutableStateFlow(
         TelegramLoginState(
-            phoneNumber = authHistoryManager.lastUsername.orEmpty()
+            phoneNumber = authHistoryManager.lastUsername.orEmpty(),
+            isMiniApp = telegramWebAppManager.isAvailable
         )
     )
     val state: StateFlow<TelegramLoginState> = mutableState
@@ -59,7 +64,66 @@ class TelegramLoginVm(
             is TelegramLoginAction.SetPhoneNumber -> handlePhoneNumber(action)
             is TelegramLoginAction.Submit -> handleSubmit()
             is TelegramLoginAction.CheckLogin -> handleCheckLogin()
+            is TelegramLoginAction.SubmitMiniApp -> handleSubmitMiniApp()
         }
+    }
+
+    private fun handleSubmitMiniApp() {
+        mutableState.value = mutableState.value.copy(isLoading = true)
+
+        viewModelScope.launch(Dispatchers.Default) {
+            val initData = telegramWebAppManager.initData
+            val status = telegramAuthManager.loginWithMiniApp(initData)
+
+            if (status == TelegramMiniAppLoginStatus.SUCCESS) {
+                handleMiniSussesLogin()
+                return@launch
+            }
+
+            if (status == TelegramMiniAppLoginStatus.NOT_FOUND) {
+                handleNotFound()
+                return@launch
+            }
+
+            if (status == TelegramMiniAppLoginStatus.ERROR) {
+                handleFail(
+                    Result.failure(Exception("Telegram Mini App login failed"))
+                )
+                return@launch
+            }
+
+            mutableState.value = mutableState.value.copy(
+                isLoading = false,
+                errorMessage = ErrorMessage("Your phone number is not confirmed in Telegram. Please confirm your phone number in Telegram and try again.")
+            )
+            val contactStatus = telegramWebAppManager.requestContact()
+            val message = when (contactStatus) {
+                ContactRequestStatus.Sent -> "Contact request sent. Please try logging in again after sharing your contact."
+                ContactRequestStatus.Cancelled -> "Contact request cancelled. Please confirm your phone number in Telegram and try again."
+                ContactRequestStatus.Unavailable -> "Unable to request contact. Please confirm your phone number in Telegram and try again."
+            }
+            mutableState.value = mutableState.value.copy(
+                errorMessage = ErrorMessage(message)
+            )
+        }.invokeOnCompletion {
+            if (it != null) {
+                handleFail(Result.failure(it))
+                return@invokeOnCompletion
+            }
+            mutableState.value = mutableState.value.copy(
+                isLoading = false
+            )
+        }
+    }
+
+    private fun handleMiniSussesLogin() {
+        mutableState.value = mutableState.value.copy(isEnd = true)
+        analytics.logEvent(
+            AnalyticsEvents.TELEGRAM_LOGIN_SUCCESS, mapOf(
+                "phone_number" to mutableState.value.phoneNumber,
+                "method" to "mini_app"
+            )
+        )
     }
 
     private fun handleCheckLogin() {

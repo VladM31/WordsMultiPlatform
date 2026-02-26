@@ -1,5 +1,8 @@
 package vm.words.ua.auth.domain.managers
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
 /**
  * Provides Telegram Mini App launch parameters injected by the browser
  * via window.TG_INIT_DATA / window.TG_USER_JSON.
@@ -35,3 +38,21 @@ sealed class ContactRequestStatus {
     data object Unavailable : ContactRequestStatus()
 }
 
+@Serializable
+data class TelegramUser(
+    val id: Long,
+    @SerialName("first_name") val firstName: String,
+    @SerialName("last_name") val lastName: String? = null,
+    val username: String? = null,
+    @SerialName("language_code") val languageCode: String? = null,
+    @SerialName("allows_write_to_pm") val allowsWriteToPm: Boolean = false,
+    @SerialName("photo_url") val photoUrl: String? = null
+)
+
+fun TelegramWebAppManager.user(): TelegramUser? {
+    return try {
+        kotlinx.serialization.json.Json.decodeFromString<TelegramUser>(userJson)
+    } catch (_: Exception) {
+        null
+    }
+}

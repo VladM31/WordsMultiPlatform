@@ -61,7 +61,13 @@ fun TelegramLoginScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.Top
         ) {
-            Spacer(modifier = Modifier.height(12.dp))
+            if (state.isLoading) {
+                CircularProgressIndicator(color = AppTheme.PrimaryColor)
+                Spacer(modifier = Modifier.height(12.dp))
+                return@Column
+            }
+
+
 
             // Input or status block
             InputBox(state, viewModel)
@@ -73,28 +79,46 @@ fun TelegramLoginScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (state.isLoading) {
-                    CircularProgressIndicator(color = AppTheme.PrimaryColor)
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
 
-                if (state.code.isBlank()) {
+
+                if (state.code.isNotBlank()) {
                     PrimaryButton(
-                        text = "Submit",
-                        onClick = { viewModel.sent(TelegramLoginAction.Submit) },
-                        enabled = !state.isLoading,
+                        text = "Open Telegram",
+                        onClick = {
+                            uriHandler.openUri(AppRemoteConfig.telegramBotLink)
+                        },
                         modifier = Modifier.fillMaxWidth(0.8f)
                     )
                     return@Column
                 }
-
                 PrimaryButton(
-                    text = "Open Telegram",
-                    onClick = {
-                        uriHandler.openUri(AppRemoteConfig.telegramBotLink)
-                    },
+                    text = "Submit",
+                    onClick = { viewModel.sent(TelegramLoginAction.Submit) },
+                    enabled = !state.isLoading,
                     modifier = Modifier.fillMaxWidth(0.8f)
                 )
+
+                if (state.isMiniApp.not()) {
+                    return@Column
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Or sing in with current Telegram session in the app",
+                    color = AppTheme.PrimaryColor,
+                    fontSize = rememberFontSize() * 1.1f,
+                    lineHeight = rememberFontSize() * 1.3f,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                PrimaryButton(
+                    text = "Sign in with Telegram",
+                    onClick = { viewModel.sent(TelegramLoginAction.SubmitMiniApp) },
+                    enabled = !state.isLoading,
+                    modifier = Modifier.fillMaxWidth(0.8f)
+                )
+
             }
         }
     }

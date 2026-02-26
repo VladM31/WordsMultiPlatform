@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import vm.words.ua.auth.domain.managers.AuthManager
+import vm.words.ua.auth.domain.managers.TelegramWebAppManager
+import vm.words.ua.auth.domain.managers.user
 import vm.words.ua.auth.domain.models.SignUpModel
 import vm.words.ua.auth.ui.actions.TelegramSignUpAction
 import vm.words.ua.auth.ui.states.TelegramSignUpState
@@ -18,10 +20,16 @@ import vm.words.ua.core.utils.toNumbersOnly
 
 class TelegramSignUpViewModel(
     private val authManager: AuthManager,
-    private val analytics: Analytics
+    private val analytics: Analytics,
+    telegramWebAppManager: TelegramWebAppManager
 ) : ViewModel() {
 
-    private val mutableState = MutableStateFlow(TelegramSignUpState())
+    private val mutableState = MutableStateFlow(
+        TelegramSignUpState(
+            firstName = telegramWebAppManager.user()?.firstName.orEmpty(),
+            lastName = telegramWebAppManager.user()?.lastName.orEmpty(),
+        )
+    )
     val state: StateFlow<TelegramSignUpState> = mutableState
     private val validator = telegramSignUpValidator(state)
 

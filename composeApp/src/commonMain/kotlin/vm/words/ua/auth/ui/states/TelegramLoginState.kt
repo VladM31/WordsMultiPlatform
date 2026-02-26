@@ -9,6 +9,7 @@ data class TelegramLoginState(
     val phoneNumber: String = "",
     val isLoading: Boolean = false,
     val isNotFoundId: Long? = null,
+    val isMiniApp: Boolean = false,
     override val errorMessage: ErrorMessage? = null,
     override val isEnd: Boolean = false
 
