@@ -67,20 +67,15 @@ fun TelegramLoginScreen(
                 return@Column
             }
 
-
-
-            // Input or status block
             InputBox(state, viewModel)
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(12.dp))
 
             // Buttons / Progress
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
-
                 if (state.code.isNotBlank()) {
                     PrimaryButton(
                         text = "Open Telegram",
@@ -91,6 +86,7 @@ fun TelegramLoginScreen(
                     )
                     return@Column
                 }
+
                 PrimaryButton(
                     text = "Submit",
                     onClick = { viewModel.sent(TelegramLoginAction.Submit) },
@@ -102,24 +98,25 @@ fun TelegramLoginScreen(
                     return@Column
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = "Or sing in with current Telegram session in the app",
+                    text = "Or sign in with current Telegram user in the app",
                     color = AppTheme.PrimaryColor,
-                    fontSize = rememberFontSize() * 1.1f,
-                    lineHeight = rememberFontSize() * 1.3f,
+                    fontSize = rememberFontSize(),
+                    lineHeight = rememberFontSize() * 1.1f,
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 PrimaryButton(
-                    text = "Sign in with Telegram",
+                    text = "Sign in with current user",
                     onClick = { viewModel.sent(TelegramLoginAction.SubmitMiniApp) },
                     enabled = !state.isLoading,
                     modifier = Modifier.fillMaxWidth(0.8f)
                 )
-
             }
+
+
         }
     }
 

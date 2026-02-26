@@ -9,6 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.auth.domain.managers.GoogleApiManager
+import vm.words.ua.auth.domain.managers.TelegramWebAppManager
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.ButtonsGrid
@@ -26,7 +27,8 @@ fun SignUpProviderScreen(
     modifier: Modifier = Modifier
 ) {
     val googleApiManager = rememberInstance<GoogleApiManager>()
-    val isGoogleAvailable = remember { googleApiManager.isAvailable() }
+    val telegramWebAppManager = rememberInstance<TelegramWebAppManager>()
+    val isGoogleAvailable = remember { googleApiManager.isAvailable() && telegramWebAppManager.isAvailable.not() }
     val googleIcon = painterResource(Res.drawable.google_icon)
 
     val buttons = remember {

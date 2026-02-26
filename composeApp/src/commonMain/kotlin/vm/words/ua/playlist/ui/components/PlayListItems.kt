@@ -1,6 +1,7 @@
 package vm.words.ua.playlist.ui.components
 
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.Text
@@ -28,6 +29,7 @@ fun ColumnScope.PlayListItems(
             fontSize = rememberFontSize(),
             color = AppTheme.SecondaryText
         )
+        Spacer(modifier = Modifier.weight(1f))
         return
     }
 

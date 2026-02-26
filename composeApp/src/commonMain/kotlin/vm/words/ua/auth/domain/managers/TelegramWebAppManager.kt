@@ -49,9 +49,14 @@ data class TelegramUser(
     @SerialName("photo_url") val photoUrl: String? = null
 )
 
+@Serializable
+private data class TelegramUserHolder(
+    val user: TelegramUser
+)
+
 fun TelegramWebAppManager.user(): TelegramUser? {
     return try {
-        kotlinx.serialization.json.Json.decodeFromString<TelegramUser>(userJson)
+        kotlinx.serialization.json.Json.decodeFromString<TelegramUserHolder>(userJson).user
     } catch (_: Exception) {
         null
     }
