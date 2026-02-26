@@ -5,7 +5,6 @@ import vm.words.ua.core.ui.states.ErrorableState
 import vm.words.ua.playlist.domain.models.PlayList
 import vm.words.ua.playlist.domain.models.PlayListCountable
 import vm.words.ua.playlist.domain.models.enums.PlayListType
-import vm.words.ua.playlist.domain.models.enums.PlaylistSortField
 import vm.words.ua.playlist.domain.models.enums.PublicPlaylistSortField
 import vm.words.ua.playlist.domain.models.filters.PlayListCountFilter
 import vm.words.ua.playlist.domain.models.filters.PublicPlayListCountFilter
@@ -25,7 +24,7 @@ data class FastStartPlayListState(
         asc = true,
         sortField = PublicPlaylistSortField.NAME
     ),
-    val yourFilter: PlayListCountFilter = PlayListCountFilter(asc = true, sortField = PlaylistSortField.NAME),
+    val yourFilter: PlayListCountFilter = PlayListCountFilter(),
 
     val selectedPlayListId: String? = null,
     val isLoading: Boolean = true,
