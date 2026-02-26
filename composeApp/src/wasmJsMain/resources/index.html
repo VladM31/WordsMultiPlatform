@@ -339,6 +339,23 @@
         window.getTgUserJson = function () {
             return window.TG_USER_JSON || "";
         };
+        window.requestTelegramContact = function () {
+            return new Promise(function (resolve) {
+                try {
+                    var tg = window.Telegram && window.Telegram.WebApp;
+                    if (!tg || typeof tg.requestContact !== 'function') {
+                        resolve('unavailable');
+                        return;
+                    }
+                    tg.requestContact(function (result) {
+                        resolve(result ? 'sent' : 'cancelled');
+                    });
+                } catch (e) {
+                    console.error('requestTelegramContact error:', e);
+                    resolve('unavailable');
+                }
+            });
+        };
     </script>
 </head>
 <body>
