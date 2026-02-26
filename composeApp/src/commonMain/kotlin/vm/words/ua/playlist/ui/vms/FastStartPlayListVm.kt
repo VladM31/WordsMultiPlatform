@@ -34,12 +34,17 @@ class FastStartPlayListVm(
             val publicPlayListWaiter = async {
                 playListManager.countBy(state.value.publicFilter) as PagedModels<PlayListCountable>
             }
+            val randomPlayList = async {
+                (playListManager.countRandom() as PlayListCountable?)?.let { listOf(it) }
+                    ?: emptyList()
+            }
             if (waitPlayLists(yourPlayListWaiter, publicPlayListWaiter)) {
                 return@launch
             }
             val disabledTypes = HashSet<PlayListType>()
             if (yourPlayListWaiter.await().isEmpty()) {
                 disabledTypes.add(PlayListType.YOUR)
+                disabledTypes.add(PlayListType.RANDOM)
             }
             if (publicPlayListWaiter.await().isEmpty()) {
                 disabledTypes.add(PlayListType.PUBLIC)
@@ -52,11 +57,13 @@ class FastStartPlayListVm(
                     disabledTypes = disabledTypes,
                     playListByType = mapOf(
                         PlayListType.YOUR to yourPlayListWaiter.await().content,
-                        PlayListType.PUBLIC to publicPlayListWaiter.await().content
+                        PlayListType.PUBLIC to publicPlayListWaiter.await().content,
+                        PlayListType.RANDOM to randomPlayList.await()
                     ),
                     hasNextByType = mapOf(
                         PlayListType.YOUR to yourPlayListWaiter.await().page.isLast.not(),
-                        PlayListType.PUBLIC to publicPlayListWaiter.await().page.isLast.not()
+                        PlayListType.PUBLIC to publicPlayListWaiter.await().page.isLast.not(),
+                        PlayListType.RANDOM to false
                     ),
                     isLoading = false
                 )
@@ -95,7 +102,25 @@ class FastStartPlayListVm(
             is FastStartPlayListAction.Start -> handleStart(action)
             is FastStartPlayListAction.UpdatePlayListFilter -> handleUpdatePlayListFilter(action)
             is FastStartPlayListAction.UpdatePublicPLFilter -> handleUpdatePublicPLFilter(action)
+            is FastStartPlayListAction.ReloadRandom -> handleReloadRandom()
         }
+    }
+
+    private fun handleReloadRandom() {
+        mutableState.update {
+            it.copy(isLoadingByType = it.isLoadingByType + (PlayListType.RANDOM to true))
+        }
+        viewModelScope.launch(Dispatchers.Default) {
+            val randomPlayList = (playListManager.countRandom() as PlayListCountable?)?.let { listOf(it) }
+                ?: emptyList()
+            mutableState.update {
+                it.copy(
+                    playListByType = it.playListByType + (PlayListType.RANDOM to randomPlayList),
+                    visibility = PlayListType.RANDOM,
+                    isLoadingByType = it.isLoadingByType + (PlayListType.RANDOM to false)
+                )
+            }
+        }.setErrorListener()
     }
 
     private fun handleUpdatePublicPLFilter(action: FastStartPlayListAction.UpdatePublicPLFilter) {
@@ -210,6 +235,7 @@ class FastStartPlayListVm(
         when (state.value.visibility) {
             PlayListType.YOUR -> handleLoadYourPlayLists()
             PlayListType.PUBLIC -> handleLoadPublicPlayLists()
+            else -> {}
         }
 
     }

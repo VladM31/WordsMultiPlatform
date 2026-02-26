@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Article
+import androidx.compose.material.icons.filled.Autorenew
+import androidx.compose.material.icons.filled.Casino
 import androidx.compose.material.icons.filled.Explore
-import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -89,9 +91,9 @@ fun FastStartPlayListScreen(
             showBackButton = true,
             onBackClick = { navController.popBackStack() },
             showAdditionalButton = state.isLoading.not(),
-            additionalButtonVector = Icons.Outlined.Search,
+            additionalButtonVector = if (state.visibility == PlayListType.RANDOM) Icons.Filled.Autorenew else Icons.Filled.Search,
             onAdditionalClick = {
-                navigateToFilter(state, navController)
+                navigateAdditionalClick(state, navController, viewModel)
             }
         )
 
@@ -167,14 +169,23 @@ private fun changeVisibility(
     return true
 }
 
-private fun navigateToFilter(
+private fun navigateAdditionalClick(
     state: FastStartPlayListState,
-    navController: SimpleNavController
+    navController: SimpleNavController,
+    viewModel: FastStartPlayListVm
 ) {
-    if (state.visibility == PlayListType.PUBLIC) {
-        navController.navigate(Screen.ExplorePlayListsFilter, state.publicFilter)
-    } else {
-        navController.navigate(Screen.PlayListFilter, state.yourFilter)
+    when (state.visibility) {
+        PlayListType.PUBLIC -> {
+            navController.navigate(Screen.ExplorePlayListsFilter, state.publicFilter)
+        }
+
+        PlayListType.YOUR -> {
+            navController.navigate(Screen.PlayListFilter, state.yourFilter)
+        }
+
+        PlayListType.RANDOM -> {
+            viewModel.send(FastStartPlayListAction.ReloadRandom)
+        }
     }
 }
 
@@ -215,6 +226,17 @@ fun ColumnScope.BottomMenu(
                 iconModifier = iconModifier,
                 textSize = textSize,
                 isDisabled = state.disabledTypes.contains(PlayListType.YOUR)
+            )
+
+            Item(
+                imageVector = Icons.Filled.Casino,
+                thisType = PlayListType.RANDOM,
+                currentType = state.visibility,
+                text = "Random",
+                onClick = onClick,
+                iconModifier = iconModifier,
+                textSize = textSize,
+                isDisabled = state.disabledTypes.contains(PlayListType.RANDOM)
             )
 
             Item(

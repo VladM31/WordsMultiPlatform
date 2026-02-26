@@ -62,32 +62,16 @@ fun <T> ColumnScope.Items(
                 toItem(index, content[index])
             }
 
-            if (isLoading.not()) {
-                return@LazyColumn
-            }
 
             item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(
-                        color = AppTheme.PrimaryColor,
-                        modifier = Modifier.size(32.dp)
-                    )
-                }
-            }
-
-            item {
-                if (!isLoading) {
+                if (isLoading.not()) {
                     return@item
                 }
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center),
-                    color = AppTheme.PrimaryColor
-                )
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    CircularProgressIndicator(
+                        color = AppTheme.PrimaryColor
+                    )
+                }
             }
         }
     }

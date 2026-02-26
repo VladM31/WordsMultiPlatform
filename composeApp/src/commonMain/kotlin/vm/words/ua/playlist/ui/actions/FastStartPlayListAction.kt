@@ -14,5 +14,5 @@ interface FastStartPlayListAction {
     data class UpdatePlayListFilter(val filter: PlayListCountFilter) : FastStartPlayListAction
 
     data object LoadMore : FastStartPlayListAction
-
+    data object ReloadRandom : FastStartPlayListAction
 }
