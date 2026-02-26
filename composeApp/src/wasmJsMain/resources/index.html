@@ -7,7 +7,7 @@
     <link rel="icon" type="image/webp" href="icon.webp">
 
     <script>
-        window.__APP_VERSION__ = "20260216_003";
+        window.__APP_VERSION__ = "20260226_001";
     </script>
 
     <!-- Preconnect for Google Fonts -->
@@ -302,6 +302,43 @@
             });
             window._firebaseEventQueue = null;
         }
+    </script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        // Global variables for Telegram auth data (read by Kotlin via getTgInitData / getTgUserJson)
+        window.TG_INIT_DATA = "";
+        window.TG_USER_JSON = "";
+
+        (function () {
+            try {
+                var tg = window.Telegram && window.Telegram.WebApp;
+                if (tg) {
+                    window.TG_INIT_DATA = tg.initData || "";
+                    window.TG_USER_JSON = JSON.stringify(tg.initDataUnsafe || {});
+                    try {
+                        tg.ready();
+                    } catch (e) {
+                        console.warn('tg.ready() failed', e);
+                    }
+                    try {
+                        tg.expand();
+                    } catch (e) {
+                        console.warn('tg.expand() failed', e);
+                    }
+                } else {
+                    console.log('Telegram WebApp not available (running outside Telegram).');
+                }
+            } catch (e) {
+                console.error('Telegram WebApp init error:', e);
+            }
+        })();
+
+        window.getTgInitData = function () {
+            return window.TG_INIT_DATA || "";
+        };
+        window.getTgUserJson = function () {
+            return window.TG_USER_JSON || "";
+        };
     </script>
 </head>
 <body>

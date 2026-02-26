@@ -26,6 +26,7 @@ class LoginViewModel(
     private val googleAuthManager: GoogleAuthManager,
     telegramAuthManager: TelegramAuthManager,
     googleApiManager: GoogleApiManager,
+    //    val manager = rememberInstance<TelegramWebAppManager>()
 ) : ViewModel() {
 
     private val mutableState = MutableStateFlow(
