@@ -49,7 +49,12 @@ fun MatchWordsScreen(
     ) {
         AppToolBar(
             title = param.currentExercise.text,
-            onBackClick = { navController.popBackStack() }
+            onBackClick = { navController.popBackStack() },
+            onRightSwipe = {
+                if (state.value.isEnd) {
+                    navController.popBackStack()
+                }
+            }
         )
 
         ExerciseProgressBar(state = state.value, bundle = param)
