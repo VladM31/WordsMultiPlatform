@@ -141,13 +141,13 @@ fun FastStartPlayListScreen(
 
     SwipeListener(
         onSwipeRight = {
-            if (changeVisibility(state, viewModel, PlayListType.YOUR)) {
+            if (changeVisibility(state, viewModel, true)) {
                 return@SwipeListener
             }
             navController.popBackStack()
         },
         onSwipeLeft = {
-            changeVisibility(state, viewModel, PlayListType.PUBLIC)
+            changeVisibility(state, viewModel, false)
         }
     )
 
@@ -156,11 +156,23 @@ fun FastStartPlayListScreen(
 private fun changeVisibility(
     state: FastStartPlayListState,
     viewModel: FastStartPlayListVm,
-    visibility: PlayListType
+    toRight: Boolean
 ): Boolean {
-    if (state.visibility == visibility) {
+    val maxIndex = if (toRight) {
+        0
+    } else {
+        PlayListType.entries.size - 1
+    }
+    val currentIndex = state.visibility.ordinal
+    val nextIndex = if (toRight) {
+        (currentIndex - 1).coerceAtLeast(maxIndex)
+    } else {
+        (currentIndex + 1).coerceAtMost(maxIndex)
+    }
+    if (nextIndex == currentIndex) {
         return false
     }
+    val visibility = PlayListType.entries[nextIndex]
     val isDisabled = state.disabledTypes.contains(visibility)
     if (isDisabled) {
         return false
