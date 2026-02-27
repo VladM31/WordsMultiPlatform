@@ -16,10 +16,7 @@ import vm.words.ua.words.domain.managers.UserWordManager
 import vm.words.ua.words.domain.models.*
 import vm.words.ua.words.domain.models.filters.UserWordFilter
 import vm.words.ua.words.net.clients.UserWordClient
-import vm.words.ua.words.net.requests.DeleteUserWordRequest
-import vm.words.ua.words.net.requests.PinUserWordRequest
-import vm.words.ua.words.net.requests.UserWordRequest
-import vm.words.ua.words.net.requests.WordRequest
+import vm.words.ua.words.net.requests.*
 import vm.words.ua.words.net.responds.UserWordRespond
 import vm.words.ua.words.net.responds.WordRespond
 
@@ -63,6 +60,28 @@ class UserWordManagerImpl(
                 asyncList.awaitAll()
             )
         }
+    }
+
+    override suspend fun update(word: EditUserWord) {
+        val uploadResults = toUploadResults(
+            image = word.image,
+            sound = word.sound
+        )
+        userWordClient.update(
+            userCacheManager.toPair().second,
+            UserWordEditRequest(
+                id = word.id,
+                original = word.original,
+                lang = word.lang,
+                translate = word.translate,
+                translateLang = word.translateLang,
+                cefr = word.cefr,
+                category = word.category,
+                description = word.description,
+                soundFileName = uploadResults.soundFileName ?: word.soundFileName,
+                imageFileName = uploadResults.imageFileName ?: word.imageFileName,
+            )
+        )
     }
 
     override suspend fun pin(pins: Collection<PinUserWord>): List<UserWord> {
