@@ -311,7 +311,7 @@
 
         (function () {
             try {
-                var tg = window.Telegram && window.Telegram.WebApp;
+                const tg = window.Telegram && window.Telegram.WebApp;
                 if (tg) {
                     window.TG_INIT_DATA = tg.initData || "";
                     window.TG_USER_JSON = JSON.stringify(tg.initDataUnsafe || {});
@@ -341,7 +341,7 @@
         };
         window.openTelegramLink = function (url) {
             try {
-                var tg = window.Telegram && window.Telegram.WebApp;
+                const tg = window.Telegram && window.Telegram.WebApp;
                 if (tg) {
                     if (typeof tg.openTelegramLink === 'function') {
                         try {
@@ -376,7 +376,7 @@
         window.requestTelegramContact = function () {
             return new Promise(function (resolve) {
                 try {
-                    var tg = window.Telegram && window.Telegram.WebApp;
+                    const tg = window.Telegram && window.Telegram.WebApp;
                     if (!tg || typeof tg.requestContact !== 'function') {
                         resolve('unavailable');
                         return;
@@ -390,6 +390,78 @@
                 }
             });
         };
+
+        // Android keyboard fix for Compose Web inside Telegram Mini App.
+        // Compose/Skiko calls focus() on a hidden <input> asynchronously after the touch
+        // event, which Android WebView rejects (keyboard only opens from a direct user
+        // gesture handler). Fix: on touchend over the canvas, immediately focus a dummy
+        // input (inside the gesture), then transfer focus to Skiko's actual input.
+        (function () {
+            if (!/Android/i.test(navigator.userAgent)) return;
+
+            let dummyInput = null;
+            let focusObserver = null;
+
+            function getDummy() {
+                if (dummyInput) return dummyInput;
+                dummyInput = document.createElement('input');
+                dummyInput.type = 'text';
+                dummyInput.setAttribute('aria-hidden', 'true');
+                dummyInput.setAttribute('tabindex', '-1');
+                dummyInput.setAttribute('autocomplete', 'off');
+                dummyInput.style.cssText =
+                    'position:fixed;top:0;left:0;width:0;height:0;' +
+                    'opacity:0;border:none;padding:0;margin:0;outline:none;' +
+                    'pointer-events:none;z-index:-9999;' +
+                    'color:transparent;background:transparent;caret-color:transparent;';
+                (document.body || document.documentElement).appendChild(dummyInput);
+                return dummyInput;
+            }
+
+            function transferToSkikoInput() {
+                // Find the hidden input/textarea that Skiko/Compose creates for IME
+                const inputs = document.querySelectorAll('input:not([aria-hidden="true"]):not([tabindex="-1"]), textarea:not([aria-hidden="true"])');
+                for (let i = 0; i < inputs.length; i++) {
+                    if (inputs[i] !== dummyInput) {
+                        inputs[i].focus({preventScroll: true});
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            document.addEventListener('touchend', function (e) {
+                const target = e.target;
+                if (!target || (target.tagName !== 'CANVAS' && target.tagName !== 'BODY')) return;
+
+                // Focus dummy synchronously inside the gesture handler
+                getDummy().focus({preventScroll: true});
+
+                // If Skiko input already exists, hand off immediately
+                if (transferToSkikoInput()) return;
+
+                // Otherwise watch for Skiko to add/reveal its input element
+                if (focusObserver) focusObserver.disconnect();
+                const deadline = Date.now() + 1000;
+                focusObserver = new MutationObserver(function (mutations, obs) {
+                    if (Date.now() > deadline) {
+                        obs.disconnect();
+                        return;
+                    }
+                    if (transferToSkikoInput()) obs.disconnect();
+                });
+                focusObserver.observe(document.documentElement, {
+                    childList: true,
+                    subtree: true,
+                    attributes: true,
+                    attributeFilter: ['style', 'class', 'tabindex', 'aria-hidden']
+                });
+                // Auto-cleanup
+                setTimeout(function () {
+                    if (focusObserver) focusObserver.disconnect();
+                }, 1000);
+            }, {passive: true});
+        })();
     </script>
 </head>
 <body>
