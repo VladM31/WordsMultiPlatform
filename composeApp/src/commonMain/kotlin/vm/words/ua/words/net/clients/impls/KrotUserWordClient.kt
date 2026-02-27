@@ -8,6 +8,7 @@ import vm.words.ua.core.net.responds.PagedRespond
 import vm.words.ua.words.net.clients.UserWordClient
 import vm.words.ua.words.net.requests.DeleteUserWordRequest
 import vm.words.ua.words.net.requests.PinUserWordRequest
+import vm.words.ua.words.net.requests.UserWordEditRequest
 import vm.words.ua.words.net.requests.UserWordRequest
 import vm.words.ua.words.net.responds.UserWordRespond
 
@@ -40,6 +41,17 @@ class KrotUserWordClient(
             header("Authorization", "Bearer $token")
             header("Content-Type", "application/json")
             setBody(requests)
+        }
+    }
+
+    override suspend fun update(
+        token: String,
+        request: UserWordEditRequest
+    ) {
+        client.put(baseUrl) {
+            header("Authorization", "Bearer $token")
+            header("Content-Type", "application/json")
+            setBody(request)
         }
     }
 
