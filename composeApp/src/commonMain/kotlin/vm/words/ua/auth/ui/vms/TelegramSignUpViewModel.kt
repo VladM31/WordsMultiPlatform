@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import vm.words.ua.auth.domain.managers.AuthManager
+import vm.words.ua.auth.domain.managers.ContactRequestStatus
 import vm.words.ua.auth.domain.managers.TelegramWebAppManager
 import vm.words.ua.auth.domain.managers.user
 import vm.words.ua.auth.domain.models.SignUpModel
@@ -21,7 +22,7 @@ import vm.words.ua.core.utils.toNumbersOnly
 class TelegramSignUpViewModel(
     private val authManager: AuthManager,
     private val analytics: Analytics,
-    telegramWebAppManager: TelegramWebAppManager
+    private val telegramWebAppManager: TelegramWebAppManager
 ) : ViewModel() {
 
     private val mutableState = MutableStateFlow(
@@ -78,33 +79,63 @@ class TelegramSignUpViewModel(
         }
 
         viewModelScope.launch(Dispatchers.Default) {
-            try {
-                authManager.signUp(state.value.toModel()).let {
-                    val erMes = it.message?.run { ErrorMessage(message = this) }
 
 
+            handleRequestContact()
 
-                    mutableState.value = state.value.copy(success = it.success, error = erMes)
-                    if (it.success) {
-                        analytics.logEvent(
-                            AnalyticsEvents.SIGNUP_SUCCESS, mapOf(
-                                "phone_number" to state.value.phoneNumber,
-                                "currency" to state.value.currency.name
-                            )
-                        )
-                        return@let
-                    }
+            authManager.signUp(state.value.toModel()).let {
+                val erMes = it.message?.run { ErrorMessage(message = this) }
+
+                mutableState.value = state.value.copy(success = it.success, error = erMes)
+                if (it.success) {
                     analytics.logEvent(
-                        AnalyticsEvents.SIGNUP_FAILED, mapOf(
+                        AnalyticsEvents.SIGNUP_SUCCESS, mapOf(
                             "phone_number" to state.value.phoneNumber,
-                            "currency" to state.value.currency.name,
-                            "error_message" to (it.message ?: "unknown_error")
+                            "currency" to state.value.currency.name
                         )
                     )
+                    return@let
                 }
-            } catch (e: Exception) {
+                analytics.logEvent(
+                    AnalyticsEvents.SIGNUP_FAILED, mapOf(
+                        "phone_number" to state.value.phoneNumber,
+                        "currency" to state.value.currency.name,
+                        "error_message" to (it.message ?: "unknown_error")
+                    )
+                )
+            }
+        }.invokeOnCompletion {
+            if (mutableState.value.success) {
+                return@invokeOnCompletion
+            }
+            val message = it?.message ?: "Unknown error"
+            mutableState.value =
+                state.value.copy(error = ErrorMessage(message = message))
+        }
+    }
+
+    private suspend fun handleRequestContact() {
+        if (telegramWebAppManager.isAvailable.not()) {
+            return
+        }
+        mutableState.value =
+            state.value.copy(error = ErrorMessage(message = "Please allow access to your contact information in Telegram settings and try again"))
+        val result = telegramWebAppManager.requestContact()
+
+        when (result) {
+            is ContactRequestStatus.Sent -> {
                 mutableState.value =
-                    state.value.copy(error = ErrorMessage(message = e.message ?: "Unknown error"))
+                    state.value.copy(error = ErrorMessage(message = "Please allow access to your contact information in Telegram settings and try again"))
+            }
+
+            is ContactRequestStatus.Cancelled -> {
+                mutableState.value =
+                    state.value.copy(error = ErrorMessage(message = "Go out from Mini App, allow access to your contact information in Telegram bot and try again"))
+            }
+
+            is ContactRequestStatus.Unavailable -> {
+                mutableState.value =
+                    state.value.copy(error = ErrorMessage(message = "Unable to request contact. Please allow access to your contact information in Telegram settings and try again"))
             }
         }
     }

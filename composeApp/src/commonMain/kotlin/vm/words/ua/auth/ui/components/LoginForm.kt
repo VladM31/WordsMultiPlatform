@@ -17,12 +17,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.auth.ui.actions.LoginAction
 import vm.words.ua.auth.ui.hints.LoginScreenHintStep
 import vm.words.ua.auth.ui.vms.LoginViewModel
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppTextField
+import vm.words.ua.core.ui.icons.GoogleIcon
 import vm.words.ua.core.ui.icons.TelegramIcon
 import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberIconSize
@@ -30,8 +30,6 @@ import vm.words.ua.core.utils.rememberLabelFontSize
 import vm.words.ua.core.utils.rememberScaleFactor
 import vm.words.ua.utils.hints.ui.utils.ViewHintStep
 import vm.words.ua.utils.hints.ui.utils.viewHint
-import wordsmultiplatform.composeapp.generated.resources.Res
-import wordsmultiplatform.composeapp.generated.resources.google_icon
 
 @Composable
 fun LoginForm(
@@ -226,7 +224,7 @@ private fun GoogleSignInButton(
     ) {
         // Using Material Icon for Google logo
         Icon(
-            painter = painterResource(Res.drawable.google_icon),
+            imageVector = GoogleIcon,
             contentDescription = "Google Sign-In",
             tint = AppTheme.PrimaryBack,
             modifier = Modifier.size(iconSize)
