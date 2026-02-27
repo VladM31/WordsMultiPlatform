@@ -135,7 +135,10 @@ class TelegramSignUpViewModel(
                     state.value.copy(error = ErrorMessage(message = "Go out from Mini App, allow access to your contact information in Telegram bot and try again"))
             }
 
-            else -> {}
+            is ContactRequestStatus.Unavailable -> {
+                mutableState.value =
+                    state.value.copy(error = ErrorMessage(message = "Please open Telegram and allow access to your contact information, then try again."))
+            }
         }
     }
 
