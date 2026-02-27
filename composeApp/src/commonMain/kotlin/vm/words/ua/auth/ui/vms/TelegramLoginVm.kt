@@ -100,11 +100,15 @@ class TelegramLoginVm(
             val message = when (contactStatus) {
                 ContactRequestStatus.Sent -> "Contact request sent. Please try logging in again after sharing your contact."
                 ContactRequestStatus.Cancelled -> "Contact request cancelled. Please confirm your phone number in Telegram and try again."
-                ContactRequestStatus.Unavailable -> "Unable to request contact. Please confirm your phone number in Telegram and try again."
+                else -> {
+                    null
+                }
             }
-            mutableState.value = mutableState.value.copy(
-                errorMessage = ErrorMessage(message)
-            )
+            message?.let {
+                mutableState.value = mutableState.value.copy(
+                    errorMessage = ErrorMessage(it)
+                )
+            }
         }.invokeOnCompletion {
             if (it != null) {
                 handleFail(Result.failure(it))

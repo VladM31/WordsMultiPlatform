@@ -81,7 +81,9 @@ class TelegramSignUpViewModel(
         viewModelScope.launch(Dispatchers.Default) {
 
 
-            handleRequestContact()
+            runCatching {
+                handleRequestContact()
+            }
 
             authManager.signUp(state.value.toModel()).let {
                 val erMes = it.message?.run { ErrorMessage(message = this) }
@@ -133,10 +135,7 @@ class TelegramSignUpViewModel(
                     state.value.copy(error = ErrorMessage(message = "Go out from Mini App, allow access to your contact information in Telegram bot and try again"))
             }
 
-            is ContactRequestStatus.Unavailable -> {
-                mutableState.value =
-                    state.value.copy(error = ErrorMessage(message = "Unable to request contact. Please allow access to your contact information in Telegram settings and try again"))
-            }
+            else -> {}
         }
     }
 
