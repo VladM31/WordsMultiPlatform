@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import vm.words.ua.auth.domain.managers.TelegramWebAppManager
 import vm.words.ua.auth.ui.actions.TelegramLoginAction
 import vm.words.ua.auth.ui.states.TelegramLoginState
 import vm.words.ua.auth.ui.vms.TelegramLoginVm
@@ -32,6 +33,7 @@ fun TelegramLoginScreen(
     val uriHandler = LocalUriHandler.current
     val toaster = rememberToast()
     val toastData = rememberToastData(navController)
+    val manager: TelegramWebAppManager = rememberInstance()
 
     LaunchedEffect(state.isEnd) {
         if (state.isEnd) {
@@ -80,7 +82,8 @@ fun TelegramLoginScreen(
                     PrimaryButton(
                         text = "Open Telegram",
                         onClick = {
-                            uriHandler.openUri(AppRemoteConfig.telegramBotLink)
+                            val opened = manager.openLink(AppRemoteConfig.telegramBotLink)
+                            if (!opened) uriHandler.openUri(AppRemoteConfig.telegramBotLink)
                         },
                         modifier = Modifier.fillMaxWidth(0.8f)
                     )

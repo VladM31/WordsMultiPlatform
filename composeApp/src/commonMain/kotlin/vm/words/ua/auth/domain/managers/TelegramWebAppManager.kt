@@ -25,6 +25,16 @@ interface TelegramWebAppManager {
      * Requires Bot API 6.9+.
      */
     suspend fun requestContact(): ContactRequestStatus
+
+    /**
+     * Attempts to open a link in a way suitable for Telegram Mini Apps.
+     * Platforms that support Telegram.WebApp.openTelegramLink should override this
+     * and return true if the call succeeded. Default implementation returns false.
+     *
+     * @param url link to open (for example the bot deep link)
+     * @return true if the platform-specific implementation opened the link, false otherwise
+     */
+    fun openLink(url: String): Boolean = false
 }
 
 sealed class ContactRequestStatus {

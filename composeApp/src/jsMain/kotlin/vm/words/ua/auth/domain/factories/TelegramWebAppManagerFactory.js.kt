@@ -22,7 +22,20 @@ private class TelegramWebAppManagerJs : TelegramWebAppManager {
             else -> ContactRequestStatus.Unavailable
         }
     }
+
+    override fun openLink(url: String): Boolean {
+        // Try Telegram WebApp API first
+        val res =
+            js("(function(u){ try { var tg = window.Telegram && window.Telegram.WebApp; if (tg && typeof tg.openTelegramLink === 'function') { tg.openTelegramLink(u); return true; } if (tg && typeof tg.openLink === 'function') { tg.openLink(u); return true; } return false; } catch(e){ console.warn('openTelegramLink error', e); return false;} })(arguments[0])") as? Boolean
+        if (res == true) return true
+        // Fallback to opening in a new tab/window
+        try {
+            js("window.open(arguments[0], '_blank')")(url)
+            return true
+        } catch (_: Throwable) {
+            return false
+        }
+    }
 }
 
 actual fun createTelegramWebAppManager(): TelegramWebAppManager = TelegramWebAppManagerJs()
-

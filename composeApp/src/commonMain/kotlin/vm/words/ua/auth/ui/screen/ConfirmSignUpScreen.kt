@@ -18,12 +18,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import vm.words.ua.auth.domain.managers.TelegramWebAppManager
 import vm.words.ua.auth.ui.actions.ConfirmSignUpAction
 import vm.words.ua.auth.ui.bundles.ConfirmSignBundle
 import vm.words.ua.auth.ui.vms.ConfirmSignUpVm
@@ -47,6 +49,7 @@ fun ConfirmSignUpScreen(
     val uriHandler = LocalUriHandler.current
     val state = viewModel.state.collectAsState()
     val bundle = navController.rememberParamOrThrow<ConfirmSignBundle>()
+    val manager: TelegramWebAppManager = rememberInstance()
 
     LaunchedEffect(state.value.waitResult) {
         if (state.value.waitResult.not()) {
@@ -93,76 +96,88 @@ fun ConfirmSignUpScreen(
                         .padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Decorative icon circle
-                    androidx.compose.foundation.layout.Box(
-                        modifier = Modifier
-                            .size(88.dp)
-                            .background(
-                                AppTheme.PrimaryColor.copy(alpha = 0.12f),
-                                shape = CircleShape
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Rounded.Check,
-                            contentDescription = "Confirmed",
-                            modifier = Modifier.size(36.sp.value.dp).semantics { contentDescription = "Confirmed" },
-                            tint = AppTheme.PrimaryColor
-                        )
-                    }
 
-                    Spacer(modifier = Modifier.height(18.dp))
-
-                    Text(
-                        text = "Confirm your account",
-                        color = AppTheme.PrimaryColor,
-                        fontSize = rememberFontSize() * 1.6f,
-                        lineHeight = rememberFontSize() * 1.65f,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = "We sent a confirmation message. Please follow the link in the message to finish registration.",
-                        color = AppTheme.PrimaryColor.copy(alpha = 0.9f),
-                        fontSize = rememberFontSize() * 1.05f,
-                        lineHeight = rememberFontSize() * 1.1f,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxWidth(0.95f)
-                            .padding(top = 4.dp, bottom = 12.dp)
-                    )
-
-                    // Show contact info (phone) so user knows where the message was sent
-                    Text(
-                        text = "Sent to: ${bundle.phoneNumber}",
-                        color = AppTheme.PrimaryColor,
-                        fontSize = rememberFontSize() * 0.95f,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(bottom = 18.dp)
-                    )
-
-                    PrimaryButton(
-                        text = "Open Telegram Bot",
-                        onClick = {
-                            uriHandler.openUri(AppRemoteConfig.telegramBotLink)
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    TextButton(
-                        onClick = { navController.popBackStack() },
-                    ) {
-                        Text(text = "Back to Login", color = AppTheme.PrimaryColor)
-                    }
+                    Content(bundle, manager, uriHandler, navController)
 
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun Content(
+    bundle: ConfirmSignBundle,
+    manager: TelegramWebAppManager,
+    uriHandler: UriHandler,
+    navController: SimpleNavController
+) {
+    Box(
+        modifier = Modifier
+            .size(88.dp)
+            .background(
+                AppTheme.PrimaryColor.copy(alpha = 0.12f),
+                shape = CircleShape
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = Icons.Rounded.Check,
+            contentDescription = "Confirmed",
+            modifier = Modifier.size(36.sp.value.dp).semantics { contentDescription = "Confirmed" },
+            tint = AppTheme.PrimaryColor
+        )
+    }
+
+    Spacer(modifier = Modifier.height(18.dp))
+
+    Text(
+        text = "Confirm your account",
+        color = AppTheme.PrimaryColor,
+        fontSize = rememberFontSize() * 1.6f,
+        lineHeight = rememberFontSize() * 1.65f,
+        fontWeight = FontWeight.Bold,
+        textAlign = TextAlign.Center
+    )
+
+    Spacer(modifier = Modifier.height(8.dp))
+
+    Text(
+        text = "We sent a confirmation message. Please follow the link in the message to finish registration.",
+        color = AppTheme.PrimaryColor.copy(alpha = 0.9f),
+        fontSize = rememberFontSize() * 1.05f,
+        lineHeight = rememberFontSize() * 1.1f,
+        textAlign = TextAlign.Center,
+        modifier = Modifier
+            .fillMaxWidth(0.95f)
+            .padding(top = 4.dp, bottom = 12.dp)
+    )
+
+    // Show contact info (phone) so user knows where the message was sent
+    Text(
+        text = "Sent to: ${bundle.phoneNumber}",
+        color = AppTheme.PrimaryColor,
+        fontSize = rememberFontSize() * 0.95f,
+        textAlign = TextAlign.Center,
+        modifier = Modifier.padding(bottom = 18.dp)
+    )
+
+    PrimaryButton(
+        text = "Open Telegram Bot",
+        onClick = {
+            // Prefer Telegram WebApp open if available
+            val opened = manager.openLink(AppRemoteConfig.telegramBotLink)
+            if (!opened) uriHandler.openUri(AppRemoteConfig.telegramBotLink)
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+    )
+
+    Spacer(modifier = Modifier.height(8.dp))
+
+    TextButton(
+        onClick = { navController.popBackStack() },
+    ) {
+        Text(text = "Back to Login", color = AppTheme.PrimaryColor)
     }
 }

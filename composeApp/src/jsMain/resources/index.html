@@ -311,6 +311,38 @@
         window.getTgUserJson = function () {
             return window.TG_USER_JSON || "";
         };
+        window.openTelegramLink = function (url) {
+            try {
+                var tg = window.Telegram && window.Telegram.WebApp;
+                if (tg) {
+                    if (typeof tg.openTelegramLink === 'function') {
+                        try {
+                            tg.openTelegramLink(url);
+                            return true;
+                        } catch (e) {
+                            console.warn('openTelegramLink failed', e);
+                        }
+                    }
+                    if (typeof tg.openLink === 'function') {
+                        try {
+                            tg.openLink(url);
+                            return true;
+                        } catch (e) {
+                            console.warn('openLink failed', e);
+                        }
+                    }
+                }
+                try {
+                    window.open(url, '_blank');
+                    return true;
+                } catch (e) {
+                    console.warn('window.open failed', e);
+                }
+            } catch (e) {
+                console.error('openTelegramLink error:', e);
+            }
+            return false;
+        };
     </script>
 </head>
 <body>
