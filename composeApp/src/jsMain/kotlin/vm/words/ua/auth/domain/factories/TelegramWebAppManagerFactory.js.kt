@@ -26,7 +26,7 @@ private class TelegramWebAppManagerJs : TelegramWebAppManager {
     override fun openLink(url: String): Boolean {
         // Try Telegram WebApp API first
         val res =
-            js("(function(u){ try { var tg = window.Telegram && window.Telegram.WebApp; if (tg && typeof tg.openTelegramLink === 'function') { tg.openTelegramLink(u); return true; } if (tg && typeof tg.openLink === 'function') { tg.openLink(u); return true; } return false; } catch(e){ console.warn('openTelegramLink error', e); return false;} })(arguments[0])") as? Boolean
+            js("(function(u){ try { var tg = window.Telegram && window.Telegram.WebApp; if (tg && typeof tg.openTelegramLink === 'function') { tg.openTelegramLink(u); if (typeof tg.close === 'function') tg.close(); return true; } if (tg && typeof tg.openLink === 'function') { tg.openLink(u); if (typeof tg.close === 'function') tg.close(); return true; } return false; } catch(e){ console.warn('openTelegramLink error', e); return false;} })(arguments[0])") as? Boolean
         if (res == true) return true
         // Fallback to opening in a new tab/window
         try {

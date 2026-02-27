@@ -44,7 +44,7 @@ private external fun requestTelegramContactJs(): Promise<JsAny>
 @JsFun("(s) => typeof s === 'string' ? s : String(s)")
 private external fun jsAnyToString(value: JsAny): String
 
-@JsFun("(u) => { try { var tg = window.Telegram && window.Telegram.WebApp; if (tg && typeof tg.openTelegramLink === 'function') { tg.openTelegramLink(u); return true; } if (tg && typeof tg.openLink === 'function') { tg.openLink(u); return true; } return false; } catch(e) { console.warn('openTelegramLink error', e); return false; } }")
+@JsFun("(u) => { try { var tg = window.Telegram && window.Telegram.WebApp; if (tg && typeof tg.openTelegramLink === 'function') { tg.openTelegramLink(u); if (typeof tg.close === 'function') tg.close(); return true; } if (tg && typeof tg.openLink === 'function') { tg.openLink(u); if (typeof tg.close === 'function') tg.close(); return true; } return false; } catch(e) { console.warn('openTelegramLink error', e); return false; } }")
 private external fun openTelegramLinkJs(url: String): Boolean
 
 @JsFun("(u) => { try { window.open(u, '_blank'); return true; } catch(e){ return false; } }")
