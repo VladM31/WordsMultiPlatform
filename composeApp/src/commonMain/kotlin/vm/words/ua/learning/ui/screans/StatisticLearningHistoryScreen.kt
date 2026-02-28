@@ -221,7 +221,7 @@ fun DatePickerComponent(showDatePicker: Boolean, onHide: () -> Unit, viewModel: 
 
 @OptIn(ExperimentalKoalaPlotApi::class)
 @Composable
-fun StatisticsBarChart(
+fun ColumnScope.StatisticsBarChart(
     statistics: List<DayStatistics>,
     toDate: Instant,
     step: Int,
@@ -281,7 +281,7 @@ fun StatisticsBarChart(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .height(400.dp)
+            .weight(1f)
             .padding(16.dp)
     ) {
         XYGraph(
