@@ -23,12 +23,16 @@ import kotlinx.datetime.*
 import kotlinx.datetime.format.char
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
+import vm.words.ua.core.ui.components.CenteredContainer
+import vm.words.ua.core.ui.components.SwipeListener
 import vm.words.ua.core.utils.getIconButtonSize
+import vm.words.ua.core.utils.rememberInterfaceMaxWidth
 import vm.words.ua.core.utils.rememberLabelFontSize
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.learning.domain.models.enums.LearningHistoryType
 import vm.words.ua.learning.ui.actions.StatisticLearningHistoryAction
 import vm.words.ua.learning.ui.vms.StatisticLearningHistoryVm
+import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
 
 // Statistics data for chart
@@ -78,15 +82,10 @@ fun StatisticLearningHistoryScreen(
             onBackClick = { navController.popBackStack() }
         )
 
-
-        // Current date range display
         val currentDateFormatted = remember(state.toDate) {
             val localDate = state.toDate.toLocalDateTime(TimeZone.currentSystemDefault()).date
             "${localDate.dayOfMonth}.${localDate.monthNumber}.${localDate.year}"
         }
-
-
-
 
         if (state.isLoading) {
             Box(
@@ -104,23 +103,29 @@ fun StatisticLearningHistoryScreen(
             navController = navController
         )
 
-        Text(
-            text = "To: $currentDateFormatted",
-            color = AppTheme.SecondaryText,
-            fontSize = rememberLabelFontSize(),
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-
-        StatisticsBarChart(
-            statistics = dayStatistics,
-            toDate = state.toDate,
-            step = state.step,
-            modifier = Modifier.fillMaxWidth()
-        )
 
 
-
+        CenteredContainer(maxWidth = rememberInterfaceMaxWidth() * 1.2f) {
+            Column {
+                Text(
+                    text = "To: $currentDateFormatted",
+                    color = AppTheme.SecondaryText,
+                    fontSize = rememberLabelFontSize(),
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                StatisticsBarChart(
+                    statistics = dayStatistics,
+                    toDate = state.toDate,
+                    step = state.step
+                )
+            }
+        }
     }
+
+    SwipeListener(
+        onSwipeRight = { navController.popBackStack() },
+        onSwipeLeft = { navController.navigate(Screen.LearningHistoryList) }
+    )
 }
 
 @Composable
@@ -149,7 +154,7 @@ private fun Menu(onSelectDate: () -> Unit, navController: SimpleNavController) {
         // History list button
         IconButton(
             onClick = {
-                navController.navigate(vm.words.ua.navigation.Screen.LearningHistoryList)
+                navController.navigate(Screen.LearningHistoryList)
             }
         ) {
             Icon(
