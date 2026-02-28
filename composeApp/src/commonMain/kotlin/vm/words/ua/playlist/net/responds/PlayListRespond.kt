@@ -3,6 +3,7 @@ package vm.words.ua.playlist.net.responds
 import kotlinx.serialization.Serializable
 import vm.words.ua.core.domain.models.enums.CEFR
 import vm.words.ua.core.domain.models.enums.Language
+import vm.words.ua.words.domain.models.enums.WordType
 
 
 @Serializable
@@ -47,7 +48,7 @@ data class PlayListRespond(
         val category: String?,
         val soundLink: String?,
         val imageLink: String?,
-        val type: String,
+        val type: WordType,
         val createdAt: String
     )
 }

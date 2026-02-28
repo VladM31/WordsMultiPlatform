@@ -40,7 +40,8 @@ class WordManagerImpl(
             description = res.description,
             category = res.category,
             soundLink = res.soundLink,
-            imageLink = res.imageLink
+            imageLink = res.imageLink,
+            type = res.type,
         )
     }
 }

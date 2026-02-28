@@ -227,7 +227,8 @@ class PlayListManagerImpl(
             description = description,
             category = category,
             soundLink = soundLink,
-            imageLink = imageLink
+            imageLink = imageLink,
+            type = type
         )
     }
 }

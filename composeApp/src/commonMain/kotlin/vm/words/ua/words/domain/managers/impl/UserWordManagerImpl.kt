@@ -197,7 +197,8 @@ class UserWordManagerImpl(
         description = description,
         category = category,
         soundLink = soundLink,
-        imageLink = imageLink
+        imageLink = imageLink,
+        type = type
     )
 
     private fun SaveWord.toRequest() = WordRequest(
