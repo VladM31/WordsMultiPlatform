@@ -19,7 +19,7 @@ object AppRemoteConfig {
     private const val DEFAULT_BASE_URL = "https://study-words.com"
     private const val DEFAULT_TELEGRAM_BOT = "https://t.me/needlework_number_bot"
 
-    const val CURRENT_VERSION = "1.1.1"
+    const val CURRENT_VERSION = "1.1.5"
 
     private var configData: RemoteConfigData? = null
         get() {
