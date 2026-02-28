@@ -19,7 +19,11 @@ import androidx.compose.ui.unit.sp
 import kotlinx.datetime.format.char
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
+import vm.words.ua.core.ui.components.CenteredContainer
+import vm.words.ua.core.ui.components.TagBadge
+import vm.words.ua.core.ui.theme.toColor
 import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberInterfaceMaxWidth
 import vm.words.ua.core.utils.rememberScaleFactor
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.learning.domain.models.LearningHistory
@@ -89,30 +93,32 @@ private fun ColumnScope.LearningHistoryList(
             return
         }
 
-        LazyColumn(
-            state = listState,
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(vertical = 8.dp)
-        ) {
-            items(
-                count = state.history.size,
-                key = { index -> state.history[index].id }
-            ) { index ->
-                LearningHistoryItem(history = state.history[index])
-            }
+        CenteredContainer(maxWidth = rememberInterfaceMaxWidth()) {
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(vertical = 8.dp)
+            ) {
+                items(
+                    count = state.history.size,
+                    key = { index -> state.history[index].id }
+                ) { index ->
+                    LearningHistoryItem(history = state.history[index])
+                }
 
-            if (state.isLoading) {
-                item {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator(
-                            color = AppTheme.PrimaryColor,
-                            modifier = Modifier.size(32.dp)
-                        )
+                if (state.isLoading) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                color = AppTheme.PrimaryColor,
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -231,10 +237,10 @@ private fun LearningHistoryItem(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(
-                        text = "Level: ${history.cefr.name}",
+                    TagBadge(
+                        text = history.cefr.name,
                         fontSize = detailsSize,
-                        color = AppTheme.SecondaryText
+                        color = history.cefr.toColor()
                     )
 
                     if (history.grade > 0) {
