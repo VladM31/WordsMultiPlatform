@@ -1,6 +1,9 @@
 package vm.words.ua.words.ui.components
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -15,7 +18,6 @@ import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberIconSize
 import wordsmultiplatform.composeapp.generated.resources.Res
 import wordsmultiplatform.composeapp.generated.resources.delete
-import wordsmultiplatform.composeapp.generated.resources.sound
 
 @Composable
 fun SelectSoundMenu(
@@ -49,7 +51,7 @@ fun SelectSoundMenu(
                         .size(getIconButtonSize() * 1.5f)
                 ) {
                     Icon(
-                        painter = painterResource(Res.drawable.sound),
+                        imageVector = if (isPlay) Icons.AutoMirrored.Filled.VolumeUp else Icons.Filled.PlayArrow,
                         contentDescription = "Play sound",
                         tint = AppTheme.PrimaryBack,
                         modifier = Modifier.size(rememberIconSize() * 1.5f)
