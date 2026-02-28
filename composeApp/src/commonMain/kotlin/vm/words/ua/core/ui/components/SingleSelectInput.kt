@@ -20,6 +20,7 @@ fun <T> SingleSelectInput(
     noneLabel: String = "",
     onSelect: (T?) -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     // Optional helper text shown below the input
     helperText: String? = null,
 ) {
@@ -29,7 +30,7 @@ fun <T> SingleSelectInput(
 
     ExposedDropdownMenuBox(
         expanded = expanded,
-        onExpandedChange = { expanded = it }
+        onExpandedChange = { if (enabled) expanded = it }
     ) {
         OutlinedTextField(
             value = value?.let(toLabel) ?: noneLabel,

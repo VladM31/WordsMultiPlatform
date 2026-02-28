@@ -58,6 +58,7 @@ sealed class Screen(val route: String) {
     data object LearningHistoryList : Screen("learning_history_list")
 
     data object DefaultAddWord : Screen("default_add_word")
+    data object WordEdit : Screen("word_edit")
 
     data object ExerciseResult : Screen("exercise_result")
 }

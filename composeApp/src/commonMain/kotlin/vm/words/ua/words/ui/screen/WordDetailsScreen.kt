@@ -14,8 +14,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.DateRange
-import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -37,19 +37,20 @@ import vm.words.ua.core.platform.currentOrientation
 import vm.words.ua.core.platform.currentPlatform
 import vm.words.ua.core.platform.isLandscape
 import vm.words.ua.core.ui.AppTheme
-import vm.words.ua.core.ui.components.AppToolBar
-import vm.words.ua.core.ui.components.ErrorMessageBox
-import vm.words.ua.core.ui.components.ImageFromBytes
+import vm.words.ua.core.ui.components.*
 import vm.words.ua.core.ui.theme.toColor
 import vm.words.ua.core.utils.*
 import vm.words.ua.di.rememberInstance
+import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.navigation.rememberParamOrThrow
 import vm.words.ua.words.domain.models.UserWord
 import vm.words.ua.words.domain.models.Word
 import vm.words.ua.words.ui.actions.UserWordsAction
 import vm.words.ua.words.ui.actions.WordDetailsAction
+import vm.words.ua.words.ui.bundles.ReloadWordDetailsBundle
 import vm.words.ua.words.ui.bundles.WordDetailsBundle
+import vm.words.ua.words.ui.bundles.WordEditBundle
 import vm.words.ua.words.ui.states.WordDetailsState
 import vm.words.ua.words.ui.vms.WordDetailsViewModel
 import wordsmultiplatform.composeapp.generated.resources.Res
@@ -61,8 +62,7 @@ fun WordDetailsScreen(
     modifier: Modifier = Modifier
 ) {
     val bundle = navController.rememberParamOrThrow<WordDetailsBundle>()
-    val userWord: UserWord? = bundle.userWord
-    val word: Word = bundle.word
+
 
     val viewModel = rememberInstance<WordDetailsViewModel>()
     val state by viewModel.state.collectAsState()
@@ -74,25 +74,27 @@ fun WordDetailsScreen(
     }
 
     LaunchedEffect(Unit) {
+        val userWord: UserWord? = bundle.userWord
+        val word: Word = bundle.word
         viewModel.sent(WordDetailsAction.Init(userWord, word))
     }
+
+    LaunchedEffect(navController.currentRoute) {
+        val returnValue = navController.getReturnParam<Any>(Screen.WordDetails)
+        (returnValue as? ReloadWordDetailsBundle)?.let {
+            viewModel.sent(WordDetailsAction.Reload)
+        }
+    }
+    println(state.userWord)
 
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(AppTheme.PrimaryBack)
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            AppToolBar(
-                title = state.word?.original ?: "Word Details",
-                showBackButton = true,
-                showAdditionalButton = userWord != null,
-                onAdditionalClick = { viewModel.sent(WordDetailsAction.Delete) },
-                onBackClick = {
-                    navController.popBackStack()
-                },
-                additionalButtonVector = Icons.Outlined.Delete
-            )
+        Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+
+            TopBar(state, navController, viewModel)
 
             if (state.isLoading) {
                 LoadingContent()
@@ -109,8 +111,6 @@ fun WordDetailsScreen(
 
                 if (isPhone && (isNotLandscape || isNotMobile)) {
                     MobileLayout(
-                        word = word,
-                        userWord = userWord,
                         wordState = state,
                         image = state.image,
                         maxWidth = maxWidth,
@@ -121,8 +121,6 @@ fun WordDetailsScreen(
                 }
 
                 DesktopLayout(
-                    word = word,
-                    userWord = userWord,
                     wordState = state,
                     image = state.image,
                     maxWidth = maxWidth,
@@ -135,6 +133,65 @@ fun WordDetailsScreen(
         // Error Snackbar
         state.errorMessage?.let { error ->
             ErrorMessageBox(error)
+        }
+    }
+}
+
+@Composable
+private fun TopBar(
+    state: WordDetailsState,
+    navController: SimpleNavController,
+    viewModel: WordDetailsViewModel
+) {
+    Box(
+        modifier = Modifier
+            .widthIn(max = rememberInterfaceMaxWidth())
+            .fillMaxWidth()
+            .height(40.dp * rememberScaleFactor())
+    ) {
+        AppToolBar(
+            title = state.word?.original ?: "Word Details",
+            showBackButton = true,
+            showAdditionalButton = false,
+            onBackClick = {
+                if (state.isReloaded) {
+                    navController.popBackStack(UserWordsAction.ReFetch)
+                } else {
+                    navController.popBackStack()
+                }
+            }
+        )
+
+
+        val userWord = state.userWord ?: return@Box
+
+        // Popup menu positioned at top right
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .padding(end = 10.dp),
+            contentAlignment = Alignment.CenterEnd
+        ) {
+
+            PopupMenuButton(
+                buttonVector = Icons.Filled.Settings,
+                items = listOf(
+                    PopupMenuItem(
+                        text = "Edit",
+                        onClick = {
+                            navController.navigate(
+                                Screen.WordEdit,
+                                WordEditBundle(userWord = userWord)
+                            )
+                        }
+                    ),
+                    PopupMenuItem(
+                        text = "Delete",
+                        onClick = { viewModel.sent(WordDetailsAction.Delete) }
+                    )
+                )
+            )
         }
     }
 }
@@ -167,8 +224,6 @@ private fun LoadingContent() {
 
 @Composable
 private fun MobileLayout(
-    word: Word,
-    userWord: UserWord?,
     wordState: WordDetailsState?,
     image: ByteContent?,
     maxWidth: Dp,
@@ -187,7 +242,7 @@ private fun MobileLayout(
         val cardWidth = (320 * scale).dp
 
         WordCard(
-            word = word,
+            word = state.word ?: return@Column,
             modifier = Modifier.widthIn(max = cardWidth)
         )
 
@@ -206,7 +261,7 @@ private fun MobileLayout(
             )
         }
 
-        userWord?.let {
+        state.userWord?.let {
             StatsCard(
                 userWord = it,
                 modifier = Modifier.widthIn(max = cardWidth)
@@ -217,8 +272,6 @@ private fun MobileLayout(
 
 @Composable
 private fun DesktopLayout(
-    word: Word,
-    userWord: UserWord?,
     wordState: WordDetailsState,
     image: ByteContent?,
     maxWidth: Dp,
@@ -242,11 +295,11 @@ private fun DesktopLayout(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             WordCard(
-                word = word,
+                word = state.word ?: return@Column,
                 modifier = Modifier.fillMaxWidth()
             )
 
-            userWord?.let {
+            state.userWord?.let {
                 StatsCard(
                     userWord = it,
                     modifier = Modifier.fillMaxWidth()

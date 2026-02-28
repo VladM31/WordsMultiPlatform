@@ -40,6 +40,10 @@ class WordsScreenProvider : ScreenProvider {
                 DefaultAddWordScreen(navController = navController)
             }
 
+            Screen.WordEdit.route -> {
+                WordEditScreen(navController = navController)
+            }
+
             else -> {
                 return false
             }

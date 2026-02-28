@@ -56,4 +56,12 @@ internal val viewModelWordsModule = DI.Module("viewModelWordsModule") {
             soundManager = instance()
         )
     }
+
+    bind<WordEditVm>() with factory {
+        WordEditVm(
+            userWordManager = instance(),
+            subscribeCacheManager = instance(),
+            soundManager = instance()
+        )
+    }
 }

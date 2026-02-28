@@ -7,6 +7,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import vm.words.ua.core.domain.managers.ByteContentManager
 import vm.words.ua.core.domain.models.ByteContent
@@ -15,6 +16,7 @@ import vm.words.ua.subscribes.domain.managers.SubscribeCacheManager
 import vm.words.ua.words.domain.managers.SoundManager
 import vm.words.ua.words.domain.managers.UserWordManager
 import vm.words.ua.words.domain.models.DeleteUserWord
+import vm.words.ua.words.domain.models.filters.UserWordFilter
 import vm.words.ua.words.ui.actions.WordDetailsAction
 import vm.words.ua.words.ui.states.WordDetailsState
 
@@ -33,6 +35,29 @@ class WordDetailsViewModel(
             is WordDetailsAction.Init -> fetchUserWord(action)
             is WordDetailsAction.Delete -> handleDelete()
             is WordDetailsAction.PlaySound -> playSound()
+            is WordDetailsAction.Reload -> handleReload()
+        }
+    }
+
+    private fun handleReload() {
+        val userWord = state.value.userWord ?: return
+        mutableState.update { it.copy(isLoading = true, isReloaded = true) }
+        viewModelScope.launch(Dispatchers.Default) {
+            val newUserWord = userWordManager.findBy(
+                UserWordFilter(
+                    userWordIds = listOf(userWord.id),
+                )
+            ).content.firstOrNull() ?: return@launch
+            mutableState.update { it.copy(isInited = false) }
+            fetchUserWord(WordDetailsAction.Init(newUserWord, newUserWord.word))
+        }.invokeOnCompletion {
+            if (it != null) {
+                mutableState.value = mutableState.value.copy(
+                    errorMessage = ErrorMessage(it.message ?: "Error reloading word")
+                )
+                it.printStackTrace()
+            }
+            mutableState.update { s -> s.copy(isLoading = false) }
         }
     }
 
@@ -45,12 +70,14 @@ class WordDetailsViewModel(
 
         mutableState.value = mutableState.value.copy(
             isLoading = isLoading,
-            userWord = action.userWord,
-            word = action.word,
             isInited = true
         )
 
         if (isLoading.not()) {
+            mutableState.value = mutableState.value.copy(
+                userWord = action.userWord,
+                word = action.word
+            )
             return
         }
 
@@ -66,16 +93,27 @@ class WordDetailsViewModel(
                 }
 
                 val imageTask = async {
-                    getContent(action.word.imageLink)
+                    if (state.value.word?.imageLink != action.word.imageLink) {
+                        getContent(action.word.imageLink)
+                    } else {
+                        state.value.image
+                    }
+
                 }
                 val soundTask = async {
-                    getContent(action.word.soundLink)
+                    if (state.value.word?.soundLink != action.word.soundLink) {
+                        getContent(action.word.soundLink)
+                    } else {
+                        state.value.sound
+                    }
                 }
 
                 mutableState.value = mutableState.value.copy(
                     isLoading = false,
                     image = imageTask.await(),
                     sound = soundTask.await(),
+                    userWord = action.userWord,
+                    word = action.word,
                     isActiveSubscribe = isActiveSubscribe
                 )
             } catch (e: Exception) {
@@ -126,7 +164,6 @@ class WordDetailsViewModel(
             try {
                 mutableState.value.sound?.let {
                     soundManager.playSound(it)
-                    // Даем время на воспроизведение звука
                     delay(1500)
                 }
 

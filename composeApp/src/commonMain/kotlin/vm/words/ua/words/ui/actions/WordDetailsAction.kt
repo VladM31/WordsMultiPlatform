@@ -7,5 +7,6 @@ sealed interface WordDetailsAction {
     data class Init(val userWord: UserWord?, val word: Word) : WordDetailsAction
     data object Delete : WordDetailsAction
     data object PlaySound : WordDetailsAction
+    data object Reload : WordDetailsAction
 }
 

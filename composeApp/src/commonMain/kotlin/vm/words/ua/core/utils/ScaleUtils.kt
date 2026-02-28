@@ -77,3 +77,11 @@ fun rememberButtonMaxWidth(): Dp {
     }
 }
 
+@Composable
+fun rememberColumnCount(): Int {
+    val isNot = isNotPhoneFormat()
+    return remember(isNot) {
+        if (isNot) 2 else 1
+    }
+}
+

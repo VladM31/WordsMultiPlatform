@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -32,7 +33,8 @@ data class PopupMenuItem(
 fun PopupMenuButton(
     items: List<PopupMenuItem>,
     modifier: Modifier = Modifier,
-    buttonIcon: Painter = painterResource(Res.drawable.setting)
+    buttonIcon: Painter = painterResource(Res.drawable.setting),
+    buttonVector: ImageVector? = null,
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -48,12 +50,21 @@ fun PopupMenuButton(
             onClick = { expanded = true },
             modifier = Modifier.size(buttonSize)
         ) {
-            Icon(
-                painter = buttonIcon,
-                contentDescription = "Menu",
-                tint = AppTheme.PrimaryColor,
-                modifier = Modifier.size(iconSize)
-            )
+            if (buttonVector != null) {
+                Icon(
+                    imageVector = buttonVector,
+                    contentDescription = "Menu",
+                    tint = AppTheme.PrimaryColor,
+                    modifier = Modifier.size(iconSize)
+                )
+            } else {
+                Icon(
+                    painter = buttonIcon,
+                    contentDescription = "Menu",
+                    tint = AppTheme.PrimaryColor,
+                    modifier = Modifier.size(iconSize)
+                )
+            }
         }
 
         DropdownMenu(

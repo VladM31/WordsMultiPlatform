@@ -14,6 +14,7 @@ data class WordDetailsState(
     val isLoading: Boolean = false,
     val isDeleted: Boolean = false,
     val isInited: Boolean = false,
+    val isReloaded: Boolean = false,
     val isPlayingSound: Boolean = false,
     val isActiveSubscribe: Boolean = false,
     override val errorMessage: ErrorMessage? = null

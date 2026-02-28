@@ -184,6 +184,9 @@ class SimpleNavController {
             ?: throw IllegalStateException("No navigation parameter for route: ${'$'}route")
     }
 
+    inline fun <reified T> getReturnParam(screen: Screen): T? {
+        return getRawReturnParam(screen.route) as? T
+    }
 
     inline fun <reified T> getReturnParam(route: String = currentRoute): T? {
         return getRawReturnParam(route) as? T
