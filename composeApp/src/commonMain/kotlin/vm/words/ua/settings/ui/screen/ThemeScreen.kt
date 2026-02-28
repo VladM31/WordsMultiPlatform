@@ -69,6 +69,7 @@ fun ThemeScreen(
                         text = "Dark Themes",
                         color = currentTheme.primaryText,
                         fontSize = titleSize,
+                        lineHeight = titleSize * 1.1f,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(vertical = 8.dp)
                     )
@@ -88,6 +89,7 @@ fun ThemeScreen(
                         text = "Light Themes",
                         color = currentTheme.primaryText,
                         fontSize = titleSize,
+                        lineHeight = titleSize * 1.1f,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(vertical = 8.dp)
                     )
@@ -106,6 +108,7 @@ fun ThemeScreen(
                         text = "Special Themes",
                         color = currentTheme.primaryText,
                         fontSize = titleSize,
+                        lineHeight = titleSize * 1.1f,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(vertical = 8.dp)
                     )
@@ -129,6 +132,7 @@ fun ThemeScreen(
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = "Monochrome Themes",
+                        lineHeight = titleSize * 1.1f,
                         color = currentTheme.primaryText,
                         fontSize = titleSize,
                         fontWeight = FontWeight.Bold,
