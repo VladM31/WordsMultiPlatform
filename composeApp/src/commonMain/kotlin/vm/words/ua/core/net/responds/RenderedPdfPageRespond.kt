@@ -6,4 +6,6 @@ data class RenderedPdfPageRespond(
     val content: ByteContent,
     val pageNumber: Int,
     val totalPages: Int,
+    val width: Int,
+    val height: Int
 )
