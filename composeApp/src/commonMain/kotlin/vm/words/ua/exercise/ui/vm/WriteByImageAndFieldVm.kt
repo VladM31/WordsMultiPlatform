@@ -87,7 +87,10 @@ class WriteByImageAndFieldVm(
     }
 
     private fun handleConfirm() {
-        val original = state.value.currentWord().original.lowercase().trim()
+        val word = runCatching {
+            state.value.currentWord()
+        }.getOrNull() ?: return
+        val original = word.original.lowercase().trim()
         val inputWord = state.value.wordText?.trim()?.lowercase()
 
         val isNotConfirm = original != inputWord
