@@ -392,15 +392,23 @@
         };
 
         // Android keyboard fix for Compose Web inside Telegram Mini App.
-        // Compose/Skiko calls focus() on a hidden <input> asynchronously after the touch
-        // event, which Android WebView rejects (keyboard only opens from a direct user
-        // gesture handler). Fix: on touchend over the canvas, immediately focus a dummy
-        // input (inside the gesture), then transfer focus to Skiko's actual input.
+        //
+        // ROOT CAUSE: Telegram Android WebView requires at least one successful
+        // "input activation" before it allows programmatic focus() on text inputs.
+        // Tapping a <select> element grants this token for the entire session.
+        // That's why all inputs start working after the user opens SingleSelectInput.
+        //
+        // FIX: On the very first touchstart we programmatically click a hidden
+        // <select> element (positioned off-screen so no popup appears) and then
+        // immediately close it. This grants the keyboard token silently.
+        // After that, every subsequent focus() on text inputs works normally.
         (function () {
             if (!/Android/i.test(navigator.userAgent)) return;
 
             let dummyInput = null;
+            let dummySelect = null;
             let focusObserver = null;
+            let keyboardWarmedUp = false;
 
             function getDummy() {
                 if (dummyInput) return dummyInput;
@@ -409,57 +417,120 @@
                 dummyInput.setAttribute('aria-hidden', 'true');
                 dummyInput.setAttribute('tabindex', '-1');
                 dummyInput.setAttribute('autocomplete', 'off');
+                dummyInput.setAttribute('autocorrect', 'off');
+                dummyInput.setAttribute('autocapitalize', 'off');
+                dummyInput.setAttribute('spellcheck', 'false');
+                dummyInput.readOnly = false;
                 dummyInput.style.cssText =
-                    'position:fixed;top:0;left:0;width:0;height:0;' +
-                    'opacity:0;border:none;padding:0;margin:0;outline:none;' +
-                    'pointer-events:none;z-index:-9999;' +
-                    'color:transparent;background:transparent;caret-color:transparent;';
+                    'position:fixed;top:0;left:0;width:1px;height:1px;' +
+                    'opacity:0.01;border:none;padding:0;margin:0;outline:none;' +
+                    'pointer-events:none;z-index:-1;' +
+                    'color:transparent;background:transparent;caret-color:transparent;' +
+                    'font-size:16px;';
                 (document.body || document.documentElement).appendChild(dummyInput);
                 return dummyInput;
             }
 
-            function transferToSkikoInput() {
-                // Find the hidden input/textarea that Skiko/Compose creates for IME
-                const inputs = document.querySelectorAll('input:not([aria-hidden="true"]):not([tabindex="-1"]), textarea:not([aria-hidden="true"])');
+            function getDummySelect() {
+                if (dummySelect) return dummySelect;
+                dummySelect = document.createElement('select');
+                var opt = document.createElement('option');
+                opt.value = '';
+                opt.textContent = '';
+                dummySelect.appendChild(opt);
+                dummySelect.style.cssText =
+                    'position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;' +
+                    'opacity:0.01;border:none;padding:0;margin:0;outline:none;' +
+                    'font-size:16px;z-index:-1;pointer-events:none;';
+                (document.body || document.documentElement).appendChild(dummySelect);
+                return dummySelect;
+            }
+
+            // Click a hidden <select> and instantly blur it.
+            // This is the exact mechanism that grants keyboard token in Telegram WebView.
+            function warmUpKeyboard() {
+                if (keyboardWarmedUp) return;
+                keyboardWarmedUp = true;
+                try {
+                    var sel = getDummySelect();
+                    sel.style.pointerEvents = 'auto';
+                    sel.focus();
+                    sel.dispatchEvent(new MouseEvent('mousedown', {bubbles: true, cancelable: true}));
+                    sel.dispatchEvent(new MouseEvent('mouseup', {bubbles: true, cancelable: true}));
+                    sel.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true}));
+                    sel.blur();
+                    sel.dispatchEvent(new Event('blur', {bubbles: true}));
+                    sel.style.pointerEvents = 'none';
+                } catch (e) { /* ignore */
+                }
+                try {
+                    var dummy = getDummy();
+                    dummy.readOnly = false;
+                    dummy.focus();
+                    dummy.dispatchEvent(new InputEvent('input', {bubbles: true, data: ''}));
+                    dummy.blur();
+                    dummy.focus();
+                } catch (e) { /* ignore */
+                }
+            }
+
+            function findSkikoInput() {
+                const inputs = document.querySelectorAll(
+                    'input:not([aria-hidden="true"]):not([tabindex="-1"]), ' +
+                    'textarea:not([aria-hidden="true"])'
+                );
                 for (let i = 0; i < inputs.length; i++) {
-                    if (inputs[i] !== dummyInput) {
-                        inputs[i].focus({preventScroll: true});
-                        return true;
-                    }
+                    if (inputs[i] !== dummyInput) return inputs[i];
+                }
+                return null;
+            }
+
+            function focusSkikoInput() {
+                const el = findSkikoInput();
+                if (el) {
+                    el.focus();
+                    el.click();
+                    return true;
                 }
                 return false;
             }
 
-            document.addEventListener('touchend', function (e) {
-                const target = e.target;
-                if (!target || (target.tagName !== 'CANVAS' && target.tagName !== 'BODY')) return;
-
-                // Focus dummy synchronously inside the gesture handler
-                getDummy().focus({preventScroll: true});
-
-                // If Skiko input already exists, hand off immediately
-                if (transferToSkikoInput()) return;
-
-                // Otherwise watch for Skiko to add/reveal its input element
+            function startObserver() {
                 if (focusObserver) focusObserver.disconnect();
-                const deadline = Date.now() + 1000;
+                const deadline = Date.now() + 1500;
                 focusObserver = new MutationObserver(function (mutations, obs) {
                     if (Date.now() > deadline) {
                         obs.disconnect();
                         return;
                     }
-                    if (transferToSkikoInput()) obs.disconnect();
+                    if (focusSkikoInput()) obs.disconnect();
                 });
                 focusObserver.observe(document.documentElement, {
                     childList: true,
                     subtree: true,
                     attributes: true,
-                    attributeFilter: ['style', 'class', 'tabindex', 'aria-hidden']
+                    attributeFilter: ['style', 'class', 'tabindex', 'aria-hidden', 'readonly']
                 });
-                // Auto-cleanup
                 setTimeout(function () {
-                    if (focusObserver) focusObserver.disconnect();
-                }, 1000);
+                    if (focusObserver) {
+                        focusObserver.disconnect();
+                        focusObserver = null;
+                    }
+                }, 1500);
+            }
+
+            // touchstart — earliest possible gesture moment
+            document.addEventListener('touchstart', function (e) {
+                warmUpKeyboard();
+                getDummy().focus();
+                focusSkikoInput();
+            }, {passive: true});
+
+            // touchend — Skiko may have created its input by now
+            document.addEventListener('touchend', function (e) {
+                getDummy().focus();
+                if (focusSkikoInput()) return;
+                startObserver();
             }, {passive: true});
         })();
     </script>
