@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,11 +19,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.utils.rememberScaleFactor
-import wordsmultiplatform.composeapp.generated.resources.Res
-import wordsmultiplatform.composeapp.generated.resources.setting
+
 
 data class PopupMenuItem(
     val text: String,
@@ -32,9 +32,8 @@ data class PopupMenuItem(
 @Composable
 fun PopupMenuButton(
     items: List<PopupMenuItem>,
-    modifier: Modifier = Modifier,
-    buttonIcon: Painter = painterResource(Res.drawable.setting),
-    buttonVector: ImageVector? = null,
+    modifier: Modifier = Modifier,//settings
+    buttonVector: ImageVector = Icons.Filled.Settings
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -50,21 +49,12 @@ fun PopupMenuButton(
             onClick = { expanded = true },
             modifier = Modifier.size(buttonSize)
         ) {
-            if (buttonVector != null) {
-                Icon(
-                    imageVector = buttonVector,
-                    contentDescription = "Menu",
-                    tint = AppTheme.PrimaryColor,
-                    modifier = Modifier.size(iconSize)
-                )
-            } else {
-                Icon(
-                    painter = buttonIcon,
-                    contentDescription = "Menu",
-                    tint = AppTheme.PrimaryColor,
-                    modifier = Modifier.size(iconSize)
-                )
-            }
+            Icon(
+                imageVector = buttonVector,
+                contentDescription = "Menu",
+                tint = AppTheme.PrimaryColor,
+                modifier = Modifier.size(iconSize)
+            )
         }
 
         DropdownMenu(

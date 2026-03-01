@@ -1,6 +1,8 @@
 package vm.words.ua.words.ui.components
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -8,14 +10,11 @@ import androidx.compose.ui.unit.dp
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.dialogs.compose.PickerResultLauncher
 import io.github.vinceglb.filekit.name
-import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.ImageFromPlatformFile
 import vm.words.ua.core.utils.getImageSize
 import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberIconSize
-import wordsmultiplatform.composeapp.generated.resources.Res
-import wordsmultiplatform.composeapp.generated.resources.delete
 
 @Composable
 fun SelectImageMenu(
@@ -71,7 +70,7 @@ fun SelectImageMenu(
                     .weight(1f)
             ) {
                 Icon(
-                    painter = painterResource(Res.drawable.delete),
+                    imageVector = Icons.Rounded.Delete,
                     contentDescription = "Remove",
                     tint = AppTheme.PrimaryColor,
                     modifier = Modifier.size(rememberIconSize())
