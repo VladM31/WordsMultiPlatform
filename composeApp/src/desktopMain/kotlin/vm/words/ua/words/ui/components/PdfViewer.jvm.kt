@@ -121,6 +121,7 @@ actual fun PdfContent(
     onError: (String) -> Unit,
     onScaleChange: (Float) -> Unit,
     onOffsetChange: (Float, Float) -> Unit,
+    onPageSizeChanged: (width: Int, height: Int) -> Unit,
     modifier: Modifier
 ) {
     var image by remember { mutableStateOf<BufferedImage?>(null) }
@@ -161,6 +162,7 @@ actual fun PdfContent(
                 }
             }
             image = pageImage
+            onPageSizeChanged(pageImage.width, pageImage.height)
         } catch (_: CancellationException) {
         } catch (e: Exception) {
             onError("Failed to render page: ${e.message}")

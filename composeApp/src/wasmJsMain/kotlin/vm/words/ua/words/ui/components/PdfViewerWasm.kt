@@ -2,6 +2,8 @@ package vm.words.ua.words.ui.components
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
@@ -16,7 +18,6 @@ import kotlinx.coroutines.withContext
 import vm.words.ua.core.net.client.RenderedPdfClient
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.ImageFromBytes
-import vm.words.ua.core.utils.appWidthDp
 import vm.words.ua.di.rememberInstance
 
 @Composable
@@ -30,13 +31,11 @@ actual fun PdfContent(
     onError: (String) -> Unit,
     onScaleChange: (Float) -> Unit,
     onOffsetChange: (Float, Float) -> Unit,
+    onPageSizeChanged: (width: Int, height: Int) -> Unit,
     modifier: Modifier
 ) {
     val baseUrl = remember(pdfData) { pdfData.decodeToString() }
     val renderClient = rememberInstance<RenderedPdfClient>()
-
-    val appWith = appWidthDp()
-    val pageBaseWidth = remember { appWith * 0.95f }
 
     var imageContent by remember(currentPage, baseUrl) { mutableStateOf<ByteArray?>(null) }
     var isLoading by remember(currentPage, baseUrl) { mutableStateOf(true) }
@@ -49,6 +48,7 @@ actual fun PdfContent(
             }
             imageContent = result.content.bytes
             onPageCountChanged(result.totalPages)
+            onPageSizeChanged(result.width, result.height)
         } catch (t: Throwable) {
             val msg = t.message ?: "Unknown pdf render error"
             onError(msg)
@@ -57,11 +57,11 @@ actual fun PdfContent(
         }
     }
 
+
     Box(
         modifier = modifier
-            .clipToBounds()          // чтобы страница не вылазила
+            .clipToBounds()
             .pointerInput(scale) {
-                // жесты зума
                 detectTapGestures(
                     onDoubleTap = {
                         val newScale = (scale + 0.25f).coerceAtMost(3f)
@@ -79,17 +79,18 @@ actual fun PdfContent(
                 color = AppTheme.PrimaryColor,
                 modifier = Modifier.align(Alignment.Center)
             )
-        } else {
-            imageContent?.let { bytes ->
-                // ВАЖНО: масштаб задаём через ширину, а не graphicsLayer
-                val widthWithScale = (pageBaseWidth * scale).coerceAtLeast(100.dp)
+            return@Box
+        }
 
+        imageContent?.let { bytes ->
+            BoxWithConstraints(Modifier.fillMaxWidth()) {
+                val imageWidth = (maxWidth * scale).coerceAtLeast(100.dp)
                 ImageFromBytes(
                     imageBytes = bytes,
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
                         .align(Alignment.TopCenter)
-                        .width(widthWithScale)
+                        .width(imageWidth)
                 )
             }
         }

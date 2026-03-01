@@ -8,25 +8,13 @@ import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelAndJoin
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileOutputStream
 
@@ -41,6 +29,7 @@ actual fun PdfContent(
     onError: (String) -> Unit,
     onScaleChange: (Float) -> Unit,
     onOffsetChange: (Float, Float) -> Unit,
+    onPageSizeChanged: (width: Int, height: Int) -> Unit,
     modifier: Modifier
 ) {
     var bitmap by remember { mutableStateOf<Bitmap?>(null) }
@@ -140,7 +129,10 @@ actual fun PdfContent(
                         Bitmap.Config.ARGB_8888
                     )
                     page.render(newBitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-                    withContext(Dispatchers.Main) { bitmap = newBitmap }
+                    withContext(Dispatchers.Main) {
+                        bitmap = newBitmap
+                        onPageSizeChanged(page.width, page.height)
+                    }
                 } finally {
                     try {
                         page.close()

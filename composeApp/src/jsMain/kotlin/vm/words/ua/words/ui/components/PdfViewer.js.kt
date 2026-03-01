@@ -90,6 +90,7 @@ actual fun PdfContent(
     onError: (String) -> Unit,
     onScaleChange: (Float) -> Unit,
     onOffsetChange: (Float, Float) -> Unit,
+    onPageSizeChanged: (width: Int, height: Int) -> Unit,
     modifier: Modifier
 ) {
     var pdf by remember { mutableStateOf<PdfDocument?>(null) }
@@ -149,6 +150,7 @@ actual fun PdfContent(
             val viewport = page.getViewport(viewportParams)
             val w = viewport.width.toDouble()
             val h = viewport.height.toDouble()
+            onPageSizeChanged(w.toInt(), h.toInt())
 
             val canvas = document.createElement("canvas") as HTMLCanvasElement
             canvas.width = w.toInt()

@@ -65,7 +65,6 @@ fun PdfViewer(
     }
 
     Box(modifier = modifier.fillMaxSize()) {
-        println(currentPlatform())
         if (currentPlatform() == AppPlatform.IOS) {
             IOSPdfViewer(pdfData, onError)
             return
@@ -172,6 +171,8 @@ private fun PagesViewer(
         currentPlatform().isWeb || currentPlatform() == AppPlatform.JVM
     }
 
+    var pageAspectRatio by remember { mutableStateOf<Float?>(null) }
+
     LazyColumn(
         state = listState,
         modifier = Modifier.fillMaxSize(),
@@ -181,45 +182,49 @@ private fun PagesViewer(
         items(totalPages, key = { it }) { pageIndex ->
             val space = if (scale > 1) 10.dp * 1.4f else 4.dp
 
-            val pageHeight = remember(scale) {
-                if (isScalable) {
-                    (basePageHeight * scale).coerceIn(300.dp, 2400.dp)
+            BoxWithConstraints(Modifier.fillMaxWidth()) {
+                val containerWidth = maxWidth
+                val naturalHeight = pageAspectRatio?.let { ratio ->
+                    containerWidth / ratio
+                } ?: basePageHeight
+
+                val pageHeight = if (isScalable) {
+                    (naturalHeight * scale).coerceIn(300.dp, 2400.dp)
                 } else {
-                    basePageHeight
+                    naturalHeight
                 }
 
-            }
+                Column(Modifier.fillMaxWidth()) {
+                    if (isScalable) Spacer(Modifier.height(space))
 
-            var modifier = Modifier
-                .fillMaxWidth()
-                .height(pageHeight)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(pageHeight)
+                            .then(if (isScalable) Modifier.clipToBounds() else Modifier)
+                    ) {
+                        PdfContent(
+                            pdfData = pdfData,
+                            currentPage = pageIndex,
+                            scale = scale,
+                            offsetX = 0f,
+                            offsetY = 0f,
+                            onPageCountChanged = onPageCountChanged,
+                            onError = onError,
+                            onScaleChange = onScaleChange,
+                            onOffsetChange = { _, _ -> },
+                            onPageSizeChanged = { w, h ->
+                                if (w > 0 && h > 0) {
+                                    val ratio = w.toFloat() / h.toFloat()
+                                    if (pageAspectRatio != ratio) pageAspectRatio = ratio
+                                }
+                            },
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
 
-            if (isScalable) {
-                modifier = modifier
-                    .clipToBounds()
-            }
-
-            if (isScalable) {
-                Spacer(Modifier.height(space))
-            }
-            Box(
-                modifier = modifier
-            ) {
-                PdfContent(
-                    pdfData = pdfData,
-                    currentPage = pageIndex,
-                    scale = scale,
-                    offsetX = 0f,
-                    offsetY = 0f,
-                    onPageCountChanged = onPageCountChanged,
-                    onError = onError,
-                    onScaleChange = onScaleChange,
-                    onOffsetChange = { _, _ -> },
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
-            if (isScalable) {
-                Spacer(Modifier.height(space))
+                    if (isScalable) Spacer(Modifier.height(space))
+                }
             }
         }
     }
@@ -242,6 +247,7 @@ private fun EmptyPageViewer(pdfData: ByteArray, onError: (String) -> Unit, onPag
             onError = onError,
             onScaleChange = {},
             onOffsetChange = { _, _ -> },
+            onPageSizeChanged = { _, _ -> },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(600.dp)
@@ -263,6 +269,7 @@ private fun IOSPdfViewer(pdfData: ByteArray, onError: (String) -> Unit) {
         onError = onError,
         onScaleChange = { new -> scale = new.coerceIn(0.5f, 3f) },
         onOffsetChange = { _, _ -> },
+        onPageSizeChanged = { _, _ -> },
         modifier = Modifier
             .fillMaxWidth()
             .height(600.dp)
@@ -284,5 +291,6 @@ expect fun PdfContent(
     onError: (String) -> Unit,
     onScaleChange: (Float) -> Unit,
     onOffsetChange: (Float, Float) -> Unit,
+    onPageSizeChanged: (width: Int, height: Int) -> Unit,
     modifier: Modifier = Modifier
 )

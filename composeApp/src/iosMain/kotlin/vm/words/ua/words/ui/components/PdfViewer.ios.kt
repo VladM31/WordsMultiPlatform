@@ -5,15 +5,24 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.interop.UIKitView
 import androidx.compose.ui.graphics.Color
-import kotlinx.cinterop.*
-import platform.Foundation.*
-import platform.PDFKit.*
-import platform.UIKit.*
-import platform.CoreGraphics.*
+import androidx.compose.ui.interop.UIKitView
+import kotlinx.cinterop.BetaInteropApi
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.addressOf
+import kotlinx.cinterop.usePinned
+import platform.CoreGraphics.CGRectMake
+import platform.Foundation.NSData
+import platform.Foundation.NSNotificationCenter
+import platform.Foundation.NSOperationQueue
+import platform.Foundation.create
+import platform.PDFKit.PDFDocument
+import platform.PDFKit.PDFView
+import platform.PDFKit.PDFViewScaleChangedNotification
+import platform.PDFKit.kPDFDisplaySinglePageContinuous
+import platform.UIKit.UIColor
+import platform.UIKit.UIEdgeInsetsMake
 import kotlin.math.abs
-import kotlin.ranges.coerceIn
 
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 @Composable
@@ -27,6 +36,7 @@ actual fun PdfContent(
     onError: (String) -> Unit,
     onScaleChange: (Float) -> Unit,
     onOffsetChange: (Float, Float) -> Unit,
+    onPageSizeChanged: (width: Int, height: Int) -> Unit,
     modifier: Modifier
 ) {
     var pdfDocument by remember { mutableStateOf<PDFDocument?>(null) }
