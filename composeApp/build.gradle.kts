@@ -207,8 +207,8 @@ android {
         applicationId = "vm.words.ua"
         minSdk = 24
         targetSdk = 35
-        versionCode = 6
-        versionName = "1.1.1"
+        versionCode = 7
+        versionName = "1.1.5"
 
         ndk {
             abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
@@ -259,15 +259,15 @@ compose.desktop {
             includeAllModules = true
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
 
-            packageName = "Words"
-            packageVersion = "1.1.1"
+            packageName = "Study words"
+            packageVersion = "1.1.5"
             description = "Words App"
-            vendor = "VM"
+            vendor = "Vladyslav Mormul"
 
             windows {
                 iconFile.set(project.file("icon.ico"))
                 shortcut = true
-                menuGroup = "Words"
+                menuGroup = "Study words"
                 dirChooser = true
             }
 

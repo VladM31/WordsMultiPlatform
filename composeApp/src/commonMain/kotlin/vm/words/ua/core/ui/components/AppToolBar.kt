@@ -8,13 +8,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -23,15 +23,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import kotlinx.coroutines.delay
-import org.jetbrains.compose.resources.painterResource
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.utils.getScaleFactor
 import vm.words.ua.core.utils.rememberInterfaceMaxWidth
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.utils.hints.ui.utils.ViewHintStep
 import vm.words.ua.utils.hints.ui.utils.viewHint
-import wordsmultiplatform.composeapp.generated.resources.Res
-import wordsmultiplatform.composeapp.generated.resources.setting
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -60,8 +57,7 @@ fun AppToolBar(
     onAdditionalClick: (() -> Unit)? = null,
     showBackButton: Boolean = true,
     showAdditionalButton: Boolean = false,
-    additionalButtonVector: ImageVector? = null,
-    additionalButtonImage: Painter = painterResource(Res.drawable.setting),
+    additionalButtonVector: ImageVector = Icons.Filled.Settings,
     currentStepHint: ViewHintStep? = null,
     additionalButtonStepHint: ViewHintStep? = null,
     additionalButtonTooltip: AdditionalButtonTooltip? = null,
@@ -122,7 +118,6 @@ fun AppToolBar(
                 AdditionalButton(
                     onAdditionalClick = onAdditionalClick,
                     showAdditionalButton = showAdditionalButton,
-                    additionalButtonImage = additionalButtonImage,
                     additionalButtonVector = additionalButtonVector,
                     buttonSize = buttonSize,
                     modifier = additionalButtonStepHint?.let {
@@ -176,8 +171,7 @@ private fun BackButton(
 private fun AdditionalButton(
     onAdditionalClick: (() -> Unit)? = null,
     showAdditionalButton: Boolean = false,
-    additionalButtonImage: Painter = painterResource(Res.drawable.setting),
-    additionalButtonVector: ImageVector?,
+    additionalButtonVector: ImageVector,
     buttonSize: Dp,
     modifier: Modifier
 ) {
@@ -190,18 +184,8 @@ private fun AdditionalButton(
         onClick = onAdditionalClick ?: {},
         modifier = Modifier.size(buttonSize)
     ) {
-        if (additionalButtonVector != null) {
-            Icon(
-                imageVector = additionalButtonVector,
-                contentDescription = "More",
-                tint = AppTheme.PrimaryColor,
-                modifier = modifier
-            )
-            return@IconButton
-        }
-
         Icon(
-            painter = additionalButtonImage,
+            imageVector = additionalButtonVector,
             contentDescription = "More",
             tint = AppTheme.PrimaryColor,
             modifier = modifier

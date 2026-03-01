@@ -14,7 +14,7 @@ fun main() = application {
 
     Window(
         onCloseRequest = ::exitApplication,
-        title = "Words",
+        title = "Study Words",
         state = windowState,
         icon = painterResource("icon.webp")
     ) {
