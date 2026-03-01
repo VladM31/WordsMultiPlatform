@@ -9,6 +9,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,23 +30,18 @@ import vm.words.ua.core.ui.theme.ThemeManager
 import vm.words.ua.utils.storage.AndroidStorageConfig
 
 class MainActivity : ComponentActivity() {
-    @Suppress("DEPRECATION")
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // Make content draw behind system bars
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        // Configure edge-to-edge manually for Android 15+ compatibility
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            // Set cutout mode to ALWAYS for Android 15+ compatibility
-            window.attributes.layoutInDisplayCutoutMode =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS
-                } else {
-                    WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
-                }
-        }
+        // Configure display cutout mode for edge-to-edge on Android 9+ (API 28+).
+        // LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS is required — SHORT_EDGES is
+        // unsupported on Android 15+ and causes a Play Store warning.
+        window.attributes.layoutInDisplayCutoutMode =
+            WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS
 
         // Initial edge-to-edge with transparent bars
         enableEdgeToEdge(
