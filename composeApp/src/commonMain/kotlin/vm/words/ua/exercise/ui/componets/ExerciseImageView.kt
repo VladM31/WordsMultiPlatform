@@ -26,7 +26,7 @@ fun ExerciseImageView(
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         if (enableImage) {
-            val imageSize = getImageSize()
+            val imageSize = getImageSize() * 0.8f
             ImageFromBytes(
                 imageBytes = word.imageContent?.bytes,
                 defaultPaint = painterResource(Res.drawable.image_icon),
