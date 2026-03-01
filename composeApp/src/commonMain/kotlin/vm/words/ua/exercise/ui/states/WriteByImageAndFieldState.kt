@@ -23,4 +23,8 @@ data class WriteByImageAndFieldState(
     fun enableImage(): Boolean {
         return isActiveSubscribe && currentWord().imageContent != null && exercise.isEnableImage()
     }
+
+    fun isError(): Boolean {
+        return isConfirm == false
+    }
 }

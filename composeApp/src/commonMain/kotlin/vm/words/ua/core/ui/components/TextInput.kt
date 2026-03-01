@@ -7,6 +7,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.utils.rememberFontSize
@@ -18,10 +19,18 @@ fun TextInput(
     label: String,
     maxLength: Int = 255,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    onValueChange: (String?) -> Unit,
+    enabled: Boolean = true,
+    color: Color = AppTheme.PrimaryColor,
+    modifier: Modifier = Modifier,
+    onValueChange: (String?) -> Unit
 ) {
     val fontSize = rememberFontSize()
     val labelFontSize = rememberLabelFontSize()
+    val currentModifier = if (modifier == Modifier) {
+        Modifier.fillMaxWidth()
+    } else {
+        modifier
+    }
 
     OutlinedTextField(
         value = value.orEmpty(),
@@ -30,15 +39,16 @@ fun TextInput(
             onValueChange(truncated.ifBlank { null })
         },
         textStyle = TextStyle(fontSize = fontSize),
-        label = { Text(label, color = AppTheme.PrimaryColor, fontSize = labelFontSize) },
-        modifier = Modifier.fillMaxWidth(),
+        label = { Text(label, color = color, fontSize = labelFontSize) },
+        modifier = currentModifier,
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = AppTheme.PrimaryColor,
-            unfocusedBorderColor = AppTheme.PrimaryColor.copy(alpha = 0.5f),
-            focusedTextColor = AppTheme.PrimaryColor,
-            unfocusedTextColor = AppTheme.PrimaryColor,
-            cursorColor = AppTheme.PrimaryColor
+            focusedBorderColor = color,
+            unfocusedBorderColor = color.copy(alpha = 0.5f),
+            focusedTextColor = color,
+            unfocusedTextColor = color,
+            cursorColor = color
         ),
-        keyboardOptions = keyboardOptions
+        keyboardOptions = keyboardOptions,
+        enabled = enabled
     )
 }

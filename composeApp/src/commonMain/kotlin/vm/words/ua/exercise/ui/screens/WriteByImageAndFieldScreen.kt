@@ -2,19 +2,22 @@ package vm.words.ua.exercise.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyGridItemSpanScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ExposurePlus1
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.components.AppToolBar
-import vm.words.ua.core.utils.isNotPhoneFormat
+import vm.words.ua.core.ui.components.CenteredContainer
 import vm.words.ua.core.utils.rememberFontSize
-import vm.words.ua.core.utils.rememberScaleFactor
+import vm.words.ua.core.utils.rememberInterfaceMaxWidth
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.exercise.ui.actions.WriteByImageAndFieldAction
 import vm.words.ua.exercise.ui.bundles.ExerciseBundle
@@ -77,7 +80,12 @@ private fun WriteByImageAndFieldScreen(
         Column(modifier = Modifier.fillMaxSize().padding(bottom = calcNextButtonHeight())) {
             AppToolBar(
                 title = param.currentExercise.text,
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
+                additionalButtonVector = Icons.Outlined.ExposurePlus1,
+                onAdditionalClick = {
+                    viewModel.sent(WriteByImageAndFieldAction.AddLetter)
+                },
+                showAdditionalButton = true
             )
 
             ExerciseProgressBar(state = state.value, bundle = param)
@@ -118,51 +126,38 @@ private fun WriteByImageAndFieldContent(
         return
     }
 
-    val columns = if (isNotPhoneFormat()) 2 else 1
 
-
-
-    // helper: во всю ширину только если 1 колонка
-    val span: (LazyGridItemSpanScope) -> GridItemSpan = {
-        if (columns == 1) GridItemSpan(it.maxLineSpan) else GridItemSpan(1)
-    }
-    val scale = rememberScaleFactor()
-    val minHeightModifier = remember(scale) {
-        if (columns == 1) {
-            Modifier
-        } else {
-            Modifier.heightIn(min = 300.dp * scale)
-        }
-    }
-
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(columns),
-        contentPadding = PaddingValues(10.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-        horizontalArrangement = Arrangement.spacedBy(20.dp),
-        modifier = modifier
-    ) {
-        item(span = span) {
-            Box(modifier = minHeightModifier, contentAlignment = Alignment.Center) {
-                ExerciseImageView(
-                    enableImage = state.value.enableImage(),
-                    word = state.value.currentWord(),
-                    fontSize = fontSize
-                ) {
-                    it.toText(state.value.exercise)
+    CenteredContainer(maxWidth = rememberInterfaceMaxWidth()) {
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(1),
+            contentPadding = PaddingValues(10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(20.dp),
+            modifier = modifier
+        ) {
+            item {
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    ExerciseImageView(
+                        enableImage = state.value.enableImage(),
+                        word = state.value.currentWord(),
+                        fontSize = fontSize,
+                        isError = state.value.isError(),
+                    ) {
+                        it.toText(state.value.exercise)
+                    }
                 }
             }
-        }
 
-        item(span = span) {
-            Box(modifier = minHeightModifier, contentAlignment = Alignment.Center) {
-                WordInputPanel(
-                    text = state.value.wordText ?: "",
-                    onTextChange = { viewModel.sent(WriteByImageAndFieldAction.UpdateText(it)) },
-                    enabled = state.value.isEditEnable,
-                    onAddLetter = { viewModel.sent(WriteByImageAndFieldAction.AddLetter) },
-                    isError = state.value.isConfirm == false
-                )
+            item {
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    WordInputPanel(
+                        text = state.value.wordText ?: "",
+                        onTextChange = { viewModel.sent(WriteByImageAndFieldAction.UpdateText(it)) },
+                        enabled = state.value.isEditEnable,
+                        isError = state.value.isError(),
+                        modifier = Modifier.widthIn(300.dp).fillMaxWidth()
+                    )
+                }
             }
         }
     }

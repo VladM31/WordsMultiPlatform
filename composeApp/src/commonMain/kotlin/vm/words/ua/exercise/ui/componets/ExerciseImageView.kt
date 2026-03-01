@@ -21,6 +21,7 @@ fun ExerciseImageView(
     enableImage: Boolean,
     word: ExerciseWordDetails,
     fontSize: androidx.compose.ui.unit.TextUnit,
+    isError: Boolean = false,
     toText: (ExerciseWordDetails) -> String,
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -38,7 +39,7 @@ fun ExerciseImageView(
 
         Text(
             text = toText(word),
-            color = AppTheme.PrimaryColor,
+            color = if (isError) AppTheme.Error else AppTheme.PrimaryColor,
             textAlign = TextAlign.Center,
             fontSize = fontSize,
             style = LocalTextStyle.current.copy(lineHeight = fontSize * 1.1f),
