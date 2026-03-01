@@ -155,7 +155,15 @@ private fun WriteByImageAndFieldContent(
                         onTextChange = { viewModel.sent(WriteByImageAndFieldAction.UpdateText(it)) },
                         enabled = state.value.isEditEnable,
                         isError = state.value.isError(),
-                        modifier = Modifier.widthIn(300.dp).fillMaxWidth()
+                        modifier = Modifier.widthIn(300.dp).fillMaxWidth(),
+                        onDone = {
+                            val action = if (state.value.isConfirm == true) {
+                                WriteByImageAndFieldAction.NextWord
+                            } else {
+                                WriteByImageAndFieldAction.Confirm
+                            }
+                            viewModel.sent(action)
+                        }
                     )
                 }
             }
