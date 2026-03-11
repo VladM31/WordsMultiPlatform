@@ -11,7 +11,7 @@ import vm.words.ua.learning.domain.models.LearningHistoryFilter
 import vm.words.ua.learning.ui.actions.LearningHistoryListAction
 import vm.words.ua.learning.ui.states.LearningHistoryListState
 
-class LearningHistoryListVm(
+class LearningHistoryListViewModel(
     private val manager: LearningHistoryManager
 ) : ViewModel() {
 

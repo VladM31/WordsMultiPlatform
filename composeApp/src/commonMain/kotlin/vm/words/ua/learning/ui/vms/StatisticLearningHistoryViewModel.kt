@@ -17,7 +17,7 @@ import vm.words.ua.learning.ui.actions.StatisticLearningHistoryAction
 import vm.words.ua.learning.ui.states.StatisticLearningHistoryState
 
 
-class StatisticLearningHistoryVm(
+class StatisticLearningHistoryViewModel(
     private val manager: LearningHistoryManager
 ) : ViewModel() {
 

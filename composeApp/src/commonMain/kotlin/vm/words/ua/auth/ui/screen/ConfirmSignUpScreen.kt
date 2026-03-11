@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.sp
 import vm.words.ua.auth.domain.managers.TelegramWebAppManager
 import vm.words.ua.auth.ui.actions.ConfirmSignUpAction
 import vm.words.ua.auth.ui.bundles.ConfirmSignBundle
-import vm.words.ua.auth.ui.vms.ConfirmSignUpVm
+import vm.words.ua.auth.ui.vms.ConfirmSignUpViewModel
 import vm.words.ua.core.config.AppRemoteConfig
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
@@ -43,7 +43,7 @@ import vm.words.ua.navigation.rememberParamOrThrow
 fun ConfirmSignUpScreen(
     navController: SimpleNavController,
     modifier: Modifier = Modifier,
-    viewModel: ConfirmSignUpVm = rememberInstance()
+    viewModel: ConfirmSignUpViewModel = rememberInstance()
 ) {
     val scrollState = rememberScrollState()
     val uriHandler = LocalUriHandler.current

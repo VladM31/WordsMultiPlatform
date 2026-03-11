@@ -35,8 +35,8 @@ internal val viewModelWordsModule = DI.Module("viewModelWordsModule") {
         )
     }
 
-    bind<UserWordFilterVm>() with factory {
-        UserWordFilterVm()
+    bind<UserWordFilterViewModel>() with factory {
+        UserWordFilterViewModel()
     }
 
     bind<PinUserWordsViewModel>() with factory {
@@ -49,16 +49,16 @@ internal val viewModelWordsModule = DI.Module("viewModelWordsModule") {
         )
     }
 
-    bind<DefaultAddWordVm>() with factory {
-        DefaultAddWordVm(
+    bind<DefaultAddWordViewModel>() with factory {
+        DefaultAddWordViewModel(
             wordManager = instance(),
             subscribeCacheManager = instance(),
             soundManager = instance()
         )
     }
 
-    bind<WordEditVm>() with factory {
-        WordEditVm(
+    bind<WordEditViewModel>() with factory {
+        WordEditViewModel(
             userWordManager = instance(),
             subscribeCacheManager = instance(),
             soundManager = instance()

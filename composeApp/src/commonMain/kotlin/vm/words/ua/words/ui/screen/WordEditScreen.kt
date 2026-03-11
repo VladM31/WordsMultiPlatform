@@ -35,12 +35,12 @@ import vm.words.ua.words.ui.bundles.WordEditBundle
 import vm.words.ua.words.ui.components.SelectImageMenu
 import vm.words.ua.words.ui.components.SelectSoundMenu
 import vm.words.ua.words.ui.states.WordEditState
-import vm.words.ua.words.ui.vms.WordEditVm
+import vm.words.ua.words.ui.vms.WordEditViewModel
 
 @Composable
 fun WordEditScreen(
     navController: SimpleNavController,
-    viewModel: WordEditVm = rememberInstance(),
+    viewModel: WordEditViewModel = rememberInstance(),
 ) {
     val bundle = navController.rememberParamOrThrow<WordEditBundle>()
     val state by viewModel.state.collectAsState()
@@ -107,7 +107,7 @@ private fun ColumnScope.InputMenu(
     columns: Int,
     state: WordEditState,
     imagePicker: PickerResultLauncher,
-    viewModel: WordEditVm,
+    viewModel: WordEditViewModel,
     soundPicker: PickerResultLauncher
 ) {
     CenteredContainer(
@@ -213,7 +213,7 @@ private fun AudioBlock(
 @Composable
 private fun MainFields(
     state: WordEditState,
-    viewModel: WordEditVm,
+    viewModel: WordEditViewModel,
 ) {
     val isEditable = state.isCustomWord
 
@@ -269,7 +269,7 @@ private fun MainFields(
 @Composable
 private fun AdditionalFields(
     state: WordEditState,
-    viewModel: WordEditVm,
+    viewModel: WordEditViewModel,
 ) {
     val isEditable = state.isCustomWord
 

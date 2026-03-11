@@ -8,7 +8,7 @@ import vm.words.ua.words.domain.models.filters.UserWordFilter
 import vm.words.ua.words.ui.actions.UserWordFilterAction
 import vm.words.ua.words.ui.states.UserWordFilterState
 
-class UserWordFilterVm : ViewModel() {
+class UserWordFilterViewModel : ViewModel() {
 
     private val mutableState = MutableStateFlow(UserWordFilterState())
     val state: StateFlow<UserWordFilterState> = mutableState

@@ -4,26 +4,26 @@ import org.kodein.di.DI
 import org.kodein.di.bind
 import org.kodein.di.instance
 import org.kodein.di.provider
-import vm.words.ua.learning.ui.vms.LearningHistoryListVm
-import vm.words.ua.learning.ui.vms.LearningPlanVm
-import vm.words.ua.learning.ui.vms.StatisticLearningHistoryVm
+import vm.words.ua.learning.ui.vms.LearningHistoryListViewModel
+import vm.words.ua.learning.ui.vms.LearningPlanViewModel
+import vm.words.ua.learning.ui.vms.StatisticLearningHistoryViewModel
 
 internal val learningViewModelDi = DI.Module("LearningViewModelDi") {
-    bind<LearningPlanVm>() with provider {
-        LearningPlanVm(
+    bind<LearningPlanViewModel>() with provider {
+        LearningPlanViewModel(
             learningHistoryManager = instance(),
             learningPlanManager = instance()
         )
     }
 
-    bind<StatisticLearningHistoryVm>() with provider {
-        StatisticLearningHistoryVm(
+    bind<StatisticLearningHistoryViewModel>() with provider {
+        StatisticLearningHistoryViewModel(
             manager = instance()
         )
     }
 
-    bind<LearningHistoryListVm>() with provider {
-        LearningHistoryListVm(
+    bind<LearningHistoryListViewModel>() with provider {
+        LearningHistoryListViewModel(
             manager = instance()
         )
     }

@@ -24,7 +24,7 @@ import vm.words.ua.learning.domain.models.enums.PlanStatus
 import vm.words.ua.learning.ui.actions.LearningPlanAction
 import vm.words.ua.learning.ui.states.LearningPlanState
 
-class LearningPlanVm(
+class LearningPlanViewModel(
     private val learningHistoryManager: LearningHistoryManager,
     private val learningPlanManager: LearningPlanManager
 ) : ViewModel() {

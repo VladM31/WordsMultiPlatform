@@ -42,14 +42,14 @@ import vm.words.ua.playlist.domain.models.filters.PublicPlayListCountFilter
 import vm.words.ua.playlist.ui.actions.FastStartPlayListAction
 import vm.words.ua.playlist.ui.components.FastStartPlayListItem
 import vm.words.ua.playlist.ui.states.FastStartPlayListState
-import vm.words.ua.playlist.ui.vms.FastStartPlayListVm
+import vm.words.ua.playlist.ui.vms.FastStartPlayListViewModel
 
 
 @Composable
 fun FastStartPlayListScreen(
     navController: SimpleNavController,
 ) {
-    val viewModel = rememberInstance<FastStartPlayListVm>()
+    val viewModel = rememberInstance<FastStartPlayListViewModel>()
     val state by viewModel.state.collectAsState()
     val listState = rememberLazyListState()
 
@@ -155,7 +155,7 @@ fun FastStartPlayListScreen(
 
 private fun changeVisibility(
     state: FastStartPlayListState,
-    viewModel: FastStartPlayListVm,
+    viewModel: FastStartPlayListViewModel,
     toRight: Boolean
 ): Boolean {
     val maxIndex = if (toRight) {
@@ -184,7 +184,7 @@ private fun changeVisibility(
 private fun navigateAdditionalClick(
     state: FastStartPlayListState,
     navController: SimpleNavController,
-    viewModel: FastStartPlayListVm
+    viewModel: FastStartPlayListViewModel
 ) {
     when (state.visibility) {
         PlayListType.PUBLIC -> {

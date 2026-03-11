@@ -27,8 +27,8 @@ internal val viewModelDi = DI.Module("viewModel") {
         )
     }
 
-    bind<ConfirmSignUpVm>() with factory {
-        ConfirmSignUpVm(
+    bind<ConfirmSignUpViewModel>() with factory {
+        ConfirmSignUpViewModel(
             authManager = instance()
         )
     }

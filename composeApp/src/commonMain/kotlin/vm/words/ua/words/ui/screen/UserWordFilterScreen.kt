@@ -24,13 +24,13 @@ import vm.words.ua.words.ui.actions.UserWordFilterAction
 import vm.words.ua.words.ui.bundles.UserWordFilterBundle
 import vm.words.ua.words.ui.components.SortSelector
 import vm.words.ua.words.ui.states.UserWordFilterState
-import vm.words.ua.words.ui.vms.UserWordFilterVm
+import vm.words.ua.words.ui.vms.UserWordFilterViewModel
 
 
 @Composable
 fun UserWordFilterScreen(
     navController: SimpleNavController,
-    viewModel: UserWordFilterVm = rememberInstance<UserWordFilterVm>()
+    viewModel: UserWordFilterViewModel = rememberInstance<UserWordFilterViewModel>()
 ) {
     val state by viewModel.state.collectAsState()
 

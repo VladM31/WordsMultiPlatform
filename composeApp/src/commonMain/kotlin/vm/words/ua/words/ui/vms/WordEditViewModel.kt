@@ -20,7 +20,7 @@ import vm.words.ua.words.domain.models.enums.WordType
 import vm.words.ua.words.ui.actions.WordEditAction
 import vm.words.ua.words.ui.states.WordEditState
 
-class WordEditVm(
+class WordEditViewModel(
     private val userWordManager: UserWordManager,
     private val subscribeCacheManager: SubscribeCacheManager,
     private val soundManager: SoundManager,

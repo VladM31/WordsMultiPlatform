@@ -21,7 +21,7 @@ import vm.words.ua.words.ui.actions.DefaultAddWordAction
 import vm.words.ua.words.ui.states.DefaultAddWordState
 import vm.words.ua.words.ui.validations.defaultAddWordValidator
 
-class DefaultAddWordVm(
+class DefaultAddWordViewModel(
     private val wordManager: UserWordManager,
     private val subscribeCacheManager: SubscribeCacheManager,
     private val soundManager: SoundManager

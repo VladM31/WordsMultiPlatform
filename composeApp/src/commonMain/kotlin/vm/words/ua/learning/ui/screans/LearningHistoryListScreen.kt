@@ -30,13 +30,13 @@ import vm.words.ua.learning.domain.models.LearningHistory
 import vm.words.ua.learning.domain.models.enums.LearningHistoryType
 import vm.words.ua.learning.ui.actions.LearningHistoryListAction
 import vm.words.ua.learning.ui.states.LearningHistoryListState
-import vm.words.ua.learning.ui.vms.LearningHistoryListVm
+import vm.words.ua.learning.ui.vms.LearningHistoryListViewModel
 import vm.words.ua.navigation.SimpleNavController
 
 @Composable
 fun LearningHistoryListScreen(
     navController: SimpleNavController,
-    viewModel: LearningHistoryListVm = rememberInstance()
+    viewModel: LearningHistoryListViewModel = rememberInstance()
 ) {
     val state by viewModel.state.collectAsState()
     val listState = rememberLazyListState()

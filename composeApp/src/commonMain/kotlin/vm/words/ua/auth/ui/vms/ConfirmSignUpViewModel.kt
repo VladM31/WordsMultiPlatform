@@ -13,7 +13,7 @@ import vm.words.ua.auth.ui.actions.ConfirmSignUpAction
 import vm.words.ua.auth.ui.states.ConfirmSignUpState
 import vm.words.ua.core.ui.models.ErrorMessage
 
-class ConfirmSignUpVm(
+class ConfirmSignUpViewModel(
     private val authManager: AuthManager
 ) : ViewModel() {
 

@@ -31,7 +31,7 @@ import vm.words.ua.core.utils.rememberLabelFontSize
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.learning.domain.models.enums.LearningHistoryType
 import vm.words.ua.learning.ui.actions.StatisticLearningHistoryAction
-import vm.words.ua.learning.ui.vms.StatisticLearningHistoryVm
+import vm.words.ua.learning.ui.vms.StatisticLearningHistoryViewModel
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
 
@@ -46,7 +46,7 @@ data class DayStatistics(
 @Composable
 fun StatisticLearningHistoryScreen(
     navController: SimpleNavController,
-    viewModel: StatisticLearningHistoryVm = rememberInstance()
+    viewModel: StatisticLearningHistoryViewModel = rememberInstance()
 ) {
     val state by viewModel.state.collectAsState()
     var showDatePicker by remember { mutableStateOf(false) }
@@ -170,7 +170,7 @@ private fun Menu(onSelectDate: () -> Unit, navController: SimpleNavController) {
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun DatePickerComponent(showDatePicker: Boolean, onHide: () -> Unit, viewModel: StatisticLearningHistoryVm) {
+fun DatePickerComponent(showDatePicker: Boolean, onHide: () -> Unit, viewModel: StatisticLearningHistoryViewModel) {
     val state by viewModel.state.collectAsState()
 
     // DatePicker state

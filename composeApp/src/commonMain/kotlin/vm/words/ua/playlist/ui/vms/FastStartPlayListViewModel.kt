@@ -18,7 +18,7 @@ import vm.words.ua.playlist.domain.models.filters.PublicPlayListFilter
 import vm.words.ua.playlist.ui.actions.FastStartPlayListAction
 import vm.words.ua.playlist.ui.states.FastStartPlayListState
 
-class FastStartPlayListVm(
+class FastStartPlayListViewModel(
     private val playListManager: PlayListManager
 ) : ViewModel() {
 

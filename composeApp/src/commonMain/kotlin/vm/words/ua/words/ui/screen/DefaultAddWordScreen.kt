@@ -28,12 +28,12 @@ import vm.words.ua.words.ui.actions.DefaultAddWordAction
 import vm.words.ua.words.ui.components.SelectImageMenu
 import vm.words.ua.words.ui.components.SelectSoundMenu
 import vm.words.ua.words.ui.states.DefaultAddWordState
-import vm.words.ua.words.ui.vms.DefaultAddWordVm
+import vm.words.ua.words.ui.vms.DefaultAddWordViewModel
 
 @Composable
 fun DefaultAddWordScreen(
     navController: SimpleNavController,
-    viewModel: DefaultAddWordVm = rememberInstance()
+    viewModel: DefaultAddWordViewModel = rememberInstance()
 ) {
 
     val state by viewModel.state.collectAsState()
@@ -214,7 +214,7 @@ fun DefaultAddWordScreen(
 @Composable
 private fun SoundSwitch(
     state: DefaultAddWordState,
-    viewModel: DefaultAddWordVm
+    viewModel: DefaultAddWordViewModel
 ) {
     val scale = rememberScaleFactor()
     val minHeight = remember(scale) {

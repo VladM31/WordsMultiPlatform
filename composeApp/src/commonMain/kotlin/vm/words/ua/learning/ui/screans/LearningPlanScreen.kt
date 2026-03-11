@@ -30,7 +30,7 @@ import vm.words.ua.learning.ui.actions.LearningPlanAction
 import vm.words.ua.learning.ui.components.CounterRow
 import vm.words.ua.learning.ui.components.ProgressPieChart
 import vm.words.ua.learning.ui.states.LearningPlanState
-import vm.words.ua.learning.ui.vms.LearningPlanVm
+import vm.words.ua.learning.ui.vms.LearningPlanViewModel
 import vm.words.ua.navigation.SimpleNavController
 
 @Composable
@@ -39,7 +39,7 @@ fun LearningPlanScreen(
     modifier: Modifier = Modifier,
 
     ) {
-    val viewModel: LearningPlanVm = rememberInstance<LearningPlanVm>()
+    val viewModel: LearningPlanViewModel = rememberInstance<LearningPlanViewModel>()
     val state by viewModel.state.collectAsState()
 
 
@@ -142,7 +142,7 @@ private fun CreateBtn(onClick: () -> Unit) {
 
 @Composable
 private fun ModifyPlan(
-    viewModel: LearningPlanVm,
+    viewModel: LearningPlanViewModel,
     state: LearningPlanState
 ) {
 
