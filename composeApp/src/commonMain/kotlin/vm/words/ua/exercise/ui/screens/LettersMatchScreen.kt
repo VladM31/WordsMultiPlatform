@@ -26,6 +26,7 @@ import vm.words.ua.core.ui.AppColors
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.CenteredContainer
+import vm.words.ua.core.ui.components.SwipeListener
 import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberInterfaceMaxWidth
 import vm.words.ua.core.utils.rememberScaleFactor
@@ -115,7 +116,14 @@ private fun LettersMatchScreen(
         )
     }
 
-
+    SwipeListener(
+        onSwipeRight = { navController.popBackStack() },
+        onSwipeLeft = {
+            if (state.value.isNext) {
+                viewModel.sent(LettersMatchAction.Next)
+            }
+        }
+    )
 }
 
 @Composable

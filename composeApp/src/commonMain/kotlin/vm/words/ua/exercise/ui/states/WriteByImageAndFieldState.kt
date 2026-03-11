@@ -27,4 +27,8 @@ data class WriteByImageAndFieldState(
     fun isError(): Boolean {
         return isConfirm == false
     }
+
+    fun isNext(): Boolean {
+        return isConfirm == true
+    }
 }

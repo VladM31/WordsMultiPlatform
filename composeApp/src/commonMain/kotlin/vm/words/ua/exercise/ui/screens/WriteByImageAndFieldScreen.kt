@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.CenteredContainer
+import vm.words.ua.core.ui.components.SwipeListener
 import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberInterfaceMaxWidth
 import vm.words.ua.di.rememberInstance
@@ -99,11 +100,24 @@ private fun WriteByImageAndFieldScreen(
             )
         }
 
+        SwipeListener(
+            onSwipeRight = { navController.popBackStack() },
+            onSwipeLeft = {
+                val action = if (state.value.isNext()) {
+                    WriteByImageAndFieldAction.NextWord
+                } else {
+                    WriteByImageAndFieldAction.Confirm
+                }
+                viewModel.sent(action)
+            }
+        )
+
+
         NextButton(
             hide = false,
-            text = if (state.value.isConfirm == true) "Next" else "Confirm",
+            text = if (state.value.isNext()) "Next" else "Confirm",
             onNextClick = {
-                val action = if (state.value.isConfirm == true) {
+                val action = if (state.value.isNext()) {
                     WriteByImageAndFieldAction.NextWord
                 } else {
                     WriteByImageAndFieldAction.Confirm

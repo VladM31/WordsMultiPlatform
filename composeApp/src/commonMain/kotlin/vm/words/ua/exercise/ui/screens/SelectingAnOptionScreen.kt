@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.CenteredLoader
+import vm.words.ua.core.ui.components.SwipeListener
 import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberWidthDeviceFormat
 import vm.words.ua.di.rememberInstance
@@ -190,9 +191,20 @@ private fun SelectingAnOptionScreen(
             Spacer(modifier = Modifier.weight(1f))
         }
 
+        SwipeListener(
+            onSwipeRight = { navController.popBackStack() },
+            onSwipeLeft = {
+                if (state.value.waitNext) {
+                    onNext()
+                }
+            }
+        )
+
         if (state.value.waitNext.not()) {
             return@Box
         }
+
+
 
         Box(
             Modifier
