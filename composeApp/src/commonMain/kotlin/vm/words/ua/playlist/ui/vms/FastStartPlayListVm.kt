@@ -50,10 +50,18 @@ class FastStartPlayListVm(
                 disabledTypes.add(PlayListType.PUBLIC)
             }
 
+            val initialVisibility = yourPlayListWaiter.await().isNotEmpty()
+                .let { if (it) PlayListType.YOUR else PlayListType.PUBLIC }
+
             mutableState.update { state ->
+                // Only set visibility if user hasn't changed it yet (still default)
+                val newVisibility = if (state.visibility == PlayListType.YOUR && state.disabledTypes.isEmpty()) {
+                    initialVisibility
+                } else {
+                    state.visibility
+                }
                 state.copy(
-                    visibility = yourPlayListWaiter.await().isNotEmpty()
-                        .let { if (it) PlayListType.YOUR else PlayListType.PUBLIC },
+                    visibility = newVisibility,
                     disabledTypes = disabledTypes,
                     playListByType = mapOf(
                         PlayListType.YOUR to yourPlayListWaiter.await().content,
@@ -251,7 +259,8 @@ class FastStartPlayListVm(
             mutableState.update {
                 it.copy(
                     playListByType = it.playListByType + (PlayListType.YOUR to result),
-                    hasNextByType = it.hasNextByType + (PlayListType.YOUR to (models.page.isLast.not()))
+                    hasNextByType = it.hasNextByType + (PlayListType.YOUR to (models.page.isLast.not())),
+                    visibility = PlayListType.YOUR
                 )
             }
         }.setErrorListener()
@@ -269,7 +278,8 @@ class FastStartPlayListVm(
             mutableState.update {
                 it.copy(
                     playListByType = it.playListByType + (PlayListType.PUBLIC to result),
-                    hasNextByType = it.hasNextByType + (PlayListType.PUBLIC to (models.page.isLast.not()))
+                    hasNextByType = it.hasNextByType + (PlayListType.PUBLIC to (models.page.isLast.not())),
+                    visibility = PlayListType.PUBLIC
                 )
             }
         }.setErrorListener()
