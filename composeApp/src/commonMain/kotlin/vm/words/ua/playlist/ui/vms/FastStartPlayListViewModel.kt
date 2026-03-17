@@ -179,7 +179,7 @@ class FastStartPlayListViewModel(
                     isExpandedByPlayListId = it.isExpandedByPlayListId + (playListId to false)
                 )
             }
-        }
+        }.setErrorListener()
 
 
     }
