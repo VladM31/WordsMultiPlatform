@@ -47,8 +47,10 @@ class UserWordsViewModel(
     }
 
     private fun handleDeleteWord(action: UserWordsAction.DeleteWord) {
+        val newSelectedWords = mutableState.value.selectedWords - action.userWordId
         mutableState.value = mutableState.value.copy(
-            selectedWords = mutableState.value.selectedWords - action.userWordId
+            selectedWords = newSelectedWords,
+            showWordsDialog = newSelectedWords.isNotEmpty() && state.value.showWordsDialog
         )
     }
 
