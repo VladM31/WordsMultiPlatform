@@ -260,7 +260,7 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
 
             packageName = "Words"
-            packageVersion = "1.1.5"
+            packageVersion = "1.1.6"
             description = "Words App"
             vendor = "Vladyslav Mormul"
 
