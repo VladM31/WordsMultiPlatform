@@ -132,7 +132,7 @@ private fun SelectedWordItem(
                 text = word.lang.upperShortName,
                 color = AppTheme.SecondaryColor
             )
-            Spacer(modifier = Modifier.width(4.dp))
+            Spacer(modifier = Modifier.width(8.dp))
 
             Column(Modifier.weight(1f)) {
                 Text(
