@@ -259,7 +259,7 @@ compose.desktop {
             includeAllModules = true
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
 
-            packageName = "Study words"
+            packageName = "Words"
             packageVersion = "1.1.5"
             description = "Words App"
             vendor = "Vladyslav Mormul"
@@ -267,7 +267,7 @@ compose.desktop {
             windows {
                 iconFile.set(project.file("icon.ico"))
                 shortcut = true
-                menuGroup = "Study words"
+                menuGroup = "Words"
                 dirChooser = true
             }
 
