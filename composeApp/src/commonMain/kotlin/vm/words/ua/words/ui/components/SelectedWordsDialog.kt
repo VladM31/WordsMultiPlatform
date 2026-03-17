@@ -22,6 +22,7 @@ import vm.words.ua.core.ui.AppColors
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.TagBadge
 import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberInterfaceMaxWidth
 import vm.words.ua.core.utils.rememberLabelFontSize
 import vm.words.ua.words.domain.models.Word
 
@@ -35,7 +36,7 @@ fun SelectedWordsDialog(
         Surface(shape = RoundedCornerShape(8.dp)) {
             Column(
                 modifier = Modifier
-                    .widthIn(min = 280.dp, max = 420.dp)
+                    .widthIn(min = 280.dp, max = rememberInterfaceMaxWidth() * 0.9f)
                     .heightIn(min = 200.dp, max = 560.dp)
                     .padding(10.dp),
                 verticalArrangement = Arrangement.spacedBy(6.dp)
