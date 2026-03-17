@@ -148,6 +148,11 @@ fun FastStartPlayListScreen(
         },
         onSwipeLeft = {
             changeVisibility(state, viewModel, false)
+        },
+        onSwipeDown = {
+            if (state.visibility == PlayListType.RANDOM) {
+                viewModel.send(FastStartPlayListAction.ReloadRandom)
+            }
         }
     )
 
