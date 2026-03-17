@@ -141,7 +141,7 @@ fun UserWordsScreen(
                 onDelete = { wordId ->
                     val userWord =
                         state.selectedWords.values.firstOrNull { it.word.id == wordId } ?: return@SelectedWordsDialog
-                    viewModel.sent(UserWordsAction.DeleteWord(userWord.id))
+                    viewModel.sent(UserWordsAction.UnselectWord(userWord.id))
                 }
             )
         }

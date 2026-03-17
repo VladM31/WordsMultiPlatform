@@ -12,5 +12,5 @@ sealed interface UserWordsAction {
     data object LoadMore : UserWordsAction
     data object ShowWordsDialog : UserWordsAction
     data object HideWordsDialog : UserWordsAction
-    data class DeleteWord(val userWordId: String) : UserWordsAction
+    data class UnselectWord(val userWordId: String) : UserWordsAction
 }

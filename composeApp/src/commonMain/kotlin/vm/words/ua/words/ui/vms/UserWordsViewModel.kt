@@ -39,7 +39,7 @@ class UserWordsViewModel(
 
             is UserWordsAction.HideWordsDialog -> mutableState.value =
                 mutableState.value.copy(showSelectedDialog = false)
-            is UserWordsAction.DeleteWord -> handleDeleteWord(action)
+            is UserWordsAction.UnselectWord -> handleUnselectWord(action)
         }
     }
 
@@ -49,7 +49,7 @@ class UserWordsViewModel(
         )
     }
 
-    private fun handleDeleteWord(action: UserWordsAction.DeleteWord) {
+    private fun handleUnselectWord(action: UserWordsAction.UnselectWord) {
         val newSelectedWords = mutableState.value.selectedWords - action.userWordId
         mutableState.value = mutableState.value.copy(
             selectedWords = newSelectedWords,
