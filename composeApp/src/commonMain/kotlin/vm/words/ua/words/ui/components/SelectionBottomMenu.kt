@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppTheme
+import vm.words.ua.core.utils.rememberInterfaceMaxWidth
 import vm.words.ua.core.utils.rememberLabelFontSize
 
 /**
@@ -36,10 +37,12 @@ fun SelectionBottomMenu(
         modifier = modifier
             .fillMaxWidth()
             .background(AppTheme.PrimaryBack)
-            .padding(8.dp)
+            .padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
             modifier = Modifier
+                .widthIn(max = rememberInterfaceMaxWidth())
                 .fillMaxWidth()
                 .padding(horizontal = 12.dp, vertical = 6.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -53,7 +56,7 @@ fun SelectionBottomMenu(
                 ),
                 contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp)
             ) {
-                Text(text = "Clear", fontSize = rememberLabelFontSize())
+                Text(text = "Dismiss", fontSize = rememberLabelFontSize())
             }
 
             if (showDelete) {
