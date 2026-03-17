@@ -14,12 +14,15 @@ import androidx.compose.ui.unit.sp
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppTextField
 import vm.words.ua.core.ui.components.AppToolBar
+import vm.words.ua.core.ui.components.CenteredContainer
 import vm.words.ua.core.ui.components.ErrorMessageBox
 import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberInterfaceMaxWidth
 import vm.words.ua.core.utils.rememberLabelFontSize
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.settings.ui.actions.ProfileAction
+import vm.words.ua.settings.ui.states.ProfileState
 import vm.words.ua.settings.ui.vm.ProfileViewModel
 
 @Composable
@@ -39,98 +42,41 @@ fun ProfileScreen(
             showBackButton = true,
             onBackClick = { navController.popBackStack() }
         )
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp)
-        ) {
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Profile information card
-            Card(
+        CenteredContainer(maxWidth = rememberInterfaceMaxWidth()) {
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .shadow(4.dp, RoundedCornerShape(16.dp)),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = AppTheme.PrimaryBack
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp)
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp)
-                ) {
-                    // Header
-                    Text(
-                        text = "Personal Information",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = AppTheme.PrimaryColor,
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    )
+                Spacer(modifier = Modifier.height(24.dp))
 
-                    // First name
-                    ProfileInfoItem(
-                        label = "First Name",
-                        value = state.firstName
-                    )
+                // Profile information card
+                ProfileCard(state)
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.weight(1f))
 
-                    // Last name
-                    ProfileInfoItem(
-                        label = "Last Name",
-                        value = state.lastName
-                    )
-
-                    // Email (if exists)
-                    if (!state.email.isNullOrBlank()) {
-                        Spacer(modifier = Modifier.height(16.dp))
-                        ProfileInfoItem(
-                            label = "Email",
-                            value = state.email.orEmpty(),
-                            valueColor = AppTheme.PrimaryColor
+                // Delete account button
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    TextButton(
+                        onClick = { viewModel.sent(ProfileAction.OpenDeleteAccountDialog) },
+                        modifier = Modifier
+                            .widthIn(max = 350.dp)
+                            .padding(vertical = 8.dp),
+                        colors = ButtonDefaults.textButtonColors(
+                            contentColor = AppTheme.PrimaryRed.copy(alpha = 0.7f)
                         )
-                    }
-
-                    // Phone (if exists)
-                    if (!state.phoneNumber.isNullOrBlank()) {
-                        Spacer(modifier = Modifier.height(16.dp))
-                        ProfileInfoItem(
-                            label = "Phone",
-                            value = state.phoneNumber.orEmpty(),
-                            valueColor = AppTheme.PrimaryColor
+                    ) {
+                        Text(
+                            text = "Delete Account",
+                            fontSize = rememberLabelFontSize(),
+                            fontWeight = FontWeight.Normal,
+                            textAlign = TextAlign.Center
                         )
                     }
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
             }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            // Delete account button
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                TextButton(
-                    onClick = { viewModel.sent(ProfileAction.OpenDeleteAccountDialog) },
-                    modifier = Modifier
-                        .widthIn(max = 350.dp)
-                        .padding(vertical = 8.dp),
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = AppTheme.PrimaryRed.copy(alpha = 0.7f)
-                    )
-                ) {
-                    Text(
-                        text = "Delete Account",
-                        fontSize = rememberLabelFontSize(),
-                        fontWeight = FontWeight.Normal,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 
@@ -217,6 +163,71 @@ fun ProfileScreen(
         },
         shape = RoundedCornerShape(16.dp)
     )
+}
+
+@Composable
+private fun ProfileCard(state: ProfileState) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .shadow(4.dp, RoundedCornerShape(16.dp)),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = AppTheme.PrimaryBack
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp)
+        ) {
+            // Header
+            Text(
+                text = "Personal Information",
+                fontSize = rememberLabelFontSize() * 0.9,
+                fontWeight = FontWeight.Bold,
+                color = AppTheme.PrimaryColor,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(bottom = 16.dp)
+                    .fillMaxWidth()
+            )
+
+            // First name
+            ProfileInfoItem(
+                label = "First Name",
+                value = state.firstName
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Last name
+            ProfileInfoItem(
+                label = "Last Name",
+                value = state.lastName
+            )
+
+            // Email (if exists)
+            if (!state.email.isNullOrBlank()) {
+                Spacer(modifier = Modifier.height(16.dp))
+                ProfileInfoItem(
+                    label = "Email",
+                    value = state.email.orEmpty(),
+                    valueColor = AppTheme.PrimaryColor
+                )
+            }
+
+            // Phone (if exists)
+            if (!state.phoneNumber.isNullOrBlank()) {
+                Spacer(modifier = Modifier.height(16.dp))
+                ProfileInfoItem(
+                    label = "Phone",
+                    value = state.phoneNumber.orEmpty(),
+                    valueColor = AppTheme.PrimaryColor
+                )
+            }
+        }
+    }
 }
 
 @Composable
