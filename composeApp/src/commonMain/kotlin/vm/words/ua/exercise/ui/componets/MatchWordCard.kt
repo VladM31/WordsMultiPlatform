@@ -23,8 +23,7 @@ fun MatchWordCard(
     isMistake: Boolean,
     isMatched: Boolean,
     fontSize: TextUnit,
-    onClick: () -> Unit,
-    enabled: Boolean
+    onClick: () -> Unit
 ) {
     val containerColor = when {
         isMatched -> AppTheme.ColorScheme.primaryContainer.copy(alpha = 0.5f)
@@ -45,7 +44,7 @@ fun MatchWordCard(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(18.dp))
-            .then(if (enabled && !isMatched) Modifier.clickable { onClick() } else Modifier)
+            .then(if (!isMatched) Modifier.clickable { onClick() } else Modifier)
             .padding(horizontal = 4.dp, vertical = 4.dp)
     ) {
         Text(

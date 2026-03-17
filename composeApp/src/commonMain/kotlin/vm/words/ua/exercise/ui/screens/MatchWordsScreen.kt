@@ -94,8 +94,7 @@ fun MatchWordsScreen(
                                     index = index
                                 )
                             )
-                        },
-                        enabled = state.value.original == null
+                        }
                     )
                 }
             }
@@ -130,8 +129,7 @@ fun MatchWordsScreen(
                                     index = index
                                 )
                             )
-                        },
-                        enabled = state.value.translate == null
+                        }
                     )
                 }
             }
