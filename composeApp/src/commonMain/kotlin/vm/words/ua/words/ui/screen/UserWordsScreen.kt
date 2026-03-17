@@ -134,7 +134,7 @@ fun UserWordsScreen(
             )
         }
 
-        if (state.showWordsDialog) {
+        if (state.showSelectedDialog) {
             SelectedWordsDialog(
                 words = state.selectedWords.values.map { it.word },
                 onDismiss = { viewModel.sent(UserWordsAction.HideWordsDialog) },

@@ -34,8 +34,11 @@ class UserWordsViewModel(
             is UserWordsAction.PinWords -> pinWords(action.playListId)
             is UserWordsAction.ReFetch -> handleReFetch()
             is UserWordsAction.LoadMore -> handleLoadMore()
-            is UserWordsAction.ShowWordsDialog -> mutableState.value = mutableState.value.copy(showWordsDialog = true)
-            is UserWordsAction.HideWordsDialog -> mutableState.value = mutableState.value.copy(showWordsDialog = false)
+            is UserWordsAction.ShowWordsDialog -> mutableState.value =
+                mutableState.value.copy(showSelectedDialog = true)
+
+            is UserWordsAction.HideWordsDialog -> mutableState.value =
+                mutableState.value.copy(showSelectedDialog = false)
             is UserWordsAction.DeleteWord -> handleDeleteWord(action)
         }
     }
@@ -50,7 +53,7 @@ class UserWordsViewModel(
         val newSelectedWords = mutableState.value.selectedWords - action.userWordId
         mutableState.value = mutableState.value.copy(
             selectedWords = newSelectedWords,
-            showWordsDialog = newSelectedWords.isNotEmpty() && state.value.showWordsDialog
+            showSelectedDialog = newSelectedWords.isNotEmpty() && state.value.showSelectedDialog
         )
     }
 
@@ -60,7 +63,7 @@ class UserWordsViewModel(
             val newSelectedWords = mutableState.value.selectedWords - action.word.id
             mutableState.value = mutableState.value.copy(
                 selectedWords = newSelectedWords,
-                showWordsDialog = newSelectedWords.isNotEmpty() && state.value.showWordsDialog
+                showSelectedDialog = newSelectedWords.isNotEmpty() && state.value.showSelectedDialog
             )
             return
         }

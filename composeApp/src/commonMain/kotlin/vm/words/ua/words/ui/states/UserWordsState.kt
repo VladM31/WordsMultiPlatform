@@ -15,7 +15,7 @@ data class UserWordsState(
     val isLoading: Boolean = false,
     val selectedPlayListId: String? = null,
     val openPlayList: OpenPlayList? = null,
-    val showWordsDialog: Boolean = false,
+    val showSelectedDialog: Boolean = false,
     override val errorMessage: ErrorMessage? = null,
 ) : ErrorableState {
 
