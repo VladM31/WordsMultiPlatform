@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
 import vm.words.ua.core.ui.components.CenteredContainer
+import vm.words.ua.core.ui.components.SwipeListener
 import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberInterfaceMaxWidth
 import vm.words.ua.core.utils.rememberLabelFontSize
@@ -104,6 +105,22 @@ fun ExerciseResultScreen(navController: SimpleNavController) {
             }
         }
     }
+
+    SwipeListener(
+        onSwipeRight = { navController.popBackStack() },
+        onSwipeLeft = {
+            if (bundle.userWords.isNullOrEmpty()) {
+                return@SwipeListener
+            }
+            navController.navigateAndClearCurrent(
+                Screen.ExerciseSelection,
+                ExerciseSelectionBundle(
+                    playListId = bundle.playListId,
+                    words = bundle.userWords
+                )
+            )
+        }
+    )
 }
 
 @Composable
