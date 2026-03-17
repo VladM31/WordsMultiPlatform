@@ -41,7 +41,23 @@ class WordsViewModel(
             is WordsAction.Clear -> clear()
             is WordsAction.LoadMore -> loadMore()
             is WordsAction.UpdateFilter -> updateFilter(action)
+            is WordsAction.ShowWordsDialog -> mutableState.value =
+                mutableState.value.copy(showSelectedDialog = true)
+
+            is WordsAction.HideWordsDialog -> mutableState.value =
+                mutableState.value.copy(showSelectedDialog = false)
+
+            is WordsAction.UnselectWord -> unselectWord(action.wordId)
         }
+    }
+
+    private fun unselectWord(wordId: String) {
+        val newSelectedWords = state.value.selectedWords - wordId
+        mutableState.value = state.value.copy(
+            selectedWords = newSelectedWords,
+            showSelectedDialog = newSelectedWords.isNotEmpty() && state.value.showSelectedDialog
+        )
+
     }
 
     private fun loadMore() {
@@ -116,7 +132,8 @@ class WordsViewModel(
 
         mutableState.apply {
             value = value.copy(
-                selectedWords = selectedWords
+                selectedWords = selectedWords,
+                showSelectedDialog = selectedWords.isNotEmpty() && state.value.showSelectedDialog
             )
         }
     }

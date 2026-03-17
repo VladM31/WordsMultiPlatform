@@ -8,4 +8,8 @@ sealed interface WordsAction {
     data object Clear : WordsAction
     data class UpdateFilter(val filter: WordFilter) : WordsAction
     data object LoadMore : WordsAction
+
+    data object ShowWordsDialog : WordsAction
+    data object HideWordsDialog : WordsAction
+    data class UnselectWord(val wordId: String) : WordsAction
 }

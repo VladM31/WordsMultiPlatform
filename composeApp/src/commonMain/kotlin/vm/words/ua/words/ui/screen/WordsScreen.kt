@@ -18,6 +18,7 @@ import vm.words.ua.words.ui.actions.WordsAction
 import vm.words.ua.words.ui.bundles.PinUserWordsBundle
 import vm.words.ua.words.ui.bundles.WordDetailsBundle
 import vm.words.ua.words.ui.bundles.WordFilterBundle
+import vm.words.ua.words.ui.components.SelectedWordsDialog
 import vm.words.ua.words.ui.components.SelectionBottomMenu
 import vm.words.ua.words.ui.components.WordItem
 import vm.words.ua.words.ui.vms.WordsViewModel
@@ -112,8 +113,22 @@ fun WordsScreen(
                     )
                 )
             },
-            applyLabel = "Apply(${state.selectedWords.size})"
+            applyLabel = "Apply(${state.selectedWords.size})",
+
+            enableShowBtn = true,
+            onShow = {
+                viewModel.sent(WordsAction.ShowWordsDialog)
+            }
         )
 
+        if (state.showSelectedDialog) {
+            SelectedWordsDialog(
+                words = state.selectedWords.values.toList(),
+                onDismiss = { viewModel.sent(WordsAction.HideWordsDialog) },
+                onDelete = { wordId ->
+                    viewModel.sent(WordsAction.UnselectWord(wordId))
+                }
+            )
+        }
     }
 }

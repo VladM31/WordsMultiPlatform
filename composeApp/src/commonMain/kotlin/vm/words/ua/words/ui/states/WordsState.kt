@@ -14,5 +14,6 @@ data class WordsState @OptIn(ExperimentalTime::class) constructor(
     val error: ErrorMessage? = null,
     val currentPage: Int = 0,
     val hasMore: Boolean = true,
+    val showSelectedDialog: Boolean = false,
     val filterId: Long = Clock.System.now().toEpochMilliseconds()
 )
