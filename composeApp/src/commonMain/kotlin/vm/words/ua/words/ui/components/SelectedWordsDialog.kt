@@ -1,6 +1,6 @@
 package vm.words.ua.words.ui.components
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -13,9 +13,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import vm.words.ua.core.ui.AppColors
@@ -83,7 +83,7 @@ fun SelectedWordsDialog(
                     horizontalArrangement = Arrangement.End
                 ) {
                     Button(onClick = onDismiss) {
-                        Text("Dismiss")
+                        Text("Dismiss", fontSize = rememberLabelFontSize() * 0.7f)
                     }
                 }
             }
@@ -104,13 +104,21 @@ private fun SelectedWordItem(
         modifier = Modifier
             .fillMaxWidth()
             .shadow(
-                elevation = 4.dp,
-                shape = RoundedCornerShape(14.dp),
-                ambientColor = Color.Black.copy(alpha = 0.10f),
-                spotColor = Color.Black.copy(alpha = 0.10f)
+                elevation = 8.dp,
+                shape = RoundedCornerShape(20.dp),
+                ambientColor = Color.Black.copy(alpha = 0.2f),
+                spotColor = Color.Black.copy(alpha = 0.2f)
+            )
+            .border(
+                width = 5.dp,
+                color = Color.Transparent,
+                shape = RoundedCornerShape(20.dp)
             ),
-        shape = RoundedCornerShape(14.dp),
-        colors = CardDefaults.cardColors(containerColor = cardBackground),
+
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = cardBackground.compositeOver(Color.Black.copy(alpha = 0.5f))
+        ),
         elevation = CardDefaults.cardElevation(0.dp)
     ) {
         Row(
@@ -126,13 +134,16 @@ private fun SelectedWordItem(
             )
             Spacer(modifier = Modifier.width(4.dp))
 
-            Text(
-                text = word.original,
-                color = AppColors.primaryText,
-                fontSize = fontSize,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.weight(1f)
-            )
+            Column(Modifier.weight(1f)) {
+                Text(
+                    text = word.original,
+                    color = AppColors.primaryText,
+                    fontSize = fontSize,
+                    fontWeight = FontWeight.SemiBold,
+                    lineHeight = fontSize * 1.3f
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+            }
 
             IconButton(onClick = onDelete) {
                 Icon(
@@ -142,25 +153,5 @@ private fun SelectedWordItem(
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun LangBadge(langCode: String, color: Color, fontSize: TextUnit) {
-    Box(
-        modifier = Modifier
-            .background(
-                color = color.copy(alpha = 0.15f),
-                shape = RoundedCornerShape(6.dp)
-            )
-            .padding(horizontal = 8.dp, vertical = 4.dp)
-    ) {
-        Text(
-            text = langCode,
-            color = color,
-            fontSize = fontSize,
-            fontWeight = FontWeight.Bold,
-            lineHeight = fontSize * 1.1f
-        )
     }
 }
