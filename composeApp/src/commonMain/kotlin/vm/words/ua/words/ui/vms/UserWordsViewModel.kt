@@ -34,26 +34,36 @@ class UserWordsViewModel(
             is UserWordsAction.PinWords -> pinWords(action.playListId)
             is UserWordsAction.ReFetch -> handleReFetch()
             is UserWordsAction.LoadMore -> handleLoadMore()
+            is UserWordsAction.ShowWordsDialog -> mutableState.value = mutableState.value.copy(showWordsDialog = true)
+            is UserWordsAction.HideWordsDialog -> mutableState.value = mutableState.value.copy(showWordsDialog = false)
+            is UserWordsAction.DeleteWord -> handleDeleteWord(action)
         }
     }
 
     private fun handleClear() {
         mutableState.value = mutableState.value.copy(
-            selectedWords = emptySet()
+            selectedWords = emptyMap()
+        )
+    }
+
+    private fun handleDeleteWord(action: UserWordsAction.DeleteWord) {
+        mutableState.value = mutableState.value.copy(
+            selectedWords = mutableState.value.selectedWords - action.userWordId
         )
     }
 
 
-
     private fun handleSelectWord(action: UserWordsAction.SelectWord) {
-        if (state.value.selectedWords.contains(action.wordId)) {
+        if (state.value.selectedWords.contains(action.word.id)) {
+            val newSelectedWords = mutableState.value.selectedWords - action.word.id
             mutableState.value = mutableState.value.copy(
-                selectedWords = mutableState.value.selectedWords - action.wordId
+                selectedWords = newSelectedWords,
+                showWordsDialog = newSelectedWords.isNotEmpty() && state.value.showWordsDialog
             )
             return
         }
         mutableState.value = mutableState.value.copy(
-            selectedWords = mutableState.value.selectedWords + action.wordId
+            selectedWords = mutableState.value.selectedWords + (action.word.id to action.word)
         )
     }
 
@@ -64,7 +74,7 @@ class UserWordsViewModel(
 
         mutableState.value = mutableState.value.copy(
             filter = action.filter,
-            selectedWords = emptySet(),
+            selectedWords = emptyMap(),
             page = 0,
             isLoading = false,
             hasMore = true,
@@ -82,7 +92,7 @@ class UserWordsViewModel(
                 .map {
                     PinPlayList(
                         playListId = playListId,
-                        wordId = it
+                        wordId = it.key
                     )
                 }
 
@@ -90,7 +100,7 @@ class UserWordsViewModel(
             prepare()
 
             mutableState.value = state.value.copy(
-                selectedWords = emptySet(),
+                selectedWords = emptyMap(),
                 openPlayList = UserWordsState.OpenPlayList(playListId)
             )
 

@@ -6,7 +6,7 @@ import vm.words.ua.words.domain.models.UserWord
 import vm.words.ua.words.domain.models.filters.UserWordFilter
 
 data class UserWordsState(
-    val selectedWords: Set<String> = emptySet(),
+    val selectedWords: Map<String, UserWord> = emptyMap(),
     val filter: UserWordFilter = UserWordFilter(),
     val userWords: List<UserWord> = emptyList(),
     val count: Long = 0,
@@ -15,6 +15,7 @@ data class UserWordsState(
     val isLoading: Boolean = false,
     val selectedPlayListId: String? = null,
     val openPlayList: OpenPlayList? = null,
+    val showWordsDialog: Boolean = false,
     override val errorMessage: ErrorMessage? = null,
 ) : ErrorableState {
 

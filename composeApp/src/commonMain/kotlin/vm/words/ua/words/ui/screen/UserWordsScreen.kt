@@ -21,6 +21,7 @@ import vm.words.ua.playlist.ui.components.SelectPlayListDialog
 import vm.words.ua.words.ui.actions.UserWordsAction
 import vm.words.ua.words.ui.bundles.UserWordFilterBundle
 import vm.words.ua.words.ui.bundles.WordDetailsBundle
+import vm.words.ua.words.ui.components.SelectedWordsDialog
 import vm.words.ua.words.ui.components.SelectionBottomMenu
 import vm.words.ua.words.ui.components.WordItem
 import vm.words.ua.words.ui.vms.UserWordsViewModel
@@ -100,7 +101,7 @@ fun UserWordsScreen(
                     userWord = item,
                     isSelected = state.selectedWords.contains(item.id),
                     onSelect = {
-                        viewModel.sent(UserWordsAction.SelectWord(item.id))
+                        viewModel.sent(UserWordsAction.SelectWord(item))
                     },
                     onOpen = {
                         navController.navigate(
@@ -133,13 +134,25 @@ fun UserWordsScreen(
             )
         }
 
+        if (state.showWordsDialog) {
+            SelectedWordsDialog(
+                words = state.selectedWords.values.map { it.word },
+                onDismiss = { viewModel.sent(UserWordsAction.HideWordsDialog) },
+                onDelete = { wordId ->
+                    val userWord =
+                        state.selectedWords.values.firstOrNull { it.word.id == wordId } ?: return@SelectedWordsDialog
+                    viewModel.sent(UserWordsAction.DeleteWord(userWord.id))
+                }
+            )
+        }
+
         if (state.selectedWords.isNotEmpty() && showPlayListSelector.not()) {
             SelectionBottomMenu(
                 onUnselect = { viewModel.sent(UserWordsAction.Clear) },
                 onApply = { showPlayListSelector = true },
                 applyLabel = "Apply(${state.selectedWords.size})",
-
-                enableShowBtn = true
+                enableShowBtn = true,
+                onShow = { viewModel.sent(UserWordsAction.ShowWordsDialog) }
             )
         }
 
