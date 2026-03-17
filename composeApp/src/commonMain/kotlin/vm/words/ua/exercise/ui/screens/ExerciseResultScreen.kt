@@ -9,10 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.EmojiEvents
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -36,7 +33,9 @@ import vm.words.ua.core.utils.rememberInterfaceMaxWidth
 import vm.words.ua.core.utils.rememberLabelFontSize
 import vm.words.ua.core.utils.rememberScaleFactor
 import vm.words.ua.exercise.ui.bundles.ExerciseResultBundle
+import vm.words.ua.exercise.ui.bundles.ExerciseSelectionBundle
 import vm.words.ua.exercise.ui.bundles.WordGradeResult
+import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.navigation.rememberParamOrThrow
 
@@ -60,7 +59,19 @@ fun ExerciseResultScreen(navController: SimpleNavController) {
         AppToolBar(
             title = "Results",
             showBackButton = true,
-            onBackClick = { navController.popBackStack() }
+            onBackClick = { navController.popBackStack() },
+            showAdditionalButton = bundle.userWords.isNullOrEmpty().not(),
+            //reload icon
+            additionalButtonVector = Icons.Filled.Refresh,
+            onAdditionalClick = {
+                navController.navigateAndClearCurrent(
+                    Screen.ExerciseSelection,
+                    ExerciseSelectionBundle(
+                        playListId = bundle.playListId,
+                        words = bundle.userWords ?: emptyList()
+                    )
+                )
+            }
         )
 
         CenteredContainer(maxWidth = rememberInterfaceMaxWidth()) {

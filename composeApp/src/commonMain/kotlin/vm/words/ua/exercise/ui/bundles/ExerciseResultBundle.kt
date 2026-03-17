@@ -1,10 +1,13 @@
 package vm.words.ua.exercise.ui.bundles
 
 import vm.words.ua.exercise.domain.models.enums.Exercise
+import vm.words.ua.words.domain.models.UserWord
 
 data class ExerciseResultBundle(
     val wordResults: List<WordGradeResult>,
     val exercises: List<Exercise>,
+    val playListId: String? = null,
+    val userWords: List<UserWord>? = null,
 ) {
     val totalWords: Int get() = wordResults.map { it.wordId }.distinct().size
     val correctWords: Int

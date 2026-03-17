@@ -57,5 +57,26 @@ fun UserWord.toExerciseWordDetails(transactionId: String) = ExerciseWordDetails(
     description = word.description,
     category = word.category,
     soundLink = word.soundLink,
-    imageLink = word.imageLink
+    imageLink = word.imageLink,
+    type = word.type
+)
+
+fun ExerciseWordDetails.toUserWord() = UserWord(
+    id = userWordId,
+    learningGrade = grade.toLong(),
+    createdAt = createdAt,
+    lastReadDate = lastReadDate,
+    word = vm.words.ua.words.domain.models.Word(
+        id = wordId,
+        original = original,
+        translate = translate,
+        lang = lang,
+        translateLang = translateLang,
+        cefr = cefr,
+        description = description,
+        category = category,
+        soundLink = soundLink,
+        imageLink = imageLink,
+        type = type
+    )
 )

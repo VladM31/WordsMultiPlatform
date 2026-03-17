@@ -4,6 +4,7 @@ import kotlinx.datetime.Instant
 import vm.words.ua.core.domain.models.ByteContent
 import vm.words.ua.core.domain.models.enums.CEFR
 import vm.words.ua.core.domain.models.enums.Language
+import vm.words.ua.words.domain.models.enums.WordType
 
 data class ExerciseWordDetails(
     val userWordId: String,
@@ -22,5 +23,6 @@ data class ExerciseWordDetails(
     val soundLink: String?,
     val imageLink: String?,
     val soundContent: ByteContent? = null,
-    val imageContent: ByteContent? = null
+    val imageContent: ByteContent? = null,
+    val type: WordType
 )

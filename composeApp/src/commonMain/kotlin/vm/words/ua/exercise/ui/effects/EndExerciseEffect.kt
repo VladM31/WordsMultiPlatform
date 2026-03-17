@@ -8,6 +8,7 @@ import kotlinx.coroutines.withContext
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.exercise.domain.managers.ExerciseStatisticalManager
 import vm.words.ua.exercise.domain.mappers.toScreen
+import vm.words.ua.exercise.domain.mappers.toUserWord
 import vm.words.ua.exercise.domain.models.data.EndExerciseTransaction
 import vm.words.ua.exercise.ui.bundles.ExerciseBundle
 import vm.words.ua.exercise.ui.bundles.ExerciseResultBundle
@@ -71,6 +72,7 @@ fun EndExerciseEffect(
         val resultBundle = ExerciseResultBundle(
             wordResults = allResults,
             exercises = bundle.exercises.map { it.exercise },
+            userWords = state.words.map { it.toUserWord() }
         )
         navController.navigateAndClearCurrent(Screen.ExerciseResult, resultBundle)
     }
