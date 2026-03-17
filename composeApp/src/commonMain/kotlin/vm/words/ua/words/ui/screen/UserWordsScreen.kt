@@ -135,13 +135,11 @@ fun UserWordsScreen(
 
         if (state.selectedWords.isNotEmpty() && showPlayListSelector.not()) {
             SelectionBottomMenu(
-                visible = true,
                 onUnselect = { viewModel.sent(UserWordsAction.Clear) },
                 onApply = { showPlayListSelector = true },
-                showDelete = false,
-                deleteLabel = "Delete(${state.selectedWords.size})",
-                onDelete = { },
-                applyLabel = "Apply(${state.selectedWords.size})"
+                applyLabel = "Apply(${state.selectedWords.size})",
+
+                enableShowBtn = true
             )
         }
 

@@ -101,7 +101,6 @@ fun WordsScreen(
             return
         }
         SelectionBottomMenu(
-            visible = true,
             onUnselect = {
                 viewModel.sent(WordsAction.Clear)
             },

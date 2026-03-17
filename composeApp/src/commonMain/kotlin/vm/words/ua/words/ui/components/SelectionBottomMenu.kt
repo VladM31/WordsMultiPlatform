@@ -2,14 +2,21 @@ package vm.words.ua.words.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Fullscreen
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import vm.words.ua.core.ui.AppColors
 import vm.words.ua.core.ui.AppTheme
+import vm.words.ua.core.utils.rememberIconSize
 import vm.words.ua.core.utils.rememberInterfaceMaxWidth
 import vm.words.ua.core.utils.rememberLabelFontSize
 
@@ -22,16 +29,17 @@ import vm.words.ua.core.utils.rememberLabelFontSize
  */
 @Composable
 fun SelectionBottomMenu(
-    visible: Boolean,
+
     onUnselect: () -> Unit,
-    onApply: () -> Unit,
-    showDelete: Boolean = false,
-    deleteLabel: String = "Delete",
-    onDelete: () -> Unit = {},
     applyLabel: String = "Apply",
-    modifier: Modifier = Modifier
-) {
-    if (!visible) return
+    onApply: () -> Unit,
+
+    enableShowBtn: Boolean = false,
+    onShow: () -> Unit = {},
+
+    modifier: Modifier = Modifier,
+
+    ) {
 
     Column(
         modifier = modifier
@@ -54,21 +62,30 @@ fun SelectionBottomMenu(
                     containerColor = AppTheme.PrimaryBack,
                     contentColor = AppTheme.PrimaryColor
                 ),
+                elevation = ButtonDefaults.buttonElevation(
+                    defaultElevation = 2.dp,
+                    pressedElevation = 1.dp,
+                    hoveredElevation = 4.dp
+                ),
                 contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp)
             ) {
                 Text(text = "Dismiss", fontSize = rememberLabelFontSize())
             }
 
-            if (showDelete) {
-                Button(
-                    onClick = onDelete,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = AppTheme.Error,
-                        contentColor = AppTheme.PrimaryBack
-                    ),
-                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp)
+            if (enableShowBtn) {
+                Surface(
+                    onClick = onShow,
+                    modifier = Modifier.size(rememberIconSize() * 0.8f),
+                    shape = RoundedCornerShape(12.dp),
+                    color = AppColors.primaryColor.copy(alpha = 0.15f),
+                    contentColor = AppColors.primaryColor
                 ) {
-                    Text(text = deleteLabel, fontSize = rememberLabelFontSize())
+                    Icon(
+                        imageVector = Icons.Outlined.Fullscreen,
+                        contentDescription = "Open word",
+                        modifier = Modifier.size(rememberIconSize() * 0.5f)
+                    )
+
                 }
             }
 
