@@ -172,16 +172,17 @@ fun PlayListDetailsScreen(
         )
     }
 
-    if (showEditDialog) {
-        EditPlayListDialog(
-            currentName = state.name,
-            onDismiss = { showEditDialog = false },
-            onConfirm = { newName ->
-                viewModel.sent(PlayListDetailsAction.HandleEdit(newName))
-                showEditDialog = false
-            }
-        )
+    if (showEditDialog.not()) {
+        return
     }
+    EditPlayListDialog(
+        currentName = state.name,
+        onDismiss = { showEditDialog = false },
+        onConfirm = { newName ->
+            viewModel.sent(PlayListDetailsAction.HandleEdit(newName))
+            showEditDialog = false
+        }
+    )
 }
 
 @Composable
