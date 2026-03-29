@@ -18,7 +18,6 @@ import vm.words.ua.core.ui.components.PrimaryButton
 import vm.words.ua.core.ui.components.TextInput
 import vm.words.ua.core.utils.isNotPhoneFormat
 import vm.words.ua.core.utils.rememberInterfaceMaxWidth
-import vm.words.ua.core.utils.rememberScaleFactor
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
 import vm.words.ua.playlist.domain.models.enums.PlaylistSortField
@@ -42,8 +41,6 @@ fun PlayListFilterScreen(
     // Get current filter from navigation params
     val currentFilter = navController.getParam<PlayListCountFilter>() ?: PlayListCountFilter()
 
-    val buttonPadding = (16 * rememberScaleFactor()).dp
-    val buttonHeight = (56 * rememberScaleFactor()).dp
 
     // Initialize with current filter
     LaunchedEffect(Unit) {
