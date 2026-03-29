@@ -16,9 +16,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
+import vm.words.ua.core.ui.components.CenteredContainer
 import vm.words.ua.core.ui.components.ErrorMessageBox
+import vm.words.ua.core.utils.rememberInterfaceMaxWidth
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.navigation.SimpleNavController
+import vm.words.ua.navigation.rememberParamOrThrow
 import vm.words.ua.playlist.domain.models.bundles.PlayListDetailsBundle
 import vm.words.ua.playlist.ui.actions.PublicPlayListDetailsAction
 import vm.words.ua.playlist.ui.components.ReadOnlyWordItem
@@ -33,10 +36,10 @@ fun PublicPlayListDetailsScreen(
     val state by viewModel.state.collectAsState()
     val listState = rememberLazyListState()
 
-    val bundle = navController.getParam<PlayListDetailsBundle>()
+    val bundle = navController.rememberParamOrThrow<PlayListDetailsBundle>()
 
     LaunchedEffect(bundle) {
-        bundle?.let {
+        bundle.let {
             viewModel.sent(PublicPlayListDetailsAction.Init(it.playListId))
         }
     }
@@ -82,17 +85,19 @@ fun PublicPlayListDetailsScreen(
             if (playList == null) {
                 return@Box
             }
-            LazyColumn(
-                state = listState,
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(vertical = 8.dp)
-            ) {
-                items(
-                    count = playList.words.size,
-                    key = { index -> playList.words[index].userWord.word.id }
-                ) { index ->
-                    val word = playList.words[index].userWord.word
-                    ReadOnlyWordItem(word = word, navController = navController)
+            CenteredContainer(maxWidth = rememberInterfaceMaxWidth()) {
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(vertical = 8.dp)
+                ) {
+                    items(
+                        count = playList.words.size,
+                        key = { index -> playList.words[index].userWord.word.id }
+                    ) { index ->
+                        val word = playList.words[index].userWord.word
+                        ReadOnlyWordItem(word = word, navController = navController)
+                    }
                 }
             }
 
