@@ -8,9 +8,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -180,7 +184,10 @@ private fun RowScope.ContentView(
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Group 1: word count
-            Row {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.height(IntrinsicSize.Min)
+            ) {
                 TagBadge("${playList.count} words", accentPrimary)
                 Spacer(modifier = Modifier.width(4.dp))
                 if (isPinned) {
@@ -222,25 +229,23 @@ private fun RowScope.ContentView(
 
 @Composable
 private fun PinIcon(color: Color) {
-    val size = rememberIconSize() * 0.25f
-
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
+            .fillMaxHeight()
+            .aspectRatio(1f)
             .background(
                 color = color.copy(alpha = 0.15f),
                 shape = RoundedCornerShape(4.dp)
             )
-            .padding(6.dp)
     ) {
         Icon(
             imageVector = Icons.Filled.PushPin,
             contentDescription = "Pinned playlist",
-            modifier = Modifier.size(size),
+            modifier = Modifier.fillMaxSize(0.75f),
             tint = color
         )
     }
-
 }
 
 @Composable
