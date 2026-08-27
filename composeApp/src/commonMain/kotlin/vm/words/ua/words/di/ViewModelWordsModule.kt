@@ -4,7 +4,14 @@ import org.kodein.di.DI
 import org.kodein.di.bind
 import org.kodein.di.factory
 import org.kodein.di.instance
-import vm.words.ua.words.ui.vms.*
+import vm.words.ua.words.ui.vms.DefaultAddWordViewModel
+import vm.words.ua.words.ui.vms.PinUserWordsViewModel
+import vm.words.ua.words.ui.vms.UserWordFilterViewModel
+import vm.words.ua.words.ui.vms.UserWordsViewModel
+import vm.words.ua.words.ui.vms.WordDetailsViewModel
+import vm.words.ua.words.ui.vms.WordEditViewModel
+import vm.words.ua.words.ui.vms.WordFilterViewModel
+import vm.words.ua.words.ui.vms.WordsViewModel
 
 internal val viewModelWordsModule = DI.Module("viewModelWordsModule") {
     bind<WordDetailsViewModel>() with factory {
@@ -30,7 +37,7 @@ internal val viewModelWordsModule = DI.Module("viewModelWordsModule") {
     bind<UserWordsViewModel>() with factory {
         UserWordsViewModel(
             userWordManager = instance(),
-            pinPlayListManager = instance(),
+            pinWordPlayListManager = instance(),
             playListManager = instance()
         )
     }
@@ -45,7 +52,7 @@ internal val viewModelWordsModule = DI.Module("viewModelWordsModule") {
             subscribeCacheManager = instance(),
             byteContentManager = instance(),
             soundManager = instance(),
-            pinPlayListManager = instance()
+            pinWordPlayListManager = instance()
         )
     }
 

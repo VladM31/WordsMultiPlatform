@@ -13,6 +13,7 @@ data class PlayListCountFilter(
     val count: Range<Long>? = null,
     val sortField: PlaylistSortField = PlaylistSortField.CREATED_AT,
     val asc: Boolean = false,
+    var hasPin: Boolean? = null,
     val page: Int = 0,
     val size: Int = 20
 ) : Queryable

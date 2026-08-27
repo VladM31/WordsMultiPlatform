@@ -4,11 +4,28 @@ import kotlinx.datetime.Instant
 import vm.words.ua.core.domain.managers.UserCacheManager
 import vm.words.ua.core.domain.models.PagedModels
 import vm.words.ua.playlist.domain.managers.PlayListManager
-import vm.words.ua.playlist.domain.models.*
+import vm.words.ua.playlist.domain.models.AssignPlayListsDto
+import vm.words.ua.playlist.domain.models.AssignedPlaylistDto
+import vm.words.ua.playlist.domain.models.PlayList
 import vm.words.ua.playlist.domain.models.PlayList.PinnedWord
-import vm.words.ua.playlist.domain.models.filters.*
+import vm.words.ua.playlist.domain.models.PlayListCount
+import vm.words.ua.playlist.domain.models.PlayListGrade
+import vm.words.ua.playlist.domain.models.PlaylistIdDto
+import vm.words.ua.playlist.domain.models.PublicPlayListCountDto
+import vm.words.ua.playlist.domain.models.SavePlayList
+import vm.words.ua.playlist.domain.models.UpdatePlayList
+import vm.words.ua.playlist.domain.models.filters.DeletePlayListFilter
+import vm.words.ua.playlist.domain.models.filters.PlayListCountFilter
+import vm.words.ua.playlist.domain.models.filters.PlayListFilter
+import vm.words.ua.playlist.domain.models.filters.PublicPlayListCountFilter
+import vm.words.ua.playlist.domain.models.filters.PublicPlayListFilter
 import vm.words.ua.playlist.net.clients.PlayListClient
-import vm.words.ua.playlist.net.requests.*
+import vm.words.ua.playlist.net.requests.AssignPlayListsRequest
+import vm.words.ua.playlist.net.requests.PlayListGradeRequest
+import vm.words.ua.playlist.net.requests.PublicPlayListCountRequest
+import vm.words.ua.playlist.net.requests.PublicPlayListGetRequest
+import vm.words.ua.playlist.net.requests.SavePlayListRequest
+import vm.words.ua.playlist.net.requests.UpdatePlayListRequest
 import vm.words.ua.playlist.net.responds.PlayListCountRespond
 import vm.words.ua.playlist.net.responds.PlayListRespond
 import vm.words.ua.playlist.net.responds.PublicPlayListCountRespond
@@ -117,7 +134,8 @@ class PlayListManagerImpl(
         tags = tags,
         cefrs = cefrs,
         language = language,
-        translateLanguage = translateLanguage
+        translateLanguage = translateLanguage,
+        pinnedAt = null
     )
 
     private fun PublicPlayListCountFilter.toPublicPlayListCountRequest(): PublicPlayListCountRequest =
@@ -181,7 +199,8 @@ class PlayListManagerImpl(
             tags = tags,
             cefrs = cefrs,
             language = language,
-            translateLanguage = translateLanguage
+            translateLanguage = translateLanguage,
+            pinnedAt = pinnedAt
         )
     }
 

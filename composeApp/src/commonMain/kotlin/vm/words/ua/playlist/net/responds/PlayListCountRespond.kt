@@ -1,5 +1,6 @@
 package vm.words.ua.playlist.net.responds
 
+import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import vm.words.ua.core.domain.models.enums.CEFR
 import vm.words.ua.core.domain.models.enums.Language
@@ -14,5 +15,6 @@ data class PlayListCountRespond(
     val tags: Set<String>?,
     val cefrs: Set<CEFR>?,
     val language: Language?,
-    val translateLanguage: Language?
+    val translateLanguage: Language?,
+    val pinnedAt: Instant?
 )

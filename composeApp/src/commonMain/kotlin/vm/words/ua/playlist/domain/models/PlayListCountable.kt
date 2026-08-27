@@ -13,4 +13,5 @@ interface PlayListCountable {
     val cefrs: Set<CEFR>?
     val language: Language?
     val translateLanguage: Language?
+    val pinnedAt: Instant?
 }

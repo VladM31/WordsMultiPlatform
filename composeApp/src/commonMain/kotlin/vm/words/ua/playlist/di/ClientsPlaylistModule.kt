@@ -6,17 +6,23 @@ import org.kodein.di.bind
 import org.kodein.di.instance
 import org.kodein.di.singleton
 import vm.words.ua.playlist.net.clients.PinPlayListClient
+import vm.words.ua.playlist.net.clients.PinWordPlayListClient
 import vm.words.ua.playlist.net.clients.PlayListClient
-import vm.words.ua.playlist.net.clients.impls.KtorPinPlayListClient
+import vm.words.ua.playlist.net.clients.impls.KrotPinPlayListClient
+import vm.words.ua.playlist.net.clients.impls.KtorPinWordPlayListClient
 import vm.words.ua.playlist.net.clients.impls.KtorPlayListClient
 
 
 internal val clientsPlaylistModule = DI.Module("clientsPlaylistModule"){
     bind<PlayListClient>() with singleton {
-        KtorPlayListClient(instance<HttpClient>())
+        KtorPlayListClient(client = instance<HttpClient>())
+    }
+
+    bind<PinWordPlayListClient>() with singleton {
+        KtorPinWordPlayListClient(client = instance<HttpClient>())
     }
 
     bind<PinPlayListClient>() with singleton {
-        KtorPinPlayListClient(instance<HttpClient>())
+        KrotPinPlayListClient(client = instance<HttpClient>())
     }
 }

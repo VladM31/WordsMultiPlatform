@@ -4,13 +4,21 @@ import org.kodein.di.DI
 import org.kodein.di.bind
 import org.kodein.di.factory
 import org.kodein.di.instance
-import vm.words.ua.playlist.ui.vms.*
+import vm.words.ua.playlist.ui.vms.ExplorePlayListsFilterViewModel
+import vm.words.ua.playlist.ui.vms.ExplorePlayListsViewModel
+import vm.words.ua.playlist.ui.vms.FastStartPlayListViewModel
+import vm.words.ua.playlist.ui.vms.PlayListDetailsViewModel
+import vm.words.ua.playlist.ui.vms.PlayListFilterViewModel
+import vm.words.ua.playlist.ui.vms.PlayListViewModel
+import vm.words.ua.playlist.ui.vms.PublicPlayListDetailsViewModel
 
 internal val viewModelPlayListModule = DI.Module("viewModelPlayListModule"){
     // ViewModels
     bind<PlayListViewModel>() with factory {
         PlayListViewModel(
-            playListManager = instance()
+            playListManager = instance(),
+            pinUseCase = instance(),
+            unPinUseCase = instance()
         )
     }
 
@@ -21,7 +29,7 @@ internal val viewModelPlayListModule = DI.Module("viewModelPlayListModule"){
     bind<PlayListDetailsViewModel>() with factory {
         PlayListDetailsViewModel(
             playListManager = instance(),
-            pinPlayListManager = instance()
+            pinWordPlayListManager = instance()
         )
     }
 

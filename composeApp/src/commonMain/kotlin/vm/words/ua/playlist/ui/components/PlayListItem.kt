@@ -1,12 +1,26 @@
 package vm.words.ua.playlist.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.PlaylistPlay
+import androidx.compose.material.icons.filled.PushPin
+import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material.icons.outlined.Visibility
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,7 +31,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import vm.words.ua.core.ui.AppColors
-import vm.words.ua.core.utils.*
+import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberIconSize
+import vm.words.ua.core.utils.rememberLabelFontSize
+import vm.words.ua.core.utils.rememberScaleFactor
+import vm.words.ua.core.utils.toFormatDateTime
 import vm.words.ua.playlist.domain.models.PlayListCountable
 
 @Composable
@@ -25,7 +43,10 @@ fun PlayListItem(
     playList: PlayListCountable,
     onClick: (String) -> Unit,
     modifier: Modifier = Modifier,
-    showCreatedDate: Boolean = true
+    showCreatedDate: Boolean = true,
+    isPinned: Boolean? = null,
+    pinEnabled: Boolean = true,
+    onPinClick: ((String) -> Unit)? = null
 ) {
     // Use reactive colors that update when theme changes
     val cardBackground = AppColors.secondaryBack
@@ -79,24 +100,6 @@ fun PlayListItem(
                             .padding(cardPadding),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Playlist icon
-                        Box(
-                            modifier = Modifier
-                                .background(
-                                    color = accentPrimary.copy(alpha = 0.15f),
-                                    shape = RoundedCornerShape(12.dp)
-                                )
-                                .padding(12.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Outlined.PlaylistPlay,
-                                contentDescription = null,
-                                tint = accentPrimary,
-                                modifier = Modifier.size(iconSize * 1.5f)
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.width(12.dp))
 
                         // Main content
                         Column(
@@ -148,10 +151,57 @@ fun PlayListItem(
                                 accentColor = accentPrimary,
                                 disabledColor = textMuted
                             )
+
+                            if (isPinned != null && onPinClick != null) {
+                                PinButton(
+                                    isPinned = isPinned,
+                                    enabled = pinEnabled,
+                                    onClick = { onPinClick(playList.id) },
+                                    size = iconSize * 1.4f,
+                                    accentColor = accentPrimary,
+                                    disabledColor = textMuted
+                                )
+                            }
                         }
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun PinButton(
+    isPinned: Boolean,
+    enabled: Boolean,
+    onClick: () -> Unit,
+    size: Dp,
+    accentColor: Color,
+    disabledColor: Color
+) {
+    val backgroundColor = if (enabled)
+        accentColor.copy(alpha = if (isPinned) 0.2f else 0.15f)
+    else
+        disabledColor.copy(alpha = 0.3f)
+
+    val iconColor = if (enabled) accentColor else disabledColor
+
+    Surface(
+        onClick = onClick,
+        enabled = enabled,
+        modifier = Modifier.size(size),
+        shape = RoundedCornerShape(12.dp),
+        color = backgroundColor,
+        contentColor = iconColor
+    ) {
+        Box(
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = if (isPinned) Icons.Filled.PushPin else Icons.Outlined.PushPin,
+                contentDescription = if (isPinned) "Unpin playlist" else "Pin playlist",
+                modifier = Modifier.size(size * 0.5f),
+            )
         }
     }
 }

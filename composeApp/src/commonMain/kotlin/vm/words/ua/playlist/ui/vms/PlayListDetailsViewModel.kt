@@ -6,7 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import vm.words.ua.playlist.domain.managers.PinPlayListManager
+import vm.words.ua.playlist.domain.managers.PinWordPlayListManager
 import vm.words.ua.playlist.domain.managers.PlayListManager
 import vm.words.ua.playlist.domain.models.PinPlayList
 import vm.words.ua.playlist.domain.models.UpdatePlayList
@@ -17,7 +17,7 @@ import vm.words.ua.playlist.ui.states.PlayListDetailsState
 
 class PlayListDetailsViewModel(
     private val playListManager: PlayListManager,
-    private val pinPlayListManager: PinPlayListManager
+    private val pinWordPlayListManager: PinWordPlayListManager
 ) : ViewModel() {
 
     private val mutableState = MutableStateFlow(PlayListDetailsState())
@@ -80,7 +80,7 @@ class PlayListDetailsViewModel(
                     playListId = state.value.id
                 )
             }
-            pinPlayListManager.unpin(unPinWords)
+            pinWordPlayListManager.unpin(unPinWords)
 
             val newWords = state.value.words.filter {
                 state.value.selectedWords.containsKey(it.userWord.id).not()

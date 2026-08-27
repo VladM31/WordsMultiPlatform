@@ -1,18 +1,51 @@
 package vm.words.ua.playlist.ui.components
 
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.PushPin
+import androidx.compose.material.icons.outlined.PushPin
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.utils.rememberFontSize
+import vm.words.ua.core.utils.rememberIconSize
 import vm.words.ua.core.utils.rememberLabelFontSize
 import vm.words.ua.di.rememberInstance
 import vm.words.ua.playlist.domain.models.PlayListCount
@@ -49,13 +83,20 @@ fun SelectPlayListDialog(
     var selectedId by remember { mutableStateOf<String?>(null) }
     var validationError by remember { mutableStateOf<String?>(null) }
 
+    val playlists = state.pinnedPlayList.content + state.otherPlayList.content
+    val isLoading = state.pinnedPlayList.isLoading || state.otherPlayList.isLoading
+    val hasMore = state.pinnedPlayList.hasMore || state.otherPlayList.hasMore
 
     // Trigger loading more when nearing end
-    LaunchedEffect(listState.firstVisibleItemIndex, state.isLoading, state.hasMore) {
+    LaunchedEffect(listState.firstVisibleItemIndex, isLoading, hasMore) {
         val lastVisible = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-        val total = state.playlists.size
-        if (!state.isLoading && state.hasMore && total > 0 && lastVisible >= total - 3) {
-            viewModel.sent(PlayListAction.LoadMore)
+        val total = playlists.size
+        if (!isLoading && hasMore && total > 0 && lastVisible >= total - 3) {
+            if (state.pinnedPlayList.hasMore) {
+                viewModel.sent(PlayListAction.LoadMore(true))
+            } else {
+                viewModel.sent(PlayListAction.LoadMore(false))
+            }
         }
     }
 
@@ -86,13 +127,13 @@ fun SelectPlayListDialog(
                         .weight(1f)
                         .fillMaxWidth()
                 ) {
-                    if (state.playlists.isEmpty() && state.isLoading) {
+                    if (playlists.isEmpty() && isLoading) {
                         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                             CircularProgressIndicator()
                         }
                         return@Box
                     }
-                    if (state.playlists.isEmpty()) {
+                    if (playlists.isEmpty()) {
                         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                             Text(
                                 "No playlists found",
@@ -107,12 +148,12 @@ fun SelectPlayListDialog(
                         verticalArrangement = Arrangement.spacedBy(6.dp),
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        items(state.playlists, key = { it.id }) { item ->
+                        items(playlists, key = { it.id }) { item ->
                             PlayListItem(item, selectedId) {
                                 selectedId = item.id
                             }
                         }
-                        if (state.isLoading) {
+                        if (isLoading) {
                             item("loading_more") {
                                 Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                                     CircularProgressIndicator(modifier = Modifier.size(24.dp))
@@ -145,7 +186,7 @@ fun SelectPlayListDialog(
                             onPin(id)
                             onDismiss()
                         }
-                    }, enabled = state.playlists.isNotEmpty()) {
+                    }, enabled = playlists.isNotEmpty()) {
                         Text("Add")
                     }
                 }
@@ -319,6 +360,10 @@ private fun PlayListItem(
     onClick: () -> Unit = {}
 ) {
     val selected = item.id == selectedId
+    val isPinned = remember(item.id) {
+        item.pinnedAt != null
+    }
+    val iconSize = rememberIconSize() * 0.6f
 
     Row(
         modifier = Modifier
@@ -348,11 +393,24 @@ private fun PlayListItem(
                 maxLines = 1,
                 fontSize = rememberLabelFontSize()
             )
-            Text(
-                text = "${item.count} words",
-                color = AppTheme.PrimaryColor,
-                fontSize = rememberLabelFontSize() * 0.85f
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "${item.count} words",
+                    color = AppTheme.PrimaryColor,
+                    fontSize = rememberLabelFontSize() * 0.85f
+                )
+                Icon(
+                    imageVector = if (isPinned) Icons.Filled.PushPin else Icons.Outlined.PushPin,
+                    contentDescription = if (isPinned) "Unpin playlist" else "Pin playlist",
+                    modifier = Modifier.size(iconSize),
+                    tint = AppTheme.PrimaryColor,
+                )
+            }
         }
     }
 }

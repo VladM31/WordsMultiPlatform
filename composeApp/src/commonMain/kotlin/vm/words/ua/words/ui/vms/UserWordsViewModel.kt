@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import vm.words.ua.core.ui.models.ErrorMessage
-import vm.words.ua.playlist.domain.managers.PinPlayListManager
+import vm.words.ua.playlist.domain.managers.PinWordPlayListManager
 import vm.words.ua.playlist.domain.managers.PlayListManager
 import vm.words.ua.playlist.domain.models.PinPlayList
 import vm.words.ua.playlist.domain.models.filters.PlayListFilter
@@ -18,7 +18,7 @@ import vm.words.ua.words.ui.states.UserWordsState
 
 class UserWordsViewModel(
     private val userWordManager: UserWordManager,
-    private val pinPlayListManager: PinPlayListManager,
+    private val pinWordPlayListManager: PinWordPlayListManager,
     private val playListManager: PlayListManager
 ) : ViewModel() {
 
@@ -101,7 +101,7 @@ class UserWordsViewModel(
                     )
                 }
 
-            pinPlayListManager.pin(pins)
+            pinWordPlayListManager.pin(pins)
             prepare()
 
             mutableState.value = state.value.copy(

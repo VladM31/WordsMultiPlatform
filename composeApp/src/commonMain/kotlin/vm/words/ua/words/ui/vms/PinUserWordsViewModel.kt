@@ -3,12 +3,17 @@ package vm.words.ua.words.ui.vms
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.vinceglb.filekit.readBytes
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import vm.words.ua.core.domain.managers.ByteContentManager
 import vm.words.ua.core.domain.models.ByteContent
-import vm.words.ua.playlist.domain.managers.PinPlayListManager
+import vm.words.ua.playlist.domain.managers.PinWordPlayListManager
 import vm.words.ua.playlist.domain.models.PinPlayList
 import vm.words.ua.subscribes.domain.managers.SubscribeCacheManager
 import vm.words.ua.words.domain.managers.SoundManager
@@ -26,7 +31,7 @@ class PinUserWordsViewModel(
     private val subscribeCacheManager: SubscribeCacheManager,
     private val byteContentManager: ByteContentManager,
     private val soundManager: SoundManager,
-    private val pinPlayListManager: PinPlayListManager
+    private val pinWordPlayListManager: PinWordPlayListManager
 ) : ViewModel() {
 
     private val mutableState: MutableStateFlow<PinUserWordsState> =
@@ -157,7 +162,7 @@ class PinUserWordsViewModel(
                         wordId = wordId
                     )
                 }
-                pinPlayListManager.pin(pins)
+                pinWordPlayListManager.pin(pins)
 
                 mutableState.value = state.value.copy(
                     navigateToPlayListId = playListId,

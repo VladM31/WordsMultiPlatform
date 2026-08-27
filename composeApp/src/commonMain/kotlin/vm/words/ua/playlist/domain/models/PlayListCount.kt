@@ -12,5 +12,6 @@ data class PlayListCount(
     override val tags: Set<String>?,
     override val cefrs: Set<CEFR>?,
     override val language: Language?,
-    override val translateLanguage: Language?
+    override val translateLanguage: Language?,
+    override val pinnedAt: Instant?
 ) : PlayListCountable

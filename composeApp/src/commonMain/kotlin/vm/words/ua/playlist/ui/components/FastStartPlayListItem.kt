@@ -4,15 +4,33 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.KeyboardArrowUp
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -145,6 +163,7 @@ private fun RowScope.ContentView(
     val arrowIconSize = (10 * scaleFactor).dp
     val hasLangs = playList.language != null || playList.translateLanguage != null
     val cefrs = playList.cefrs?.sortedBy { it.ordinal }
+    val isPinned = playList.pinnedAt != null
 
     Column(modifier = Modifier.weight(1f).padding(end = 8.dp)) {
         Text(
@@ -161,9 +180,15 @@ private fun RowScope.ContentView(
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Group 1: word count
-            TagBadge("${playList.count} words", accentPrimary)
+            Row {
+                TagBadge("${playList.count} words", accentPrimary)
+                Spacer(modifier = Modifier.width(4.dp))
+                if (isPinned) {
+                    PinIcon(accentPrimary)
+                }
+            }
 
-            // Delimiter 1
+            // Delimiter
             if (hasLangs) {
                 MetaDot(textMuted)
             }
@@ -193,6 +218,29 @@ private fun RowScope.ContentView(
             }
         }
     }
+}
+
+@Composable
+private fun PinIcon(color: Color) {
+    val size = rememberIconSize() * 0.25f
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .background(
+                color = color.copy(alpha = 0.15f),
+                shape = RoundedCornerShape(4.dp)
+            )
+            .padding(6.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Filled.PushPin,
+            contentDescription = "Pinned playlist",
+            modifier = Modifier.size(size),
+            tint = color
+        )
+    }
+
 }
 
 @Composable

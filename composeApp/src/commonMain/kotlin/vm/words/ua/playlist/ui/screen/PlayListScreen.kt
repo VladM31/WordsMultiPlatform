@@ -7,7 +7,13 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.AppToolBar
@@ -45,9 +51,16 @@ fun PlayListScreen(
     }
 
     // Load more when reaching end of list
-    LaunchedEffect(listState.canScrollForward, state.isLoading) {
-        if (!listState.canScrollForward && !state.isLoading && state.hasMore) {
-            viewModel.sent(PlayListAction.LoadMore)
+    LaunchedEffect(
+        listState.canScrollForward,
+        state.pinnedPlayList.isLoading,
+        state.otherPlayList.isLoading
+    ) {
+        if (listState.canScrollForward) return@LaunchedEffect
+        if (!state.pinnedPlayList.isLoading && state.pinnedPlayList.hasMore) {
+            viewModel.sent(PlayListAction.LoadMore(pinned = true))
+        } else if (!state.otherPlayList.isLoading && state.otherPlayList.hasMore) {
+            viewModel.sent(PlayListAction.LoadMore(pinned = false))
         }
     }
 
@@ -84,7 +97,9 @@ fun PlayListScreen(
             listState = listState,
             onPlayListClick = { playListId ->
                 navController.navigate(Screen.PlayListDetails, PlayListDetailsBundle(playListId))
-            }
+            },
+            onPin = { playListId -> viewModel.sent(PlayListAction.Pin(playListId)) },
+            onUnPin = { playListId -> viewModel.sent(PlayListAction.UnPin(playListId)) }
         )
 
         BottomNavBar(
