@@ -1,7 +1,8 @@
 package vm.words.ua.core.config
 
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
+import io.ktor.client.request.get
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
 import kotlinx.serialization.json.Json
 import vm.words.ua.core.domain.models.DocumentInfo
 import vm.words.ua.core.domain.models.PlatformDetail
@@ -19,7 +20,7 @@ object AppRemoteConfig {
     private const val DEFAULT_BASE_URL = "https://study-words.com"
     private const val DEFAULT_TELEGRAM_BOT = "https://t.me/needlework_number_bot"
 
-    const val CURRENT_VERSION = "1.1.6"
+    const val CURRENT_VERSION = "1.1.7"
 
     private var configData: RemoteConfigData? = null
         get() {
