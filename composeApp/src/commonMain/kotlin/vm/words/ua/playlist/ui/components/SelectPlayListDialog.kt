@@ -28,7 +28,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.PushPin
-import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -360,8 +359,8 @@ private fun PlayListItem(
     onClick: () -> Unit = {}
 ) {
     val selected = item.id == selectedId
-    val isPinned = remember(item.id) {
-        item.pinnedAt != null
+    val isNotPinned = remember(item.id) {
+        item.pinnedAt == null
     }
     val iconSize = rememberIconSize() * 0.6f
 
@@ -404,9 +403,12 @@ private fun PlayListItem(
                     color = AppTheme.PrimaryColor,
                     fontSize = rememberLabelFontSize() * 0.85f
                 )
+                if (isNotPinned) {
+                    return@Row
+                }
                 Icon(
-                    imageVector = if (isPinned) Icons.Filled.PushPin else Icons.Outlined.PushPin,
-                    contentDescription = if (isPinned) "Unpin playlist" else "Pin playlist",
+                    imageVector = Icons.Filled.PushPin,
+                    contentDescription = "Pinned playlist",
                     modifier = Modifier.size(iconSize),
                     tint = AppTheme.PrimaryColor,
                 )
