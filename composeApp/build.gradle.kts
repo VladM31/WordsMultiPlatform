@@ -207,8 +207,8 @@ android {
         applicationId = "vm.words.ua"
         minSdk = 24
         targetSdk = 36
-        versionCode = 9
-        versionName = "1.1.7"
+        versionCode = 10
+        versionName = "1.1.7.2"
 
         ndk {
             abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
