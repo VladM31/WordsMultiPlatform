@@ -1,12 +1,14 @@
 package vm.words.ua.auth.net.responses
 import kotlinx.serialization.Serializable
 
+/**
+ * Ответ входа бэкенда (`AuthRespond`): токен и пользователь.
+ * Бэк не отдаёт `currency`, `error` и `tempToken`, ошибки приходят статусом и текстом.
+ */
 @Serializable
 data class AuthResponse(
     val user : User? = null,
-    val token : Token? = null,
-    val error: Error? = null,
-    val tempToken: String? = null
+    val token: Token? = null
 ) {
     @Serializable
     data class Token(
@@ -17,18 +19,13 @@ data class AuthResponse(
     @Serializable
     data class User(
         val id: String,
-        val phoneNumber: String?,
+        val phoneNumber: String? = null,
         val firstName: String,
         val lastName: String,
-        val currency: String,
-        val email: String?,
-        val role: String
+        val email: String? = null,
+        val role: String,
+        /** Задан ли пароль. `null`, если бэк старой версии не отдаёт признак */
+        val hasPassword: Boolean? = null
     )
-    @Serializable
-    data class Error(
-        val message: String
-    )
-
-    fun hasError() = error != null
 }
 

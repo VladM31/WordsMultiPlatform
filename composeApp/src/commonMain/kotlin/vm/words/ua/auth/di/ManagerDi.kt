@@ -40,7 +40,9 @@ internal val managerDi = DI.Module("manager") {
     bind<UserManager>() with singleton {
         UserManagerImpl(
             userCacheManager = instance(),
-            userClient = instance()
+            userClient = instance(),
+            googleApiManager = instance(),
+            telegramAuthManager = instance()
         )
     }
 }

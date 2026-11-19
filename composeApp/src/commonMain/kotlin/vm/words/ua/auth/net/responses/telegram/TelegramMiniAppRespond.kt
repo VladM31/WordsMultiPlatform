@@ -7,5 +7,6 @@ import vm.words.ua.auth.net.responses.AuthResponse
 @Serializable
 data class TelegramMiniAppRespond(
     val status: TelegramMiniAppLoginStatus,
-    val auth: AuthResponse?
+    /** Заполнено только при [TelegramMiniAppLoginStatus.SUCCESS] */
+    val auth: AuthResponse? = null
 )

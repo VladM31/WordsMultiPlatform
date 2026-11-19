@@ -24,7 +24,8 @@ internal val viewModelSettingsModule = DI.Module("viewModelSettingsModule") {
     bind<ProfileViewModel>() with factory {
         ProfileViewModel(
             userCacheManager = instance(),
-            userManager = instance()
+            userManager = instance(),
+            telegramWebAppManager = instance()
         )
     }
 }

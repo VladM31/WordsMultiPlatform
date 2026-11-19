@@ -5,6 +5,7 @@ import vm.words.ua.auth.net.requests.telegram.TelegramAuthStartLoginReq
 import vm.words.ua.auth.net.requests.telegram.TelegramMiniAppLoginRequest
 import vm.words.ua.auth.net.responses.TelegramLoginRespond
 import vm.words.ua.auth.net.responses.telegram.TelegramAuthRespond
+import vm.words.ua.auth.net.responses.telegram.TelegramCodeStatusRespond
 import vm.words.ua.auth.net.responses.telegram.TelegramMiniAppRespond
 
 interface TelegramAuthClient {
@@ -13,4 +14,7 @@ interface TelegramAuthClient {
     suspend fun login(request: TelegramAuthLoginReq): TelegramLoginRespond
 
     suspend fun login(req: TelegramMiniAppLoginRequest): TelegramMiniAppRespond
+
+    /** `GET /auth/telegram-status`: где находится код. Код при этом не расходуется. */
+    suspend fun codeStatus(code: String): TelegramCodeStatusRespond
 }

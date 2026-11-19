@@ -1,8 +1,7 @@
 package vm.words.ua.core.config
 
-import io.ktor.client.request.get
-import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.bodyAsText
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import kotlinx.serialization.json.Json
 import vm.words.ua.core.domain.models.DocumentInfo
 import vm.words.ua.core.domain.models.PlatformDetail
@@ -40,7 +39,8 @@ object AppRemoteConfig {
     }
 
     val baseUrl: String
-        get() = configData?.baseUrl ?: DEFAULT_BASE_URL
+        //        get() = configData?.baseUrl ?: DEFAULT_BASE_URL
+        get() = "https://dev.study-words.com"
 
     val currentVersion: String
         get() = CURRENT_VERSION
@@ -58,7 +58,8 @@ object AppRemoteConfig {
         get() = getUnknowPlatformDetails().policy
 
     val telegramBotLink: String
-        get() = configData?.telegramBotLink ?: DEFAULT_TELEGRAM_BOT
+        //        get() = configData?.telegramBotLink ?: DEFAULT_TELEGRAM_BOT
+        get() = "https://t.me/test_notification_vm_bot"
 
     val updateLink: String
         get() = getPlatformDetails().updateLink

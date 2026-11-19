@@ -6,11 +6,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import vm.words.ua.auth.domain.exceptions.GoogleLoginException
 import vm.words.ua.auth.domain.managers.*
 import vm.words.ua.auth.domain.models.AuthResult
-import vm.words.ua.auth.domain.models.GoogleLoginErrorMessage
-import vm.words.ua.auth.domain.models.google.GmailLoginDto
 import vm.words.ua.auth.ui.actions.LoginAction
 import vm.words.ua.auth.ui.states.LoginState
 import vm.words.ua.auth.ui.validation.gmailLoginValidator
@@ -48,32 +45,22 @@ class LoginViewModel(
             is LoginAction.SetPassword -> setPassword(action)
             is LoginAction.GoogleSignIn -> handleGoogleSignIn()
             is LoginAction.DismissErrorMessage -> mutableState.value = state.value.copy(errorMessage = null)
-            is LoginAction.ClearNotFound -> mutableState.value = state.value.copy(isNotFoundGoogle = false)
         }
     }
 
     private fun handleGoogleSignIn() {
         viewModelScope.launch(Dispatchers.Default) {
             try {
+                // Вход и регистрация через Google это один вызов: POST /auth/google
                 val result = googleAuthManager.login()
-                val error = result.message?.let {
-                    if (result.isNotFound) {
-                        null
-                    } else {
-                        ErrorMessage(message = it)
-                    }
-                }
+                val error = result.message?.let { ErrorMessage(message = it) }
 
                 emitEvent(result.success)
 
                 mutableState.value = state.value.copy(
                     isEnd = result.success,
-                    errorMessage = error,
-                    isNotFoundGoogle = result.isNotFound
+                    errorMessage = error
                 )
-            } catch (e: GoogleLoginException) {
-                mutableState.value =
-                    state.value.copy(errorMessage = GoogleLoginErrorMessage(message = e.message ?: "Error"))
             } catch (e: Exception) {
                 mutableState.value =
                     state.value.copy(errorMessage = ErrorMessage(message = e.message ?: "Error"))
@@ -103,23 +90,10 @@ class LoginViewModel(
             return
         }
 
+        // И телефон, и email идут в один метод: POST /auth/login {login, password}
         viewModelScope.launch(Dispatchers.Default) {
-            if (state.value.isPhone) {
-                phoneNumberLogIn()
-            } else {
-                gmailLogIn()
-            }
+            passwordLogIn()
         }
-    }
-
-    private suspend fun gmailLogIn() {
-        val dto = GmailLoginDto(
-            email = state.value.username,
-            password = state.value.password
-        )
-        handleResult(googleAuthManager.login(dto))
-
-
     }
 
     private fun handleResult(result: AuthResult) {
@@ -139,10 +113,10 @@ class LoginViewModel(
         )
     }
 
-    private suspend fun phoneNumberLogIn() {
+    private suspend fun passwordLogIn() {
         try {
             val result = authManager.logIn(
-                phoneNumber = state.value.username,
+                login = state.value.username,
                 password = state.value.password
             )
             handleResult(result)

@@ -2,12 +2,12 @@ package vm.words.ua.auth.ui.vms
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.plus
 import vm.words.ua.auth.domain.managers.AuthHistoryManager
 import vm.words.ua.auth.domain.managers.ContactRequestStatus
 import vm.words.ua.auth.domain.managers.TelegramAuthManager
@@ -19,6 +19,7 @@ import vm.words.ua.auth.ui.actions.TelegramLoginAction
 import vm.words.ua.auth.ui.states.TelegramLoginState
 import vm.words.ua.core.analytics.Analytics
 import vm.words.ua.core.analytics.AnalyticsEvents
+import vm.words.ua.core.net.exceptions.ApiException
 import vm.words.ua.core.ui.models.ErrorMessage
 import vm.words.ua.core.utils.toNumbersOnly
 import vm.words.ua.utils.validation.Validator
@@ -41,6 +42,9 @@ class TelegramLoginVm(
     val state: StateFlow<TelegramLoginState> = mutableState
     private val validator = Validator(state)
 
+    /** Опрос подтверждения входа, его можно прервать через [TelegramLoginAction.Cancel] */
+    private var waiterJob: Job? = null
+
     init {
         validator.add(
             { it.phoneNumber },
@@ -53,10 +57,21 @@ class TelegramLoginVm(
                 code = it.code,
                 isLoading = false
             )
-            viewModelScope.launch(Dispatchers.Default) {
+            waiterJob = viewModelScope.launch(Dispatchers.Default) {
                 runWaiter(it)
             }
         }
+    }
+
+    private fun handleCancel() {
+        waiterJob?.cancel()
+        waiterJob = null
+        telegramAuthManager.cancelSession()
+        mutableState.value = mutableState.value.copy(
+            code = "",
+            isLoading = false,
+            errorMessage = null
+        )
     }
 
     fun sent(action: TelegramLoginAction) {
@@ -65,6 +80,7 @@ class TelegramLoginVm(
             is TelegramLoginAction.Submit -> handleSubmit()
             is TelegramLoginAction.CheckLogin -> handleCheckLogin()
             is TelegramLoginAction.SubmitMiniApp -> handleSubmitMiniApp()
+            is TelegramLoginAction.Cancel -> handleCancel()
         }
     }
 
@@ -80,21 +96,20 @@ class TelegramLoginVm(
                 return@launch
             }
 
-            if (status == TelegramMiniAppLoginStatus.NOT_FOUND) {
-                handleNotFound()
-                return@launch
-            }
-
+            // ERROR: подпись неверна, данные устарели или бот недоступен
             if (status == TelegramMiniAppLoginStatus.ERROR) {
                 handleFail(
-                    Result.failure(Exception("Telegram Mini App login failed"))
+                    Result.failure(
+                        Exception("Telegram sign-in failed: the data is invalid or expired, or the bot is unavailable. Close and reopen the app, then try again.")
+                    )
                 )
                 return@launch
             }
 
+            // NOT_FOUND_IN_BOT: бот не знает телефон пользователя, нужно открыть бота и отправить контакт
             mutableState.value = mutableState.value.copy(
                 isLoading = false,
-                errorMessage = ErrorMessage("Your phone number is not confirmed in Telegram. Please confirm your phone number in Telegram and try again.")
+                errorMessage = ErrorMessage("The Telegram bot doesn't know your phone number. Open the bot, send your contact and try again.")
             )
             val contactStatus = telegramWebAppManager.requestContact()
             val message = when (contactStatus) {
@@ -132,9 +147,16 @@ class TelegramLoginVm(
 
     private fun handleCheckLogin() {
         viewModelScope.launch(Dispatchers.Default) {
-            val success =
+            val result = runCatching {
                 telegramAuthManager.login(mutableState.value.phoneNumber, mutableState.value.code)
-            if (success) {
+            }
+            result.exceptionOrNull()?.let {
+                mutableState.value = mutableState.value.copy(
+                    errorMessage = ErrorMessage(it.message ?: "Unknown error")
+                )
+                return@launch
+            }
+            if (result.getOrDefault(false)) {
                 authHistoryManager.updateLastUsername(mutableState.value.phoneNumber)
                 mutableState.value = mutableState.value.copy(isEnd = true)
             }
@@ -152,7 +174,7 @@ class TelegramLoginVm(
             return
         }
 
-        viewModelScope.launch(Dispatchers.Default) {
+        waiterJob = viewModelScope.launch(Dispatchers.Default) {
             mutableState.value = mutableState.value.copy(isLoading = true)
 
             val result = telegramAuthManager.runCatching {
@@ -214,12 +236,44 @@ class TelegramLoginVm(
         )
     }
 
+    /**
+     * Опрашивает `POST /auth/telegram-login` каждые 3 секунды, пока пользователь не нажмёт кнопку в боте.
+     * Код живёт 15 минут, после этого ожидание прекращается. После успеха код одноразовый,
+     * повторный вызов вернёт `success=false`.
+     */
     private suspend fun runWaiter(session: TelegramAuthSession) {
-        while (true) {
-            val success = telegramAuthManager.login(
-                session.phoneNumber,
-                session.code
-            )
+        val deadline = Clock.System.now().plus(CODE_LIFETIME_MINUTES, DateTimeUnit.MINUTE)
+        while (Clock.System.now() < deadline) {
+            val success = try {
+                telegramAuthManager.login(
+                    session.phoneNumber,
+                    session.code
+                )
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: ApiException) {
+                when {
+                    // лимит запросов: ждём столько, сколько просит бэк
+                    e.isTooManyRequests -> {
+                        delay((e.retryAfterSeconds ?: POLL_DELAY_SECONDS) * 1000)
+                        continue
+                    }
+                    // бот временно недоступен: продолжаем опрос
+                    e.isServiceUnavailable -> {
+                        delay(POLL_DELAY_SECONDS * 1000)
+                        continue
+                    }
+                    // аккаунт не активен, код неизвестен и т.п.: ждать нет смысла
+                    else -> {
+                        stopWaiting(e.message ?: "Telegram login failed")
+                        return
+                    }
+                }
+            } catch (e: Exception) {
+                // нет сети и подобное: пробуем ещё раз
+                delay(POLL_DELAY_SECONDS * 1000)
+                continue
+            }
             if (success) {
                 authHistoryManager.updateLastUsername(session.phoneNumber)
                 mutableState.value = mutableState.value.copy(isEnd = true)
@@ -228,9 +282,31 @@ class TelegramLoginVm(
                         "phone_number" to session.phoneNumber
                     )
                 )
-                break
+                return
             }
-            delay(3000)
+            delay(POLL_DELAY_SECONDS * 1000)
         }
+        stopWaiting("Login was not confirmed in Telegram in time. Please try again")
+    }
+
+    private fun stopWaiting(message: String) {
+        telegramAuthManager.cancelSession()
+        analytics.logEvent(
+            AnalyticsEvents.TELEGRAM_LOGIN_FAILED, mapOf(
+                "phone_number" to mutableState.value.phoneNumber,
+                "error" to message
+            )
+        )
+        mutableState.value = mutableState.value.copy(
+            code = "",
+            isLoading = false,
+            errorMessage = ErrorMessage(message)
+        )
+    }
+
+    private companion object {
+        /** Код входа на бэке действует 15 минут */
+        const val CODE_LIFETIME_MINUTES = 15
+        const val POLL_DELAY_SECONDS = 3L
     }
 }

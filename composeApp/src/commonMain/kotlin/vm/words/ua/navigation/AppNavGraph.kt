@@ -1,11 +1,14 @@
 package vm.words.ua.navigation
 
-import androidx.compose.runtime.*
-import vm.words.ua.core.ui.animation.NavTransition
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import org.kodein.di.instance
 import vm.words.ua.core.analytics.Analytics
 import vm.words.ua.core.platform.AppPlatform
 import vm.words.ua.core.platform.currentPlatform
+import vm.words.ua.core.ui.animation.NavTransition
 import vm.words.ua.core.ui.components.SwipeProvider
 import vm.words.ua.core.ui.screen.LoaderScreen
 import vm.words.ua.core.ui.screen.UpdateScreen
@@ -25,9 +28,8 @@ private val noInternetSupportRoutes = setOf(
 private val noHomeBtmSupportRoutes = setOf(
     Screen.UpdateApp,
     Screen.Login,
-    Screen.TelegramSignUp,
     Screen.TelegramLogin,
-    Screen.ConfirmSignUp
+    Screen.TelegramSignUp
 ).map { it.route }
 
 @Composable

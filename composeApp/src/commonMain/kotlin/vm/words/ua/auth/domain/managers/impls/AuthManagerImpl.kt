@@ -1,10 +1,8 @@
 package vm.words.ua.auth.domain.managers.impls
 
 import vm.words.ua.auth.domain.managers.AuthManager
-import vm.words.ua.auth.domain.mappers.toRequest
 import vm.words.ua.auth.domain.mappers.toUser
 import vm.words.ua.auth.domain.models.AuthResult
-import vm.words.ua.auth.domain.models.SignUpModel
 import vm.words.ua.auth.net.clients.AuthClient
 import vm.words.ua.auth.net.requests.LoginRequest
 import vm.words.ua.core.domain.managers.UserCacheManager
@@ -15,19 +13,16 @@ class AuthManagerImpl(
     private val  userCacheManager : UserCacheManager
 ) : AuthManager {
     override suspend fun logIn(
-        phoneNumber: String,
+        login: String,
         password: String
     ): AuthResult {
         return try {
             val response = authClient.logIn(
                 LoginRequest(
-                    phoneNumber,
-                    password
+                    login = login.trim(),
+                    password = password
                 )
             )
-            if (response.hasError()) {
-                return AuthResult(false, response.error?.message)
-            }
             response.user?.let {
                 userCacheManager.saveUser(it.toUser())
             }
@@ -45,14 +40,6 @@ class AuthManagerImpl(
         }catch (e: Exception) {
             AuthResult(false, e.message)
         }
-    }
-
-    override suspend fun signUp(req: SignUpModel): AuthResult {
-        return authClient.runCatching {
-            signUp(req.toRequest()).let {
-                AuthResult(it.success, it.error)
-            }
-        }.getOrDefault(AuthResult(false))
     }
 
     override suspend fun isRegistered(phoneNumber: String): Boolean {

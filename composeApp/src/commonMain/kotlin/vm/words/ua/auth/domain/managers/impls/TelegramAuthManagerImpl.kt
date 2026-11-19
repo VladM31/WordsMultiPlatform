@@ -6,8 +6,10 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.plus
 import vm.words.ua.auth.domain.managers.TelegramAuthManager
 import vm.words.ua.auth.domain.mappers.toUser
+import vm.words.ua.auth.domain.models.OwnershipPurpose
 import vm.words.ua.auth.domain.models.TelegramAuthResult
 import vm.words.ua.auth.domain.models.TelegramAuthSession
+import vm.words.ua.auth.domain.models.enums.TelegramCodeStatus
 import vm.words.ua.auth.domain.models.enums.TelegramMiniAppLoginStatus
 import vm.words.ua.auth.net.clients.TelegramAuthClient
 import vm.words.ua.auth.net.requests.telegram.TelegramAuthLoginReq
@@ -37,13 +39,38 @@ class TelegramAuthManagerImpl(
             return TelegramAuthResult(isNotFound = true)
         }
 
-        val expireDate = Clock.System.now().plus(10, DateTimeUnit.MINUTE)
+        // Код входа на бэке действует 15 минут
+        val expireDate = Clock.System.now().plus(CODE_LIFETIME_MINUTES, DateTimeUnit.MINUTE)
 
         storageManager.putString(CODE_KEY, codeRespond.code)
         storageManager.putString(PHONE_NUMBER_KEY, phoneNumber)
         storageManager.putString(EXPIRY_DATE_KEY, expireDate.toEpochMilliseconds().toString())
 
         return TelegramAuthResult(code = codeRespond.code)
+    }
+
+    override suspend fun startProof(phoneNumber: String, purpose: OwnershipPurpose): TelegramAuthResult {
+        val codeRespond = telegramAuthClient.startLogin(
+            TelegramAuthStartLoginReq(
+                phoneNumber = phoneNumber,
+                deviceName = getDeviceName(),
+                purpose = purpose.value
+            )
+        )
+        if (codeRespond.isNotFound) {
+            return TelegramAuthResult(isNotFound = true)
+        }
+        return TelegramAuthResult(code = codeRespond.code)
+    }
+
+    override suspend fun codeStatus(code: String): TelegramCodeStatus {
+        return telegramAuthClient.codeStatus(code).status
+    }
+
+    override fun cancelSession() {
+        storageManager.remove(CODE_KEY)
+        storageManager.remove(PHONE_NUMBER_KEY)
+        storageManager.remove(EXPIRY_DATE_KEY)
     }
 
     override suspend fun login(phoneNumber: String, code: String): Boolean {
@@ -117,6 +144,7 @@ class TelegramAuthManagerImpl(
         }
 
     companion object {
+        const val CODE_LIFETIME_MINUTES = 15
         private const val CODE_KEY = "code"
         private const val EXPIRY_DATE_KEY = "expiry_date"
         private const val PHONE_NUMBER_KEY = "phone_number"

@@ -1,11 +1,9 @@
 package vm.words.ua.core.ui.components
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import org.kodein.di.instance
 import vm.words.ua.core.domain.managers.UserCacheManager
+import vm.words.ua.core.net.UnauthorizedHandler
 import vm.words.ua.di.DiContainer
 import vm.words.ua.navigation.Screen
 import vm.words.ua.navigation.SimpleNavController
@@ -15,6 +13,12 @@ fun AuthWatcher() {
     val navController: SimpleNavController by DiContainer.di.instance()
     val userCacheManager : UserCacheManager by DiContainer.di.instance()
     val tokenState by userCacheManager.tokenFlow.collectAsState()
+
+    // 401: сбрасываем токен, дальше LaunchedEffect ниже уведёт на экран входа
+    DisposableEffect(userCacheManager) {
+        UnauthorizedHandler.onUnauthorized = { userCacheManager.clear() }
+        onDispose { UnauthorizedHandler.onUnauthorized = null }
+    }
 
     LaunchedEffect(tokenState) {
         val current = navController.currentRoute

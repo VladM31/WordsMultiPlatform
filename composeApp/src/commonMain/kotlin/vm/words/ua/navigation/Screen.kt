@@ -5,12 +5,10 @@ sealed class Screen(val route: String) {
     data object Login : Screen("login")
 
     data object SignUpProvider : Screen("sign_up_provider")
-    data object TelegramSignUp : Screen("sign_up_telegram")
-    data object GoogleSignUp : Screen("sign_up_google")
 
 
     data object TelegramLogin : Screen("telegram_login")
-    data object ConfirmSignUp : Screen("confirm_sign_up")
+    data object TelegramSignUp : Screen("sign_up_telegram")
 
     data object WordList : Screen("word_list")
     data object WordDetails : Screen("word_details")

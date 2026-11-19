@@ -4,7 +4,8 @@ import org.kodein.di.DI
 import org.kodein.di.bind
 import org.kodein.di.factory
 import org.kodein.di.instance
-import vm.words.ua.auth.ui.vms.*
+import vm.words.ua.auth.ui.vms.LoginViewModel
+import vm.words.ua.auth.ui.vms.TelegramLoginVm
 
 internal val viewModelDi = DI.Module("viewModel") {
     bind<LoginViewModel>() with factory {
@@ -19,20 +20,6 @@ internal val viewModelDi = DI.Module("viewModel") {
         )
     }
 
-    bind<TelegramSignUpViewModel>() with factory {
-        TelegramSignUpViewModel(
-            authManager = instance(),
-            analytics = instance(),
-            telegramWebAppManager = instance(),
-        )
-    }
-
-    bind<ConfirmSignUpViewModel>() with factory {
-        ConfirmSignUpViewModel(
-            authManager = instance()
-        )
-    }
-
     bind<TelegramLoginVm>() with factory {
         TelegramLoginVm(
             telegramAuthManager = instance(),
@@ -42,10 +29,4 @@ internal val viewModelDi = DI.Module("viewModel") {
         )
     }
 
-    bind<GoogleSignUpViewModel>() with factory {
-        GoogleSignUpViewModel(
-            googleAuthManager = instance(),
-            analytics = instance()
-        )
-    }
 }

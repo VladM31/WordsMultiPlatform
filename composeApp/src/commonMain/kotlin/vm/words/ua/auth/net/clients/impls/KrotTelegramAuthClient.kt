@@ -11,8 +11,11 @@ import vm.words.ua.auth.net.requests.telegram.TelegramAuthStartLoginReq
 import vm.words.ua.auth.net.requests.telegram.TelegramMiniAppLoginRequest
 import vm.words.ua.auth.net.responses.TelegramLoginRespond
 import vm.words.ua.auth.net.responses.telegram.TelegramAuthRespond
+import vm.words.ua.auth.net.responses.telegram.TelegramCodeStatusRespond
 import vm.words.ua.auth.net.responses.telegram.TelegramMiniAppRespond
 import vm.words.ua.core.config.AppRemoteConfig
+import vm.words.ua.core.net.exceptions.ApiException
+import vm.words.ua.core.net.utils.throwIfError
 
 class KrotTelegramAuthClient(
     private val httpClient: HttpClient
@@ -22,39 +25,61 @@ class KrotTelegramAuthClient(
         "${AppRemoteConfig.baseUrl}/auth"
     }
 
+    /**
+     * `POST /auth/telegram-start-login`: единый метод входа и регистрации.
+     *
+     * 200: код входа. 400 с текстом "not known to the Telegram bot": бот не знает номер,
+     * пользователь должен открыть бота и отправить контакт. 404: аккаунт заблокирован.
+     * 409, 429 (с `Retry-After`), 503 и остальные 400 приходят как [ApiException].
+     */
     override suspend fun startLogin(request: TelegramAuthStartLoginReq): TelegramAuthRespond {
         val respond = httpClient.post("${baseUrl}/telegram-start-login") {
             contentType(ContentType.Application.Json)
             setBody(request)
         }
-        if (respond.status.isSuccess()){
+        if (respond.status.isSuccess()) {
             return TelegramAuthRespond(
                 isNotFound = false,
                 code = respond.bodyAsText()
             )
         }
-        if (respond.status == io.ktor.http.HttpStatusCode.NotFound){
+
+        val body = runCatching { respond.bodyAsText() }.getOrDefault("")
+        if (respond.status == HttpStatusCode.BadRequest && body.isUnknownToBot()) {
             return TelegramAuthRespond(
                 isNotFound = true,
                 code = null
             )
         }
-        throw Exception(respond.bodyAsText())
+
+        throw ApiException(
+            status = respond.status.value,
+            body = body,
+            retryAfterSeconds = respond.headers[HttpHeaders.RetryAfter]?.toLongOrNull()
+        )
     }
 
     override suspend fun login(request: TelegramAuthLoginReq): TelegramLoginRespond {
-        val respond = httpClient.post("${baseUrl}/telegram-login") {
+        return httpClient.post("${baseUrl}/telegram-login") {
             contentType(ContentType.Application.Json)
             setBody(request)
-        }
-        return respond.body()
+        }.throwIfError().body()
     }
 
     override suspend fun login(req: TelegramMiniAppLoginRequest): TelegramMiniAppRespond {
-        val respond = httpClient.post("${baseUrl}/telegram/mini-app/login") {
+        return httpClient.post("${baseUrl}/telegram/mini-app/login") {
             contentType(ContentType.Application.Json)
             setBody(req)
-        }
-        return respond.body()
+        }.throwIfError().body()
+    }
+
+    override suspend fun codeStatus(code: String): TelegramCodeStatusRespond {
+        return httpClient.get("${baseUrl}/telegram-status") {
+            parameter("code", code)
+        }.throwIfError().body()
+    }
+
+    private fun String.isUnknownToBot(): Boolean {
+        return contains("not known to the Telegram bot", ignoreCase = true)
     }
 }

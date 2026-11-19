@@ -8,8 +8,9 @@ data class User(
     val phoneNumber: String?,
     val firstName: String,
     val lastName: String,
-    val currency: String,
     val email: String?,
     val role: String,
-    val dateOfLonIn: Long
+    val dateOfLonIn: Long,
+    /** Задан ли пароль, `null` пока неизвестно (старые данные в кэше) */
+    val hasPassword: Boolean? = null
 )
