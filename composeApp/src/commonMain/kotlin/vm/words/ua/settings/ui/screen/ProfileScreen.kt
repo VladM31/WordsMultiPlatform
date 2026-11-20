@@ -91,6 +91,7 @@ fun ProfileScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
                     .padding(horizontal = 16.dp)
             ) {
                 Spacer(modifier = Modifier.height(24.dp))
@@ -109,9 +110,8 @@ fun ProfileScreen(
                     ProfileCard(state)
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Spacer(modifier = Modifier.weight(1f))
+                // weight() внутри прокручиваемой колонки не работает, поэтому отступ фиксированный
+                Spacer(modifier = Modifier.height(32.dp))
 
                 // Delete account button
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
