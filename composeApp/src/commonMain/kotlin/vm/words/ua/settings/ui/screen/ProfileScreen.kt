@@ -94,7 +94,7 @@ fun ProfileScreen(
                     .verticalScroll(rememberScrollState())
                     .padding(horizontal = 16.dp)
             ) {
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 if (isWide) {
                     Row(
@@ -649,7 +649,7 @@ private fun ProfileCard(state: ProfileState, modifier: Modifier = Modifier) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp)
+                .padding(12.dp)
         ) {
             // Header
             Text(
@@ -658,7 +658,7 @@ private fun ProfileCard(state: ProfileState, modifier: Modifier = Modifier) {
                 fontWeight = FontWeight.Bold,
                 color = AppTheme.PrimaryColor,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(bottom = 16.dp)
+                modifier = Modifier.padding(bottom = 8.dp)
                     .fillMaxWidth()
             )
 
@@ -668,7 +668,7 @@ private fun ProfileCard(state: ProfileState, modifier: Modifier = Modifier) {
                 value = state.firstName
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             // Last name
             ProfileInfoItem(
@@ -678,7 +678,7 @@ private fun ProfileCard(state: ProfileState, modifier: Modifier = Modifier) {
 
             // Email (if exists)
             if (!state.email.isNullOrBlank()) {
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 ProfileInfoItem(
                     label = "Email",
                     value = state.email.orEmpty(),
@@ -688,7 +688,7 @@ private fun ProfileCard(state: ProfileState, modifier: Modifier = Modifier) {
 
             // Phone (if exists)
             if (!state.phoneNumber.isNullOrBlank()) {
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 ProfileInfoItem(
                     label = "Phone",
                     value = state.phoneNumber.orEmpty(),
