@@ -29,5 +29,11 @@ data class ProfileState(
     override val errorMessage: ErrorMessage? = null,
 ) : ErrorableState {
 
+    /**
+     * Привязать Google можно, пока у аккаунта нет email: бэк берёт email только у провайдера (Google),
+     * отдельного признака привязки в ответе нет.
+     */
+    val canLinkGoogle: Boolean get() = isGoogleAvailable && email.isNullOrBlank()
+
     val tryToDelete: Boolean get() = dialog == ProfileDialog.DELETE
 }

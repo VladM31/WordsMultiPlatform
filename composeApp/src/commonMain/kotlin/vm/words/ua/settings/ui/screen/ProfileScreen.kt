@@ -200,7 +200,7 @@ private fun ProfileActionsPanel(
                 icon = Icons.Outlined.Lock,
                 onClick = { viewModel.sent(ProfileAction.OpenDialog(ProfileDialog.PASSWORD)) }
             )
-            if (state.isGoogleAvailable) {
+            if (state.canLinkGoogle) {
                 AccountActionRow(
                     text = "Link Google",
                     icon = LinkIcon,
@@ -328,7 +328,7 @@ private fun ProfileMenu(
                 ProfileMenuItem("Password", Icons.Filled.Lock) {
                     onAction(ProfileAction.OpenDialog(ProfileDialog.PASSWORD))
                 }
-                if (state.isGoogleAvailable) {
+                if (state.canLinkGoogle) {
                     ProfileMenuItem("Link Google", Icons.Filled.AccountCircle, enabled = !state.isLoading) {
                         onAction(ProfileAction.LinkGoogle)
                     }
