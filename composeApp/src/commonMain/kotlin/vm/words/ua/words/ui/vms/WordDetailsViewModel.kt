@@ -68,69 +68,75 @@ class WordDetailsViewModel(
         val isLoading = action.word.imageLink.isNullOrBlank().not()
                 || action.word.soundLink.isNullOrBlank().not()
 
+        val previousWord = state.value.word
+
+        // Слово показываем сразу: картинка и аудио догружаются отдельно и не блокируют экран
         mutableState.value = mutableState.value.copy(
-            isLoading = isLoading,
-            isInited = true
+            isLoading = false,
+            isInited = true,
+            userWord = action.userWord,
+            word = action.word
         )
 
         if (isLoading.not()) {
-            mutableState.value = mutableState.value.copy(
-                userWord = action.userWord,
-                word = action.word
-            )
             return
         }
 
-        viewModelScope.launch(Dispatchers.Default) {
+        mutableState.value = mutableState.value.copy(isLoading = true)
 
+        viewModelScope.launch(Dispatchers.Default) {
             try {
                 val isActiveSubscribe = subscribeManager.isActiveSubscribe()
-                if (isActiveSubscribe.not()){
-                    mutableState.value = mutableState.value.copy(
-                        isLoading = false
-                    )
+                if (isActiveSubscribe.not()) {
                     return@launch
                 }
 
                 val imageTask = async {
-                    if (state.value.word?.imageLink != action.word.imageLink) {
+                    if (previousWord?.imageLink != action.word.imageLink) {
                         getContent(action.word.imageLink)
                     } else {
                         state.value.image
                     }
-
                 }
                 val soundTask = async {
-                    if (state.value.word?.soundLink != action.word.soundLink) {
+                    if (previousWord?.soundLink != action.word.soundLink) {
                         getContent(action.word.soundLink)
                     } else {
                         state.value.sound
                     }
                 }
 
-                mutableState.value = mutableState.value.copy(
-                    isLoading = false,
-                    image = imageTask.await(),
-                    sound = soundTask.await(),
-                    userWord = action.userWord,
-                    word = action.word,
-                    isActiveSubscribe = isActiveSubscribe
-                )
+                mutableState.update {
+                    it.copy(
+                        image = imageTask.await(),
+                        sound = soundTask.await(),
+                        isActiveSubscribe = isActiveSubscribe
+                    )
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
-                mutableState.value = mutableState.value.copy(
-                    isLoading = false,
-                    errorMessage = ErrorMessage(e.message ?: "Error loading image")
-                )
+                mutableState.update {
+                    it.copy(errorMessage = ErrorMessage(e.message ?: "Error loading image"))
+                }
+            } finally {
+                mutableState.update { it.copy(isLoading = false) }
             }
         }
     }
 
+    /** Ошибка загрузки одного файла не должна отбрасывать второй, поэтому возвращаем null */
     private suspend fun getContent(link: String?): ByteContent? {
         if (link.isNullOrBlank()) {
             return null
         }
-        return byteContentManager.downloadByteContent(link)
+        return try {
+            byteContentManager.downloadByteContent(link)
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 
 
