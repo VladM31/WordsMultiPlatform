@@ -7,6 +7,7 @@ import vm.words.ua.auth.domain.mappers.toUser
 import vm.words.ua.auth.domain.models.DeleteOptions
 import vm.words.ua.auth.domain.models.OwnershipProof
 import vm.words.ua.auth.domain.models.OwnershipPurpose
+import vm.words.ua.auth.domain.models.TelegramLinkStart
 import vm.words.ua.auth.domain.models.enums.TelegramCodeStatus
 import vm.words.ua.auth.net.clients.UserClient
 import vm.words.ua.auth.net.requests.DeleteAccountRequest
@@ -14,8 +15,10 @@ import vm.words.ua.auth.net.requests.EditUserRequest
 import vm.words.ua.auth.net.requests.OwnershipProofRequest
 import vm.words.ua.auth.net.requests.SetPasswordRequest
 import vm.words.ua.auth.net.requests.google.GoogleSignInRequest
+import vm.words.ua.auth.net.requests.telegram.TelegramLinkRequest
 import vm.words.ua.core.domain.managers.UserCacheManager
 import vm.words.ua.core.domain.models.Token
+import vm.words.ua.core.platform.getDeviceName
 import vm.words.ua.core.utils.toPair
 
 class UserManagerImpl(
@@ -89,6 +92,21 @@ class UserManagerImpl(
             throw IllegalStateException("The Telegram bot doesn't know your phone number. Open the bot and send your contact first")
         }
         return result.code ?: throw IllegalStateException("Telegram code is empty")
+    }
+
+    override suspend fun startTelegramLink(phoneNumber: String): TelegramLinkStart {
+        val respond = userClient.linkTelegram(
+            userCacheManager.toPair(),
+            TelegramLinkRequest(phoneNumber = phoneNumber.trim(), deviceName = getDeviceName())
+        )
+        return TelegramLinkStart(code = respond.code, botActivationRequired = respond.botActivationRequired)
+    }
+
+    override fun onTelegramLinked(phoneNumber: String) {
+        // Бэк хранит номер цифрами, как и приходит в ответах
+        userCacheManager.saveUser(
+            userCacheManager.user.copy(phoneNumber = phoneNumber.filter { it.isDigit() })
+        )
     }
 
     override suspend fun telegramProofStatus(code: String): TelegramCodeStatus {

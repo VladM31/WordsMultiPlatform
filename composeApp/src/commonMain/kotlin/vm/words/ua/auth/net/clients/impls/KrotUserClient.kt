@@ -9,7 +9,9 @@ import vm.words.ua.auth.net.requests.DeleteAccountRequest
 import vm.words.ua.auth.net.requests.EditUserRequest
 import vm.words.ua.auth.net.requests.SetPasswordRequest
 import vm.words.ua.auth.net.requests.google.GoogleSignInRequest
+import vm.words.ua.auth.net.requests.telegram.TelegramLinkRequest
 import vm.words.ua.auth.net.responses.AuthResponse
+import vm.words.ua.auth.net.responses.telegram.TelegramLinkRespond
 import vm.words.ua.core.config.AppRemoteConfig
 import vm.words.ua.core.net.utils.throwIfError
 
@@ -39,6 +41,17 @@ class KrotUserClient(
         req: GoogleSignInRequest
     ): AuthResponse.User {
         return client.post("$baseUrl/identities/google") {
+            contentType(ContentType.Application.Json)
+            header(header.first, header.second)
+            setBody(req)
+        }.throwIfError().body()
+    }
+
+    override suspend fun linkTelegram(
+        header: Pair<String, String>,
+        req: TelegramLinkRequest
+    ): TelegramLinkRespond {
+        return client.post("$baseUrl/identities/telegram") {
             contentType(ContentType.Application.Json)
             header(header.first, header.second)
             setBody(req)

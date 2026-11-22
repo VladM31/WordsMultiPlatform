@@ -4,7 +4,9 @@ import vm.words.ua.auth.net.requests.DeleteAccountRequest
 import vm.words.ua.auth.net.requests.EditUserRequest
 import vm.words.ua.auth.net.requests.SetPasswordRequest
 import vm.words.ua.auth.net.requests.google.GoogleSignInRequest
+import vm.words.ua.auth.net.requests.telegram.TelegramLinkRequest
 import vm.words.ua.auth.net.responses.AuthResponse
+import vm.words.ua.auth.net.responses.telegram.TelegramLinkRespond
 
 /**
  * Методы `/user*`. Все требуют Bearer-токен (передаётся в [header]).
@@ -20,6 +22,12 @@ interface UserClient {
 
     /** `POST /user/identities/google`: привязка Google к текущему аккаунту. */
     suspend fun linkGoogle(header: Pair<String, String>, req: GoogleSignInRequest): AuthResponse.User
+
+    /**
+     * `POST /user/identities/telegram`: привязка телефона и Telegram к текущему аккаунту.
+     * 409: номер или профиль Telegram у другого аккаунта, либо Telegram уже привязан.
+     */
+    suspend fun linkTelegram(header: Pair<String, String>, req: TelegramLinkRequest): TelegramLinkRespond
 
     /** `POST /user/delete`: удаление аккаунта. */
     suspend fun deleteAccount(header: Pair<String, String>, req: DeleteAccountRequest)

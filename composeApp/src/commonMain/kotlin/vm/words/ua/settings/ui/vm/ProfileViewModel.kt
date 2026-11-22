@@ -21,6 +21,7 @@ import vm.words.ua.settings.ui.states.ProfileDialog
 import vm.words.ua.settings.ui.states.ProfileState
 import vm.words.ua.settings.ui.validations.validateName
 import vm.words.ua.settings.ui.validations.validatePassword
+import vm.words.ua.settings.ui.validations.validatePhoneNumber
 
 class ProfileViewModel(
     private val userCacheManager: UserCacheManager,
@@ -49,10 +50,7 @@ class ProfileViewModel(
             phoneNumber = userCacheManager.user.phoneNumber,
             hasPassword = userCacheManager.user.hasPassword,
             // как и на экране входа: внутри Telegram Mini App Google недоступен
-            isGoogleAvailable = userManager.isGoogleAvailable && telegramWebAppManager.isAvailable.not(),
-            // внутри Mini App подтверждение идёт по initData, номер телефона не нужен
-            isTelegramProofAvailable = telegramWebAppManager.isAvailable ||
-                    !userCacheManager.user.phoneNumber.isNullOrBlank()
+            isGoogleAvailable = userManager.isGoogleAvailable && telegramWebAppManager.isAvailable.not()
         )
     }
 
@@ -67,6 +65,8 @@ class ProfileViewModel(
                     dialog = action.dialog,
                     proof = null,
                     telegramProofCode = null,
+                    telegramLinkCode = null,
+                    botActivationRequired = false,
                     errorMessage = null
                 )
             }
@@ -78,6 +78,7 @@ class ProfileViewModel(
             is ProfileAction.SetPassword -> handleSetPassword(action)
             is ProfileAction.DeleteAccount -> handleDeleteAccount(action)
             is ProfileAction.LinkGoogle -> handleLinkGoogle()
+            is ProfileAction.LinkTelegram -> handleLinkTelegram(action)
             is ProfileAction.ProveWithGoogle -> handleProveWithGoogle()
             is ProfileAction.ProveWithTelegram -> handleProveWithTelegram(action)
         }
@@ -89,6 +90,8 @@ class ProfileViewModel(
             dialog = ProfileDialog.NONE,
             proof = null,
             telegramProofCode = null,
+            telegramLinkCode = null,
+            botActivationRequired = false,
             errorMessage = null
         )
     }
@@ -186,6 +189,44 @@ class ProfileViewModel(
         }
     }
 
+    /**
+     * Привязка телефона и Telegram: бот присылает сообщение с Yes и No, приложение ждёт ответа.
+     * Если бот не знает номер, сообщение придёт, когда пользователь откроет бота и отправит свой контакт.
+     * После [TelegramCodeStatus.LINKED] номер сохраняется в данных пользователя.
+     */
+    private fun handleLinkTelegram(action: ProfileAction.LinkTelegram) {
+        if (state.value.isLoading || state.value.telegramLinkCode != null) return
+
+        val error = validatePhoneNumber(action.phoneNumber)
+        if (error != null) {
+            showError(error)
+            return
+        }
+
+        proofJob?.cancel()
+        proofJob = viewModelScope.launch(Dispatchers.Default) {
+            var code: String? = null
+            execute {
+                val start = userManager.startTelegramLink(action.phoneNumber)
+                code = start.code
+                mutableState.value = state.value.copy(
+                    telegramLinkCode = start.code,
+                    botActivationRequired = start.botActivationRequired
+                )
+            }
+            val requested = code ?: return@launch
+
+            if (awaitTelegramStatus(requested, TelegramCodeStatus.LINKED)) {
+                userManager.onTelegramLinked(action.phoneNumber)
+                closeDialog()
+                mutableState.value = state.value.copy(
+                    phoneNumber = userCacheManager.user.phoneNumber,
+                    message = "Telegram linked"
+                )
+            }
+        }
+    }
+
     private fun handleProveWithGoogle() {
         request {
             val proof = userManager.requestGoogleProof()
@@ -236,10 +277,22 @@ class ProfileViewModel(
         }
         val requested = code ?: return
 
+        if (awaitTelegramStatus(requested, TelegramCodeStatus.CONFIRMED)) {
+            execute { onProofReady(OwnershipProof.telegram(requested), newPassword) }
+        }
+    }
+
+    /**
+     * Опрашивает статус кода, пока он не станет [target]. Остальные итоговые статусы (No, конфликт,
+     * истёк срок) останавливают ожидание с сообщением, то же делает таймаут.
+     *
+     * @return `true`, если достигнут [target]
+     */
+    private suspend fun awaitTelegramStatus(code: String, target: TelegramCodeStatus): Boolean {
         val deadline = Clock.System.now().plus(PROOF_LIFETIME_MINUTES, DateTimeUnit.MINUTE)
         while (Clock.System.now() < deadline) {
             val status = try {
-                userManager.telegramProofStatus(requested)
+                userManager.telegramProofStatus(code)
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
@@ -248,19 +301,25 @@ class ProfileViewModel(
                 continue
             }
 
+            if (status == target) return true
             when (status) {
                 TelegramCodeStatus.PENDING -> delay(POLL_DELAY_MILLIS)
-                TelegramCodeStatus.CONFIRMED -> {
-                    execute { onProofReady(OwnershipProof.telegram(requested), newPassword) }
-                    return
-                }
+                TelegramCodeStatus.REFUSED -> stopWaiting("You pressed No in Telegram. Nothing was changed")
+                TelegramCodeStatus.CONFLICT -> stopWaiting(
+                    "This phone number or Telegram profile belongs to another account. Nothing was linked"
+                )
 
-                TelegramCodeStatus.REFUSED -> return stopWaiting("You pressed No in Telegram. Nothing was changed")
-                TelegramCodeStatus.USED -> return stopWaiting("This confirmation was already used. Try again")
-                TelegramCodeStatus.EXPIRED -> return stopWaiting("The confirmation expired. Try again")
+                TelegramCodeStatus.USED -> stopWaiting("This confirmation was already used. Try again")
+                TelegramCodeStatus.EXPIRED -> stopWaiting("The confirmation expired. Try again")
+                // CONFIRMED и LINKED бывают только у своих запросов, чужой статус значит ошибку
+                TelegramCodeStatus.CONFIRMED, TelegramCodeStatus.LINKED -> stopWaiting(
+                    "Unexpected confirmation state. Try again"
+                )
             }
+            if (status != TelegramCodeStatus.PENDING) return false
         }
         stopWaiting("Nothing was confirmed in Telegram in time. Try again")
+        return false
     }
 
     /**
@@ -277,6 +336,7 @@ class ProfileViewModel(
     private fun stopWaiting(message: String) {
         mutableState.value = state.value.copy(
             telegramProofCode = null,
+            telegramLinkCode = null,
             errorMessage = ErrorMessage(message = message)
         )
     }

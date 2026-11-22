@@ -8,6 +8,8 @@ package vm.words.ua.settings.ui.validations
 private const val PASSWORD_MIN = 8
 private const val PASSWORD_MAX = 60
 private const val PASSWORD_MAX_BYTES = 72
+private const val PHONE_MIN_DIGITS = 10
+private const val PHONE_MAX_DIGITS = 15
 private const val NAME_MIN = 2
 private const val NAME_MAX = 60
 
@@ -17,6 +19,15 @@ fun validatePassword(label: String, value: String): String? {
     }
     if (value.encodeToByteArray().size > PASSWORD_MAX_BYTES) {
         return "$label is too long: at most $PASSWORD_MAX_BYTES bytes"
+    }
+    return null
+}
+
+/** Бэк принимает номер в любом формате, главное 10..15 цифр. */
+fun validatePhoneNumber(value: String): String? {
+    val digits = value.count { it.isDigit() }
+    if (digits < PHONE_MIN_DIGITS || digits > PHONE_MAX_DIGITS) {
+        return "Phone number must have between $PHONE_MIN_DIGITS and $PHONE_MAX_DIGITS digits"
     }
     return null
 }

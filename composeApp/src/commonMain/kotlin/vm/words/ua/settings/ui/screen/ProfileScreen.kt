@@ -34,6 +34,7 @@ import vm.words.ua.auth.domain.models.OwnershipProvider
 import vm.words.ua.core.config.AppRemoteConfig
 import vm.words.ua.core.ui.AppTheme
 import vm.words.ua.core.ui.components.*
+import vm.words.ua.core.ui.icons.TelegramIcon
 import vm.words.ua.core.ui.states.ToastData
 import vm.words.ua.core.utils.rememberFontSize
 import vm.words.ua.core.utils.rememberInterfaceMaxWidth
@@ -88,9 +89,11 @@ fun ProfileScreen(
                 )
             }
             CenteredContainer(maxWidth = if (isWide) WIDE_LAYOUT_CONTENT_WIDTH else rememberInterfaceMaxWidth()) {
+                Column(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .weight(1f)
+                    .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
                     .padding(horizontal = 16.dp)
             ) {
@@ -110,11 +113,14 @@ fun ProfileScreen(
                     ProfileCard(state)
                 }
 
-                // weight() внутри прокручиваемой колонки не работает, поэтому отступ фиксированный
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(16.dp))
+            }
 
-                // Delete account button
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    // Delete account button: закреплена внизу экрана, вне прокрутки
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
                     TextButton(
                         onClick = { viewModel.sent(ProfileAction.OpenDialog(ProfileDialog.DELETE)) },
                         modifier = Modifier
@@ -132,7 +138,7 @@ fun ProfileScreen(
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
             }
         }
     }
@@ -143,6 +149,7 @@ fun ProfileScreen(
         ProfileDialog.EDIT_NAME -> EditNameDialog(state, viewModel)
         ProfileDialog.PASSWORD -> PasswordDialog(state, viewModel)
         ProfileDialog.DELETE -> DeleteAccountDialog(state, viewModel)
+        ProfileDialog.LINK_TELEGRAM -> LinkTelegramDialog(state, viewModel)
     }
 
     // Error messages shown as dialog, the form stays open so the user can fix the input
@@ -196,7 +203,7 @@ private fun ProfileActionsPanel(
                 onClick = { viewModel.sent(ProfileAction.OpenDialog(ProfileDialog.EDIT_NAME)) }
             )
             AccountActionRow(
-                text = "Password",
+                text = if (state.hasPassword == false) "Set password" else "Change password",
                 icon = Icons.Outlined.Lock,
                 onClick = { viewModel.sent(ProfileAction.OpenDialog(ProfileDialog.PASSWORD)) }
             )
@@ -206,6 +213,14 @@ private fun ProfileActionsPanel(
                     icon = LinkIcon,
                     enabled = !state.isLoading,
                     onClick = { viewModel.sent(ProfileAction.LinkGoogle) }
+                )
+            }
+            if (state.canLinkTelegram) {
+                AccountActionRow(
+                    text = "Link Telegram",
+                    icon = TelegramIcon,
+                    enabled = !state.isLoading,
+                    onClick = { viewModel.sent(ProfileAction.OpenDialog(ProfileDialog.LINK_TELEGRAM)) }
                 )
             }
         }
@@ -325,12 +340,20 @@ private fun ProfileMenu(
                 ProfileMenuItem("Edit name", Icons.Filled.Edit) {
                     onAction(ProfileAction.OpenDialog(ProfileDialog.EDIT_NAME))
                 }
-                ProfileMenuItem("Password", Icons.Filled.Lock) {
+                ProfileMenuItem(
+                    if (state.hasPassword == false) "Set password" else "Change password",
+                    Icons.Filled.Lock
+                ) {
                     onAction(ProfileAction.OpenDialog(ProfileDialog.PASSWORD))
                 }
                 if (state.canLinkGoogle) {
                     ProfileMenuItem("Link Google", Icons.Filled.AccountCircle, enabled = !state.isLoading) {
                         onAction(ProfileAction.LinkGoogle)
+                    }
+                }
+                if (state.canLinkTelegram) {
+                    ProfileMenuItem("Link Telegram", TelegramIcon, enabled = !state.isLoading) {
+                        onAction(ProfileAction.OpenDialog(ProfileDialog.LINK_TELEGRAM))
                     }
                 }
             }
@@ -395,13 +418,77 @@ private fun EditNameDialog(state: ProfileState, viewModel: ProfileViewModel) {
     }
 }
 
+/**
+ * Привязка телефона и Telegram. После отправки номера бот присылает сообщение с Yes и No,
+ * приложение само ждёт ответа. Если бот не знает номер, пользователь должен открыть бота,
+ * нажать Start, отправить свой контакт и подтвердить в сообщении.
+ */
+@Composable
+private fun LinkTelegramDialog(state: ProfileState, viewModel: ProfileViewModel) {
+    var phoneNumber by remember { mutableStateOf("") }
+    val telegramManager: TelegramWebAppManager = rememberInstance()
+    val uriHandler = LocalUriHandler.current
+    val isWaiting = state.telegramLinkCode != null
+
+    ProfileDialogFrame(
+        title = "Link Telegram",
+        confirmText = "Link",
+        isLoading = state.isLoading,
+        onConfirm = { viewModel.sent(ProfileAction.LinkTelegram(phoneNumber)) },
+        onDismiss = { viewModel.sent(ProfileAction.DismissDialog) }
+    ) {
+        Text(
+            text = "Enter the phone number of your Telegram account. " +
+                    "The bot will send you a message, confirm it with Yes.",
+            fontSize = rememberLabelFontSize(),
+            lineHeight = rememberLabelFontSize() * 1.1,
+            color = AppTheme.PrimaryColor.copy(alpha = 0.7f)
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        AppTextField(
+            value = phoneNumber,
+            modifier = Modifier.fillMaxWidth(),
+            onValueChange = { if (!isWaiting) phoneNumber = it },
+            label = "Phone number"
+        )
+        if (!isWaiting) return@ProfileDialogFrame
+
+        Spacer(modifier = Modifier.height(16.dp))
+        Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = if (state.botActivationRequired) {
+                    "Please activate the bot, share your phone number and confirm in the message."
+                } else {
+                    "Waiting for your Yes in the Telegram bot…"
+                },
+                fontSize = rememberLabelFontSize(),
+                lineHeight = rememberLabelFontSize() * 1.1,
+                color = AppTheme.PrimaryColor,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            CircularProgressIndicator(
+                modifier = Modifier.size(24.dp),
+                color = AppTheme.PrimaryColor,
+                strokeWidth = 2.dp
+            )
+            TextButton(onClick = {
+                val opened = telegramManager.openLink(AppRemoteConfig.telegramBotLink)
+                if (!opened) uriHandler.openUri(AppRemoteConfig.telegramBotLink)
+            }) {
+                Text(text = "Open bot", fontSize = rememberLabelFontSize())
+            }
+        }
+    }
+}
+
 @Composable
 private fun PasswordDialog(state: ProfileState, viewModel: ProfileViewModel) {
     var newPassword by remember { mutableStateOf("") }
     var oldPassword by remember { mutableStateOf("") }
 
     ProfileDialogFrame(
-        title = "Password",
+        title = if (state.hasPassword == false) "Set password" else "Change password",
         confirmText = "Save",
         isLoading = state.isLoading,
         onConfirm = {
@@ -557,7 +644,7 @@ private fun ProofSection(
             color = AppTheme.PrimaryColor.copy(alpha = 0.7f)
         )
         Row(horizontalArrangement = Arrangement.Center) {
-            if (state.isGoogleAvailable) {
+            if (state.canProveWithGoogle) {
                 TextButton(
                     onClick = { viewModel.sent(ProfileAction.ProveWithGoogle) },
                     enabled = !state.isLoading
@@ -565,7 +652,7 @@ private fun ProofSection(
                     Text(text = "Google", fontSize = rememberLabelFontSize())
                 }
             }
-            if (state.isTelegramProofAvailable) {
+            if (state.canProveWithTelegram) {
                 TextButton(
                     onClick = { viewModel.sent(ProfileAction.ProveWithTelegram(newPassword)) },
                     enabled = !state.isLoading

@@ -3,6 +3,7 @@ package vm.words.ua.auth.domain.managers
 import vm.words.ua.auth.domain.models.DeleteOptions
 import vm.words.ua.auth.domain.models.OwnershipProof
 import vm.words.ua.auth.domain.models.OwnershipPurpose
+import vm.words.ua.auth.domain.models.TelegramLinkStart
 import vm.words.ua.auth.domain.models.enums.TelegramCodeStatus
 
 /**
@@ -37,6 +38,19 @@ interface UserManager {
      * @return код, который после нажатия Yes используется как [OwnershipProof.telegram]
      */
     suspend fun requestTelegramProofCode(purpose: OwnershipPurpose): String
+
+    /**
+     * Запускает привязку телефона и Telegram к текущему аккаунту (например, созданному через Google).
+     * Если бот не знает номер, в [TelegramLinkStart.botActivationRequired] будет `true`: сообщение придёт,
+     * когда пользователь откроет бота и отправит свой контакт.
+     * Ждать результата нужно через [telegramProofStatus]: [TelegramCodeStatus.LINKED] значит готово
+     * (тогда вызвать [onTelegramLinked]), [TelegramCodeStatus.CONFLICT] значит ничего не привязано.
+     * 409 приходит как [vm.words.ua.core.net.exceptions.ApiException].
+     */
+    suspend fun startTelegramLink(phoneNumber: String): TelegramLinkStart
+
+    /** Сохраняет привязанный номер в данных пользователя после [TelegramCodeStatus.LINKED]. */
+    fun onTelegramLinked(phoneNumber: String)
 
     /** Нажал ли пользователь Yes в боте. Опрашивать можно сколько угодно, код не расходуется. */
     suspend fun telegramProofStatus(code: String): TelegramCodeStatus

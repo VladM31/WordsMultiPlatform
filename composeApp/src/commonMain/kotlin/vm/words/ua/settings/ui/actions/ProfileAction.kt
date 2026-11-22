@@ -18,6 +18,12 @@ sealed interface ProfileAction {
     /** Привязать Google к текущему аккаунту */
     data object LinkGoogle : ProfileAction
 
+    /**
+     * Привязать телефон и Telegram к текущему аккаунту. Бот присылает сообщение с Yes и No,
+     * приложение само ждёт подтверждения. Если бот не знает номер, пользователю нужно открыть бота.
+     */
+    data class LinkTelegram(val phoneNumber: String) : ProfileAction
+
     /** Подтвердить владение через Google (свежий idToken) */
     data object ProveWithGoogle : ProfileAction
 
