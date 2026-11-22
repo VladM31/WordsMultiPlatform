@@ -11,7 +11,6 @@ import vm.words.ua.core.domain.models.PagedModels
 import vm.words.ua.core.net.client.FileApiClient
 import vm.words.ua.core.net.requests.AudioGenerationRequest
 import vm.words.ua.core.net.requests.SaveFileRequest
-import vm.words.ua.core.utils.toPair
 import vm.words.ua.words.domain.managers.UserWordManager
 import vm.words.ua.words.domain.models.*
 import vm.words.ua.words.domain.models.filters.UserWordFilter
@@ -35,7 +34,7 @@ class UserWordManagerImpl(
 
     override suspend fun findBy(filter: UserWordFilter): PagedModels<UserWord> {
         val paged = userWordClient.findBy(
-            userCacheManager.toPair().second,
+            userCacheManager.token.value,
             filter.toQueryMap()
         )
 
@@ -56,7 +55,7 @@ class UserWordManagerImpl(
         withContext(kotlinx.coroutines.Dispatchers.Default) {
             val asyncList = words.map { async { toRequest(it) } }
             userWordClient.save(
-                userCacheManager.toPair().second,
+                userCacheManager.token.value,
                 asyncList.awaitAll()
             )
         }
@@ -68,7 +67,7 @@ class UserWordManagerImpl(
             sound = word.sound
         )
         userWordClient.update(
-            userCacheManager.toPair().second,
+            userCacheManager.token.value,
             UserWordEditRequest(
                 id = word.id,
                 original = word.original,
@@ -88,7 +87,7 @@ class UserWordManagerImpl(
         return withContext(kotlinx.coroutines.Dispatchers.Default) {
             val asyncList = pins.map { async { toRequest(it) } }
             userWordClient.pin(
-                userCacheManager.toPair().second,
+                userCacheManager.token.value,
                 asyncList.awaitAll()
             ).map { toWord(it) }
         }
@@ -96,7 +95,7 @@ class UserWordManagerImpl(
 
     override suspend fun delete(requests: List<DeleteUserWord>) {
         userWordClient.delete(
-            userCacheManager.toPair().second,
+            userCacheManager.token.value,
             requests.map {
                 DeleteUserWordRequest(
                     id = it.id,

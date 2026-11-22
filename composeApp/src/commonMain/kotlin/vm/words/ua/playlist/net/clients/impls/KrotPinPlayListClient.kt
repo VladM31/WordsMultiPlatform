@@ -1,10 +1,8 @@
 package vm.words.ua.playlist.net.clients.impls
 
-import io.ktor.client.HttpClient
-import io.ktor.client.request.header
-import io.ktor.client.request.patch
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
+import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.http.*
 import vm.words.ua.core.config.AppRemoteConfig
 import vm.words.ua.playlist.net.clients.PinPlayListClient
 import vm.words.ua.playlist.net.requests.pin.PinPlayListRequest
@@ -34,7 +32,7 @@ class KrotPinPlayListClient(
     private suspend fun execute(token: String, ending: String) {
         val url = baseUrl + ending
         client.patch(url) {
-            header("Authorization", token)
+            header("Authorization", "Bearer $token")
             contentType(ContentType.Application.Json)
         }
 

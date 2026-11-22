@@ -25,7 +25,7 @@ class KtorPlayListClient(
     override suspend fun countBy(token: String, filter: PlayListCountFilter): PagedRespond<PlayListCountRespond> {
         return try {
             val response = client.get("$baseUrl/count") {
-                header("Authorization", token)
+                header("Authorization", "Bearer $token")
                 filter.toQueryMap().forEach { parameter(it.key, it.value) }
             }
 
@@ -39,7 +39,7 @@ class KtorPlayListClient(
     override suspend fun findBy(token: String, filter: PlayListFilter): PagedRespond<PlayListRespond> {
         return try {
             val response = client.get("$baseUrl") {
-                header("Authorization", token)
+                header("Authorization", "Bearer $token")
                 filter.toQueryMap().forEach { parameter(it.key, it.value) }
             }
 
@@ -56,7 +56,7 @@ class KtorPlayListClient(
     ): PagedRespond<PlayListRespond> {
         return try {
             val response = client.get("$baseUrl/public") {
-                header("Authorization", token)
+                header("Authorization", "Bearer $token")
                 filter.toQueryMap().forEach { parameter(it.key, it.value) }
             }
 
@@ -72,7 +72,7 @@ class KtorPlayListClient(
         filter: PublicPlayListCountRequest
     ): PagedRespond<PublicPlayListCountRespond> {
         val response = client.get("$baseUrl/count/public") {
-            header("Authorization", token)
+            header("Authorization", "Bearer $token")
             filter.toQueryMap().forEach { parameter(it.key, it.value) }
         }
         return response.body<PagedRespond<PublicPlayListCountRespond>>()
@@ -80,7 +80,7 @@ class KtorPlayListClient(
 
     override suspend fun countRandom(token: String): PlayListCountRespond? {
         val response = client.get("$baseUrl/random") {
-            header("Authorization", token)
+            header("Authorization", "Bearer $token")
         }
         if (response.status == HttpStatusCode.NotFound) {
             return null
@@ -96,7 +96,7 @@ class KtorPlayListClient(
 
     override suspend fun getAssignedPlaylists(token: String): Set<AssignedPlaylistRespond> {
         val response = client.get("$baseUrl/assigned") {
-            header("Authorization", token)
+            header("Authorization", "Bearer $token")
         }
         return response.body<Set<AssignedPlaylistRespond>>()
     }
@@ -106,7 +106,7 @@ class KtorPlayListClient(
         req: AssignPlayListsRequest
     ): List<PlaylistIdRespond> {
         val response = client.post("$baseUrl/assign") {
-            header("Authorization", token)
+            header("Authorization", "Bearer $token")
             contentType(ContentType.Application.Json)
             setBody(req)
         }
@@ -123,7 +123,7 @@ class KtorPlayListClient(
     override suspend fun save(token: String, playLists: List<SavePlayListRequest>) {
         try {
             client.post("$baseUrl") {
-                header("Authorization", token)
+                header("Authorization", "Bearer $token")
                 contentType(ContentType.Application.Json)
                 setBody(playLists)
             }
@@ -135,7 +135,7 @@ class KtorPlayListClient(
     override suspend fun update(token: String, playLists: List<UpdatePlayListRequest>) {
         try {
             client.put("$baseUrl") {
-                header("Authorization", token)
+                header("Authorization", "Bearer $token")
                 contentType(ContentType.Application.Json)
                 setBody(playLists)
             }
@@ -147,7 +147,7 @@ class KtorPlayListClient(
     override suspend fun updateGrades(token: String, grades: List<PlayListGradeRequest>) {
         try {
             client.put("$baseUrl/grades") {
-                header("Authorization", token)
+                header("Authorization", "Bearer $token")
                 contentType(ContentType.Application.Json)
                 setBody(grades)
             }
@@ -159,7 +159,7 @@ class KtorPlayListClient(
     override suspend fun delete(token: String, filter: DeletePlayListFilter) {
         try {
             client.delete("$baseUrl/delete") {
-                header("Authorization", token)
+                header("Authorization", "Bearer $token")
                 filter.toQueryMap().forEach {
                     parameter(it.key, it.value)
                 }

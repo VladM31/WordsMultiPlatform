@@ -2,7 +2,6 @@ package vm.words.ua.words.domain.managers.impl
 
 import vm.words.ua.core.domain.managers.UserCacheManager
 import vm.words.ua.core.domain.models.PagedModels
-import vm.words.ua.core.utils.toPair
 import vm.words.ua.words.domain.managers.WordManager
 import vm.words.ua.words.domain.models.Word
 import vm.words.ua.words.domain.models.filters.WordFilter
@@ -16,7 +15,7 @@ class WordManagerImpl(
     override suspend fun findBy(filter: WordFilter): PagedModels<Word> {
         return try {
             val query = filter.toQueryMap()
-            wordClient.findBy(userCacheManager.toPair().second, query)
+            wordClient.findBy(userCacheManager.token.value, query)
                 .let { PagedModels.of(it, this::toWord) }
         } catch (e: Exception) {
             e.printStackTrace()
